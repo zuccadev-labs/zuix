@@ -35,9 +35,16 @@ export interface Anchor {
 
 /**
  * Anclaje de una arista en un nodo: el puerto indicado o, sin él, el primero del sentido que toca (salida para el
- * origen, entrada para el destino); sin puertos, el centro del lado por defecto.
+ * origen, entrada para el destino); sin puertos, el centro del lado por defecto. `measured` trae la fracción medida
+ * de los puertos que dibuja el cuerpo del nodo (`anchor`), que gana a la calculada.
  */
-export function anchorOf(node: GraphNode, rect: Rect, portId: string | undefined, kind: "source" | "target"): Anchor {
+export function anchorOf(
+  node: GraphNode,
+  rect: Rect,
+  portId: string | undefined,
+  kind: "source" | "target",
+  measured?: ReadonlyMap<string, number>,
+): Anchor {
   const ports = node.ports ?? [];
   const port = (portId ? ports.find((p) => p.id === portId) : undefined) ?? ports.find((p) => p.kind === kind);
   if (!port) {
@@ -45,7 +52,8 @@ export function anchorOf(node: GraphNode, rect: Rect, portId: string | undefined
     return { side, point: sidePoint(rect, side, 0.5) };
   }
   const side = portSide(port);
-  return { side, point: sidePoint(rect, side, portFractions(ports).get(port.id) ?? 0.5) };
+  const t = measured?.get(port.id) ?? portFractions(ports).get(port.id) ?? 0.5;
+  return { side, point: sidePoint(rect, side, Math.min(1, Math.max(0, t))) };
 }
 
 /** Tipos de un puerto (`"json text"` → dos). Vacío o `any` acepta cualquiera. */

@@ -70,7 +70,7 @@ function readJSON(el: HTMLElement, selector: string): unknown {
 function readNode(el: HTMLElement): GraphNode | null {
   const id = el.dataset.id;
   if (!id) return null;
-  const group = el.classList.contains("z-node-group") || el.dataset.type === "group";
+  const group = el.classList.contains("z-node-group") || el.dataset.type === "group" || el.dataset.type === "zone";
   const label = el.querySelector(".z-node__title, .z-node-group__title")?.textContent?.trim() || el.getAttribute("aria-label") || id;
   const ports: NodePort[] = [...el.querySelectorAll<HTMLElement>(".z-node-port")].map((p) => ({
     id: p.dataset.port ?? "",
@@ -80,6 +80,16 @@ function readNode(el: HTMLElement): GraphNode | null {
     label: p.querySelector(".z-node-port__label")?.textContent?.trim() || undefined,
     max: num(p.dataset.max),
   }));
+  // Conectores que dibuja el cuerpo (PortPanel): puertos `anchor`, de salida salvo que digan otra cosa.
+  for (const a of el.querySelectorAll<HTMLElement>("[data-port-anchor][data-port]")) {
+    if (ports.some((p) => p.id === a.dataset.port)) continue;
+    ports.push({
+      id: a.dataset.port ?? "",
+      kind: a.dataset.kind === "target" ? "target" : "source",
+      side: (a.dataset.side as NodePort["side"]) || "bottom",
+      anchor: true,
+    });
+  }
   const w = num(el.dataset.width);
   const h = num(el.dataset.height);
   const node: GraphNode = {
@@ -87,7 +97,7 @@ function readNode(el: HTMLElement): GraphNode | null {
     position: { x: num(el.dataset.x) ?? 0, y: num(el.dataset.y) ?? 0 },
     data: { label, status: (el.dataset.status as NodeStatus) || undefined },
   };
-  if (group) node.type = "group";
+  if (group) node.type = el.dataset.type === "zone" ? "zone" : "group";
   else if (el.dataset.type) node.type = el.dataset.type;
   if (el.dataset.parent) node.parentId = el.dataset.parent;
   if (w && h) node.size = { width: w, height: h };
@@ -188,6 +198,7 @@ function mount(root: HTMLElement): Mounted {
     snap: snapAttr === "false" ? false : (num(snapAttr) ?? 16),
     readOnly: yes(root.dataset.readonly),
     edgeType: (root.dataset.edgeType as GraphEdge["type"]) || undefined,
+    cull: root.dataset.cull !== "false",
     allowCycles: root.dataset.allowCycles !== "false",
     fitOnMount: root.dataset.fit !== "false",
     labels: props.labels,

@@ -62,6 +62,12 @@ export interface NodeCanvasProps {
   readOnly?: boolean;
   onLockChange?: (locked: boolean) => void;
   edgeType?: GraphEdge["type"];
+  /** Escala de grosores de las aristas con `weight`. Por defecto, velocidades de enlace (10G, 2.5G, 1G, 100M…). */
+  edgeScale?: NodeCanvasOptions["edgeScale"];
+  /** Opciones del enrutado `orthogonal` (margen alrededor de los nodos, radio, separación de carriles). */
+  routing?: NodeCanvasOptions["routing"];
+  /** Pintar solo lo que se ve. Por defecto sí; `false` pinta todo (diagramas pequeños, impresión). */
+  cull?: boolean;
   /** Sentido del botón de ordenar de los controles. Por defecto `LR`. */
   layoutDirection?: "LR" | "TB";
   background?: "dots" | "grid" | "none";
@@ -129,6 +135,9 @@ export const NodeCanvas = withRef(function NodeCanvas({
   readOnly,
   onLockChange,
   edgeType,
+  edgeScale,
+  routing,
+  cull,
   layoutDirection,
   background = "dots",
   minimap = true,
@@ -167,6 +176,9 @@ export const NodeCanvas = withRef(function NodeCanvas({
     snap,
     readOnly,
     edgeType,
+    edgeScale,
+    routing,
+    cull,
     layoutDirection,
     allowCycles,
     labels,
@@ -252,6 +264,8 @@ export const NodeCanvas = withRef(function NodeCanvas({
         focusNode: (nid) => handle.current?.focusNode(nid),
         removeSelection: () => handle.current?.removeSelection(),
         removeEdge: (eid) => handle.current?.removeEdge(eid),
+        exportSVG: (o) => handle.current?.exportSVG(o) ?? Promise.reject(new Error("[zui] NodeCanvas sin montar")),
+        exportPNG: (o) => handle.current?.exportPNG(o) ?? Promise.reject(new Error("[zui] NodeCanvas sin montar")),
         get graph() {
           return handle.current?.graph ?? graph;
         },

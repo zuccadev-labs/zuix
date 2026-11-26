@@ -1,0 +1,665 @@
+/* @zuccadev-labs/zuix-zui — diagramas de infraestructura: aristas con estilo (grosor, discontinua, punteada, doble con
+   núcleo, color libre, etiquetas de extremo), nodos nube y carpeta, zonas, FolderCard, PortPanel, StoragePool,
+   DiagramLegend y Redact. Los colores de zona, VLAN y arista llegan como variables locales (`--z-zone-color`,
+   `--z-vlan-color`, `--z-edge-color`) con el valor de un token o un color de la aplicación. */
+@layer zui.nodes {
+  /* ── Aristas con estilo ─────────────────────────────────────────────────────────────────────────────────── */
+  .z-edge[data-color] .z-edge__path {
+    stroke: var(--z-edge-color, var(--z-line-strong));
+  }
+  .z-edge .z-edge__path {
+    stroke-width: var(--z-edge-width, 2px);
+  }
+  .z-edge[data-dash] .z-edge__path {
+    stroke-dasharray: var(--z-edge-dash, none);
+  }
+  .z-edge[data-tone="info"] .z-edge__path {
+    stroke: var(--z-info);
+  }
+  /* Línea doble (troncal): el trazo exterior lleva el color y un núcleo del color del fondo lo vacía por dentro. */
+  .z-edge[data-double] .z-edge__path {
+    stroke-width: max(5px, var(--z-edge-width, 5px));
+    stroke-linecap: butt;
+  }
+  .z-edge__core {
+    fill: none;
+    stroke: var(--z-diagram-trunk-core);
+    stroke-width: calc(max(5px, var(--z-edge-width, 5px)) - 3px);
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+  .z-edge[data-selected] .z-edge__path {
+    stroke-width: calc(var(--z-edge-width, 2px) + 0.5px);
+  }
+  .z-node-canvas__marker[data-tone="custom"] path {
+    fill: var(--z-marker-color, var(--z-line-strong));
+  }
+  .z-node-canvas__marker[data-tone="info"] path {
+    fill: var(--z-info);
+  }
+  /* Etiqueta de un extremo («10G» junto al puerto): sin caja, en la fuente de los datos, al lado de la línea. */
+  .z-edge__end-label {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    translate: calc(var(--z-edge-x, 0px) + var(--z-space-1-5)) calc(var(--z-edge-y, 0px) - 50%);
+    padding-inline: var(--z-space-0-5);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface);
+    color: var(--z-fg-muted);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-tight);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .z-edge__end-label[data-orient="h"] {
+    translate: calc(var(--z-edge-x, 0px) - 50%) calc(var(--z-edge-y, 0px) - 100% - var(--z-space-1));
+  }
+  .z-edge__end-label[data-selected] {
+    color: var(--z-accent-text);
+  }
+
+  /* ── Nodo nube ──────────────────────────────────────────────────────────────────────────────────────────── */
+  .z-node[data-type="cloud"] {
+    justify-content: center;
+    align-items: center;
+    min-inline-size: 200px;
+    max-inline-size: none;
+    min-block-size: 112px;
+    padding-block: var(--z-space-6) var(--z-space-3);
+    padding-inline: var(--z-space-8);
+    border: 0;
+    background: none;
+    box-shadow: none;
+    text-align: center;
+  }
+  .z-node__shape {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .z-node__shape path {
+    fill: var(--z-surface-solid);
+    stroke: var(--z-line-strong);
+    stroke-width: 1.5px;
+  }
+  .z-node[data-type="cloud"][data-selected] {
+    box-shadow: none;
+  }
+  .z-node[data-type="cloud"][data-selected] .z-node__shape path {
+    stroke: var(--z-accent);
+    stroke-width: 2px;
+  }
+  .z-node[data-type="cloud"] > .z-node__header {
+    position: relative;
+    justify-content: center;
+    min-block-size: 0;
+    padding: 0;
+  }
+  .z-node[data-type="cloud"] .z-node__title {
+    font-size: var(--z-text-heading);
+    flex: none;
+  }
+  .z-node[data-type="cloud"] > .z-node__body {
+    position: relative;
+    flex: none;
+    padding: 0;
+    border: 0;
+    font-size: var(--z-text-caption);
+  }
+
+  /* ── Tarjeta de carpeta (FolderCard y nodo `folder`) ────────────────────────────────────────────────────── */
+  .z-folder-card {
+    --z-folder-color: var(--z-line-strong);
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    color: var(--z-fg);
+  }
+  .z-folder-card__tab {
+    position: relative;
+    z-index: var(--z-layer-raised);
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+    max-inline-size: 100%;
+    margin-block-end: -1px;
+    padding-block: var(--z-space-1-5);
+    padding-inline: var(--z-space-3) var(--z-space-4);
+    border: 1px solid var(--z-folder-color);
+    border-block-end: 0;
+    border-start-start-radius: var(--z-radius-sm);
+    border-start-end-radius: var(--z-radius-md);
+    background: var(--z-surface-solid);
+    direction: var(--z-node-dir, inherit);
+  }
+  .z-folder-card__icon {
+    display: inline-grid;
+    flex: none;
+    color: var(--z-fg-muted);
+  }
+  .z-folder-card__title {
+    margin: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    color: var(--z-fg);
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-bold);
+    line-height: var(--z-leading-tight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-folder-card__kind {
+    flex: none;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+    white-space: nowrap;
+  }
+  .z-folder-card__kind::before {
+    content: "·" / "";
+    margin-inline-end: var(--z-space-2);
+    color: var(--z-fg-subtle);
+  }
+  .z-folder-card__body {
+    flex: 1;
+    min-block-size: 0;
+    padding-block: var(--z-space-3);
+    padding-inline: var(--z-space-4);
+    border: 1px solid var(--z-folder-color);
+    border-radius: var(--z-radius-lg);
+    border-start-start-radius: 0;
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+    direction: var(--z-node-dir, inherit);
+  }
+  .z-folder-card__footer {
+    margin-block-start: var(--z-space-3);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  /* Dentro del lienzo, el nodo no pinta caja propia: la pinta la carpeta. */
+  .z-node.z-folder-card {
+    min-inline-size: 220px;
+    max-inline-size: var(--z-node-w, none);
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .z-node.z-folder-card[data-selected] {
+    box-shadow: none;
+  }
+  .z-node.z-folder-card[data-selected] > .z-folder-card__tab,
+  .z-node.z-folder-card[data-selected] > .z-folder-card__body {
+    border-color: var(--z-accent);
+  }
+  .z-node.z-folder-card[data-selected] > .z-folder-card__body {
+    box-shadow: 0 0 0 1px var(--z-accent);
+  }
+  .z-node.z-folder-card:focus-visible {
+    outline-offset: var(--z-space-1);
+  }
+
+  /* ── Zona (grupo con color) ─────────────────────────────────────────────────────────────────────────────── */
+  .z-node-group[data-type="zone"] {
+    --z-zone-color: var(--z-line-strong);
+    border: 1.5px dashed var(--z-zone-color);
+    border-radius: var(--z-radius-lg);
+    background: color-mix(in oklab, var(--z-zone-color) 6%, transparent);
+  }
+  .z-node-group[data-type="zone"] > .z-node-group__header {
+    flex-wrap: wrap;
+    column-gap: var(--z-space-3);
+    row-gap: var(--z-space-1);
+  }
+  .z-node-group[data-type="zone"] .z-node-group__title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    padding-block: var(--z-space-0-5);
+    padding-inline: var(--z-space-2);
+    border: 1px solid var(--z-zone-color);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-solid);
+    color: var(--z-fg);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-caption);
+  }
+  .z-node-group[data-type="zone"] .z-node-group__title::before {
+    content: "";
+    inline-size: var(--z-space-2);
+    block-size: var(--z-space-2);
+    border-radius: var(--z-radius-full);
+    background: var(--z-zone-color);
+  }
+  .z-node-group__note {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-weight: var(--z-weight-regular);
+  }
+
+  /* ── PortPanel ──────────────────────────────────────────────────────────────────────────────────────────── */
+  .z-port-panel {
+    --z-port-w: 44px;
+    --z-port-h: 34px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--z-space-5);
+    /* Cara física de un equipo: el puerto 1 va a la izquierda también en RTL. */
+    direction: ltr;
+  }
+  .z-port-panel[data-size="sm"] {
+    --z-port-w: 34px;
+    --z-port-h: 26px;
+  }
+  .z-port-panel__group {
+    display: flex;
+    gap: var(--z-space-1-5);
+  }
+  .z-port {
+    --z-port-color: var(--z-line-strong);
+    display: grid;
+    justify-items: center;
+    gap: var(--z-space-1);
+    min-inline-size: var(--z-port-w);
+    padding: var(--z-space-0-5);
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg);
+    cursor: default;
+    outline: none;
+  }
+  .z-port:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-port__number {
+    color: var(--z-fg-muted);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-fine);
+    line-height: var(--z-leading-tight);
+    white-space: nowrap;
+  }
+  .z-port__jack {
+    display: grid;
+    place-items: center;
+    inline-size: var(--z-port-w);
+    block-size: var(--z-port-h);
+    border: 1.5px solid var(--z-port-color);
+    border-radius: var(--z-radius-xs);
+    background: color-mix(in oklab, var(--z-port-color) 20%, var(--z-port-jack-bg));
+    box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+  }
+  .z-port:not([data-vlan]) .z-port__jack {
+    background: var(--z-port-jack-bg);
+  }
+  /* RJ45: hueco con la muesca de la pestaña arriba. */
+  .z-port__socket {
+    inline-size: 56%;
+    block-size: 52%;
+    background: var(--z-port-socket);
+    clip-path: polygon(0 34%, 22% 34%, 22% 0, 78% 0, 78% 34%, 100% 34%, 100% 100%, 0 100%);
+  }
+  .z-port[data-connector="sfp"],
+  .z-port[data-connector="qsfp"] {
+    min-inline-size: calc(var(--z-port-w) * 1.3);
+  }
+  .z-port[data-connector="sfp"] .z-port__jack,
+  .z-port[data-connector="qsfp"] .z-port__jack {
+    inline-size: calc(var(--z-port-w) * 1.3);
+  }
+  .z-port[data-connector="sfp"] .z-port__socket,
+  .z-port[data-connector="qsfp"] .z-port__socket {
+    inline-size: 76%;
+    block-size: 40%;
+    border-radius: var(--z-radius-xs);
+    clip-path: none;
+  }
+  .z-port[data-connector="qsfp"] .z-port__socket {
+    block-size: 56%;
+  }
+  .z-port[data-connector="coax"] .z-port__socket {
+    inline-size: calc(var(--z-port-h) * 0.5);
+    block-size: calc(var(--z-port-h) * 0.5);
+    border: 2px solid var(--z-fg-muted);
+    border-radius: var(--z-radius-full);
+    clip-path: none;
+    background: radial-gradient(circle, var(--z-fg) 0 22%, var(--z-port-socket) 26%);
+  }
+  .z-port__vlans {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    min-block-size: var(--z-space-2);
+  }
+  .z-port__vlan {
+    inline-size: 5px;
+    block-size: 4px;
+    border-radius: 1px;
+    background: var(--z-vlan-color, var(--z-fg-muted));
+  }
+  .z-port__vlan[data-untagged] {
+    block-size: var(--z-space-2);
+  }
+  .z-port__to {
+    max-inline-size: calc(var(--z-port-w) * 1.6);
+    overflow: hidden;
+    color: var(--z-fg);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-medium);
+    line-height: var(--z-leading-tight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .z-port[data-state="free"] .z-port__to,
+  .z-port[data-state="disabled"] .z-port__to {
+    color: var(--z-fg-subtle);
+    font-weight: var(--z-weight-regular);
+  }
+  .z-port[data-state="free"] .z-port__jack {
+    border-color: var(--z-line-strong);
+  }
+  .z-port[data-state="disabled"] .z-port__jack {
+    border-style: dashed;
+    border-color: var(--z-line-strong);
+    background: repeating-linear-gradient(-45deg, var(--z-port-jack-bg) 0 4px, var(--z-surface-3) 4px 6px);
+  }
+  .z-port[data-state="disabled"] .z-port__socket {
+    opacity: 0.45;
+  }
+  .z-port[data-state="exposed"] .z-port__jack {
+    border-color: var(--z-danger);
+    box-shadow: 0 0 0 2px var(--z-danger-soft);
+  }
+  .z-port[data-state="exposed"] .z-port__to {
+    color: var(--z-danger-text);
+  }
+  .z-port[aria-selected="true"] .z-port__jack {
+    outline: 2px solid var(--z-accent);
+    outline-offset: 2px;
+  }
+  @media (hover: hover) {
+    .z-port:hover .z-port__jack {
+      border-color: var(--z-accent);
+    }
+  }
+
+  /* ── StoragePool ────────────────────────────────────────────────────────────────────────────────────────── */
+  .z-storage-pool {
+    display: grid;
+    gap: var(--z-space-3);
+    padding-block: var(--z-space-3);
+    padding-inline: var(--z-space-4);
+    border: 1px solid var(--z-line);
+    border-radius: var(--z-radius-md);
+    background: var(--z-surface-2);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+  }
+  .z-storage-pool__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--z-space-3);
+    row-gap: var(--z-space-1);
+  }
+  .z-storage-pool__name {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-bold);
+    line-height: var(--z-leading-tight);
+  }
+  .z-storage-pool__disks {
+    color: var(--z-fg-muted);
+  }
+  .z-storage-pool__usage {
+    margin-inline-start: auto;
+    color: var(--z-fg-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-storage-pool__meter {
+    position: relative;
+    block-size: var(--z-space-2);
+    overflow: hidden;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+  }
+  .z-storage-pool__fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--z-pool-used, 0%);
+    border-radius: inherit;
+    background: var(--z-accent);
+  }
+  .z-storage-pool__meter[data-level="high"] .z-storage-pool__fill {
+    background: var(--z-warning);
+  }
+  .z-storage-pool__meter[data-level="critical"] .z-storage-pool__fill {
+    background: var(--z-danger);
+  }
+  .z-storage-pool__vdevs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-4) var(--z-space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-storage-pool__vdev {
+    display: grid;
+    align-content: start;
+    gap: var(--z-space-0-5);
+    min-inline-size: 0;
+  }
+  .z-storage-pool__drives {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1-5);
+    margin-block-end: var(--z-space-1-5);
+    padding-block-end: var(--z-space-1-5);
+    border-block-end: 1px solid var(--z-line-strong);
+  }
+  .z-storage-pool__title {
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-storage-pool__meta {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-storage-pool__meta[data-redundancy="none"] {
+    color: var(--z-warning-text);
+  }
+  .z-storage-pool__note {
+    margin: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  /* Discos: HDD con su plato, SSD con el chip, NVMe en barra. */
+  .z-disk {
+    display: grid;
+    place-items: center;
+    inline-size: 28px;
+    block-size: 34px;
+    border: 1.5px solid var(--z-line-strong);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-solid);
+  }
+  .z-disk__face {
+    inline-size: 16px;
+    block-size: 16px;
+    border: 1.5px solid var(--z-accent);
+    border-radius: var(--z-radius-full);
+    background: radial-gradient(circle, var(--z-accent) 0 2px, transparent 2.5px);
+  }
+  .z-disk[data-kind="ssd"] {
+    inline-size: 40px;
+    block-size: 26px;
+  }
+  .z-disk[data-kind="ssd"] .z-disk__face {
+    inline-size: 20px;
+    block-size: 12px;
+    border: 0;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--z-accent) 55%, var(--z-surface-3));
+  }
+  .z-disk[data-kind="nvme"] {
+    inline-size: 64px;
+    block-size: 18px;
+    padding-inline: var(--z-space-1);
+    place-items: center start;
+  }
+  .z-disk[data-kind="nvme"] .z-disk__face {
+    inline-size: 70%;
+    block-size: 8px;
+    border: 0;
+    border-radius: 2px;
+    background: repeating-linear-gradient(
+      to right,
+      color-mix(in oklab, var(--z-accent) 55%, var(--z-surface-3)) 0 10px,
+      transparent 10px 13px
+    );
+  }
+
+  /* ── DiagramLegend ──────────────────────────────────────────────────────────────────────────────────────── */
+  .z-diagram-legend {
+    display: grid;
+    gap: var(--z-space-3);
+    color: var(--z-fg);
+    font-size: var(--z-text-small);
+  }
+  .z-diagram-legend__title {
+    margin: 0;
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-bold);
+  }
+  .z-diagram-legend__list {
+    display: grid;
+    gap: var(--z-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-diagram-legend[data-columns="2"] .z-diagram-legend__list {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    column-gap: var(--z-space-6);
+  }
+  .z-diagram-legend__item {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--z-space-3);
+    color: var(--z-fg-muted);
+  }
+  .z-diagram-legend__item[data-type="width"] {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .z-diagram-legend__key {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--z-space-5);
+  }
+  .z-diagram-legend__swatch {
+    flex: none;
+    overflow: visible;
+  }
+  .z-diagram-legend__widths {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-1) var(--z-space-3);
+  }
+  .z-diagram-legend__width {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+  }
+  .z-diagram-legend__value {
+    color: var(--z-fg);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-caption);
+  }
+  .z-diagram-legend__zone {
+    inline-size: 36px;
+    block-size: var(--z-space-4);
+    border: 1.5px dashed var(--z-zone-color, var(--z-line-strong));
+    border-radius: var(--z-radius-xs);
+    background: color-mix(in oklab, var(--z-zone-color, var(--z-line-strong)) 10%, transparent);
+  }
+  .z-diagram-legend__share {
+    inline-size: 36px;
+    block-size: var(--z-space-4);
+    border: 1.5px dashed var(--z-info);
+    border-radius: var(--z-radius-xs);
+  }
+  .z-diagram-legend__chip {
+    padding-block: 1px;
+    padding-inline: var(--z-space-1-5);
+    border: 1px solid var(--z-line-strong);
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg-muted);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-fine);
+  }
+  .z-diagram-legend__text {
+    color: var(--z-info-text);
+    font-family: var(--z-font-mono);
+    font-size: var(--z-text-caption);
+    white-space: nowrap;
+  }
+  .z-diagram-legend__symbol {
+    display: inline-flex;
+    color: var(--z-fg-muted);
+  }
+
+  /* ── Redact ─────────────────────────────────────────────────────────────────────────────────────────────── */
+  [data-sensitive][data-redacted] {
+    text-decoration: underline dotted var(--z-fg-subtle);
+    text-underline-offset: 3px;
+  }
+
+  @media (forced-colors: active) {
+    .z-edge[data-color] .z-edge__path,
+    .z-edge .z-edge__path {
+      stroke: CanvasText;
+    }
+    .z-edge__core {
+      stroke: Canvas;
+    }
+    .z-node-canvas__marker[data-tone="custom"] path {
+      fill: CanvasText;
+    }
+    .z-node__shape path {
+      fill: Canvas;
+      stroke: CanvasText;
+    }
+    .z-folder-card__tab,
+    .z-folder-card__body,
+    .z-node-group[data-type="zone"],
+    .z-port__jack,
+    .z-disk,
+    .z-diagram-legend__zone {
+      border-color: CanvasText;
+    }
+    .z-port__vlan,
+    .z-storage-pool__fill,
+    .z-port__socket {
+      background: CanvasText;
+    }
+    .z-port[aria-selected="true"] .z-port__jack {
+      outline-color: Highlight;
+    }
+    .z-node-group[data-type="zone"] .z-node-group__title::before {
+      background: CanvasText;
+    }
+  }
+}

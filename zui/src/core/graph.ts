@@ -19,6 +19,11 @@ export interface NodePort {
   label?: string;
   /** Máximo de conexiones del puerto. Sin límite por defecto. */
   max?: number;
+  /**
+   * El puerto lo dibuja el cuerpo del nodo (un elemento con `data-port-anchor` y `data-port` igual a su id, como los
+   * conectores de un PortPanel): no se pinta el asa por defecto y la arista sale del centro de ese elemento.
+   */
+  anchor?: boolean;
 }
 
 export interface NodeData {
@@ -30,6 +35,8 @@ export interface NodeData {
   status?: NodeStatus;
   /** Color del icono de la cabecera. */
   tone?: "accent" | "success" | "warning" | "danger" | "info";
+  /** Color de una zona o de un nodo de diagrama: tono, token (`chart-3`) o color libre. */
+  color?: string;
   [key: string]: unknown;
 }
 
@@ -41,7 +48,10 @@ export interface GraphNode<D extends NodeData = NodeData> {
   size?: Size;
   /** Grupo que lo contiene. */
   parentId?: string;
-  /** `group` pinta un grupo/subflujo; cualquier otro valor lo interpreta quien pinta. */
+  /**
+   * `group` pinta un grupo/subflujo y `zone` una zona (grupo con borde discontinuo, etiqueta y color: una DMZ, una
+   * VLAN); `cloud` una nube y `folder` una tarjeta con pestaña de carpeta. Cualquier otro valor lo interpreta quien pinta.
+   */
   type?: string;
   data: D;
   ports?: NodePort[];
@@ -60,6 +70,22 @@ export interface GraphEdge {
   label?: string;
   markerEnd?: "arrow" | "none";
   tone?: "neutral" | "accent" | "success" | "warning" | "danger";
+  /** Grosor en px. Gana a `weight`. */
+  width?: number;
+  /** Valor que fija el grosor según la escala del lienzo (`edgeScale`): por ejemplo la velocidad, `"10G"`. */
+  weight?: string | number;
+  /** Tipo de línea. Por defecto `solid`. */
+  dash?: "solid" | "dashed" | "dotted";
+  /** Línea doble con núcleo (un troncal). */
+  double?: boolean;
+  /** Color: tono (`accent`), token (`chart-3`) o color libre (`#58a6ff`). Gana a `tone`. */
+  color?: string;
+  /** Etiqueta junto al origen («10G» al lado del puerto). */
+  sourceLabel?: string;
+  /** Etiqueta junto al destino. */
+  targetLabel?: string;
+  /** Categoría de la arista para la leyenda (`trunk`, `wan`, `console`…). */
+  kind?: string;
 }
 
 export interface Graph<D extends NodeData = NodeData> {
@@ -68,7 +94,8 @@ export interface Graph<D extends NodeData = NodeData> {
 }
 
 export const DEFAULT_NODE_SIZE: Size = { width: 200, height: 76 };
-export const isGroup = (n: Pick<GraphNode, "type">) => n.type === "group";
+/** Un grupo o una zona: contiene nodos (`parentId`), se pinta debajo y se mueve con ellos. */
+export const isGroup = (n: Pick<GraphNode, "type">) => n.type === "group" || n.type === "zone";
 export const nodeLabel = (n: GraphNode | undefined) => (n ? String(n.data?.label ?? n.id) : "");
 
 /** Índice por id. */

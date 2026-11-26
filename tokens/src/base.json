@@ -246,7 +246,10 @@
     "chart-bar-max": "28px",
     "chart-bar-radius": "{radius-xs}",
     "chart-area-opacity": "0.16",
-    "chart-line-width": "2px"
+    "chart-line-width": "2px",
+    "diagram-trunk-core": "{surface}",
+    "port-jack-bg": "color-mix(in srgb, {fg} 7%, {surface-solid})",
+    "port-socket": "color-mix(in srgb, {canvas} 94%, {fg})"
   },
   "required": [
     "accent",

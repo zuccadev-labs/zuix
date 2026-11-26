@@ -8,6 +8,9 @@
 
 import { announce } from "./announcer";
 import { edgeRoute, type EdgeRoute, type EdgeType, routeBounds, type Side } from "./edge-path";
+import { dashArray, edgeColor, edgeWidth, type EdgeWidthScale, pointAlong } from "./edge-style";
+import { cloneForExport, cloneToSVG, type ExportOptions, svgToPNG } from "./export-image";
+import { type OrthogonalOptions, routeOrthogonal } from "./orthogonal-route";
 import {
   addEdge,
   copyFragment,
@@ -41,7 +44,7 @@ import {
 import { layeredLayout } from "./layout-layers";
 import { minimapProjection, minimapView, viewportFromMinimap } from "./minimap";
 import { mergeNodeLabels, type NodeCanvasLabels, nodeVars, portLabel } from "./node-view";
-import { anchorOf, compatiblePorts, connectionProblem, normalizeConnection, type PortRef } from "./ports";
+import { anchorOf, compatiblePorts, connectionProblem, normalizeConnection, type PortRef, portSide } from "./ports";
 import { boxSelection } from "./selection";
 import { arrowDirection, nextInDirection } from "./spatial";
 import { createUndoStack } from "./undo";
@@ -127,6 +130,15 @@ export interface NodeCanvasOptions {
   locale?: string;
   /** Margen (px de pantalla) alrededor de lo visible en el que ya se pintan nodos y aristas. Por defecto 240. */
   overscan?: number;
+  /**
+   * Pintar solo lo que se ve. Por defecto sí; con `false` se pintan todos los nodos y aristas (un diagrama pequeño que
+   * se imprime o se exporta entero).
+   */
+  cull?: boolean;
+  /** Escala de grosores de las aristas con `weight` (por defecto, velocidades de enlace: 10G, 2.5G, 1G, 100M…). */
+  edgeScale?: EdgeWidthScale;
+  /** Opciones del enrutado `orthogonal`: margen, radio, separación de carriles. */
+  routing?: OrthogonalOptions;
   onGraphChange?: (graph: Graph, change: GraphChange) => void;
   onViewportChange?: (viewport: Viewport) => void;
   onSelectionChange?: (selection: CanvasSelection) => void;
@@ -156,6 +168,10 @@ export interface NodeCanvasHandle {
   /** Borra la selección (con anuncio y deshacer). */
   removeSelection(): void;
   removeEdge(id: string): void;
+  /** SVG autocontenido del diagrama completo (todos los nodos y aristas, al 100 %), sin el cromo. */
+  exportSVG(options?: ExportOptions): Promise<string>;
+  /** PNG del diagrama completo. */
+  exportPNG(options?: ExportOptions): Promise<Blob>;
   readonly graph: Graph;
   readonly viewport: Viewport;
   readonly selection: CanvasSelection;
@@ -165,7 +181,7 @@ export interface NodeCanvasHandle {
 }
 
 const SVG = "http://www.w3.org/2000/svg";
-const TONES = ["neutral", "accent", "success", "warning", "danger"] as const;
+const TONES = ["neutral", "accent", "success", "warning", "danger", "info"] as const;
 /** Lo que no arrastra el nodo al pulsarlo: los controles de su cuerpo. */
 const CONTROL =
   'a[href], button:not(.z-node-port), input, select, textarea, label, summary, [contenteditable]:not([contenteditable="false"]), [role="switch"], [role="slider"], [role="combobox"], [role="listbox"], [role="checkbox"], [role="radio"], [data-node-nodrag]';
@@ -211,7 +227,11 @@ interface EdgeEls {
   g: SVGGElement;
   hit: SVGPathElement;
   path: SVGPathElement;
+  /** Núcleo de una línea doble. */
+  core: SVGPathElement | null;
   label: HTMLElement | null;
+  /** Etiquetas de los extremos. */
+  ends: { source: HTMLElement | null; target: HTMLElement | null };
   key: string;
 }
 
@@ -250,6 +270,10 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
   let rects = new Map<string, Rect>();
   let adj: Adjacency = adjacency(graph.edges);
   const measured = new Map<string, Size>();
+  /** Fracción medida de los puertos que dibuja el cuerpo del nodo (`anchor`), por nodo. */
+  const portT = new Map<string, Map<string, number>>();
+  /** Cambia con la geometría (modelo, medidas): las rutas ortogonales se recalculan con ella. */
+  let geometry = 0;
   let vp: Viewport = o.viewport ?? DEFAULT_VIEWPORT;
   let selNodes = new Set<string>();
   let selEdges = new Set<string>();
@@ -335,6 +359,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     }
     edgeSvgEl.prepend(defs);
   }
+  const defsEl = defs;
   let edgeLayer = edgeSvgEl.querySelector<SVGGElement>(":scope > g.z-node-canvas__edge-layer");
   if (!edgeLayer) {
     edgeLayer = svgEl(doc, "g", { class: "z-node-canvas__edge-layer" });
@@ -381,6 +406,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
   let version = 0;
   const recompute = () => {
     version++;
+    geometry++;
     index = indexNodes(graph.nodes);
     rects = nodeRects(graph.nodes, measured);
     adj = adjacency(graph.edges);
@@ -481,13 +507,38 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
               measured.set(id, { width: w, height: h });
               changed = true;
             }
+            if (measurePorts(el, id)) changed = true;
           }
           if (changed) {
             version++;
+            geometry++;
             rects = nodeRects(graph.nodes, measured);
             invalidate({ edges: true, minimap: true, cull: true, chrome: true });
           }
         });
+  /** Mide dónde caen los conectores que dibuja el cuerpo de un nodo (`[data-port-anchor][data-port]`). */
+  function measurePorts(el: HTMLElement, id: string): boolean {
+    const anchors = el.querySelectorAll<HTMLElement>("[data-port-anchor][data-port]");
+    const node = index.get(id);
+    if (!anchors.length || !node?.ports?.some((p) => p.anchor)) return portT.delete(id);
+    const box = el.getBoundingClientRect();
+    if (!box.width || !box.height) return false;
+    const next = new Map<string, number>();
+    for (const a of anchors) {
+      const port = node.ports.find((p) => p.id === a.dataset.port);
+      if (!port?.anchor || a.closest("[data-id]") !== el) continue;
+      const r = a.getBoundingClientRect();
+      const side = portSide(port);
+      const t =
+        side === "top" || side === "bottom" ? (r.left + r.width / 2 - box.left) / box.width : (r.top + r.height / 2 - box.top) / box.height;
+      next.set(port.id, Math.round(t * 10000) / 10000);
+    }
+    const old = portT.get(id);
+    const same = old && old.size === next.size && [...next].every(([k, v]) => Math.abs((old.get(k) ?? -1) - v) < 0.0005);
+    if (same) return false;
+    portT.set(id, next);
+    return true;
+  }
   const rootResize =
     typeof ResizeObserver === "undefined"
       ? null
@@ -589,15 +640,47 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
 
   const cssId = (id: string) => id.replace(/[^\w-]/g, "_");
 
-  const routeOf = (e: GraphEdge): EdgeRoute | null => {
+  const endsOf = (e: GraphEdge) => {
     const a = index.get(e.source);
     const b = index.get(e.target);
     const ra = rects.get(e.source);
     const rb = rects.get(e.target);
     if (!a || !b || !ra || !rb) return null;
-    const s = anchorOf(a, ra, e.sourcePort, "source");
-    const t = anchorOf(b, rb, e.targetPort, "target");
+    const s = anchorOf(a, ra, e.sourcePort, "source", portT.get(e.source));
+    const t = anchorOf(b, rb, e.targetPort, "target", portT.get(e.target));
+    return { source: s.point, sourceSide: s.side, target: t.point, targetSide: t.side };
+  };
+  // Rutas ortogonales: se calculan todas a la vez (esquivan nodos y se reparten en carriles) cuando cambia la
+  // geometría. Mientras se arrastra o redimensiona, la escalonada suave de siempre (barata); al soltar, la buena.
+  let orthoKey = "";
+  let orthoRoutes = new Map<string, EdgeRoute>();
+  const orthogonalRoutes = () => {
+    const quick = gesture?.kind === "drag" || gesture?.kind === "resize";
+    const key = `${geometry}|${quick}|${JSON.stringify(o.routing ?? null)}|${o.edgeType}`;
+    if (key === orthoKey) return orthoRoutes;
+    orthoKey = key;
+    const reqs = [];
+    for (const e of graph.edges) {
+      if ((e.type ?? o.edgeType ?? "bezier") !== "orthogonal") continue;
+      const ends = endsOf(e);
+      if (ends) reqs.push({ id: e.id, ends, source: e.source, target: e.target, width: edgeWidth(e, o.edgeScale) });
+    }
+    if (quick) {
+      orthoRoutes = new Map(reqs.map((r) => [r.id, edgeRoute("smoothstep", r.ends, o.routing)]));
+      return orthoRoutes;
+    }
+    const obstacles = graph.nodes.filter((n) => !isGroup(n) && rects.has(n.id)).map((n) => ({ id: n.id, ...rects.get(n.id)! }));
+    orthoRoutes = routeOrthogonal(reqs, obstacles, o.routing).routes;
+    return orthoRoutes;
+  };
+
+  const routeOf = (e: GraphEdge): EdgeRoute | null => {
+    const ends = endsOf(e);
+    if (!ends) return null;
     const type = e.type ?? o.edgeType ?? "bezier";
+    if (type === "orthogonal") return orthogonalRoutes().get(e.id) ?? edgeRoute("smoothstep", ends, o.routing);
+    const s = { point: ends.source, side: ends.sourceSide };
+    const t = { point: ends.target, side: ends.targetSide };
     const key = `${type}|${s.point.x}|${s.point.y}|${s.side}|${t.point.x}|${t.point.y}|${t.side}`;
     const cached = routes.get(e.id);
     if (cached?.key === key) return cached.route;
@@ -606,14 +689,70 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     return route;
   };
 
+  /** Marcadores de los colores libres: uno por color, creados al primer uso. */
+  const customMarkers = new Map<string, string>();
   const markerFor = (e: GraphEdge) => {
     if ((e.markerEnd ?? (e.animated ? "arrow" : "arrow")) === "none") return null;
     if (selEdges.has(e.id)) return `url(#${uid}-arrow-selected)`;
-    return `url(#${uid}-arrow-${e.tone ?? "neutral"})`;
+    const c = edgeColor(e.color, e.tone);
+    if (c.value) {
+      let id = customMarkers.get(c.value);
+      if (!id) {
+        id = `${uid}-arrow-c${customMarkers.size}`;
+        customMarkers.set(c.value, id);
+        const marker = svgEl(doc, "marker", {
+          id,
+          class: "z-node-canvas__marker",
+          "data-tone": "custom",
+          viewBox: "0 0 12 12",
+          refX: "15",
+          refY: "6",
+          markerWidth: "12",
+          markerHeight: "12",
+          markerUnits: "userSpaceOnUse",
+          orient: "auto-start-reverse",
+        });
+        marker.style.setProperty("--z-marker-color", c.value);
+        marker.append(svgEl(doc, "path", { d: "M 2 2 L 10 6 L 2 10 Z" }));
+        defsEl.append(marker);
+      }
+      return `url(#${id})`;
+    }
+    return `url(#${uid}-arrow-${c.tone ?? "neutral"})`;
+  };
+  const endLabel = (els: EdgeEls, which: "source" | "target", text: string | undefined, route: EdgeRoute, selected: boolean) => {
+    let el = els.ends[which];
+    if (!text) {
+      el?.remove();
+      els.ends[which] = null;
+      return;
+    }
+    if (!el) {
+      el = doc.createElement("div");
+      el.className = "z-edge__end-label";
+      el.dataset.end = which;
+      el.dataset.edge = els.g.dataset.id ?? "";
+      labelsLayer.append(el);
+      els.ends[which] = el;
+    }
+    if (el.textContent !== text) el.textContent = text;
+    const pts = route.points;
+    const from = which === "source" ? "start" : "end";
+    const p = pointAlong(pts, from, 16);
+    const a = which === "source" ? pts[0] : pts[pts.length - 1];
+    const b = which === "source" ? pts[1] : pts[pts.length - 2];
+    const vertical = !!a && !!b && Math.abs(a.x - b.x) < Math.abs(a.y - b.y);
+    el.dataset.orient = vertical ? "v" : "h";
+    el.toggleAttribute("data-selected", selected);
+    el.style.setProperty("--z-edge-x", px(p.x));
+    el.style.setProperty("--z-edge-y", px(p.y));
   };
 
   const paintEdges = () => {
-    const area = cullArea ?? expandRect(visibleRect(vp, size()), (o.overscan ?? 240) / vp.zoom);
+    const area =
+      o.cull === false
+        ? { x: -1e9, y: -1e9, width: 2e9, height: 2e9 }
+        : (cullArea ?? expandRect(visibleRect(vp, size()), (o.overscan ?? 240) / vp.zoom));
     const keep = new Set<string>();
     const reconnectEdgeId = gesture?.kind === "reconnect" ? gesture.edge : null;
     // Cajas de cada arista (sus dos nodos y un margen para la curva): se calculan una vez por cambio del modelo, no
@@ -646,20 +785,48 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
         g.append(hit, path);
         g.dataset.id = e.id;
         edgeLayerEl.append(g);
-        els = { g, hit, path, label: null, key: "" };
+        els = { g, hit, path, core: null, label: null, ends: { source: null, target: null }, key: "" };
         edgeEls.set(e.id, els);
       }
       const selected = selEdges.has(e.id);
       const marker = markerFor(e);
-      const key = `${route.d}|${e.type ?? o.edgeType ?? "bezier"}|${e.animated}|${e.tone}|${selected}|${marker}|${e.label}|${reconnectEdgeId === e.id}`;
+      const width = edgeWidth(e, o.edgeScale);
+      const color = edgeColor(e.color, e.tone);
+      const dash = e.animated ? null : dashArray(e.dash, width);
+      const key = `${route.d}|${e.type ?? o.edgeType ?? "bezier"}|${e.animated}|${color.tone ?? color.value}|${selected}|${marker}|${e.label}|${reconnectEdgeId === e.id}|${width}|${dash}|${e.double}|${e.sourceLabel}|${e.targetLabel}`;
       if (els.key === key) continue;
       els.key = key;
       const g = els.g;
       g.dataset.type = e.type ?? o.edgeType ?? "bezier";
       g.toggleAttribute("data-animated", !!e.animated);
       g.toggleAttribute("data-selected", selected);
-      if (e.tone && e.tone !== "neutral") g.dataset.tone = e.tone;
+      if (color.tone) g.dataset.tone = color.tone;
       else delete g.dataset.tone;
+      if (color.value) {
+        g.dataset.color = "";
+        g.style.setProperty("--z-edge-color", color.value);
+      } else {
+        delete g.dataset.color;
+        g.style.removeProperty("--z-edge-color");
+      }
+      if (width !== 2) g.style.setProperty("--z-edge-width", px(width));
+      else g.style.removeProperty("--z-edge-width");
+      if (dash) {
+        g.dataset.dash = e.dash ?? "dashed";
+        g.style.setProperty("--z-edge-dash", dash);
+      } else {
+        delete g.dataset.dash;
+        g.style.removeProperty("--z-edge-dash");
+      }
+      g.toggleAttribute("data-double", !!e.double);
+      if (e.double && !els.core) {
+        els.core = svgEl(doc, "path", { class: "z-edge__core" });
+        els.path.after(els.core);
+      } else if (!e.double && els.core) {
+        els.core.remove();
+        els.core = null;
+      }
+      els.core?.setAttribute("d", route.d);
       g.toggleAttribute("data-reconnecting", reconnectEdgeId === e.id);
       els.hit.setAttribute("d", route.d);
       els.path.setAttribute("d", route.d);
@@ -695,11 +862,15 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
         els.label.remove();
         els.label = null;
       }
+      endLabel(els, "source", e.sourceLabel, route, selected);
+      endLabel(els, "target", e.targetLabel, route, selected);
     }
     for (const [id, els] of edgeEls)
       if (!keep.has(id)) {
         els.g.remove();
         els.label?.remove();
+        els.ends.source?.remove();
+        els.ends.target?.remove();
         edgeEls.delete(id);
       }
     for (const end of [...overlayEl.querySelectorAll<SVGElement>(".z-edge__end")])
@@ -752,7 +923,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     const key = `${version}|${keep.join(",")}`;
     if (!force && cullArea && key === cullKey && containsRect(cullArea, view)) return false;
     cullKey = key;
-    const area = expandRect(view, (o.overscan ?? 240) / vp.zoom);
+    const area = o.cull === false ? { x: -1e9, y: -1e9, width: 2e9, height: 2e9 } : expandRect(view, (o.overscan ?? 240) / vp.zoom);
     cullArea = area;
     const next = new Set<string>();
     for (const [id, r] of rects) if (intersects(r, area)) next.add(id);
@@ -2081,7 +2252,76 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
   }
   flush();
 
+  /** Espera un fotograma (o nada, sin navegador). */
+  const frameWait = () =>
+    new Promise<void>((resolve) => (win?.requestAnimationFrame ? win.requestAnimationFrame(() => resolve()) : resolve()));
+  /**
+   * Clon del diagrama entero para exportarlo: pinta todo (sin recorte), espera a que estén todos los nodos (el binding
+   * de React los pinta en su siguiente render) y encuadra el contenido con un margen, al 100 %.
+   */
+  const exportClone = async (opts: ExportOptions = {}) => {
+    const before = o.cull;
+    if (before !== false) {
+      o = { ...o, cull: false };
+      version++;
+      invalidateAll();
+      flush();
+    }
+    try {
+      for (let i = 0; i < 90; i++) {
+        collect();
+        if (graph.nodes.every((n) => nodeEls.has(n.id))) break;
+        await frameWait();
+      }
+      // Dos fotogramas más: las medidas de los nodos recién pintados (ResizeObserver) y sus aristas.
+      await frameWait();
+      await frameWait();
+      invalidate({ nodes: true, edges: true });
+      flush();
+      const boxes: Rect[] = [...rects.values()];
+      for (const e of graph.edges) {
+        const r = routeOf(e);
+        if (r) boxes.push(routeBounds(r));
+      }
+      const pad = opts.padding ?? 32;
+      const content = expandRect(unionRect(boxes) ?? { x: 0, y: 0, width: 1, height: 1 }, pad);
+      const bgEl = root.querySelector(".z-node-canvas__background");
+      const dots = bgEl && win ? win.getComputedStyle(bgEl, "::before") : null;
+      return await cloneForExport(root, opts, (clone) => {
+        const world = clone.querySelector<HTMLElement>(".z-node-canvas__world");
+        world?.style.setProperty("transform", `translate(${px(-content.x)}, ${px(-content.y)})`);
+        clone.style.setProperty("border", "0");
+        clone.style.setProperty("border-radius", "0");
+        clone.style.setProperty("min-height", "0");
+        const bg = clone.querySelector<HTMLElement>(".z-node-canvas__background");
+        if (bg) {
+          bg.replaceChildren();
+          const image = dots?.getPropertyValue("background-image");
+          if (image && image !== "none") {
+            const step = typeof o.snap === "number" && o.snap > 0 ? o.snap : 16;
+            bg.style.setProperty("background-image", image);
+            bg.style.setProperty("background-size", `${step}px ${step}px`);
+            bg.style.setProperty("background-position", `${px(-content.x % step)} ${px(-content.y % step)}`);
+          }
+        }
+        return { width: content.width, height: content.height };
+      });
+    } finally {
+      if (before !== false) {
+        o = { ...o, cull: before };
+        version++;
+        invalidateAll();
+        flush();
+      }
+    }
+  };
+
   return {
+    exportSVG: async (opts) => cloneToSVG(await exportClone(opts), opts?.title),
+    exportPNG: async (opts) => {
+      const c = await exportClone(opts);
+      return svgToPNG(cloneToSVG(c, opts?.title), c.width, c.height, opts?.scale ?? 2, doc);
+    },
     setGraph(next) {
       if (next === graph) return;
       graph = next;
@@ -2153,6 +2393,8 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
       for (const els of edgeEls.values()) {
         els.g.remove();
         els.label?.remove();
+        els.ends.source?.remove();
+        els.ends.target?.remove();
       }
       edgeEls.clear();
       overlayEl.replaceChildren();

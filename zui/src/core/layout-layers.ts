@@ -17,6 +17,11 @@ export interface LayoutOptions {
   sweeps?: number;
   /** Origen de la disposición. */
   origin?: Point;
+  /**
+   * Capa mínima de algunos nodos (niveles fijos: internet → borde → núcleo → equipos → servidores). La capa final es
+   * la mayor entre esta y la del camino más largo; los sucesores se empujan detrás.
+   */
+  minLayer?: ReadonlyMap<string, number>;
 }
 
 export interface LayoutResult {
@@ -77,7 +82,7 @@ export function layeredLayout(
   // Capa = camino más largo desde una fuente (orden topológico de Kahn sobre el DAG).
   const indeg = new Map(ids.map((id) => [id, preds.get(id)!.length]));
   const queue = ids.filter((id) => indeg.get(id) === 0);
-  const layer = new Map<string, number>(ids.map((id) => [id, 0]));
+  const layer = new Map<string, number>(ids.map((id) => [id, Math.max(0, Math.floor(o.minLayer?.get(id) ?? 0))]));
   while (queue.length) {
     const id = queue.shift()!;
     for (const t of succs.get(id)!) {

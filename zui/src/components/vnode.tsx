@@ -27,6 +27,8 @@ const ATTR: Record<string, string> = {
   "text-anchor": "textAnchor",
   "dominant-baseline": "dominantBaseline",
   "stroke-linecap": "strokeLinecap",
+  "vector-effect": "vectorEffect",
+  "stroke-dasharray": "strokeDasharray",
   contenteditable: "contentEditable",
   enterkeyhint: "enterKeyHint",
   autocapitalize: "autoCapitalize",

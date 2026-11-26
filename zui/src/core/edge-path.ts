@@ -1,12 +1,14 @@
 // Rutas SVG de las aristas de un lienzo de nodos: recta, curva bézier (puntos de control según el lado del puerto),
 // escalonada (ortogonal) y escalonada suave (ortogonal con radio en las esquinas). Devuelven el atributo `d`, el
-// punto medio para la etiqueta y la longitud aproximada. Puro, sin documento.
+// punto medio para la etiqueta y la longitud aproximada. `orthogonal` es la escalonada suave que además esquiva los
+// nodos: la calcula el lienzo con todas las aristas a la vez (core/orthogonal-route); suelta, aquí, sale como
+// `smoothstep`. Puro, sin documento.
 
 import type { Point } from "./viewport";
 
 export type Side = "left" | "right" | "top" | "bottom";
-export type EdgeType = "straight" | "bezier" | "step" | "smoothstep";
-export const EDGE_TYPES: readonly EdgeType[] = ["straight", "bezier", "step", "smoothstep"];
+export type EdgeType = "straight" | "bezier" | "step" | "smoothstep" | "orthogonal";
+export const EDGE_TYPES: readonly EdgeType[] = ["straight", "bezier", "step", "smoothstep", "orthogonal"];
 
 export interface EdgeEnds {
   source: Point;
@@ -44,7 +46,7 @@ const dist = (a: Point, b: Point) => Math.hypot(b.x - a.x, b.y - a.y);
 export function edgeRoute(type: EdgeType | string | undefined, ends: EdgeEnds, o: EdgeRouteOptions = {}): EdgeRoute {
   if (type === "straight") return straight(ends);
   if (type === "step") return orthogonal(ends, 0, o.offset ?? 20);
-  if (type === "smoothstep") return orthogonal(ends, Math.max(0, o.radius ?? 10), o.offset ?? 20);
+  if (type === "smoothstep" || type === "orthogonal") return orthogonal(ends, Math.max(0, o.radius ?? 10), o.offset ?? 20);
   return bezier(ends, o.curvature ?? 0.35);
 }
 
@@ -169,10 +171,9 @@ export function polylineMidpoint(points: Point[]): { length: number; mid: Point 
   return { length, mid: points[0] ?? { x: 0, y: 0 } };
 }
 
-function orthogonal(ends: EdgeEnds, radius: number, offset: number): EdgeRoute {
-  const points = orthogonalPoints(ends, offset);
-  const { length, mid } = polylineMidpoint(points);
-  if (points.length < 2) return { d: `M ${pt(ends.source)} L ${pt(ends.target)}`, label: mid, length, points };
+/** Atributo `d` de una polilínea ortogonal con las esquinas redondeadas (radio limitado a la mitad de cada tramo). */
+export function roundedPath(points: readonly Point[], radius: number): string {
+  if (points.length < 2) return points.length ? `M ${pt(points[0]!)}` : "";
   let d = `M ${pt(points[0]!)}`;
   for (let i = 1; i < points.length - 1; i++) {
     const p = points[i]!;
@@ -188,7 +189,14 @@ function orthogonal(ends: EdgeEnds, radius: number, offset: number): EdgeRoute {
     d += ` L ${pt({ x: p.x - inDir.x * r, y: p.y - inDir.y * r })} Q ${pt(p)} ${pt({ x: p.x + outDir.x * r, y: p.y + outDir.y * r })}`;
   }
   d += ` L ${pt(points[points.length - 1]!)}`;
-  return { d, label: mid, length, points };
+  return d;
+}
+
+function orthogonal(ends: EdgeEnds, radius: number, offset: number): EdgeRoute {
+  const points = orthogonalPoints(ends, offset);
+  const { length, mid } = polylineMidpoint(points);
+  if (points.length < 2) return { d: `M ${pt(ends.source)} L ${pt(ends.target)}`, label: mid, length, points };
+  return { d: roundedPath(points, radius), label: mid, length, points };
 }
 
 /** Caja aproximada de una ruta (sus vértices o puntos de control): sirve para saber si se ve. */

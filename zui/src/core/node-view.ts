@@ -2,6 +2,7 @@
 // icono, título y estado; cuerpo; puertos; asa de redimensionado), el de un grupo y la vista en lista. Lo pintan el
 // modo DOM (core/vnode → nodos) y las pruebas; el binding de React escribe el mismo marcado. Sin documento.
 
+import { cloudShapeTree, colorVar, folderTabTree } from "./diagram";
 import { GRAPH_LABELS, type Graph, type GraphLabels, type GraphNode, indexNodes, isGroup, nodeLabel, type NodePort } from "./graph";
 import { portFractions, portSide } from "./ports";
 import { fill, h, icon, type VEl } from "./vnode";
@@ -184,29 +185,58 @@ export function portTree(p: NodePort, t: number, labels: NodeCanvasLabels = NODE
  */
 export function nodeTree(node: GraphNode, x: number, y: number, labels: NodeCanvasLabels = NODE_CANVAS_LABELS): VEl {
   const label = nodeLabel(node);
+  const color = colorVar(node.data.color as string | undefined);
   if (isGroup(node)) {
+    const zone = node.type === "zone";
     return h(
       "div",
       {
         class: "z-node-group",
         "data-id": node.id,
-        "data-type": "group",
+        "data-type": zone ? "zone" : "group",
         role: "group",
         "aria-roledescription": labels.roleGroup,
         "aria-label": label,
-        s: nodeVars(x, y, node.size),
+        s: { ...nodeVars(x, y, node.size), ...(zone && color ? { "--z-zone-color": color } : {}) },
       },
       h(
         "div",
         { class: "z-node-group__header" },
         node.data.icon ? icon(String(node.data.icon), 16) : null,
         h("span", { class: "z-node-group__title" }, label),
+        zone && node.data.description ? h("span", { class: "z-node-group__note" }, String(node.data.description)) : null,
       ),
       h("span", { class: "z-node__resize", "aria-hidden": "true" }),
     );
   }
   const ports = node.ports ?? [];
   const fractions = portFractions(ports);
+  const handles = ports.filter((p) => !p.anchor).map((p) => portTree(p, fractions.get(p.id) ?? 0.5, labels));
+  const base = {
+    "data-id": node.id,
+    "data-type": node.type,
+    role: "group",
+    "aria-roledescription": labels.roleNode,
+    "aria-label": label,
+  };
+  if (node.type === "cloud")
+    return h(
+      "div",
+      { class: "z-node", ...base, s: nodeVars(x, y, node.size) },
+      cloudShapeTree(),
+      h("div", { class: "z-node__header" }, h("span", { class: "z-node__title" }, label)),
+      node.data.description ? h("div", { class: "z-node__body" }, String(node.data.description)) : null,
+      ...handles,
+    );
+  if (node.type === "folder")
+    return h(
+      "div",
+      { class: "z-node z-folder-card", ...base, s: { ...nodeVars(x, y, node.size), ...(color ? { "--z-folder-color": color } : {}) } },
+      folderTabTree({ title: label, kind: node.data.kind as string | undefined, icon: node.data.icon as string | undefined, as: "span" }),
+      h("div", { class: "z-folder-card__body" }, node.data.description ? String(node.data.description) : null),
+      ...handles,
+      h("span", { class: "z-node__resize", "aria-hidden": "true" }),
+    );
   const status = node.data.status;
   const statusText = status ? labels.status[status] : "";
   return h(
@@ -230,7 +260,7 @@ export function nodeTree(node: GraphNode, x: number, y: number, labels: NodeCanv
       statusText ? h("span", { class: "z-node__status", "data-status": status }, statusText) : null,
     ),
     node.data.description ? h("div", { class: "z-node__body" }, String(node.data.description)) : null,
-    ...ports.map((p) => portTree(p, fractions.get(p.id) ?? 0.5, labels)),
+    ...handles,
     h("span", { class: "z-node__resize", "aria-hidden": "true" }),
   );
 }
