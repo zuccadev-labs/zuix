@@ -1549,7 +1549,7 @@ function sitePages() {
 function appScreens() {
   const data = readFileSync(join(root, "examples/app/src/data.ts"), "utf8");
   const shell = [...data.slice(data.indexOf("SCREENS")).matchAll(/\{ id: "([a-z-]+)"/g)].map((m) => m[1]);
-  return [...new Set(shell), "audit", "layers", "agenda-stage", "planning-stage", "scale-stage"];
+  return [...new Set(shell), "audit", "layers", "agenda-stage", "planning-stage", "scale-stage", "adaptive-stage"];
 }
 
 // ── Recorrido ──────────────────────────────────────────────────────────────────────────────────────────

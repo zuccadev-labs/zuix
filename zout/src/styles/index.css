@@ -1,6 +1,7 @@
 /* @zuccadev-labs/zuix-zout — estilos. Requiere antes: @zuccadev-labs/zuix-tokens/tokens.css y @zuccadev-labs/zuix-zui/styles.css (material y base). */
 @import "./site.css";
 @import "./pages.css";
+@import "./adaptive.css";
 
 @layer zout {
   /* Tira con desplazamiento horizontal: el lado con contenido oculto se difumina (data-scroll-edges lo pone el
@@ -148,7 +149,9 @@
   }
   /* Sin framework el panel cerrado sigue en el documento, con `hidden`. */
   .z-shell__side[hidden],
-  .z-shell__inspector[hidden] {
+  .z-shell__inspector[hidden],
+  .z-shell__side[data-size-hidden],
+  .z-shell__inspector[data-size-hidden] {
     display: none;
   }
   .z-shell__side {
@@ -243,7 +246,9 @@
   /* Sin medir todavía (HTML del servidor, o antes de init()): un panel `auto` que no cabe no se muestra acoplado
      ni un instante. Los cortes son los de por defecto (880 y 1180 px); al medir manda el comportamiento. */
   @container z-shell (max-width: 879.98px) {
-    .z-shell:not([data-measured]) > .z-shell__body > .z-shell__side:not([data-panel-mode="docked"], [data-panel-mode="overlay"]) {
+    .z-shell:not([data-measured])
+      > .z-shell__body
+      > .z-shell__side:not([data-panel-mode="docked"], [data-panel-mode="overlay"], [data-adaptive]) {
       display: none;
     }
   }
@@ -254,8 +259,67 @@
     }
   }
   @container z-shell (max-width: 1179.98px) {
-    .z-shell:not([data-measured]) > .z-shell__body > .z-shell__inspector:not([data-panel-mode="docked"], [data-panel-mode="overlay"]) {
+    .z-shell:not([data-measured])
+      > .z-shell__body
+      > .z-shell__inspector:not([data-panel-mode="docked"], [data-panel-mode="overlay"], [data-adaptive]) {
       display: none;
+    }
+  }
+  /* Paneles con ajustes por clase (`adaptive`), sin medir: la hoja ya los oculta en las clases en que son cajón u
+     ocultos, y los estrecha al ancho de la Sidebar plegada en las que son `rail`. Al medir, manda el binding. */
+  @container z-shell (width < 600px) {
+    .z-shell:not([data-measured])
+      > .z-shell__body
+      > :is(.z-shell__side, .z-shell__inspector)[data-adaptive]:is([data-drawer-in~="compact"], [data-hidden-in~="compact"]) {
+      display: none;
+    }
+    .z-shell:not([data-measured]) > .z-shell__body > :is(.z-shell__side, .z-shell__inspector)[data-adaptive][data-rail-in~="compact"] {
+      width: calc(max(36px, var(--z-touch-target, 0px)) + var(--z-space-2) * 2 + 2px);
+      overflow: hidden;
+    }
+  }
+  @container z-shell (600px <= width < 840px) {
+    .z-shell:not([data-measured])
+      > .z-shell__body
+      > :is(.z-shell__side, .z-shell__inspector)[data-adaptive]:is([data-drawer-in~="medium"], [data-hidden-in~="medium"]) {
+      display: none;
+    }
+    .z-shell:not([data-measured]) > .z-shell__body > :is(.z-shell__side, .z-shell__inspector)[data-adaptive][data-rail-in~="medium"] {
+      width: calc(max(36px, var(--z-touch-target, 0px)) + var(--z-space-2) * 2 + 2px);
+      overflow: hidden;
+    }
+  }
+  @container z-shell (840px <= width < 1200px) {
+    .z-shell:not([data-measured])
+      > .z-shell__body
+      > :is(.z-shell__side, .z-shell__inspector)[data-adaptive]:is([data-drawer-in~="expanded"], [data-hidden-in~="expanded"]) {
+      display: none;
+    }
+    .z-shell:not([data-measured]) > .z-shell__body > :is(.z-shell__side, .z-shell__inspector)[data-adaptive][data-rail-in~="expanded"] {
+      width: calc(max(36px, var(--z-touch-target, 0px)) + var(--z-space-2) * 2 + 2px);
+      overflow: hidden;
+    }
+  }
+  @container z-shell (1200px <= width < 1600px) {
+    .z-shell:not([data-measured])
+      > .z-shell__body
+      > :is(.z-shell__side, .z-shell__inspector)[data-adaptive]:is([data-drawer-in~="large"], [data-hidden-in~="large"]) {
+      display: none;
+    }
+    .z-shell:not([data-measured]) > .z-shell__body > :is(.z-shell__side, .z-shell__inspector)[data-adaptive][data-rail-in~="large"] {
+      width: calc(max(36px, var(--z-touch-target, 0px)) + var(--z-space-2) * 2 + 2px);
+      overflow: hidden;
+    }
+  }
+  @container z-shell (width >= 1600px) {
+    .z-shell:not([data-measured])
+      > .z-shell__body
+      > :is(.z-shell__side, .z-shell__inspector)[data-adaptive]:is([data-drawer-in~="xlarge"], [data-hidden-in~="xlarge"]) {
+      display: none;
+    }
+    .z-shell:not([data-measured]) > .z-shell__body > :is(.z-shell__side, .z-shell__inspector)[data-adaptive][data-rail-in~="xlarge"] {
+      width: calc(max(36px, var(--z-touch-target, 0px)) + var(--z-space-2) * 2 + 2px);
+      overflow: hidden;
     }
   }
   @container stage (max-width: 760px) {
@@ -1627,40 +1691,40 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(var(--z-grid-min, 240px), 100%), 1fr));
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="0"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="0"] {
     gap: var(--z-space-0);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="1"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="1"] {
     gap: var(--z-space-1);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="2"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="2"] {
     gap: var(--z-space-2);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="3"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="3"] {
     gap: var(--z-space-3);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="4"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="4"] {
     gap: var(--z-space-4);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="5"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="5"] {
     gap: var(--z-space-5);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="6"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="6"] {
     gap: var(--z-space-6);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="8"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="8"] {
     gap: var(--z-space-8);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="10"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="10"] {
     gap: var(--z-space-10);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="12"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="12"] {
     gap: var(--z-space-12);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="16"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="16"] {
     gap: var(--z-space-16);
   }
-  :is(.z-stack, .z-inline, .z-grid)[data-gap="20"] {
+  :is(.z-stack, .z-inline, .z-grid, .z-adaptive__grid)[data-gap="20"] {
     gap: var(--z-space-20);
   }
   :is(.z-stack, .z-inline)[data-align="start"] {

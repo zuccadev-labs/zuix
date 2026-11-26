@@ -1,0 +1,30 @@
+{
+  "name": "AdaptiveToolbar",
+  "group": "layout",
+  "status": "new",
+  "description": "Barra de herramientas que pasa acciones a un menú «más» según la clase de tamaño: cada acción declara en qué clases va al menú (variant: \"menu\") o se oculta. Es su propio contenedor de consulta.",
+  "import": "import { AdaptiveToolbar } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "actions",
+      "type": "AdaptiveToolbarAction[]",
+      "required": true,
+      "description": "{ id, label, icon, onSelect?, disabled?, showLabel?, adaptive? }."
+    },
+    { "name": "label", "type": "string", "required": true },
+    { "name": "moreLabel", "type": "string", "default": "More actions" },
+    { "name": "variant", "type": "enum", "values": ["glass", "plain"], "default": "glass" },
+    { "name": "size", "type": "enum", "values": ["sm", "md"], "default": "md" },
+    { "name": "measure", "type": "enum", "values": ["container", "window"], "default": "container" }
+  ],
+  "tokens": ["size-medium", "size-expanded", "size-large", "size-xlarge"],
+  "classes": ["z-adaptive-toolbar", "z-adaptive-toolbar__more"],
+  "behavior": "react",
+  "a11y": "Toolbar con una sola parada de tabulación (APG). Medida, la barra solo contiene lo que se ve; el resto está en un Menu (APG menu button) en el orden de las acciones.",
+  "examples": [
+    {
+      "title": "Acciones secundarias al menú en compacto",
+      "code": "<AdaptiveToolbar\n  label=\"Document\"\n  actions={[\n    { id: \"bold\", label: \"Bold\", icon: \"bold\" },\n    { id: \"italic\", label: \"Italic\", icon: \"italic\" },\n    { id: \"link\", label: \"Link\", icon: \"link\", adaptive: { compact: { variant: \"menu\" }, medium: { variant: \"bar\" } } },\n    { id: \"share\", label: \"Share\", icon: \"share\", adaptive: { compact: { variant: \"menu\" }, expanded: { variant: \"bar\" } } },\n  ]}\n/>"
+    }
+  ]
+}

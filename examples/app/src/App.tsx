@@ -58,6 +58,7 @@ import { LoginScreen } from "./screens/Login";
 import { ProfileScreen, SettingsScreen } from "./screens/People";
 import { ListingScreen } from "./screens/Listing";
 import { Pickers } from "./screens/Pickers";
+import { AdaptiveScreen } from "./screens/Adaptive";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -255,6 +256,8 @@ export function App() {
       <ListingScreen />
     ) : active === "pickers" ? (
       <Pickers />
+    ) : active === "adaptive" ? (
+      <AdaptiveScreen />
     ) : (
       <Editor />
     );

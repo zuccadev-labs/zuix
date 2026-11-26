@@ -1,6 +1,8 @@
 // Lógica pura de los layouts, sin React ni DOM. La comparten el binding de React (layouts/*.tsx) y
 // @zuccadev-labs/zuix-zout/dom, para que los dos lados calculen lo mismo.
 
+import { SIZE_CLASS_NAMES, resolveAdaptive, sizeClassFor, type AdaptiveMap, type SizeClass } from "./adaptive";
+
 /* ---------- Shell ---------- */
 
 export type PanelMode = "docked" | "overlay";
@@ -27,6 +29,49 @@ export function panelMode(width: number | null, breakpoint: number, mode?: Panel
  */
 export function railInDrawer(width: number | null, breakpoint: number, sidebar: PanelMode | null): boolean {
   return width !== null && width < breakpoint && sidebar === "overlay";
+}
+
+/** Variante de un panel del Shell en una clase de tamaño (`adaptive: { compact: { variant: "drawer" } }`). */
+export type ShellPanelVariant = "docked" | "drawer" | "rail";
+
+export interface AdaptivePanelState {
+  mode: PanelMode;
+  /** Acoplado y plegado a iconos: la Sidebar que lleva dentro se pliega sola. */
+  rail: boolean;
+  /** Oculto en esta clase: ni acoplado ni cajón. */
+  hidden: boolean;
+}
+
+const panelVariant = (variant: string | undefined): ShellPanelVariant =>
+  variant === "drawer" || variant === "overlay" ? "drawer" : variant === "rail" ? "rail" : "docked";
+
+/**
+ * Estado de un panel del Shell con ajustes por clase, a partir del ancho medido del shell. Sin medir (`null`, el HTML
+ * del servidor) queda acoplado: la hoja oculta o estrecha el panel con consultas de contenedor hasta que se mide.
+ */
+export function adaptivePanel(width: number | null, adaptive: AdaptiveMap): AdaptivePanelState {
+  if (width === null) return { mode: "docked", rail: false, hidden: false };
+  const s = resolveAdaptive(adaptive, sizeClassFor(width));
+  const variant = panelVariant(s.variant);
+  return { mode: variant === "drawer" ? "overlay" : "docked", rail: variant === "rail", hidden: s.hidden === true };
+}
+
+/**
+ * Clases en que un panel adaptativo es cajón, rail u oculto, separadas por espacios (atributos `data-drawer-in`,
+ * `data-rail-in` y `data-hidden-in` del `<aside>`): con ellas la hoja coloca el panel antes de medir.
+ */
+export function adaptivePanelClasses(adaptive: AdaptiveMap): { drawerIn?: string; railIn?: string; hiddenIn?: string } {
+  const drawer: SizeClass[] = [];
+  const rail: SizeClass[] = [];
+  const hidden: SizeClass[] = [];
+  for (const cls of SIZE_CLASS_NAMES) {
+    const s = resolveAdaptive(adaptive, cls);
+    if (s.hidden) hidden.push(cls);
+    else if (panelVariant(s.variant) === "drawer") drawer.push(cls);
+    else if (panelVariant(s.variant) === "rail") rail.push(cls);
+  }
+  const list = (l: SizeClass[]) => (l.length ? l.join(" ") : undefined);
+  return { drawerIn: list(drawer), railIn: list(rail), hiddenIn: list(hidden) };
 }
 
 /* ---------- ResizeHandle ---------- */

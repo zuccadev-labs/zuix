@@ -41,7 +41,7 @@ iconos al cargarse) y cualquier importación desde él trae todo el comportamien
 
 La columna de la `0.3.0` es la de los tarballs publicados; la que puse antes de publicarla era algo menor. La de
 la `0.4.0` la medí el 2026-11-23, después de subir la versión. `zui` pasa de 144 a 224 componentes, `zout` de 19
-a 30 piezas y `zicon` de 346 a 366 iconos; `tokens` crece por las hojas del modo compat. Descomprimido, `zui`
+a 35 piezas y `zicon` de 346 a 366 iconos; `tokens` crece por las hojas del modo compat. Descomprimido, `zui`
 ocupa 14,4 MB: 6 MB de mapas de fuente, 3,6 MB de JavaScript y 2,1 MB de CSS. Importar solo `Button` añade
 1,9 kB minificados, y `dist/zui.dom.js` sube a unos 1018 kB porque el modo sin framework cubre ya las familias
 nuevas.

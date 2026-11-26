@@ -17,6 +17,7 @@ import { AgendaScreen } from "./screens/Agenda";
 import { PIECES, PlanningPieces, type PieceId } from "./screens/Planning";
 import { PerfStage } from "./screens/Perf";
 import { ScaleListsStage } from "./screens/scale";
+import { AdaptiveSsr, AdaptiveStage } from "./screens/Adaptive";
 
 // La suite de navegador comprueba con este atributo qué React sirvió la página (tests/browser/run.mjs, REACT=18).
 document.documentElement.dataset.react = version;
@@ -35,7 +36,9 @@ if (
   screen === "agenda-stage" ||
   screen === "planning-stage" ||
   screen === "perf-stage" ||
-  screen === "scale-stage"
+  screen === "scale-stage" ||
+  screen === "adaptive-stage" ||
+  screen === "adaptive-ssr"
 ) {
   document.documentElement.dataset.theme = params.get("theme") === "light" ? "light" : "dark";
   document.documentElement.dataset.brand = params.get("brand") === "zutool" ? "zutool" : "dazlabs";
@@ -51,6 +54,11 @@ createRoot(root).render(
       <AuditSsr />
     ) : screen === "layers" ? (
       <Layers />
+    ) : screen === "adaptive-stage" ? (
+      // Página adaptativa a todo el ancho: la que se captura en las cinco clases de tamaño.
+      <AdaptiveStage />
+    ) : screen === "adaptive-ssr" ? (
+      <AdaptiveSsr />
     ) : screen === "perf-stage" ? (
       // Rendimiento de la agenda: 5000 eventos y 500 recursos (?n= cambia el número de eventos).
       <main className="z-root app-stage" data-testid="screen-perf-stage">

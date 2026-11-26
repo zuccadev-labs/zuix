@@ -39,7 +39,7 @@ and the framework-free mode.
 | `@zuccadev-labs/zuix-tokens` | [`tokens/`](./tokens/README.md) | Single source of design values. A brand is one file | Yes |
 | `@zuccadev-labs/zuix-zicon` | [`zicon/`](./zicon/README.md) | 366 icons in `outline` and `solid`, a `<z-icon>` element and a React component | Yes |
 | `@zuccadev-labs/zuix-zui` | [`zui/`](./zui/README.md) | 237 accessible components that only read tokens | Yes |
-| `@zuccadev-labs/zuix-zout` | [`zout/`](./zout/README.md) | 30 layouts: shell, split panes, work tabs, grids, page layouts | Yes |
+| `@zuccadev-labs/zuix-zout` | [`zout/`](./zout/README.md) | 35 layouts: shell, split panes, work tabs, grids, page layouts | Yes |
 | `@zuccadev-labs/zuix-zudocs` | `zudocs/` | Documentation standard and Docusaurus template | No |
 
 The five published packages share one version number and are installed and upgraded together.

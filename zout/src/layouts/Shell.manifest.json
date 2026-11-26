@@ -48,7 +48,7 @@
     {
       "name": "sidebar",
       "type": "ShellPanel",
-      "description": "{ content, label, open?, mode?: 'auto'|'docked'|'overlay', width?, minWidth?, maxWidth?, defaultWidth?, onResize?, resizeLabel? }"
+      "description": "{ content, label, open?, mode?: 'auto'|'docked'|'overlay', width?, minWidth?, maxWidth?, defaultWidth?, onResize?, resizeLabel?, adaptive? }. `adaptive`: ajustes por clase de tamaño del shell; `variant` docked, drawer o rail (acoplado y plegado a iconos), y `hidden`. Con ellos el panel ignora `mode` y el corte en px."
     },
     {
       "name": "inspector",

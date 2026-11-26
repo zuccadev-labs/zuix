@@ -49,11 +49,19 @@
 //   .z-appbar[data-collapse]                  barra que se pliega al desplazar (respaldo sin animaciones ligadas al
 //                                             desplazamiento) y data-scrolled con algo desplazado (./pages)
 //   .z-docs-layout__toc                        índice con la sección que se lee marcada con aria-current
+//   .z-adaptive                               AdaptiveLayout (./adaptive): la hoja coloca; aquí se mide la clase
+//                                             (data-size-class, z:sizeclass), se reordena el DOM con data-reorder="dom"
+//                                             (por defecto) y se avisa con z:ordermismatch en "visual".
+//                                             setAdaptiveTemplates y setAdaptiveItem editan en vivo
+//   .z-adaptive-switch                        AdaptiveSwitch: la hoja muestra la variante; aquí, z:sizeclass { variant }
+//                                             y el foco pasa a la variante nueva si estaba en la que se oculta
+//   .z-shell__side[data-adaptive]             panel con ajustes por clase (data-drawer-in, data-rail-in, data-hidden-in)
 // Tras insertar marcado nuevo: hydrate(contenedor).
 // Eventos (burbujean y se pueden cancelar): z:modechange, z:open, z:close, z:resize, z:select, z:add, z:change.
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { edgeMargin, trackScrollEdges } from "../edges";
 import { disposePages, hydratePages } from "./pages";
+import { disposeAdaptive, hydrateAdaptive } from "./adaptive";
 import { disposeSite, hydrateSite, onSiteClick } from "./site";
 import { hydrateChat, onChatClick, onChatKeydown, onChatPopState } from "./chat";
 import { chevronDoubleLeft } from "@zuccadev-labs/zuix-zicon/icons/chevron-double-left";
@@ -102,6 +110,7 @@ import {
   type PhysicalSide,
   type ResizeSide,
 } from "../logic";
+import { sizeClassFor } from "../adaptive";
 
 /**
  * ¿`el` está dentro de una capa `[popover]` abierta (con `within: false`, ¿es una)? Sin Popover API, `:popover-open` no es un
@@ -165,6 +174,8 @@ interface PanelState {
   previous: HTMLElement | null;
   /** Si estaba abierto la última vez que estuvo acoplado. */
   dockedOpen: boolean;
+  /** Si la Sidebar de dentro la plegó la variante `rail` (y hay que desplegarla al salir de ella). */
+  railCollapsed?: boolean;
 }
 interface ShellState {
   width: number | null;
@@ -175,13 +186,27 @@ interface ShellState {
 const shells = new WeakMap<HTMLElement, ShellState>();
 const panelOf = (shell: HTMLElement, side: ShellSide) => shell.querySelector<HTMLElement>(PANEL[side]);
 
+/**
+ * Variante de un panel con ajustes por clase (`data-adaptive`, con `data-drawer-in`, `data-rail-in` y
+ * `data-hidden-in`, que escribe el binding): `null` si el panel no los tiene o el shell no se ha medido.
+ */
+function adaptiveVariant(panel: HTMLElement | null, width: number | null): "docked" | "drawer" | "rail" | "hidden" | null {
+  if (!panel?.hasAttribute("data-adaptive") || width === null) return null;
+  const cls = sizeClassFor(width);
+  const has = (name: string) => (panel.getAttribute(name) ?? "").split(/\s+/).includes(cls);
+  return has("data-hidden-in") ? "hidden" : has("data-drawer-in") ? "drawer" : has("data-rail-in") ? "rail" : "docked";
+}
+
 function autoModes(shell: HTMLElement, state: ShellState): ShellModes {
-  const mode = (side: ShellSide, fallback: number) =>
-    panelMode(
+  const mode = (side: ShellSide, fallback: number) => {
+    const variant = adaptiveVariant(panelOf(shell, side), state.width);
+    if (variant) return variant === "drawer" ? "overlay" : "docked";
+    return panelMode(
       state.width,
       num(shell.getAttribute(`data-${side}-breakpoint`), fallback),
       panelOf(shell, side)?.dataset.panelMode as PanelMode | "auto" | undefined,
     );
+  };
   return { sidebar: mode("sidebar", SIDEBAR_BREAKPOINT), inspector: mode("inspector", INSPECTOR_BREAKPOINT) };
 }
 
@@ -201,7 +226,25 @@ function syncShell(shell: HTMLElement): void {
   const auto = autoModes(shell, state);
   const panels = SIDES.map((side) => {
     const el = panelOf(shell, side);
-    return { side, el, mode: el && !el.hidden ? auto[side] : null };
+    const variant = adaptiveVariant(el, state.width);
+    // Ajustes por clase: `hidden` lo retira en esa clase sin tocar si está abierto; `rail` pliega la Sidebar de dentro.
+    if (el) {
+      el.toggleAttribute("data-size-hidden", variant === "hidden");
+      if (variant === "rail") el.dataset.variant = "rail";
+      else if (el.dataset.variant === "rail") delete el.dataset.variant;
+      const sidebar = el.querySelector<HTMLElement>(".z-sidebar");
+      if (sidebar && variant !== null) {
+        const st = state.panels[side];
+        if (variant === "rail" && !sidebar.hasAttribute("data-collapsed")) {
+          st.railCollapsed = true;
+          setSidebarCollapsed(sidebar, true, true);
+        } else if (variant !== "rail" && st.railCollapsed) {
+          st.railCollapsed = false;
+          setSidebarCollapsed(sidebar, false, true);
+        }
+      }
+    }
+    return { side, el, mode: el && !el.hidden && variant !== "hidden" ? auto[side] : null };
   });
   const drawerOpen = panels.some((p) => p.mode === "overlay");
 
@@ -284,6 +327,7 @@ function measure(shell: HTMLElement, width: number): void {
   if (!state) return;
   state.width = width;
   shell.dataset.measured = "";
+  shell.dataset.sizeClass = sizeClassFor(width);
   const next = autoModes(shell, state);
   const prev = state.modes;
   if (!prev || prev.sidebar !== next.sidebar || prev.inspector !== next.inspector) {
@@ -1351,6 +1395,9 @@ function onDoubleClick(event: MouseEvent): void {
 }
 
 export { setChatView, setChatWidgetOpen } from "./chat";
+export { getAdaptiveTemplates, setAdaptiveItem, setAdaptiveTemplates } from "./adaptive";
+export { adaptiveTransition, observeSizeClass, sizeClassOf, type MeasureMode, type SizeState } from "../adaptive-runtime";
+export { SIZE_CLASSES, sizeClassFor, type SizeClass } from "../adaptive";
 
 /** Prepara el marcado bajo `[data-z-dom]`: mide los shells, completa divisores y pestañas. Repetible. */
 export function hydrate(root: ParentNode = document): void {
@@ -1364,6 +1411,7 @@ export function hydrate(root: ParentNode = document): void {
   hydrateSite(root);
   hydrateChat(root);
   hydratePages(root);
+  hydrateAdaptive(root);
   for (const handle of all(root, ".z-resize")) {
     // Un tirador escrito solo con su clase recibe el rol y los atributos del patrón «window splitter».
     if (!handle.hasAttribute("role")) handle.setAttribute("role", "separator");
@@ -1387,6 +1435,7 @@ export function dispose(root: ParentNode = document): void {
   if (!isBrowser) return;
   disposeSite(root);
   disposePages(root);
+  disposeAdaptive(root);
   for (const shell of all(root, ".z-shell")) {
     shellObserver?.unobserve(shell);
     shells.delete(shell);

@@ -1,8 +1,13 @@
 {
  "name": "@zuccadev-labs/zuix-zout",
- "count": 30,
+ "count": 35,
  "groups": {
   "layout": [
+   "AdaptiveLayout",
+   "AdaptiveSwitch",
+   "AdaptiveTable",
+   "AdaptiveTabs",
+   "AdaptiveToolbar",
    "AppBar",
    "AuthLayout",
    "BottomNavigation",
@@ -36,6 +41,451 @@
   ]
  },
  "components": [
+  {
+   "name": "AdaptiveLayout",
+   "group": "layout",
+   "status": "new",
+   "description": "Layout adaptativo: una plantilla de áreas distinta por clase de tamaño (compact, medium, expanded, large, xlarge) y piezas que declaran por clase su área, su orden y si se ocultan. Lo coloca la hoja con consultas de contenedor, así que el HTML del servidor ya sale colocado y la hidratación no mueve nada.",
+   "import": "import { AdaptiveLayout, AdaptiveItem } from \"@zuccadev-labs/zuix-zout\"",
+   "exports": [
+    "AdaptiveLayout",
+    "AdaptiveItem"
+   ],
+   "props": [
+    {
+     "name": "templates",
+     "type": "AdaptiveTemplates",
+     "required": true,
+     "description": "{ [clase]: { areas: string[], columns?, rows? } }, heredadas hacia arriba (mobile-first). `areas` como grid-template-areas, una cadena por fila."
+    },
+    {
+     "name": "reorder",
+     "type": "enum",
+     "values": [
+      "dom",
+      "visual"
+     ],
+     "default": "dom",
+     "description": "`dom`: mueve los nodos (con moveBefore donde existe) para que el orden del documento sea el que se ve. `visual`: solo CSS, con reading-flow donde existe y aviso en desarrollo donde no."
+    },
+    {
+     "name": "measure",
+     "type": "enum",
+     "values": [
+      "container",
+      "window"
+     ],
+     "default": "container",
+     "description": "Qué se mide para elegir la clase."
+    },
+    {
+     "name": "gap",
+     "type": "enum",
+     "values": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      12,
+      16,
+      20
+     ],
+     "default": 4
+    },
+    {
+     "name": "transition",
+     "type": "boolean",
+     "default": false,
+     "description": "Anima con view transitions los cambios de orden y de plantilla, salvo con prefers-reduced-motion."
+    },
+    {
+     "name": "onSizeClassChange",
+     "type": "(state: SizeState) => void",
+     "description": "Clase de tamaño y de entrada nuevas, también en la primera medida."
+    },
+    {
+     "name": "onOrderMismatch",
+     "type": "(report: OrderReport) => void",
+     "description": "En modo visual, el orden que se ve y el del DOM se separan. Sin ella, aviso por consola en desarrollo si el navegador no tiene reading-flow."
+    },
+    {
+     "name": "onIssues",
+     "type": "(issues: AdaptiveIssue[]) => void",
+     "description": "Plantillas mal formadas o piezas en un área que no existe. Sin ella, consola en desarrollo."
+    },
+    {
+     "name": "as",
+     "type": "ElementType",
+     "default": "div"
+    },
+    {
+     "name": "AdaptiveItem.id",
+     "type": "string",
+     "required": true,
+     "description": "Identificador de la pieza (`data-item`)."
+    },
+    {
+     "name": "AdaptiveItem.area",
+     "type": "string",
+     "description": "Área en todas las clases, salvo lo que diga `adaptive`."
+    },
+    {
+     "name": "AdaptiveItem.order",
+     "type": "number",
+     "description": "Orden dentro de su área o en el flujo."
+    },
+    {
+     "name": "AdaptiveItem.span",
+     "type": "number",
+     "description": "Columnas que ocupa una pieza sin área."
+    },
+    {
+     "name": "AdaptiveItem.hidden",
+     "type": "boolean"
+    },
+    {
+     "name": "AdaptiveItem.adaptive",
+     "type": "AdaptiveMap",
+     "description": "{ [clase]: { order?, hidden?, area?, span?, variant?, props? } }, heredados hacia arriba."
+    },
+    {
+     "name": "AdaptiveItem.elementId",
+     "type": "string",
+     "description": "Atributo id del elemento."
+    }
+   ],
+   "states": [
+    "compact",
+    "medium",
+    "expanded",
+    "large",
+    "xlarge"
+   ],
+   "tokens": [
+    "space-4",
+    "size-compact",
+    "size-medium",
+    "size-expanded",
+    "size-large",
+    "size-xlarge",
+    "duration-normal",
+    "ease-standard"
+   ],
+   "classes": [
+    "z-adaptive",
+    "z-adaptive__grid",
+    "z-adaptive__item"
+   ],
+   "behavior": "dom",
+   "a11y": "El orden visual no rompe el de foco ni el de lectura. Con reorder=\"dom\" (por defecto) las piezas se mueven en el DOM al cambiar de clase, sin rehacerlas (moveBefore conserva el foco; sin él, el foco se devuelve a su sitio), así que Tab y el lector de pantalla siguen lo que se ve. Con reorder=\"visual\" el DOM no se toca: la rejilla lleva reading-flow: grid-rows y, en un navegador sin él, el binding avisa en desarrollo (onOrderMismatch o consola) y zout/dom emite z:ordermismatch. Las transiciones respetan prefers-reduced-motion.",
+   "examples": [
+    {
+     "title": "Tres plantillas: una columna, dos y tres con navegación",
+     "code": "<AdaptiveLayout\n  templates={{\n    compact: { areas: [\"header\", \"main\", \"aside\"] },\n    medium: { areas: [\"header header\", \"main aside\"], columns: \"minmax(0, 2fr) minmax(0, 1fr)\" },\n    expanded: { areas: [\"nav header header\", \"nav main aside\"], columns: \"200px minmax(0, 2fr) minmax(0, 1fr)\" },\n  }}\n>\n  <AdaptiveItem id=\"header\" area=\"header\"><h2>Overview</h2></AdaptiveItem>\n  <AdaptiveItem id=\"nav\" area=\"nav\" adaptive={{ compact: { hidden: true }, expanded: { hidden: false } }}><button type=\"button\">Reports</button></AdaptiveItem>\n  <AdaptiveItem id=\"main\" area=\"main\"><p>Weekly activity.</p></AdaptiveItem>\n  <AdaptiveItem id=\"aside\" area=\"aside\"><button type=\"button\">Export</button></AdaptiveItem>\n</AdaptiveLayout>"
+    },
+    {
+     "title": "Orden por clase sin plantilla en compacto",
+     "code": "<AdaptiveLayout\n  templates={{ expanded: { areas: [\"filters results\"], columns: \"260px 1fr\" } }}\n  gap={3}\n>\n  <AdaptiveItem id=\"results\" area=\"results\" adaptive={{ compact: { order: 1 } }}><p>24 results</p></AdaptiveItem>\n  <AdaptiveItem id=\"filters\" area=\"filters\" adaptive={{ compact: { order: 2 } }}><button type=\"button\">Filters</button></AdaptiveItem>\n</AdaptiveLayout>"
+    }
+   ],
+   "file": "zout/src/layouts/AdaptiveLayout.manifest.json"
+  },
+  {
+   "name": "AdaptiveSwitch",
+   "group": "layout",
+   "status": "new",
+   "description": "Una variante de un componente por clase de tamaño. Es su propio contenedor de consulta: hasta medir, todas las variantes están en el documento y la hoja muestra la de la clase activa; medido, el binding deja montada solo esa.",
+   "import": "import { AdaptiveSwitch } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "variants",
+     "type": "Record<string, ReactNode>",
+     "required": true
+    },
+    {
+     "name": "adaptive",
+     "type": "AdaptiveMap",
+     "required": true,
+     "description": "{ [clase]: { variant } }, heredado hacia arriba."
+    },
+    {
+     "name": "fallback",
+     "type": "string",
+     "description": "Variante de las clases sin ajuste. Por defecto, la primera."
+    },
+    {
+     "name": "measure",
+     "type": "enum",
+     "values": [
+      "container",
+      "window"
+     ],
+     "default": "container"
+    },
+    {
+     "name": "onVariantChange",
+     "type": "(variant: string, sizeClass: SizeClass) => void"
+    },
+    {
+     "name": "as",
+     "type": "ElementType",
+     "default": "div"
+    }
+   ],
+   "tokens": [
+    "size-medium",
+    "size-expanded",
+    "size-large",
+    "size-xlarge"
+   ],
+   "classes": [
+    "z-adaptive-switch",
+    "z-adaptive-switch__variant"
+   ],
+   "behavior": "dom",
+   "a11y": "Las variantes ocultas llevan display: none: no se enfocan ni se leen. Si el foco estaba en la variante que se oculta, pasa al primer control de la nueva (también en zout/dom).",
+   "examples": [
+    {
+     "title": "Botón con texto o solo icono",
+     "code": "<AdaptiveSwitch\n  adaptive={{ compact: { variant: \"icon\" }, medium: { variant: \"text\" } }}\n  variants={{\n    icon: <IconButton icon=\"plus\" label=\"New project\" />,\n    text: <Button icon=\"plus\" variant=\"primary\">New project</Button>,\n  }}\n/>"
+    }
+   ],
+   "file": "zout/src/layouts/AdaptiveSwitch.manifest.json"
+  },
+  {
+   "name": "AdaptiveTable",
+   "group": "layout",
+   "status": "new",
+   "description": "Tabla de datos que en compacto pasa a una lista de tarjetas: el título de la fila y sus campos como lista de definiciones. Las mismas filas y columnas; la tabla es un DataTable con todas sus props.",
+   "import": "import { AdaptiveTable } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "adaptive",
+     "type": "AdaptiveMap",
+     "default": "{ compact: { variant: \"cards\" }, medium: { variant: \"table\" } }",
+     "description": "Variante por clase: table o cards."
+    },
+    {
+     "name": "cardTitle",
+     "type": "(row: T, index: number) => ReactNode",
+     "description": "Por defecto, la primera columna."
+    },
+    {
+     "name": "cardHeadingLevel",
+     "type": "enum",
+     "values": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "default": 3
+    },
+    {
+     "name": "cardsLabel",
+     "type": "string",
+     "description": "Nombre de la lista. Por defecto, el caption."
+    },
+    {
+     "name": "measure",
+     "type": "enum",
+     "values": [
+      "container",
+      "window"
+     ],
+     "default": "container"
+    },
+    {
+     "name": "rows · columns · rowKey · …",
+     "type": "DataTableProps<T>",
+     "description": "Las de DataTable."
+    }
+   ],
+   "tokens": [
+    "card-bg",
+    "card-border",
+    "card-radius",
+    "fg",
+    "fg-muted",
+    "accent",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "text-body",
+    "text-small",
+    "weight-semibold",
+    "leading-snug"
+   ],
+   "classes": [
+    "z-adaptive-table",
+    "z-adaptive-cards",
+    "z-adaptive-card",
+    "z-adaptive-card__title",
+    "z-adaptive-card__fields",
+    "z-adaptive-card__field"
+   ],
+   "behavior": "dom",
+   "a11y": "En tarjetas, una lista con nombre; cada tarjeta lleva un encabezado (h3 por defecto) y una lista de definiciones con las cabeceras de columna como términos.",
+   "examples": [
+    {
+     "title": "Proyectos",
+     "code": "<AdaptiveTable\n  caption=\"Projects\"\n  rowKey={(row) => row.id}\n  rows={[\n    { id: \"atlas\", name: \"Atlas\", owner: \"Marta Ruiz\", tasks: 18 },\n    { id: \"borealis\", name: \"Borealis\", owner: \"Ken Adams\", tasks: 4 },\n  ]}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (row) => row.name },\n    { key: \"owner\", header: \"Owner\", accessor: (row) => row.owner },\n    { key: \"tasks\", header: \"Tasks\", accessor: (row) => row.tasks, align: \"end\" },\n  ]}\n/>"
+    }
+   ],
+   "file": "zout/src/layouts/AdaptiveTable.manifest.json"
+  },
+  {
+   "name": "AdaptiveTabs",
+   "group": "layout",
+   "status": "new",
+   "description": "Pestañas que cambian de forma con la clase de tamaño: pestañas donde caben, un select nativo o una barra inferior en compacto. Una sola selección, que se conserva al cambiar de variante.",
+   "import": "import { AdaptiveTabs } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "AdaptiveTabItem[]",
+     "required": true,
+     "description": "{ value, label, icon?, badge?, disabled?, content }. `icon` hace falta para la variante bottom-nav."
+    },
+    {
+     "name": "value",
+     "type": "string"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true,
+     "description": "Nombre accesible de la navegación."
+    },
+    {
+     "name": "adaptive",
+     "type": "AdaptiveMap",
+     "default": "{ compact: { variant: \"select\" }, medium: { variant: \"tabs\" } }",
+     "description": "Variante por clase: tabs, select o bottom-nav."
+    },
+    {
+     "name": "tabsVariant",
+     "type": "enum",
+     "values": [
+      "segmented",
+      "pill",
+      "underline"
+     ]
+    },
+    {
+     "name": "measure",
+     "type": "enum",
+     "values": [
+      "container",
+      "window"
+     ],
+     "default": "container"
+    }
+   ],
+   "tokens": [
+    "space-3"
+   ],
+   "classes": [
+    "z-adaptive-tabs",
+    "z-adaptive-tabs__select",
+    "z-adaptive-tabs__panel"
+   ],
+   "behavior": "react",
+   "a11y": "En pestañas, el patrón APG de Tabs. En select, un <select> nativo con el nombre de la navegación y el contenido en una región con el nombre de la sección. En barra inferior, BottomNavigation con aria-current.",
+   "examples": [
+    {
+     "title": "Select en compacto, pestañas desde medio",
+     "code": "<AdaptiveTabs\n  label=\"Project\"\n  items={[\n    { value: \"overview\", label: \"Overview\", icon: \"home\", content: <p>Summary.</p> },\n    { value: \"activity\", label: \"Activity\", icon: \"clock\", content: <p>Latest changes.</p> },\n    { value: \"settings\", label: \"Settings\", icon: \"cog\", content: <p>Options.</p> },\n  ]}\n/>"
+    }
+   ],
+   "file": "zout/src/layouts/AdaptiveTabs.manifest.json"
+  },
+  {
+   "name": "AdaptiveToolbar",
+   "group": "layout",
+   "status": "new",
+   "description": "Barra de herramientas que pasa acciones a un menú «más» según la clase de tamaño: cada acción declara en qué clases va al menú (variant: \"menu\") o se oculta. Es su propio contenedor de consulta.",
+   "import": "import { AdaptiveToolbar } from \"@zuccadev-labs/zuix-zout\"",
+   "props": [
+    {
+     "name": "actions",
+     "type": "AdaptiveToolbarAction[]",
+     "required": true,
+     "description": "{ id, label, icon, onSelect?, disabled?, showLabel?, adaptive? }."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "moreLabel",
+     "type": "string",
+     "default": "More actions"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "glass",
+      "plain"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "measure",
+     "type": "enum",
+     "values": [
+      "container",
+      "window"
+     ],
+     "default": "container"
+    }
+   ],
+   "tokens": [
+    "size-medium",
+    "size-expanded",
+    "size-large",
+    "size-xlarge"
+   ],
+   "classes": [
+    "z-adaptive-toolbar",
+    "z-adaptive-toolbar__more"
+   ],
+   "behavior": "react",
+   "a11y": "Toolbar con una sola parada de tabulación (APG). Medida, la barra solo contiene lo que se ve; el resto está en un Menu (APG menu button) en el orden de las acciones.",
+   "examples": [
+    {
+     "title": "Acciones secundarias al menú en compacto",
+     "code": "<AdaptiveToolbar\n  label=\"Document\"\n  actions={[\n    { id: \"bold\", label: \"Bold\", icon: \"bold\" },\n    { id: \"italic\", label: \"Italic\", icon: \"italic\" },\n    { id: \"link\", label: \"Link\", icon: \"link\", adaptive: { compact: { variant: \"menu\" }, medium: { variant: \"bar\" } } },\n    { id: \"share\", label: \"Share\", icon: \"share\", adaptive: { compact: { variant: \"menu\" }, expanded: { variant: \"bar\" } } },\n  ]}\n/>"
+    }
+   ],
+   "file": "zout/src/layouts/AdaptiveToolbar.manifest.json"
+  },
   {
    "name": "AppBar",
    "group": "layout",
@@ -2141,7 +2591,7 @@
     {
      "name": "sidebar",
      "type": "ShellPanel",
-     "description": "{ content, label, open?, mode?: 'auto'|'docked'|'overlay', width?, minWidth?, maxWidth?, defaultWidth?, onResize?, resizeLabel? }"
+     "description": "{ content, label, open?, mode?: 'auto'|'docked'|'overlay', width?, minWidth?, maxWidth?, defaultWidth?, onResize?, resizeLabel?, adaptive? }. `adaptive`: ajustes por clase de tamaño del shell; `variant` docked, drawer o rail (acoplado y plegado a iconos), y `hidden`. Con ellos el panel ignora `mode` y el corte en px."
     },
     {
      "name": "inspector",

@@ -1,0 +1,52 @@
+{
+  "name": "AdaptiveTable",
+  "group": "layout",
+  "status": "new",
+  "description": "Tabla de datos que en compacto pasa a una lista de tarjetas: el título de la fila y sus campos como lista de definiciones. Las mismas filas y columnas; la tabla es un DataTable con todas sus props.",
+  "import": "import { AdaptiveTable } from \"@zuccadev-labs/zuix-zout\"",
+  "props": [
+    {
+      "name": "adaptive",
+      "type": "AdaptiveMap",
+      "default": "{ compact: { variant: \"cards\" }, medium: { variant: \"table\" } }",
+      "description": "Variante por clase: table o cards."
+    },
+    { "name": "cardTitle", "type": "(row: T, index: number) => ReactNode", "description": "Por defecto, la primera columna." },
+    { "name": "cardHeadingLevel", "type": "enum", "values": [2, 3, 4, 5, 6], "default": 3 },
+    { "name": "cardsLabel", "type": "string", "description": "Nombre de la lista. Por defecto, el caption." },
+    { "name": "measure", "type": "enum", "values": ["container", "window"], "default": "container" },
+    { "name": "rows · columns · rowKey · …", "type": "DataTableProps<T>", "description": "Las de DataTable." }
+  ],
+  "tokens": [
+    "card-bg",
+    "card-border",
+    "card-radius",
+    "fg",
+    "fg-muted",
+    "accent",
+    "space-1",
+    "space-2",
+    "space-3",
+    "space-4",
+    "text-body",
+    "text-small",
+    "weight-semibold",
+    "leading-snug"
+  ],
+  "classes": [
+    "z-adaptive-table",
+    "z-adaptive-cards",
+    "z-adaptive-card",
+    "z-adaptive-card__title",
+    "z-adaptive-card__fields",
+    "z-adaptive-card__field"
+  ],
+  "behavior": "dom",
+  "a11y": "En tarjetas, una lista con nombre; cada tarjeta lleva un encabezado (h3 por defecto) y una lista de definiciones con las cabeceras de columna como términos.",
+  "examples": [
+    {
+      "title": "Proyectos",
+      "code": "<AdaptiveTable\n  caption=\"Projects\"\n  rowKey={(row) => row.id}\n  rows={[\n    { id: \"atlas\", name: \"Atlas\", owner: \"Marta Ruiz\", tasks: 18 },\n    { id: \"borealis\", name: \"Borealis\", owner: \"Ken Adams\", tasks: 4 },\n  ]}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (row) => row.name },\n    { key: \"owner\", header: \"Owner\", accessor: (row) => row.owner },\n    { key: \"tasks\", header: \"Tasks\", accessor: (row) => row.tasks, align: \"end\" },\n  ]}\n/>"
+    }
+  ]
+}

@@ -1,0 +1,375 @@
+/* @zuccadev-labs/zuix-zout — layouts adaptativos: AdaptiveLayout, AdaptiveSwitch y las variantes que se apoyan en él.
+   La colocación sale de aquí, no de JavaScript: cada pieza lleva sus valores para las cinco clases en variables
+   (`--z-place-<clase>`, `--z-order-<clase>`) y la rejilla, su plantilla (`--z-areas-<clase>`, `--z-columns-<clase>`,
+   `--z-rows-<clase>`); una consulta de contenedor elige la de la clase activa. Así el HTML del servidor ya se ve
+   colocado y la hidratación no mueve nada.
+   Los cortes son los tokens `--z-size-*` (600, 840, 1200 y 1600 px). Una consulta no admite `var()` en la
+   condición: si cambian los tokens, cambian aquí. */
+@layer zout {
+  .z-adaptive {
+    container: z-adaptive / inline-size;
+    min-inline-size: 0;
+  }
+  .z-adaptive[data-measure="window"] {
+    container: none;
+  }
+  .z-adaptive__grid {
+    display: grid;
+    gap: var(--z-space-4);
+    grid-template-areas: var(--z-areas-compact, none);
+    grid-template-columns: var(--z-columns-compact, minmax(0, 1fr));
+    grid-template-rows: var(--z-rows-compact, none);
+    min-inline-size: 0;
+  }
+  .z-adaptive__item {
+    grid-area: var(--z-place-compact, auto);
+    order: var(--z-order-compact, 0);
+    min-inline-size: 0;
+  }
+  /* Modo visual: el DOM no se toca y el navegador que lo admite hace seguir el foco y la lectura al orden de la
+     rejilla. Donde no, el binding avisa en desarrollo si los dos órdenes se separan. */
+  .z-adaptive[data-reorder="visual"] > .z-adaptive__grid {
+    reading-flow: grid-rows;
+  }
+  /* Transiciones opcionales entre clases o al editar la plantilla (adaptiveTransition). */
+  .z-adaptive[data-transition] > .z-adaptive__grid > .z-adaptive__item {
+    view-transition-class: z-adaptive-item;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    ::view-transition-group(.z-adaptive-item) {
+      animation-duration: var(--z-duration-normal);
+      animation-timing-function: var(--z-ease-standard);
+    }
+  }
+
+  /* ---- Clase activa: medida sobre el contenedor ---- */
+  @container z-adaptive (width >= 600px) {
+    .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-medium, none);
+      grid-template-columns: var(--z-columns-medium, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-medium, none);
+    }
+    .z-adaptive__item {
+      grid-area: var(--z-place-medium, auto);
+      order: var(--z-order-medium, 0);
+    }
+  }
+  @container z-adaptive (width >= 840px) {
+    .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-expanded, none);
+      grid-template-columns: var(--z-columns-expanded, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-expanded, none);
+    }
+    .z-adaptive__item {
+      grid-area: var(--z-place-expanded, auto);
+      order: var(--z-order-expanded, 0);
+    }
+  }
+  @container z-adaptive (width >= 1200px) {
+    .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-large, none);
+      grid-template-columns: var(--z-columns-large, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-large, none);
+    }
+    .z-adaptive__item {
+      grid-area: var(--z-place-large, auto);
+      order: var(--z-order-large, 0);
+    }
+  }
+  @container z-adaptive (width >= 1600px) {
+    .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-xlarge, none);
+      grid-template-columns: var(--z-columns-xlarge, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-xlarge, none);
+    }
+    .z-adaptive__item {
+      grid-area: var(--z-place-xlarge, auto);
+      order: var(--z-order-xlarge, 0);
+    }
+  }
+  @container z-adaptive (width < 600px) {
+    .z-adaptive__item[data-hidden-in~="compact"] {
+      display: none;
+    }
+  }
+  @container z-adaptive (600px <= width < 840px) {
+    .z-adaptive__item[data-hidden-in~="medium"] {
+      display: none;
+    }
+  }
+  @container z-adaptive (840px <= width < 1200px) {
+    .z-adaptive__item[data-hidden-in~="expanded"] {
+      display: none;
+    }
+  }
+  @container z-adaptive (1200px <= width < 1600px) {
+    .z-adaptive__item[data-hidden-in~="large"] {
+      display: none;
+    }
+  }
+  @container z-adaptive (width >= 1600px) {
+    .z-adaptive__item[data-hidden-in~="xlarge"] {
+      display: none;
+    }
+  }
+
+  /* ---- Clase activa: medida sobre la ventana (data-measure="window") ---- */
+  @media (width >= 600px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-medium, none);
+      grid-template-columns: var(--z-columns-medium, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-medium, none);
+    }
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item {
+      grid-area: var(--z-place-medium, auto);
+      order: var(--z-order-medium, 0);
+    }
+  }
+  @media (width >= 840px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-expanded, none);
+      grid-template-columns: var(--z-columns-expanded, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-expanded, none);
+    }
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item {
+      grid-area: var(--z-place-expanded, auto);
+      order: var(--z-order-expanded, 0);
+    }
+  }
+  @media (width >= 1200px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-large, none);
+      grid-template-columns: var(--z-columns-large, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-large, none);
+    }
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item {
+      grid-area: var(--z-place-large, auto);
+      order: var(--z-order-large, 0);
+    }
+  }
+  @media (width >= 1600px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid {
+      grid-template-areas: var(--z-areas-xlarge, none);
+      grid-template-columns: var(--z-columns-xlarge, minmax(0, 1fr));
+      grid-template-rows: var(--z-rows-xlarge, none);
+    }
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item {
+      grid-area: var(--z-place-xlarge, auto);
+      order: var(--z-order-xlarge, 0);
+    }
+  }
+  @media (width < 600px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item[data-hidden-in~="compact"] {
+      display: none;
+    }
+  }
+  @media (600px <= width < 840px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item[data-hidden-in~="medium"] {
+      display: none;
+    }
+  }
+  @media (840px <= width < 1200px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item[data-hidden-in~="expanded"] {
+      display: none;
+    }
+  }
+  @media (1200px <= width < 1600px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item[data-hidden-in~="large"] {
+      display: none;
+    }
+  }
+  @media (width >= 1600px) {
+    .z-adaptive[data-measure="window"] > .z-adaptive__grid > .z-adaptive__item[data-hidden-in~="xlarge"] {
+      display: none;
+    }
+  }
+
+  /* ---- AdaptiveSwitch: una variante por clase ----
+     Es su propio contenedor: decide con el ancho que le queda. Hasta que el binding mide, todas las variantes están en
+     el documento y la hoja muestra solo la de la clase activa; medido, React deja montada solo esa. Sin framework la
+     hoja lo hace siempre. */
+  .z-adaptive-switch {
+    container: z-adaptive-switch / inline-size;
+    min-inline-size: 0;
+  }
+  .z-adaptive-switch[data-measure="window"] {
+    container: none;
+  }
+  .z-adaptive-switch__variant {
+    display: contents;
+  }
+  @container z-adaptive-switch (width < 600px) {
+    .z-adaptive-switch:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="compact"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-switch (600px <= width < 840px) {
+    .z-adaptive-switch:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="medium"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-switch (840px <= width < 1200px) {
+    .z-adaptive-switch:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="expanded"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-switch (1200px <= width < 1600px) {
+    .z-adaptive-switch:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="large"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-switch (width >= 1600px) {
+    .z-adaptive-switch:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="xlarge"]) {
+      display: none;
+    }
+  }
+  @media (width < 600px) {
+    .z-adaptive-switch[data-measure="window"]:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="compact"]) {
+      display: none;
+    }
+  }
+  @media (600px <= width < 840px) {
+    .z-adaptive-switch[data-measure="window"]:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="medium"]) {
+      display: none;
+    }
+  }
+  @media (840px <= width < 1200px) {
+    .z-adaptive-switch[data-measure="window"]:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="expanded"]) {
+      display: none;
+    }
+  }
+  @media (1200px <= width < 1600px) {
+    .z-adaptive-switch[data-measure="window"]:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="large"]) {
+      display: none;
+    }
+  }
+  @media (width >= 1600px) {
+    .z-adaptive-switch[data-measure="window"]:not([data-measured]) > .z-adaptive-switch__variant:not([data-classes~="xlarge"]) {
+      display: none;
+    }
+  }
+
+  /* ---- AdaptiveTable: lista de tarjetas ---- */
+  .z-adaptive-cards {
+    display: grid;
+    gap: var(--z-space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-adaptive-card {
+    display: grid;
+    gap: var(--z-space-2);
+    padding: var(--z-space-4);
+    border: 1px solid var(--z-card-border);
+    border-radius: var(--z-card-radius);
+    background: var(--z-card-bg);
+    color: var(--z-fg);
+  }
+  .z-adaptive-card__title {
+    margin: 0;
+    font-size: var(--z-text-body);
+    font-weight: var(--z-weight-semibold);
+    line-height: var(--z-leading-snug);
+  }
+  .z-adaptive-card__fields {
+    display: grid;
+    grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+    gap: var(--z-space-1) var(--z-space-4);
+    margin: 0;
+    font-size: var(--z-text-small);
+  }
+  .z-adaptive-card__field {
+    display: contents;
+  }
+  .z-adaptive-card__fields dt {
+    color: var(--z-fg-muted);
+  }
+  .z-adaptive-card__fields dd {
+    margin: 0;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .z-adaptive-card[data-selected] {
+    border-color: var(--z-accent);
+  }
+
+  /* ---- AdaptiveTabs y AdaptiveToolbar ---- */
+  .z-adaptive-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    min-inline-size: 0;
+  }
+  .z-adaptive-tabs__select {
+    max-inline-size: 100%;
+  }
+  .z-adaptive-toolbar {
+    container: z-adaptive-toolbar / inline-size;
+    min-inline-size: 0;
+  }
+  .z-adaptive-toolbar[data-measure="window"] {
+    container: none;
+  }
+
+  @container z-adaptive-toolbar (width < 600px) {
+    .z-adaptive-toolbar:not([data-measured]) [data-menu-in~="compact"],
+    .z-adaptive-toolbar:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="compact"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-toolbar (600px <= width < 840px) {
+    .z-adaptive-toolbar:not([data-measured]) [data-menu-in~="medium"],
+    .z-adaptive-toolbar:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="medium"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-toolbar (840px <= width < 1200px) {
+    .z-adaptive-toolbar:not([data-measured]) [data-menu-in~="expanded"],
+    .z-adaptive-toolbar:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="expanded"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-toolbar (1200px <= width < 1600px) {
+    .z-adaptive-toolbar:not([data-measured]) [data-menu-in~="large"],
+    .z-adaptive-toolbar:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="large"]) {
+      display: none;
+    }
+  }
+  @container z-adaptive-toolbar (width >= 1600px) {
+    .z-adaptive-toolbar:not([data-measured]) [data-menu-in~="xlarge"],
+    .z-adaptive-toolbar:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="xlarge"]) {
+      display: none;
+    }
+  }
+  @media (width < 600px) {
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) [data-menu-in~="compact"],
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="compact"]) {
+      display: none;
+    }
+  }
+  @media (600px <= width < 840px) {
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) [data-menu-in~="medium"],
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="medium"]) {
+      display: none;
+    }
+  }
+  @media (840px <= width < 1200px) {
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) [data-menu-in~="expanded"],
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="expanded"]) {
+      display: none;
+    }
+  }
+  @media (1200px <= width < 1600px) {
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) [data-menu-in~="large"],
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="large"]) {
+      display: none;
+    }
+  }
+  @media (width >= 1600px) {
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) [data-menu-in~="xlarge"],
+    .z-adaptive-toolbar[data-measure="window"]:not([data-measured]) .z-adaptive-toolbar__more:not([data-more-in~="xlarge"]) {
+      display: none;
+    }
+  }
+}

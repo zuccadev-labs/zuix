@@ -2,6 +2,92 @@
  "name": "@zuccadev-labs/zuix-zout",
  "note": "Contrato HTML: marcado que producen los componentes. Iconos como <z-icon>. `behavior`: none = solo CSS; dom = necesita @zuccadev-labs/zuix-zui/dom (layouts de zout: @zuccadev-labs/zuix-zout/dom); react = hoy solo disponible en el binding de React.",
  "components": {
+  "AdaptiveLayout": {
+   "group": "layout",
+   "classes": [
+    "z-adaptive",
+    "z-adaptive__grid",
+    "z-adaptive__item"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Tres plantillas: una columna, dos y tres con navegación",
+     "html": "<div class=\"z-adaptive\" data-reorder=\"dom\">\n  <div class=\"z-adaptive__grid\" style=\"--z-areas-compact:&quot;header&quot; &quot;main&quot; &quot;aside&quot;;--z-columns-compact:minmax(0, 1fr);--z-rows-compact:none;--z-areas-medium:&quot;header header&quot; &quot;main aside&quot;;--z-columns-medium:minmax(0, 2fr) minmax(0, 1fr);--z-rows-medium:none;--z-areas-expanded:&quot;nav header header&quot; &quot;nav main aside&quot;;--z-columns-expanded:200px minmax(0, 2fr) minmax(0, 1fr);--z-rows-expanded:none;--z-areas-large:&quot;nav header header&quot; &quot;nav main aside&quot;;--z-columns-large:200px minmax(0, 2fr) minmax(0, 1fr);--z-rows-large:none;--z-areas-xlarge:&quot;nav header header&quot; &quot;nav main aside&quot;;--z-columns-xlarge:200px minmax(0, 2fr) minmax(0, 1fr);--z-rows-xlarge:none\">\n    <div class=\"z-adaptive__item\" data-item=\"header\" style=\"--z-place-compact:header;--z-order-compact:0;--z-place-medium:header;--z-order-medium:0;--z-place-expanded:header;--z-order-expanded:0;--z-place-large:header;--z-order-large:0;--z-place-xlarge:header;--z-order-xlarge:0\">\n      <h2>Overview</h2>\n    </div>\n    <div class=\"z-adaptive__item\" data-item=\"nav\" data-hidden-in=\"compact medium\" style=\"--z-place-compact:auto;--z-order-compact:0;--z-place-medium:auto;--z-order-medium:0;--z-place-expanded:nav;--z-order-expanded:0;--z-place-large:nav;--z-order-large:0;--z-place-xlarge:nav;--z-order-xlarge:0\">\n      <button type=\"button\">Reports</button>\n    </div>\n    <div class=\"z-adaptive__item\" data-item=\"main\" style=\"--z-place-compact:main;--z-order-compact:0;--z-place-medium:main;--z-order-medium:0;--z-place-expanded:main;--z-order-expanded:0;--z-place-large:main;--z-order-large:0;--z-place-xlarge:main;--z-order-xlarge:0\">\n      <p>Weekly activity.</p>\n    </div>\n    <div class=\"z-adaptive__item\" data-item=\"aside\" style=\"--z-place-compact:aside;--z-order-compact:0;--z-place-medium:aside;--z-order-medium:0;--z-place-expanded:aside;--z-order-expanded:0;--z-place-large:aside;--z-order-large:0;--z-place-xlarge:aside;--z-order-xlarge:0\">\n      <button type=\"button\">Export</button>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Orden por clase sin plantilla en compacto",
+     "html": "<div class=\"z-adaptive\" data-reorder=\"dom\">\n  <div class=\"z-adaptive__grid\" data-gap=\"3\" style=\"--z-areas-compact:none;--z-columns-compact:minmax(0, 1fr);--z-rows-compact:none;--z-areas-medium:none;--z-columns-medium:minmax(0, 1fr);--z-rows-medium:none;--z-areas-expanded:&quot;filters results&quot;;--z-columns-expanded:260px 1fr;--z-rows-expanded:none;--z-areas-large:&quot;filters results&quot;;--z-columns-large:260px 1fr;--z-rows-large:none;--z-areas-xlarge:&quot;filters results&quot;;--z-columns-xlarge:260px 1fr;--z-rows-xlarge:none\">\n    <div class=\"z-adaptive__item\" data-item=\"results\" style=\"--z-place-compact:auto;--z-order-compact:1;--z-place-medium:auto;--z-order-medium:1;--z-place-expanded:results;--z-order-expanded:1;--z-place-large:results;--z-order-large:1;--z-place-xlarge:results;--z-order-xlarge:1\">\n      <p>24 results</p>\n    </div>\n    <div class=\"z-adaptive__item\" data-item=\"filters\" style=\"--z-place-compact:auto;--z-order-compact:2;--z-place-medium:auto;--z-order-medium:2;--z-place-expanded:filters;--z-order-expanded:2;--z-place-large:filters;--z-order-large:2;--z-place-xlarge:filters;--z-order-xlarge:2\">\n      <button type=\"button\">Filters</button>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "AdaptiveSwitch": {
+   "group": "layout",
+   "classes": [
+    "z-adaptive-switch",
+    "z-adaptive-switch__variant"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Botón con texto o solo icono",
+     "html": "<div class=\"z-adaptive-switch\">\n  <div class=\"z-adaptive-switch__variant\" data-variant=\"icon\" data-classes=\"compact\">\n    <button type=\"button\" title=\"New project\" aria-label=\"New project\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"plus\" size=\"16\"></z-icon>\n    </button>\n  </div>\n  <div class=\"z-adaptive-switch__variant\" data-variant=\"text\" data-classes=\"medium expanded large xlarge\">\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n      <z-icon name=\"plus\" size=\"16\"></z-icon>\n      New project\n    </button>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "AdaptiveTable": {
+   "group": "layout",
+   "classes": [
+    "z-adaptive-table",
+    "z-adaptive-cards",
+    "z-adaptive-card",
+    "z-adaptive-card__title",
+    "z-adaptive-card__fields",
+    "z-adaptive-card__field"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Proyectos",
+     "html": "<div class=\"z-adaptive-switch z-adaptive-table\">\n  <div class=\"z-adaptive-switch__variant\" data-variant=\"cards\" data-classes=\"compact\">\n    <ul class=\"z-adaptive-cards\" aria-label=\"Projects\">\n      <li class=\"z-adaptive-card\">\n        <h3 class=\"z-adaptive-card__title\">Atlas</h3>\n        <dl class=\"z-adaptive-card__fields\">\n          <div class=\"z-adaptive-card__field\">\n            <dt>Owner</dt>\n            <dd>Marta Ruiz</dd>\n          </div>\n          <div class=\"z-adaptive-card__field\">\n            <dt>Tasks</dt>\n            <dd>18</dd>\n          </div>\n        </dl>\n      </li>\n      <li class=\"z-adaptive-card\">\n        <h3 class=\"z-adaptive-card__title\">Borealis</h3>\n        <dl class=\"z-adaptive-card__fields\">\n          <div class=\"z-adaptive-card__field\">\n            <dt>Owner</dt>\n            <dd>Ken Adams</dd>\n          </div>\n          <div class=\"z-adaptive-card__field\">\n            <dt>Tasks</dt>\n            <dd>4</dd>\n          </div>\n        </dl>\n      </li>\n    </ul>\n  </div>\n  <div class=\"z-adaptive-switch__variant\" data-variant=\"table\" data-classes=\"medium expanded large xlarge\">\n    <div class=\"z-table-wrap\" data-framed=\"true\">\n      <table class=\"z-table\" data-density=\"comfortable\">\n        <caption class=\"z-table__caption\">Projects</caption>\n        <thead>\n          <tr>\n            <th scope=\"col\" data-key=\"name\">Name</th>\n            <th scope=\"col\" data-key=\"owner\">Owner</th>\n            <th scope=\"col\" data-key=\"tasks\" data-align=\"end\">Tasks</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr class=\"\">\n            <td>Atlas</td>\n            <td>Marta Ruiz</td>\n            <td data-align=\"end\">18</td>\n          </tr>\n          <tr class=\"\">\n            <td>Borealis</td>\n            <td>Ken Adams</td>\n            <td data-align=\"end\">4</td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "AdaptiveTabs": {
+   "group": "layout",
+   "classes": [
+    "z-adaptive-tabs",
+    "z-adaptive-tabs__select",
+    "z-adaptive-tabs__panel"
+   ],
+   "behavior": "react",
+   "examples": [
+    {
+     "title": "Select en compacto, pestañas desde medio",
+     "html": "<div class=\"z-adaptive-switch z-adaptive-tabs\">\n  <div class=\"z-adaptive-switch__variant\" data-variant=\"select\" data-classes=\"compact\">\n    <span class=\"z-select z-adaptive-tabs__select\" data-size=\"md\" data-block=\"true\">\n      <select aria-label=\"Project\" class=\"z-select__control\">\n        <option value=\"overview\" selected=\"\">Overview</option>\n        <option value=\"activity\">Activity</option>\n        <option value=\"settings\">Settings</option>\n      </select>\n      <span class=\"z-select__chevron\">\n        <z-icon name=\"chevron-up-down\" size=\"16\"></z-icon>\n      </span>\n    </span>\n    <div class=\"z-adaptive-tabs__panel\" role=\"region\" aria-label=\"Overview\">\n      <p>Summary.</p>\n    </div>\n  </div>\n  <div class=\"z-adaptive-switch__variant\" data-variant=\"tabs\" data-classes=\"medium expanded large xlarge\">\n    <div class=\"z-tabs\" data-orientation=\"horizontal\">\n      <div role=\"tablist\" class=\"z-tabs__list\" data-variant=\"segmented\" data-size=\"md\" data-orientation=\"horizontal\" aria-orientation=\"horizontal\" aria-label=\"Project\">\n        <button type=\"button\" role=\"tab\" id=\"_R_2_-tab-overview\" class=\"z-tabs__tab\" data-value=\"overview\" data-state=\"active\" data-orientation=\"horizontal\" aria-selected=\"true\" aria-controls=\"_R_2_-panel-overview\" tabindex=\"0\">\n          <z-icon name=\"home\" size=\"16\"></z-icon>\n          <span class=\"z-tabs__label\">Overview</span>\n        </button>\n        <button type=\"button\" role=\"tab\" id=\"_R_2_-tab-activity\" class=\"z-tabs__tab\" data-value=\"activity\" data-state=\"inactive\" data-orientation=\"horizontal\" aria-selected=\"false\" aria-controls=\"_R_2_-panel-activity\" tabindex=\"-1\">\n          <z-icon name=\"clock\" size=\"16\"></z-icon>\n          <span class=\"z-tabs__label\">Activity</span>\n        </button>\n        <button type=\"button\" role=\"tab\" id=\"_R_2_-tab-settings\" class=\"z-tabs__tab\" data-value=\"settings\" data-state=\"inactive\" data-orientation=\"horizontal\" aria-selected=\"false\" aria-controls=\"_R_2_-panel-settings\" tabindex=\"-1\">\n          <z-icon name=\"cog\" size=\"16\"></z-icon>\n          <span class=\"z-tabs__label\">Settings</span>\n        </button>\n      </div>\n      <div role=\"tabpanel\" id=\"_R_2_-panel-overview\" aria-labelledby=\"_R_2_-tab-overview\" class=\"z-tabs__panel\" data-value=\"overview\" data-state=\"active\" tabindex=\"0\">\n        <p>Summary.</p>\n      </div>\n      <div role=\"tabpanel\" id=\"_R_2_-panel-activity\" aria-labelledby=\"_R_2_-tab-activity\" class=\"z-tabs__panel\" data-value=\"activity\" data-state=\"inactive\" tabindex=\"0\" hidden=\"\"></div>\n      <div role=\"tabpanel\" id=\"_R_2_-panel-settings\" aria-labelledby=\"_R_2_-tab-settings\" class=\"z-tabs__panel\" data-value=\"settings\" data-state=\"inactive\" tabindex=\"0\" hidden=\"\"></div>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "AdaptiveToolbar": {
+   "group": "layout",
+   "classes": [
+    "z-adaptive-toolbar",
+    "z-adaptive-toolbar__more"
+   ],
+   "behavior": "react",
+   "examples": [
+    {
+     "title": "Acciones secundarias al menú en compacto",
+     "html": "<div class=\"z-adaptive-toolbar\">\n  <div role=\"toolbar\" aria-label=\"Document\" aria-orientation=\"horizontal\" class=\"z-toolbar z-liquid\" data-variant=\"glass\" data-size=\"md\">\n    <button type=\"button\" title=\"Bold\" aria-label=\"Bold\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"bold\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Italic\" aria-label=\"Italic\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"italic\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Link\" data-menu-in=\"compact\" aria-label=\"Link\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"link\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"Share\" data-menu-in=\"compact medium\" aria-label=\"Share\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n      <z-icon name=\"share\" size=\"16\"></z-icon>\n    </button>\n    <button type=\"button\" title=\"More actions\" data-more-in=\"compact medium\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-state=\"closed\" id=\"_R_2_-trigger\" aria-label=\"More actions\" class=\"z-btn z-btn--icon z-btn--ghost z-adaptive-toolbar__more\" data-size=\"md\">\n      <z-icon name=\"ellipsis-horizontal\" size=\"16\"></z-icon>\n    </button>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "AppBar": {
    "group": "layout",
    "classes": [

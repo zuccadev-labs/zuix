@@ -26,6 +26,7 @@ binding con React 18. Si sobrescribes variables de algún componente, repasa los
 | 10 | [Compatibilidad](./10-compatibilidad.md) | Navegadores, Node, React, TypeScript y bundlers admitidos |
 | 11 | [CSP y Trusted Types](./11-csp-y-trusted-types.md) | Cómo desplegar con una política de seguridad de contenido estricta |
 | 12 | [Conectar un editor visual](./12-conectar-un-editor.md) | Catálogo de bloques, documento de página, lienzo en un iframe y cómo escribir un adaptador |
+| 13 | [Layouts adaptativos](./13-layouts-adaptativos.md) | Cómo elegir un layout distinto por clase de tamaño, en vez de estirar el mismo |
 
 ## Paquetes
 
@@ -35,7 +36,7 @@ binding con React 18. Si sobrescribes variables de algún componente, repasa los
 | `@zuccadev-labs/zuix-tokens` | Fuente única de valores de diseño. Una marca es un archivo | [Tokens](./01-tokens.md) |
 | `@zuccadev-labs/zuix-zicon` | 366 iconos en outline y solid | [Zicon](./02-zicon.md) |
 | `@zuccadev-labs/zuix-zui` | 237 componentes accesibles que solo leen tokens | [Zui](./03-zui.md) |
-| `@zuccadev-labs/zuix-zout` | 30 layouts: shell, paneles, pestañas, rejillas, layouts de página | [Zout](./04-zout.md) |
+| `@zuccadev-labs/zuix-zout` | 35 layouts: shell, paneles, pestañas, rejillas, layouts de página | [Zout](./04-zout.md) |
 | `@zuccadev-labs/zuix-zudocs` | Estándar de documentación y plantilla Docusaurus. No se publica en npm | [Zudocs](./05-zudocs.md) |
 
 ## Instalar

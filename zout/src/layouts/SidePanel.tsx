@@ -3,6 +3,7 @@ import { useId, useState, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
 import { SidebarContext } from "./sidebar-context";
+import { useShellPanel } from "./shell-panel-context";
 
 export interface SidePanelProps {
   title?: ReactNode;
@@ -94,7 +95,8 @@ export interface SidebarProps {
   footer?: ReactNode;
   /**
    * Plegada a iconos: los `SidebarItem` muestran solo el icono (con tooltip), las cabeceras de sección se ocultan y
-   * un item con submenú lo abre como panel flotante. Se alterna con `SidebarTrigger`.
+   * un item con submenú lo abre como panel flotante. Se alterna con `SidebarTrigger`. Sin valor, se pliega cuando el
+   * panel del Shell que la contiene está en la variante `rail` de sus ajustes por clase.
    */
   collapsed?: boolean;
   /** Id del contenedor: `SidebarTrigger` lo nombra en `aria-controls`. */
@@ -103,7 +105,9 @@ export interface SidebarProps {
 }
 
 /** Contenedor de secciones de sidebar, con pie opcional fijo abajo. Plegable a iconos con `collapsed`. */
-export function Sidebar({ children, footer, collapsed = false, id, className }: SidebarProps) {
+export function Sidebar({ children, footer, collapsed: collapsedProp, id, className }: SidebarProps) {
+  const { rail } = useShellPanel();
+  const collapsed = collapsedProp ?? rail;
   return (
     <SidebarContext.Provider value={{ collapsed, depth: 0 }}>
       <div id={id} className={cx("z-sidebar", className)} data-collapsed={collapsed || undefined}>

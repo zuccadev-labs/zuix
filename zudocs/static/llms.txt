@@ -350,6 +350,11 @@
 
 ## Componentes: Layouts
 
+- [AdaptiveLayout](https://zuccadev-labs.github.io/zuix/components/layout/adaptive-layout.md): Layout adaptativo: una plantilla de áreas distinta por clase de tamaño (compact, medium, expanded, large, xlarge) y piezas que declaran por clase su área, su orden y si se ocultan.
+- [AdaptiveSwitch](https://zuccadev-labs.github.io/zuix/components/layout/adaptive-switch.md): Una variante de un componente por clase de tamaño.
+- [AdaptiveTable](https://zuccadev-labs.github.io/zuix/components/layout/adaptive-table.md): Tabla de datos que en compacto pasa a una lista de tarjetas: el título de la fila y sus campos como lista de definiciones.
+- [AdaptiveTabs](https://zuccadev-labs.github.io/zuix/components/layout/adaptive-tabs.md): Pestañas que cambian de forma con la clase de tamaño: pestañas donde caben, un select nativo o una barra inferior en compacto.
+- [AdaptiveToolbar](https://zuccadev-labs.github.io/zuix/components/layout/adaptive-toolbar.md): Barra de herramientas que pasa acciones a un menú «más» según la clase de tamaño: cada acción declara en qué clases va al menú (variant: "menu") o se oculta.
 - [AppBar](https://zuccadev-labs.github.io/zuix/components/layout/app-bar.md): Barra de aplicación superior (top app bar de Material 3): pequeña, mediana o grande.
 - [AuthLayout](https://zuccadev-labs.github.io/zuix/components/layout/auth-layout.md): Página de acceso (entrar, registrarse, recuperar): tarjeta de cristal centrada sobre el lienzo (`centered`) o dividida con un lado de imagen (`split`).
 - [BottomNavigation](https://zuccadev-labs.github.io/zuix/components/layout/bottom-navigation.md): Navegación principal de móvil: de tres a cinco destinos con icono y etiqueta en una barra de cristal abajo, al alcance del pulgar y por encima de la zona segura.

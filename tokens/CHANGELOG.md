@@ -11,6 +11,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
   `warning-text`) y `heatmap-pos-hue` (de `info-text`), cada una con cuatro niveles (`heatmap-neg-1…4`,
   `heatmap-pos-1…4`) mezclados con `surface-solid`. Ámbar y azul se distinguen con daltonismo y no dependen del
   acento de la marca. Los niveles 3 y 4 de cada lado se miden como indicadores (3:1) en `pnpm tokens`.
+- Clases de tamaño: `size-compact`, `size-medium`, `size-expanded`, `size-large` y `size-xlarge` (0, 600, 840, 1200 y
+  1600 px), los cortes de las *window size classes* de Material 3 que usan los layouts adaptativos de zout.
 
 ### Cambiado
 
