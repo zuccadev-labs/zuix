@@ -221,7 +221,11 @@ function onHotkey(event: KeyboardEvent): boolean {
 
 /* ---------- Árbol: .z-tree ---------- */
 
-const treeOf = (item: Element) => item.closest<HTMLElement>('[role="tree"]');
+// `data-widget`: el árbol de otra pieza (el panel de TreeSelect), que atiende su propio campo.
+const treeOf = (item: Element) => {
+  const tree = item.closest<HTMLElement>('[role="tree"]');
+  return tree?.hasAttribute("data-widget") ? null : tree;
+};
 const treeItems = (tree: Element) => [...tree.querySelectorAll<HTMLElement>('[role="treeitem"]')].filter((item) => treeOf(item) === tree);
 const treeVisible = (tree: Element) => treeItems(tree).filter((item) => !item.parentElement?.closest(".z-tree__group[hidden]"));
 const treeGroup = (item: Element) => item.querySelector<HTMLElement>(":scope > .z-tree__group");
@@ -708,5 +712,6 @@ export function hydrate(root: ParentNode): void {
     preparePalette(command);
     filterPalette(command, false);
   }
-  for (const tree of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-tree, .z-tree[data-z-dom]")) hydrateTree(tree);
+  for (const tree of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-tree, .z-tree[data-z-dom]"))
+    if (!tree.hasAttribute("data-widget")) hydrateTree(tree);
 }

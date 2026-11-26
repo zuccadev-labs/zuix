@@ -747,7 +747,9 @@ for (const browserName of wanted) {
         const cards = await page.locator("a.zd-card").evaluateAll((as) => as.map((a) => new URL(a.href).pathname));
         ok(cards.length === manifests.length, `el índice tiene ${cards.length} tarjetas y hay ${manifests.length} componentes`);
         await page.locator("main input").first().fill("calend");
-        await page.waitForFunction(() => document.querySelectorAll("a.zd-card").length < 10);
+        // «calend» también encuentra a quien nombra el calendario en su descripción (los selectores de fechas): el
+        // índice tiene que quedarse en unas pocas tarjetas, no en las 260.
+        await page.waitForFunction(() => document.querySelectorAll("a.zd-card").length < 20);
         ok((await page.locator("a.zd-card").count()) >= 1, "el buscador del índice no encuentra Calendar");
         const empty = await page.evaluate(() =>
           [...document.querySelectorAll("svg.z-icon")].filter((s) => !s.querySelector("path")).map((s) => s.dataset.icon),

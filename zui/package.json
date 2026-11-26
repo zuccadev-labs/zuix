@@ -38,6 +38,7 @@
     "./dom": "./src/dom/index.ts",
     "./dom/core": "./src/dom/core.ts",
     "./dom/dates": "./src/dom/families/dates.ts",
+    "./dom/forms": "./src/dom/families/forms.ts",
     "./dom/data": "./src/dom/families/data.ts",
     "./dom/content": "./src/dom/families/content.ts",
     "./dom/agenda": "./src/dom/families/agenda.ts",
@@ -126,6 +127,10 @@
       "./dom/dates": {
         "types": "./dist/esm/dom/families/dates.d.ts",
         "default": "./dist/esm/dom/families/dates.js"
+      },
+      "./dom/forms": {
+        "types": "./dist/esm/dom/families/forms.d.ts",
+        "default": "./dist/esm/dom/families/forms.js"
       },
       "./dom/data": {
         "types": "./dist/esm/dom/families/data.d.ts",

@@ -51,6 +51,27 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `MetricCard`: `animate` hace contar el valor numérico con `AnimatedNumber`. Sin la prop, nada cambia.
 - `core/chart`: regresión lineal, radio de burbuja, punto más cercano, navegación de dispersión y de rejilla, puntos
   polares, niveles secuenciales y divergentes, tramos y cuenta de números, con pruebas de propiedades.
+- Formularios (grupo `forms`), con lógica pura en `core/`, binding de React, comportamiento sin framework, campo
+  nativo para `FormData`, `required` y `form.reset()`, y textos por `labels` en inglés por defecto:
+  - `Cascader`: selección jerárquica por columnas (país › región › ciudad), patrón combobox con
+    `aria-activedescendant`. Carga diferida con `loadChildren` para las opciones con `isLeaf: false` (indicador en la
+    opción y `aria-busy` en la columna), búsqueda por la ruta completa sin acentos, `changeOnSelect`, selección
+    múltiple con casillas en cascada y `showCheckedStrategy`. A 640 px o menos, una columna cada vez con «Back».
+  - `TreeSelect`: select con un árbol en su panel (`aria-haspopup="tree"`). Selección única o casillas con estado
+    mixto (las de `core/tree`, las mismas que `Tree`), búsqueda que expande lo que coincide, piezas con `maxChips` y
+    estrategia de valor `all`, `parent` o `child`.
+  - `MaskedInput`: presets `phone`, `card` (15 o 16 cifras según el prefijo), `date`, `time`, `plate` y `postal`,
+    patrones con `9`, `a`, `*` y escapes, funciones y ranuras propias. El cursor no salta al teclear, pegar o borrar
+    en medio (`beforeinput`); la composición de un IME y el autocompletado se reformatean al terminar. Crudo y
+    formateado en `onValueChange`; el formato va encima del campo y se anuncia con `aria-describedby`.
+  - `DateTimeRangePicker`: calendario de rango, hora de inicio y de fin, zona horaria opcional y preajustes; con
+    zona, el formulario recibe cada extremo con desfase y zona (RFC 9557, lo que lee `Temporal.ZonedDateTime.from`).
+  - `TimeRangePicker`: dos `TimePicker` que comprueban que el fin sea posterior al inicio o, con `allowOvernight`,
+    que cruce la medianoche, con indicador, duración y `minDuration`/`maxDuration`.
+  - `QuarterPicker`: trimestres `YYYY-Qn` en una rejilla de 2 × 2 con el patrón de `MonthPicker` y `YearPicker`.
+- `@zuccadev-labs/zuix-zui/dom/forms`: familia nueva con Cascader, TreeSelect y MaskedInput (`setMask`,
+  `setMaskedValue`). `/dom/dates` suma TimeRangePicker, DateTimeRangePicker y QuarterPicker (`setTimeRangeValue`,
+  `setDateTimeRangeValue`).
 
 ### Cambiado
 
@@ -59,6 +80,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - Las piezas comunes de los gráficos (cabecera, leyenda, tabla, ejes) pasan de `core/chart-widget` a
   `core/chart-parts`; `core/chart-widget` sigue exportando los mismos tipos.
 - `BarChart` con eje de tiempo alterna los rótulos de seis o más meses en un contenedor estrecho, como `LineChart`.
+- En el modo sin framework, Select, Combobox, TagsInput, Tree y Calendar dejan en paz el marcado de otra pieza que
+  comparte sus clases: un `.z-select` o `.z-combobox` con `data-picker`, las piezas de un campo que no es `.z-tags` y
+  un árbol o un calendario con `data-widget`.
 
 ## [0.4.0] - 2026-11-23
 

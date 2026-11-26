@@ -9,6 +9,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 - `@zuccadev-labs/zuix/editor`, `/editor/react` y `/editor/catalog`: el conector de editores visuales de zui y su
   catálogo como módulo JSON.
+- `@zuccadev-labs/zuix/zui/dom/forms`: reexporta la familia nueva de zui (Cascader, TreeSelect y MaskedInput sin
+  framework).
 
 ## [0.4.0] - 2026-11-23
 

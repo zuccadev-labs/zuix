@@ -12,6 +12,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 - La guía «Conectar un editor visual» y la investigación del conector de editores, en el sitio y en `llms.txt`.
 - Páginas del catálogo para `ScatterChart`, `RadarChart`, `ComboChart`, `HeatmapChart`, `BulletChart`,
   `CategoryBar` y `AnimatedNumber`, con su vista previa sin framework, y `llms.txt` al día.
+- Páginas de Cascader, TreeSelect, MaskedInput, DateTimeRangePicker, TimeRangePicker y QuarterPicker, con la vista
+  previa sin React de cada ejemplo (salen de sus manifiestos).
 
 ## [0.4.0] - 2026-11-23
 

@@ -57,6 +57,7 @@ import { KanbanScreen } from "./screens/Kanban";
 import { LoginScreen } from "./screens/Login";
 import { ProfileScreen, SettingsScreen } from "./screens/People";
 import { ListingScreen } from "./screens/Listing";
+import { Pickers } from "./screens/Pickers";
 
 const params = new URLSearchParams(window.location.search);
 const initialScreen: ScreenId = (() => {
@@ -252,6 +253,8 @@ export function App() {
       <Flows />
     ) : active === "listing" ? (
       <ListingScreen />
+    ) : active === "pickers" ? (
+      <Pickers />
     ) : (
       <Editor />
     );

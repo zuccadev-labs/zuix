@@ -100,7 +100,7 @@ from the other and render empty.
 |---|---|
 | [`@zuccadev-labs/zuix-tokens`](https://www.npmjs.com/package/@zuccadev-labs/zuix-tokens) | Design tokens; a brand is one file |
 | [`@zuccadev-labs/zuix-zicon`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zicon) | 366 icons in outline and solid |
-| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 231 components |
+| [`@zuccadev-labs/zuix-zui`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zui) | 237 components |
 | [`@zuccadev-labs/zuix-zout`](https://www.npmjs.com/package/@zuccadev-labs/zuix-zout) | 30 layouts |
 
 ## Documentation

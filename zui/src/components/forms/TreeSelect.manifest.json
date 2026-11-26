@@ -1,0 +1,168 @@
+{
+  "name": "TreeSelect",
+  "group": "forms",
+  "description": "Select con un árbol en su panel. Selección única o casillas con estado mixto en cascada (las de Tree), búsqueda que expande lo que coincide y piezas para lo elegido. Con casillas, el valor sale según la estrategia: todo lo marcado, la rama en lugar de sus hijos o solo hojas.",
+  "import": "import { TreeSelect } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "nodes",
+      "type": "TreeSelectNode[]",
+      "required": true,
+      "description": "Árbol `{ value, label, disabled?, children? }`."
+    },
+    {
+      "name": "value",
+      "type": "string | null | string[]",
+      "description": "Valor elegido o, con `multiple`, los valores (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | null | string[]"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value, detail: { label } | { labels }) => void"
+    },
+    {
+      "name": "multiple",
+      "type": "boolean",
+      "default": false,
+      "description": "Casillas con estado mixto; elegir no cierra el panel."
+    },
+    {
+      "name": "showCheckedStrategy",
+      "type": "enum",
+      "values": ["parent", "all", "child"],
+      "default": "parent",
+      "description": "Con `multiple`: qué ids forman el valor."
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "default": true,
+      "description": "Teclear filtra el árbol y expande los antepasados de lo que coincide."
+    },
+    {
+      "name": "defaultExpanded",
+      "type": "string[]",
+      "description": "Ramas expandidas al abrir."
+    },
+    {
+      "name": "maxChips",
+      "type": "number",
+      "description": "Piezas visibles como mucho; el resto se resume en «+N»."
+    },
+    {
+      "name": "placeholder",
+      "type": "string"
+    },
+    {
+      "name": "clearable",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TreeSelectLabels>",
+      "description": "placeholder, tree, empty, noResults, clear, toggle, remove, results y more («+{count}»), en inglés por defecto."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario."
+    }
+  ],
+  "states": ["rest", "focus", "open", "checked", "indeterminate", "disabled", "invalid"],
+  "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "control-height-lg",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "item-radius",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "row-hover",
+    "glass-border",
+    "glass-highlight"
+  ],
+  "classes": [
+    "z-treeselect",
+    "z-treeselect__control",
+    "z-treeselect__input",
+    "z-treeselect__popup",
+    "z-treeselect__tree",
+    "z-treeselect__item",
+    "z-treeselect__row",
+    "z-treeselect__check",
+    "z-treeselect__mark",
+    "z-treeselect__more"
+  ],
+  "a11y": "Patrón APG «combobox» con popup `tree` (aria-haspopup=\"tree\"): el foco se queda en el campo y la fila activa va por aria-activedescendant. Flechas arriba y abajo recorren las filas visibles; derecha expande o baja al primer hijo, izquierda contrae o sube al padre (al revés en RTL); Inicio y Fin; Intro elige (o marca); Escape vacía la búsqueda y luego cierra; Retroceso con el campo vacío quita la última pieza. Cada treeitem lleva aria-level, aria-setsize, aria-posinset, aria-expanded y aria-selected o, con casillas, aria-checked con estado mixto. El número de resultados se anuncia. Sin React: .z-treeselect con data-* y los nodos en data-props; emite z:change.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Equipo",
+      "code": "<TreeSelect aria-label=\"Team\" name=\"team\" clearable defaultValue=\"infra\" nodes={[{ value: \"eng\", label: \"Engineering\", children: [{ value: \"web\", label: \"Web\" }, { value: \"mobile\", label: \"Mobile\" }, { value: \"platform\", label: \"Platform\", children: [{ value: \"infra\", label: \"Infrastructure\" }, { value: \"data\", label: \"Data\" }] }] }, { value: \"design\", label: \"Design\", children: [{ value: \"brand\", label: \"Brand\" }, { value: \"product\", label: \"Product design\" }] }, { value: \"sales\", label: \"Sales\", disabled: true }]} />"
+    },
+    {
+      "title": "Varios equipos con casillas",
+      "code": "<TreeSelect aria-label=\"Teams\" multiple name=\"teams\" showCheckedStrategy=\"parent\" defaultValue={[\"web\", \"design\"]} defaultExpanded={[\"eng\"]} nodes={[{ value: \"eng\", label: \"Engineering\", children: [{ value: \"web\", label: \"Web\" }, { value: \"mobile\", label: \"Mobile\" }, { value: \"platform\", label: \"Platform\", children: [{ value: \"infra\", label: \"Infrastructure\" }, { value: \"data\", label: \"Data\" }] }] }, { value: \"design\", label: \"Design\", children: [{ value: \"brand\", label: \"Brand\" }, { value: \"product\", label: \"Product design\" }] }, { value: \"sales\", label: \"Sales\", disabled: true }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Equipo",
+      "code": "<div class=\"z-treeselect\" data-clearable data-name=\"team\" data-label=\"Team\" data-value=\"infra\">\n  <script type=\"application/json\" data-props>{\"nodes\": [{\"value\": \"eng\", \"label\": \"Engineering\", \"children\": [{\"value\": \"web\", \"label\": \"Web\"}, {\"value\": \"mobile\", \"label\": \"Mobile\"}, {\"value\": \"platform\", \"label\": \"Platform\", \"children\": [{\"value\": \"infra\", \"label\": \"Infrastructure\"}, {\"value\": \"data\", \"label\": \"Data\"}]}]}, {\"value\": \"design\", \"label\": \"Design\", \"children\": [{\"value\": \"brand\", \"label\": \"Brand\"}, {\"value\": \"product\", \"label\": \"Product design\"}]}, {\"value\": \"sales\", \"label\": \"Sales\", \"disabled\": true}]}</script>\n</div>"
+    },
+    {
+      "title": "Varios equipos con casillas",
+      "code": "<div class=\"z-treeselect\" data-multiple data-name=\"teams\" data-strategy=\"parent\" data-label=\"Teams\">\n  <script type=\"application/json\" data-props>{\"nodes\": [{\"value\": \"eng\", \"label\": \"Engineering\", \"children\": [{\"value\": \"web\", \"label\": \"Web\"}, {\"value\": \"mobile\", \"label\": \"Mobile\"}, {\"value\": \"platform\", \"label\": \"Platform\", \"children\": [{\"value\": \"infra\", \"label\": \"Infrastructure\"}, {\"value\": \"data\", \"label\": \"Data\"}]}]}, {\"value\": \"design\", \"label\": \"Design\", \"children\": [{\"value\": \"brand\", \"label\": \"Brand\"}, {\"value\": \"product\", \"label\": \"Product design\"}]}, {\"value\": \"sales\", \"label\": \"Sales\", \"disabled\": true}], \"value\": [\"web\", \"design\"], \"defaultExpanded\": [\"eng\"]}</script>\n</div>",
+      "script": "document.querySelector(\".z-treeselect\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    }
+  ],
+  "origin": "Nuevo. Referencias: TreeSelect de Ant Design y de PrimeReact, y el ejemplo de combobox con árbol de APG."
+}

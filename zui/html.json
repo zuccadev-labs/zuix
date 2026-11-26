@@ -3185,6 +3185,45 @@
     }
    ]
   },
+  "Cascader": {
+   "group": "forms",
+   "classes": [
+    "z-cascader",
+    "z-cascader__control",
+    "z-cascader__input",
+    "z-cascader__popup",
+    "z-cascader__columns",
+    "z-cascader__column",
+    "z-cascader__option",
+    "z-cascader__chevron",
+    "z-cascader__spinner",
+    "z-cascader__check",
+    "z-cascader__results",
+    "z-cascader__mark",
+    "z-cascader__bar",
+    "z-cascader__back",
+    "z-cascader__crumb"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "País, región y ciudad",
+     "html": "<div class=\"z-cascader\" data-searchable data-clearable data-name=\"location\" data-label=\"Location\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}], \"value\": [\"es\", \"md\", \"alc\"], \"levelLabels\": [\"Country\", \"Region\", \"City\"]}</script>\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\".z-cascader\").addEventListener(\"z:change\", (event) => console.log(event.detail.value, event.detail.labels));"
+    },
+    {
+     "title": "Varias regiones con casillas",
+     "html": "<div class=\"z-cascader\" data-multiple data-name=\"coverage\" data-label=\"Coverage\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}], \"value\": [[\"es\", \"ct\"]]}</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Rama elegible (changeOnSelect)",
+     "html": "<div class=\"z-cascader\" data-change-on-select data-placeholder=\"Country or region\" data-label=\"Area\">\n  <script type=\"application/json\" data-props>{\"options\": [{\"value\": \"es\", \"label\": \"Spain\", \"children\": [{\"value\": \"md\", \"label\": \"Madrid\", \"children\": [{\"value\": \"mad\", \"label\": \"Madrid\"}, {\"value\": \"alc\", \"label\": \"Alcalá de Henares\"}]}, {\"value\": \"ct\", \"label\": \"Catalonia\", \"children\": [{\"value\": \"bcn\", \"label\": \"Barcelona\"}, {\"value\": \"gir\", \"label\": \"Girona\"}]}]}, {\"value\": \"pt\", \"label\": \"Portugal\", \"children\": [{\"value\": \"lis\", \"label\": \"Lisbon\", \"children\": [{\"value\": \"lis-c\", \"label\": \"Lisbon\"}, {\"value\": \"sin\", \"label\": \"Sintra\"}]}]}]}</script>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Checkbox": {
    "group": "forms",
    "classes": [
@@ -3530,6 +3569,33 @@
     }
    ]
   },
+  "DateTimeRangePicker": {
+   "group": "forms",
+   "classes": [
+    "z-dtrange",
+    "z-dtrange__panel",
+    "z-dtrange__body",
+    "z-dtrange__presets",
+    "z-dtrange__footer",
+    "z-dtrange__time",
+    "z-dtrange__zone",
+    "z-dtrange__error"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Ventana de mantenimiento con zona",
+     "html": "<span class=\"z-select z-dtrange\" data-picker id=\"window\" data-size=\"md\" data-block data-name=\"window\" data-time-zone data-time-zones=\"UTC,Europe/Madrid,America/New_York,Asia/Tokyo\" data-locale=\"en-US\" data-hour-cycle=\"24\" data-today=\"2026-11-25\" data-presets='[{\"label\":\"Today\",\"value\":\"today\"},{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"}]'>\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"window-panel\" data-state=\"closed\"><span class=\"z-sr-only\">Maintenance window</span><span class=\"z-select__value\"></span></button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"window\" value=\"2026-11-28T22:00+01:00[Europe/Madrid]/2026-11-29T02:00+01:00[Europe/Madrid]\">\n</span>\n<div id=\"window-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel z-dtrange__panel\" role=\"dialog\" aria-label=\"Choose date and time range\"></div>",
+     "source": "manual",
+     "script": "document.querySelector(\"#window\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+     "title": "Sin zona",
+     "html": "<span class=\"z-select z-dtrange\" data-picker id=\"event-range\" data-size=\"md\" data-block data-locale=\"en-US\" data-today=\"2026-11-25\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"event-range-panel\" data-state=\"closed\" data-placeholder><span class=\"z-sr-only\">Event</span><span class=\"z-select__value\">Select date and time range</span></button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"\">\n</span>\n<div id=\"event-range-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel z-dtrange__panel\" role=\"dialog\" aria-label=\"Choose date and time range\"></div>",
+     "source": "manual"
+    }
+   ]
+  },
   "Editable": {
    "group": "forms",
    "classes": [
@@ -3753,6 +3819,36 @@
     }
    ]
   },
+  "MaskedInput": {
+   "group": "forms",
+   "classes": [
+    "z-masked",
+    "z-masked__format"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Teléfono",
+     "html": "<span class=\"z-masked\" data-size=\"md\" data-mask=\"phone\">\n  <span class=\"z-masked__format\" id=\"_R_0_-format\">Format: (___) ___-____</span>\n  <span class=\"z-input\" data-size=\"md\">\n    <input aria-label=\"Phone\" aria-describedby=\"_R_0_-format\" type=\"text\" class=\"z-input__control\" inputMode=\"numeric\" autoComplete=\"tel-national\" spellCheck=\"false\" autoCorrect=\"off\" value=\"(555) 123-4567\"/>\n  </span>\n  <input type=\"hidden\" name=\"phone\" value=\"5551234567\"/>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Tarjeta",
+     "html": "<span class=\"z-masked\" data-size=\"md\" data-mask=\"card\">\n  <span class=\"z-masked__format\" id=\"_R_0_-format\">Format: ____ ____ ____ ____</span>\n  <span class=\"z-input\" data-size=\"md\">\n    <span class=\"z-input__icon\">\n      <z-icon name=\"credit-card\" size=\"16\"></z-icon>\n    </span>\n    <input aria-label=\"Card number\" aria-describedby=\"_R_0_-format\" type=\"text\" class=\"z-input__control\" inputMode=\"numeric\" autoComplete=\"cc-number\" spellCheck=\"false\" autoCorrect=\"off\" value=\"\"/>\n  </span>\n  <input type=\"hidden\" name=\"card\" value=\"\"/>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Matrícula en mayúsculas",
+     "html": "<span class=\"z-masked\" data-size=\"md\" data-mask=\"plate\">\n  <span class=\"z-masked__format\" id=\"_R_0_-format\">Format: ABC-1234</span>\n  <span class=\"z-input\" data-size=\"md\">\n    <input aria-label=\"License plate\" aria-describedby=\"_R_0_-format\" type=\"text\" class=\"z-input__control\" inputMode=\"text\" autoComplete=\"off\" spellCheck=\"false\" autoCorrect=\"off\" value=\"ABC-1234\"/>\n  </span>\n  <input type=\"hidden\" name=\"plate\" value=\"ABC1234\"/>\n</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Patrón propio",
+     "html": "<span class=\"z-masked\" data-size=\"md\" data-pattern=\"aa-9999-**\">\n  <span class=\"z-masked__format\" id=\"_R_0_-format\">Format: AB-1234-X9</span>\n  <span class=\"z-input\" data-size=\"md\">\n    <input aria-label=\"Order code\" aria-describedby=\"_R_0_-format\" type=\"text\" class=\"z-input__control\" inputMode=\"text\" autoComplete=\"off\" spellCheck=\"false\" autoCorrect=\"off\" name=\"order\" value=\"\"/>\n  </span>\n</span>",
+     "source": "generated"
+    }
+   ]
+  },
   "MonthPicker": {
    "group": "forms",
    "classes": [
@@ -3877,6 +3973,27 @@
      "title": "Visible y pequeño",
      "html": "<div class=\"z-password\" data-size=\"sm\">\n  <span class=\"z-input z-password__field\" data-size=\"sm\">\n    <input aria-label=\"Access token\" id=\"_R_0_-input\" type=\"text\" autoComplete=\"off\" autoCapitalize=\"none\" autoCorrect=\"off\" spellCheck=\"false\" class=\"z-input__control\" value=\"zx-demo-token\"/>\n    <button type=\"button\" class=\"z-input__action z-password__toggle\" aria-label=\"Show password\" aria-pressed=\"true\" aria-controls=\"_R_0_-input\" aria-describedby=\"_R_0_-toggle-hint\" title=\"Show password\">\n      <span class=\"z-swap\" aria-hidden=\"true\" data-effect=\"fade\">\n        <span class=\"z-swap__item\" data-for=\"off\">\n          <z-icon name=\"eye\" size=\"14\"></z-icon>\n        </span>\n        <span class=\"z-swap__item\" data-for=\"on\">\n          <z-icon name=\"eye-slash\" size=\"14\"></z-icon>\n        </span>\n      </span>\n    </button>\n    <span id=\"_R_0_-toggle-hint\" class=\"z-sr-only\">Shows the password on screen</span>\n  </span>\n</div>",
      "source": "generated"
+    }
+   ]
+  },
+  "QuarterPicker": {
+   "group": "forms",
+   "classes": [
+    "z-quarterpicker",
+    "z-quarterpicker__field",
+    "z-quarterpicker__panel",
+    "z-quarterpicker__calendar",
+    "z-quarterpicker__unit",
+    "z-quarterpicker__name",
+    "z-quarterpicker__months"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Trimestre fiscal",
+     "html": "<div class=\"z-quarterpicker\" data-name=\"quarter\" data-label=\"Fiscal quarter\" data-locale=\"en-US\" data-today=\"2026-11-25\" data-min=\"2024-Q1\" data-max=\"2027-Q4\" data-value=\"2026-Q4\"></div>",
+     "source": "manual",
+     "script": "document.querySelector(\".z-quarterpicker\").addEventListener(\"z:change\", (event) => console.log(event.detail.value, event.detail.from, event.detail.to));"
     }
    ]
   },
@@ -4137,6 +4254,30 @@
     }
    ]
   },
+  "TimeRangePicker": {
+   "group": "forms",
+   "classes": [
+    "z-timerange",
+    "z-timerange__sep",
+    "z-timerange__meta",
+    "z-timerange__overnight",
+    "z-timerange__duration"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Horario de oficina",
+     "html": "<div class=\"z-timerange\" role=\"group\" aria-label=\"Opening hours\" data-size=\"md\" data-name=\"hours\">\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"hours-start\" role=\"group\" aria-label=\"Start time\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-value=\"09:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Start time\" title=\"Start time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"hours-start-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"hours-start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Start time\"></div>\n  <span class=\"z-timerange__sep\" aria-hidden=\"true\"><z-icon name=\"arrow-right\" size=\"16\"></z-icon></span>\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"hours-end\" role=\"group\" aria-label=\"End time\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-value=\"17:30\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"End time\" title=\"End time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"hours-end-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"hours-end-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"End time\"></div>\n  <span class=\"z-timerange__meta\" aria-live=\"polite\"></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"hours\" value=\"09:00/17:30\">\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Turno de noche",
+     "html": "<div class=\"z-timerange\" role=\"group\" aria-label=\"Night shift\" data-size=\"md\" data-allow-overnight data-name=\"shift\">\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"shift-start\" role=\"group\" aria-label=\"Start time\" data-size=\"md\" data-locale=\"en-GB\" data-hour-cycle=\"24\" data-granularity=\"minute\" data-value=\"22:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Start time\" title=\"Start time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shift-start-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"shift-start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Start time\"></div>\n  <span class=\"z-timerange__sep\" aria-hidden=\"true\"><z-icon name=\"arrow-right\" size=\"16\"></z-icon></span>\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"shift-end\" role=\"group\" aria-label=\"End time\" data-size=\"md\" data-locale=\"en-GB\" data-hour-cycle=\"24\" data-granularity=\"minute\" data-value=\"06:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"End time\" title=\"End time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shift-end-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"shift-end-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"End time\"></div>\n  <span class=\"z-timerange__meta\" aria-live=\"polite\"></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"shift\" value=\"22:00/06:00\">\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\".z-timerange\").addEventListener(\"z:change\", (event) => { if (event.target.matches(\".z-timerange\")) console.log(event.detail.value, event.detail.info); });"
+    }
+   ]
+  },
   "TransferList": {
    "group": "forms",
    "classes": [
@@ -4161,6 +4302,35 @@
      "title": "Miembros de un equipo",
      "html": "<div class=\"z-transfer\" data-searchable data-name=\"members\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"value\": \"ana\", \"label\": \"Ana Torres\", \"description\": \"Design\"}, {\"value\": \"ben\", \"label\": \"Ben Okafor\", \"description\": \"Engineering\"}, {\"value\": \"chen\", \"label\": \"Chen Wei\", \"description\": \"Engineering\"}, {\"value\": \"dara\", \"label\": \"Dara Singh\", \"description\": \"Product\", \"disabled\": true}, {\"value\": \"eli\", \"label\": \"Eli Moreau\", \"description\": \"Support\"}, {\"value\": \"femi\", \"label\": \"Femi Adeyemi\", \"description\": \"Sales\"}], \"value\": [\"chen\"], \"labels\": {\"source\": \"People\", \"target\": \"Team\"}}</script>\n</div>",
      "source": "manual"
+    }
+   ]
+  },
+  "TreeSelect": {
+   "group": "forms",
+   "classes": [
+    "z-treeselect",
+    "z-treeselect__control",
+    "z-treeselect__input",
+    "z-treeselect__popup",
+    "z-treeselect__tree",
+    "z-treeselect__item",
+    "z-treeselect__row",
+    "z-treeselect__check",
+    "z-treeselect__mark",
+    "z-treeselect__more"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Equipo",
+     "html": "<div class=\"z-treeselect\" data-clearable data-name=\"team\" data-label=\"Team\" data-value=\"infra\">\n  <script type=\"application/json\" data-props>{\"nodes\": [{\"value\": \"eng\", \"label\": \"Engineering\", \"children\": [{\"value\": \"web\", \"label\": \"Web\"}, {\"value\": \"mobile\", \"label\": \"Mobile\"}, {\"value\": \"platform\", \"label\": \"Platform\", \"children\": [{\"value\": \"infra\", \"label\": \"Infrastructure\"}, {\"value\": \"data\", \"label\": \"Data\"}]}]}, {\"value\": \"design\", \"label\": \"Design\", \"children\": [{\"value\": \"brand\", \"label\": \"Brand\"}, {\"value\": \"product\", \"label\": \"Product design\"}]}, {\"value\": \"sales\", \"label\": \"Sales\", \"disabled\": true}]}</script>\n</div>",
+     "source": "manual"
+    },
+    {
+     "title": "Varios equipos con casillas",
+     "html": "<div class=\"z-treeselect\" data-multiple data-name=\"teams\" data-strategy=\"parent\" data-label=\"Teams\">\n  <script type=\"application/json\" data-props>{\"nodes\": [{\"value\": \"eng\", \"label\": \"Engineering\", \"children\": [{\"value\": \"web\", \"label\": \"Web\"}, {\"value\": \"mobile\", \"label\": \"Mobile\"}, {\"value\": \"platform\", \"label\": \"Platform\", \"children\": [{\"value\": \"infra\", \"label\": \"Infrastructure\"}, {\"value\": \"data\", \"label\": \"Data\"}]}]}, {\"value\": \"design\", \"label\": \"Design\", \"children\": [{\"value\": \"brand\", \"label\": \"Brand\"}, {\"value\": \"product\", \"label\": \"Product design\"}]}, {\"value\": \"sales\", \"label\": \"Sales\", \"disabled\": true}], \"value\": [\"web\", \"design\"], \"defaultExpanded\": [\"eng\"]}</script>\n</div>",
+     "source": "manual",
+     "script": "document.querySelector(\".z-treeselect\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
     }
    ]
   },

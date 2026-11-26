@@ -1,0 +1,333 @@
+/* Selectores de formulario de 0.5: Cascader, TreeSelect, MaskedInput, DateTimeRangePicker, TimeRangePicker y
+   QuarterPicker. Se apoyan en las piezas que ya existen (z-input, z-combobox, z-listbox, z-tree, z-calendar,
+   z-tags__tag, z-check__box) y aquí solo va lo propio de cada uno. Solo tokens y propiedades lógicas. */
+@layer zui.forms {
+  /* Piezas de lo elegido (Cascader y TreeSelect múltiples): la caja no cuenta en la maquetación del campo. */
+  .z-picker-chips {
+    display: contents;
+  }
+
+  /* ---- Cascader ---- */
+  .z-cascader,
+  .z-treeselect {
+    position: relative;
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .z-cascader__control,
+  .z-treeselect__control {
+    width: 100%;
+    cursor: text;
+  }
+  .z-cascader__input[readonly],
+  .z-treeselect__input[readonly] {
+    cursor: pointer;
+  }
+  .z-cascader__popup {
+    /* Las columnas marcan el ancho: tantas como niveles abiertos, hasta el ancho de la ventana. */
+    max-width: calc(100vw - var(--z-space-4));
+    max-height: min(360px, var(--z-available-height, 360px));
+  }
+  .z-cascader__columns {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .z-cascader__column {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    inline-size: 200px;
+    max-inline-size: 100%;
+    min-block-size: 0;
+  }
+  .z-cascader__column + .z-cascader__column {
+    border-inline-start: 1px solid var(--z-line);
+  }
+  .z-cascader__results {
+    min-inline-size: max(280px, var(--z-anchor-width, 0px));
+  }
+  .z-cascader__option[data-open] {
+    background: var(--z-surface-2);
+    color: var(--z-fg);
+  }
+  .z-cascader__option[data-open][data-highlighted] {
+    background: var(--z-surface-3);
+  }
+  .z-cascader__chevron {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    color: var(--z-fg-muted);
+  }
+  [dir="rtl"] .z-cascader__chevron {
+    transform: scaleX(-1);
+  }
+  .z-cascader__spinner {
+    flex-shrink: 0;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-cascader__check {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+  }
+  .z-cascader__mark,
+  .z-treeselect__mark {
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+    font-weight: var(--z-weight-semibold);
+  }
+  /* Barra de nivel: solo en una ventana estrecha (abajo). */
+  .z-cascader__bar {
+    display: none;
+  }
+  .z-cascader__back {
+    flex-shrink: 0;
+  }
+  [dir="rtl"] .z-cascader__back z-icon,
+  [dir="rtl"] .z-cascader__back svg {
+    transform: scaleX(-1);
+  }
+  .z-cascader__crumb {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--z-fg);
+    font-weight: var(--z-weight-semibold);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* Teléfono: una columna cada vez, con «Back» para volver al nivel anterior. */
+  @media (max-width: 640px) {
+    .z-cascader__popup {
+      min-width: min(100%, calc(100vw - var(--z-space-4)));
+    }
+    .z-cascader__bar {
+      display: flex;
+      align-items: center;
+      gap: var(--z-space-2);
+      padding: var(--z-space-1-5) var(--z-space-1-5) 0;
+    }
+    .z-cascader__columns {
+      overflow-x: visible;
+    }
+    .z-cascader__column {
+      inline-size: 100%;
+    }
+    .z-cascader__column:not([data-current]) {
+      display: none;
+    }
+    .z-cascader__column + .z-cascader__column {
+      border-inline-start: 0;
+    }
+  }
+
+  /* ---- TreeSelect ---- */
+  .z-treeselect__popup {
+    max-height: min(360px, var(--z-available-height, 360px));
+  }
+  .z-treeselect__tree {
+    min-inline-size: max(240px, var(--z-anchor-width, 0px));
+  }
+  .z-treeselect__item[data-highlighted] > .z-tree__row {
+    background: var(--z-surface-2);
+    color: var(--z-fg);
+  }
+  .z-treeselect__item[aria-selected="true"][data-highlighted] > .z-tree__row {
+    background: var(--z-surface-3);
+  }
+  .z-treeselect__check {
+    visibility: visible;
+  }
+  .z-treeselect__more {
+    padding-inline: var(--z-space-2);
+    color: var(--z-fg-muted);
+  }
+
+  /* ---- MaskedInput ---- */
+  .z-masked {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    min-width: 0;
+    max-width: 100%;
+  }
+  .z-masked > .z-input {
+    width: 100%;
+  }
+  /* El formato va encima del campo: debajo lo taparían el teclado del móvil o la lista de autocompletado. */
+  .z-masked__format {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-masked .z-input__control {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- TimeRangePicker ---- */
+  .z-timerange {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-2);
+    min-width: 0;
+    max-width: 100%;
+  }
+  /* Contenedor de consulta: su ancho no puede salir del contenido, así que ocupa el de su sitio (en una columna
+     centrada se quedaría en cero y las horas, aplastadas). */
+  .z-timerange {
+    container: z-timerange / inline-size;
+    inline-size: 100%;
+  }
+  .z-timerange > .z-timefield {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+  /* Estrecho: una hora debajo de la otra y la flecha apuntando hacia abajo, entre las dos. */
+  @container z-timerange (inline-size < 22rem) {
+    .z-timerange > .z-timefield,
+    .z-timerange__sep {
+      flex: 1 1 100%;
+    }
+    .z-timerange__sep {
+      justify-content: center;
+      rotate: 90deg;
+    }
+    [dir="rtl"] .z-timerange__sep {
+      transform: none;
+    }
+  }
+  .z-timerange__sep {
+    display: inline-flex;
+    align-items: center;
+    color: var(--z-fg-subtle);
+  }
+  [dir="rtl"] .z-timerange__sep {
+    transform: scaleX(-1);
+  }
+  .z-timerange__meta {
+    display: flex;
+    flex: 1 1 100%;
+    align-items: center;
+    gap: var(--z-space-2);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+    font-variant-numeric: tabular-nums;
+  }
+  .z-timerange__meta:empty {
+    display: none;
+  }
+  .z-timerange__overnight {
+    gap: var(--z-space-1);
+  }
+
+  /* ---- DateTimeRangePicker ---- */
+  .z-dtrange,
+  .z-quarterpicker__field {
+    font-variant-numeric: tabular-nums;
+  }
+  .z-dtrange__body {
+    display: flex;
+    min-width: 0;
+  }
+  .z-dtrange__presets {
+    flex: 0 0 auto;
+    margin-inline-end: var(--z-space-2);
+  }
+  .z-dtrange__footer {
+    justify-content: flex-start;
+    margin-block-start: var(--z-space-2);
+  }
+  .z-dtrange__time {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-2);
+  }
+  .z-dtrange__error {
+    color: var(--z-danger-text);
+    font-size: var(--z-text-small);
+  }
+  .z-dtrange__error:empty {
+    display: none;
+  }
+  @container (inline-size < 560px) {
+    .z-dtrange__body {
+      flex-direction: column;
+    }
+  }
+  @media (max-width: 640px) {
+    .z-dtrange__body {
+      flex-direction: column;
+    }
+    .z-dtrange__presets {
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-inline-end: 0;
+      border-inline-end: 0;
+      border-block-end: 1px solid var(--z-line);
+    }
+    .z-dtrange__presets .z-calendar__presets-label {
+      flex: 1 1 100%;
+    }
+  }
+
+  /* ---- QuarterPicker ---- */
+  .z-quarterpicker {
+    position: relative;
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .z-quarterpicker[data-block="false"] {
+    display: inline-block;
+  }
+  .z-quarterpicker__field {
+    width: 100%;
+  }
+  .z-quarterpicker__unit {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-0-5);
+  }
+  /* Dos filas de dos: celdas más altas que las de mes, con el nombre y los meses. */
+  .z-calendar__grid[data-view="quarter"] .z-calendar__cell {
+    height: calc(var(--z-calendar-size) * 1.75 + var(--z-space-3));
+  }
+  .z-calendar__grid[data-view="quarter"] .z-quarterpicker__unit {
+    height: calc(var(--z-calendar-size) * 1.75);
+  }
+  .z-quarterpicker__name {
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-quarterpicker__months {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-quarterpicker__unit[data-selected] .z-quarterpicker__months {
+    color: inherit;
+  }
+
+  /* Colores forzados: la fila activa de los selectores de árbol solo cambiaba el fondo. */
+  @media (forced-colors: active) {
+    .z-treeselect__item[data-highlighted] > .z-tree__row,
+    .z-cascader__option[data-open] {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+    .z-cascader__mark,
+    .z-treeselect__mark {
+      forced-color-adjust: none;
+      background: Mark;
+      color: MarkText;
+    }
+  }
+}

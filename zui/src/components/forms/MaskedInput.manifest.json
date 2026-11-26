@@ -1,0 +1,116 @@
+{
+  "name": "MaskedInput",
+  "group": "forms",
+  "description": "Campo con máscara: teléfono, tarjeta (15 o 16 cifras según el número), fecha, hora, matrícula, código postal o patrón propio con `9` (cifra), `a` (letra), `*` (letra o cifra) y funciones. El cursor no salta al teclear, pegar o borrar en medio; la composición de un IME y el autocompletado se reformatean al terminar. Expone el valor crudo y el formateado, y el formato va sobre el campo, enlazado con aria-describedby.",
+  "import": "import { MaskedInput } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "mask",
+      "type": "MaskPreset | string | ((raw: string) => string) | MaskSpec",
+      "required": true,
+      "description": "Preset (`phone`, `card`, `date`, `time`, `plate`, `postal`), patrón, función que elige el patrón según lo tecleado o `{ pattern, tokens, transform }`."
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Valor crudo, solo lo que ocupa ranuras (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(raw: string, detail: { value: string; complete: boolean }) => void",
+      "description": "Crudo, texto formateado y si están todas las ranuras."
+    },
+    {
+      "name": "submit",
+      "type": "enum",
+      "values": ["raw", "formatted"],
+      "default": "raw",
+      "description": "Qué envía el formulario: el crudo (campo oculto) o el texto formateado."
+    },
+    {
+      "name": "formatHint",
+      "type": "string",
+      "description": "Formato que se muestra y se anuncia; por defecto el del preset o el patrón con `_`."
+    },
+    {
+      "name": "formatLabel",
+      "type": "string",
+      "default": "Format: {format}"
+    },
+    {
+      "name": "showFormat",
+      "type": "boolean",
+      "default": true,
+      "description": "Formato visible sobre el campo; sin él, solo se anuncia."
+    },
+    {
+      "name": "incompleteMessage",
+      "type": "string",
+      "default": "Enter the complete value",
+      "description": "Mensaje de validez con el valor a medias."
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "inputClassName",
+      "type": "string"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario."
+    }
+  ],
+  "states": ["rest", "focus", "complete", "incomplete", "disabled", "invalid"],
+  "tokens": ["control-bg", "control-border", "control-radius", "fg", "fg-muted", "text-caption", "space-1", "focus-width", "accent-ring"],
+  "classes": ["z-masked", "z-masked__format"],
+  "a11y": "Un `<input type=\"text\">` nativo con `inputmode` y `autocomplete` del preset (tel-national, cc-number, postal-code). El formato está en un texto visible encima del campo (no solo en el placeholder) y se anuncia con aria-describedby. `beforeinput` cancela la edición y la rehace sobre el valor crudo, así que el cursor queda tras lo tecleado; se emite el `input` correspondiente para la validación del Field. Con el valor a medias, setCustomValidity da el mensaje (`incompleteMessage`). Sin React: .z-masked con data-mask o data-pattern; emite z:change { raw, value, complete }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Teléfono",
+      "code": "<MaskedInput mask=\"phone\" aria-label=\"Phone\" name=\"phone\" defaultValue=\"5551234567\" />"
+    },
+    {
+      "title": "Tarjeta",
+      "code": "<MaskedInput mask=\"card\" aria-label=\"Card number\" name=\"card\" icon=\"credit-card\" />"
+    },
+    {
+      "title": "Matrícula en mayúsculas",
+      "code": "<MaskedInput mask=\"plate\" aria-label=\"License plate\" name=\"plate\" defaultValue=\"abc1234\" />"
+    },
+    {
+      "title": "Patrón propio",
+      "code": "<MaskedInput mask=\"aa-9999-**\" aria-label=\"Order code\" formatHint=\"AB-1234-X9\" submit=\"formatted\" name=\"order\" />"
+    }
+  ],
+  "origin": "Nuevo. Referencias: react-input-mask, IMask, Maskito (cursor con beforeinput) y la guía de formularios de pago de web.dev."
+}

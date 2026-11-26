@@ -49,6 +49,10 @@
       "types": "./zui-dom-dates.d.ts",
       "default": "./zui-dom-dates.js"
     },
+    "./zui/dom/forms": {
+      "types": "./zui-dom-forms.d.ts",
+      "default": "./zui-dom-forms.js"
+    },
     "./zui/dom/data": {
       "types": "./zui-dom-data.d.ts",
       "default": "./zui-dom-data.js"

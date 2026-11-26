@@ -1,11 +1,11 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 231 componentes en 19 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 237 componentes en 19 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
 React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
 cargar todo (`/dom`) o el núcleo (`/dom/core`) más las familias que use la página (`/dom/dates`, `/dom/agenda`,
-`/dom/charts`…): ver [Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias).
+`/dom/charts`, `/dom/forms`…): ver [Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias).
 
 No depende de ninguna biblioteca de UI. En ejecución solo necesita `@zuccadev-labs/zuix-tokens`;
 `@zuccadev-labs/zuix-zicon` es un peer obligatorio y React y React DOM (18.2 o posterior, o 19) son peers opcionales.
@@ -17,7 +17,7 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Grupo | Componentes |
 |---|---|
 | Acciones | Button, ButtonGroup, CopyButton, DownloadTrigger, Fab, FabMenu, IconButton, Link, SegmentedControl, SplitButton, Swap, Toggle, ToggleGroup, Toolbar |
-| Formularios | Calendar, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, TransferList, WeekPicker, YearPicker |
+| Formularios | Calendar, Cascader, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, DateTimeRangePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MaskedInput, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, QuarterPicker, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, TimeRangePicker, TransferList, TreeSelect, WeekPicker, YearPicker |
 | Agenda | CalendarHeatmap, EventCalendar, FreeBusy, HabitCalendar, PerpetualYear, SlotPicker, TimelineView |
 | Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, FilterBar, Item, Kbd, Meter, PriceBreakdown, PriceTag, Progress, Rating, ReviewCard, ReviewSummary, StatTile, StatusDot, SummaryList, Table, Timeline |
 | Gráficos | AnimatedNumber, AreaChart, BarChart, BulletChart, CategoryBar, ComboChart, DonutChart, HeatmapChart, LineChart, PieChart, RadarChart, ScatterChart, Sparkline |
@@ -41,7 +41,7 @@ Cada componente declara en el contrato qué necesita para funcionar:
 | `behavior` | Significado | Cuántos |
 |---|---|---|
 | `none` | Solo CSS. Basta el marcado | 73 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 157 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 163 |
 | `react` | Solo funciona con el binding de React. Hoy ninguno | 0 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
@@ -112,6 +112,153 @@ escribir `dialog.z-modal`, no `.z-modal[role=dialog]`.
   `Select required` y `DatePicker required` usan además la validación nativa: el formulario no se envía vacío.
 - `Slider` con varios tiradores envía un campo por tirador con el mismo `name`.
 - `FileUpload` con `name` conserva los archivos aceptados en el campo y el formulario los envía.
+
+## Formularios de la 0.5
+
+Seis selectores nuevos para formularios. Todos envían su valor con `name` (en un campo nativo oculto que da también
+la validación `required` del navegador), vuelven al valor con el que se montaron con `form.reset()` y avisan a la
+aplicación del cambio, así un valor controlado no se queda atrás. Los textos visibles llegan por `labels` (y
+`messages` donde hay validación), en inglés por defecto. Sin React: Cascader, TreeSelect y MaskedInput en
+`/dom/forms`; DateTimeRangePicker, TimeRangePicker y QuarterPicker en `/dom/dates`.
+
+### Cascader
+
+Selección jerárquica por columnas: país › región › ciudad. El valor es la ruta de valores (`["es", "md", "alc"]`) y
+el formulario recibe `es/md/alc` (`separator` lo cambia). Con `searchable`, lo que se teclea busca en la ruta completa
+sin mayúsculas ni acentos («alcala» encuentra «Spain / Madrid / Alcalá de Henares»). Una opción con `isLeaf: false` y
+sin `children` pide sus hijos con `loadChildren` al abrirla, con un indicador de carga en la opción y `aria-busy` en
+la columna; si la promesa falla, queda como hoja y se emite `onLoadError`. `changeOnSelect` deja elegir una rama sin
+llegar a una hoja. `multiple` pone casillas con estado mixto (las de `Tree`) y `showCheckedStrategy` decide si una
+rama marcada entera cuenta como la rama (`parent`, por defecto), como todas sus rutas (`all`) o solo como sus hojas
+(`child`). En una ventana de 640 px o menos se ve una columna cada vez, con «Back» y el nombre del nivel anterior.
+
+El teclado es el de un combobox: el foco se queda en el campo, flechas arriba y abajo recorren la columna, derecha
+abre la rama (izquierda en RTL), izquierda vuelve, Intro elige y Escape vacía la búsqueda o cierra.
+
+```tsx
+import { Cascader, type CascaderOption } from "@zuccadev-labs/zuix-zui";
+
+const places: CascaderOption[] = [
+  { value: "es", label: "Spain", children: [{ value: "md", label: "Madrid", children: [{ value: "alc", label: "Alcalá de Henares" }] }] },
+  { value: "fr", label: "France", isLeaf: false },
+];
+
+export function Location() {
+  return (
+    <Cascader
+      name="location"
+      searchable
+      levelLabels={["Country", "Region", "City"]}
+      options={places}
+      loadChildren={(option) => fetch(`/api/regions/${option.value}`).then((r) => r.json())}
+      onValueChange={(path, { labels }) => console.log(path, labels)}
+    />
+  );
+}
+```
+
+```html
+<div class="z-cascader" data-searchable data-name="location" data-label="Location">
+  <script type="application/json" data-props>{"options":[{"value":"es","label":"Spain","children":[{"value":"md","label":"Madrid"}]}],"levelLabels":["Country","Region"]}</script>
+</div>
+```
+
+Sin React, la carga diferida se pasa por propiedad: `setWidgetProps(el, { loadChildren })`. Emite `z:change { value,
+labels, option }`, `z:load { path, options }` y `z:loaderror { path, error }`.
+
+### TreeSelect
+
+Un select con un árbol en su panel: el campo es un combobox con `aria-haspopup="tree"` y la fila activa va por
+`aria-activedescendant`. Teclear filtra y expande los antepasados de lo que coincide. Con `multiple`, las casillas son
+las de `Tree` (la misma lógica de `core/tree`), lo elegido va en piezas dentro del campo (`maxChips` resume el resto en
+«+N») y el valor sale según `showCheckedStrategy`, como en Cascader.
+
+```tsx
+import { TreeSelect } from "@zuccadev-labs/zuix-zui";
+
+<TreeSelect
+  multiple
+  name="teams"
+  nodes={[{ value: "eng", label: "Engineering", children: [{ value: "web", label: "Web" }, { value: "mobile", label: "Mobile" }] }]}
+  defaultValue={["web"]}
+  onValueChange={(value) => console.log(value)}
+/>;
+```
+
+```html
+<div class="z-treeselect" data-multiple data-name="teams" data-label="Teams">
+  <script type="application/json" data-props>{"nodes":[{"value":"eng","label":"Engineering","children":[{"value":"web","label":"Web"}]}],"value":["web"]}</script>
+</div>
+```
+
+### MaskedInput
+
+Campo con máscara: presets `phone`, `card` (15 cifras en 4-6-5 si empieza por 34 o 37; si no, 16 en grupos de 4),
+`date`, `time`, `plate` y `postal`, un patrón con `9` (cifra), `a` (letra), `*` (letra o cifra) y `\` para escapar,
+una función que elige el patrón según lo tecleado o una máscara completa con ranuras propias. Cada edición se calcula
+sobre el valor crudo con `beforeinput`, así el cursor queda tras lo tecleado al escribir, pegar o borrar en medio; la
+composición de un IME, el autocompletado y los teclados de móvil que no dejan cancelar la edición se reformatean al
+terminar. `onValueChange` da el crudo, el texto formateado y si está completo. El formato va encima del campo (debajo
+lo taparía el teclado del móvil) y se anuncia con `aria-describedby`; con el valor a medias, el campo no es válido
+(`incompleteMessage`). El formulario recibe el crudo, o el texto con `submit="formatted"`.
+
+```tsx
+<MaskedInput mask="phone" name="phone" onValueChange={(raw, { value, complete }) => console.log(raw, value, complete)} />
+<MaskedInput mask="aa-9999-**" formatHint="AB-1234-X9" name="order" />
+```
+
+```html
+<span class="z-masked" data-mask="phone">
+  <span class="z-masked__format" id="phone-format">Format: (___) ___-____</span>
+  <span class="z-input"><input class="z-input__control" type="text" inputmode="numeric" autocomplete="tel-national" aria-describedby="phone-format"></span>
+  <input type="hidden" name="phone">
+</span>
+```
+
+Sin React: `setMaskedValue(el, raw)` y, para ranuras propias o un patrón que es una función, `setMask(el, spec)`.
+
+### DateTimeRangePicker
+
+Rango de fecha y hora en un panel: el calendario de rango (`Calendar`), una hora de inicio y otra de fin (`TimeField`),
+preajustes (`last-hour`, `last-24-hours`, `today`, `yesterday`, `last-7-days`, `next-7-days`, `this-week` o una
+función) y, con `showTimeZone`, la zona horaria. El valor (`{ start, end, timeZone }`) cambia con «Apply»; Escape y
+«Cancel» lo descartan. Con zona, el formulario recibe cada extremo con su desfase y su zona,
+`2026-11-28T22:00+01:00[Europe/Madrid]/2026-11-29T02:00+01:00[Europe/Madrid]`, que es lo que lee
+`Temporal.ZonedDateTime.from`: la hora queda atada al lugar. Sin zona, el reloj civil, como `datetime-local`.
+
+```tsx
+<DateTimeRangePicker
+  name="window"
+  showTimeZone
+  presets={[{ label: "Today", value: "today" }, { label: "Next 7 days", value: "next-7-days" }]}
+  onValueChange={({ start, end, timeZone }) => console.log(start, end, timeZone)}
+/>
+```
+
+### TimeRangePicker
+
+Dos `TimePicker` en un grupo. El fin tiene que ser posterior al inicio; con `allowOvernight` puede caer al día
+siguiente y un indicador («+1 day», «Ends the next day» para lectores) lo dice. Muestra la duración y admite
+`minDuration` y `maxDuration`. El formulario recibe `22:00/06:00`; un rango que no vale lleva su mensaje en el campo
+nativo (lo muestra un `Field` con `validate`).
+
+```tsx
+<TimeRangePicker name="shift" allowOvernight defaultValue={{ start: "22:00", end: "06:00" }} />
+```
+
+### QuarterPicker
+
+Trimestres con el mismo patrón que `MonthPicker` y `YearPicker`: un botón con el valor y un panel con la rejilla del
+calendario, aquí de 2 × 2 (Q1 Q2 / Q3 Q4) con los meses de cada uno. Valor `YYYY-Qn`; `onValueChange` recibe además el
+primer y el último día. Flechas, Inicio, Fin, Re Pág y Av Pág (con Mayús, de diez en diez años), con `min` y `max`.
+
+```tsx
+<QuarterPicker name="quarter" min="2024-Q1" max="2027-Q4" onValueChange={(value, { from, to }) => console.log(value, from, to)} />
+```
+
+```html
+<div class="z-quarterpicker" data-name="quarter" data-label="Fiscal quarter" data-min="2024-Q1" data-max="2027-Q4" data-value="2026-Q4"></div>
+```
 
 ## Familias de la 0.4
 

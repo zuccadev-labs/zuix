@@ -12,8 +12,10 @@ import { cloneChildren, setMarkup, type Listen } from "./shared";
 registerIcons([check, xMark]);
 
 const ICON_SIZE: Record<string, number> = { sm: 14, md: 16, lg: 18 };
-const SELECT = ".z-select:not(.z-datepicker)";
-const COMBO = ".z-combobox";
+// Los selectores con panel propio (DatePicker y los que llevan `data-picker`: DateTimeRangePicker, QuarterPicker) no son
+// un Select aunque compartan su aspecto.
+const SELECT = ".z-select:not(.z-datepicker):not([data-picker])";
+const COMBO = ".z-combobox:not([data-picker])";
 
 /* ---------- Lista ---------- */
 

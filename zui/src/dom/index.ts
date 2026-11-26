@@ -23,7 +23,7 @@
 // Esta entrada es la suite completa: reexporta ./core y todas las familias, e init() y hydrate() las registran
 // todas, así que montan lo mismo que en 0.2.0. No hace nada al importarse: quien toma de aquí solo toast() no carga
 // las familias. Para cargar solo lo que se usa: @zuccadev-labs/zuix-zui/dom/core más las familias que hagan falta
-// (/dom/dates, /dom/data, /dom/content, /dom/agenda, /dom/charts, /dom/color, /dom/media, /dom/effects,
+// (/dom/dates, /dom/forms, /dom/data, /dom/content, /dom/agenda, /dom/charts, /dom/color, /dom/media, /dom/effects,
 // /dom/time, /dom/terminal, /dom/chat, /dom/ai, /dom/dashboard, /dom/people, /dom/nodes),
 // registradas con init(módulo, …) o use(módulo). Ver docs/users/06-frameworks.md.
 import { hydrate as hydrateCore, init as initCore, use, type DomModule } from "./core";
@@ -37,6 +37,7 @@ import { dashboardModule } from "./families/dashboard";
 import { dataModule } from "./families/data";
 import { datesModule } from "./families/dates";
 import { effectsModule } from "./families/effects";
+import { formsModule } from "./families/forms";
 import { mediaModule } from "./families/media";
 import { nodesModule } from "./families/nodes";
 import { peopleModule } from "./families/people";
@@ -54,6 +55,7 @@ export * from "./families/dashboard";
 export * from "./families/data";
 export * from "./families/dates";
 export * from "./families/effects";
+export * from "./families/forms";
 export * from "./families/media";
 export * from "./families/nodes";
 export * from "./families/people";
@@ -62,6 +64,7 @@ export * from "./families/time";
 
 const everything = (): DomModule[] => [
   datesModule,
+  formsModule,
   dataModule,
   contentModule,
   agendaModule,

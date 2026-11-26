@@ -1,0 +1,228 @@
+{
+  "name": "DateTimeRangePicker",
+  "group": "forms",
+  "description": "Rango de fecha y hora en un panel: el calendario de rango, una hora de inicio y otra de fin (TimeField), zona horaria opcional y preajustes («Last 24 hours», «Today»…). El valor cambia con «Apply». Con zona, el formulario recibe cada extremo con desfase y zona (`2026-03-03T09:00+01:00[Europe/Madrid]`), lo que lee `Temporal.ZonedDateTime.from`.",
+  "import": "import { DateTimeRangePicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "{ start: string | null; end: string | null; timeZone?: string | null } | null",
+      "description": "Relojes de pared `YYYY-MM-DDTHH:mm` (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "DateTimeRange | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: DateTimeRange) => void"
+    },
+    {
+      "name": "showTimeZone",
+      "type": "boolean",
+      "default": false,
+      "description": "Selector de zona en el panel."
+    },
+    {
+      "name": "timeZones",
+      "type": "string[]",
+      "description": "Zonas que se ofrecen; por defecto, todas."
+    },
+    {
+      "name": "defaultTimeZone",
+      "type": "string",
+      "description": "Zona de partida; por defecto, la del dispositivo."
+    },
+    {
+      "name": "presets",
+      "type": "{ label: string; value: DateTimePresetKey | ((now) => { start, end }) }[]",
+      "description": "`last-hour`, `last-24-hours`, `today`, `yesterday`, `last-7-days`, `next-7-days`, `this-week` o una función."
+    },
+    {
+      "name": "min",
+      "type": "string",
+      "description": "`YYYY-MM-DD`."
+    },
+    {
+      "name": "max",
+      "type": "string"
+    },
+    {
+      "name": "isDateDisabled",
+      "type": "(date: string) => boolean"
+    },
+    {
+      "name": "numberOfMonths",
+      "type": "number",
+      "default": 2
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6"
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "hourCycle",
+      "type": "enum",
+      "values": ["12", "24"]
+    },
+    {
+      "name": "minuteStep",
+      "type": "number"
+    },
+    {
+      "name": "defaultStartTime",
+      "type": "string",
+      "default": "00:00"
+    },
+    {
+      "name": "defaultEndTime",
+      "type": "string",
+      "default": "23:59"
+    },
+    {
+      "name": "today",
+      "type": "string"
+    },
+    {
+      "name": "open",
+      "type": "boolean"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "block",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": ["start", "center", "end"],
+      "default": "start"
+    },
+    {
+      "name": "popupClassName",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DateTimeRangePickerLabels>",
+      "description": "placeholder, dialog, presets, start, end, timeZone, apply y cancel, en inglés por defecto."
+    },
+    {
+      "name": "messages",
+      "type": "Partial<DateTimeRangeMessages>",
+      "description": "incomplete, order y gap (una hora que no existe en esa zona)."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario."
+    },
+    {
+      "name": "aria-labelledby",
+      "type": "string",
+      "description": "Id del texto que nombra el control; dentro de un Field, su etiqueta."
+    }
+  ],
+  "states": ["rest", "focus", "open", "invalid", "disabled"],
+  "tokens": [
+    "control-bg",
+    "control-border",
+    "control-radius",
+    "control-radius-sm",
+    "control-height-sm",
+    "control-height-md",
+    "control-height-lg",
+    "popup-bg",
+    "popup-blur",
+    "popup-shadow",
+    "popup-radius",
+    "item-radius",
+    "surface-2",
+    "surface-3",
+    "line",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-soft",
+    "accent-text",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "text-body",
+    "text-small",
+    "text-caption",
+    "weight-medium",
+    "weight-semibold",
+    "danger-text"
+  ],
+  "classes": [
+    "z-dtrange",
+    "z-dtrange__panel",
+    "z-dtrange__body",
+    "z-dtrange__presets",
+    "z-dtrange__footer",
+    "z-dtrange__time",
+    "z-dtrange__zone",
+    "z-dtrange__error"
+  ],
+  "a11y": "Botón con aria-haspopup=\"dialog\" cuyo nombre incluye el rango elegido, y un panel role=dialog con el foco atrapado. El calendario es la rejilla APG de Calendar en modo rango; las horas son TimeField con nombre («Start», «End»), y la zona un `<select>` nativo. El error del borrador se anuncia (role=status) y «Apply» queda con aria-disabled mientras el rango no vale. Escape y «Cancel» descartan y devuelven el foco al botón. Sin React: .z-select.z-dtrange[data-picker] con su panel vacío; emite z:change { value }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Ventana de mantenimiento con zona",
+      "code": "<DateTimeRangePicker aria-label=\"Maintenance window\" name=\"window\" showTimeZone timeZones={[\"UTC\", \"Europe/Madrid\", \"America/New_York\", \"Asia/Tokyo\"]} locale=\"en-US\" hourCycle={24} today=\"2026-11-25\" defaultValue={{ start: \"2026-11-28T22:00\", end: \"2026-11-29T02:00\", timeZone: \"Europe/Madrid\" }} presets={[{ label: \"Today\", value: \"today\" }, { label: \"Next 7 days\", value: \"next-7-days\" }]} />"
+    },
+    {
+      "title": "Sin zona",
+      "code": "<DateTimeRangePicker aria-label=\"Event\" locale=\"en-US\" today=\"2026-11-25\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Ventana de mantenimiento con zona",
+      "code": "<span class=\"z-select z-dtrange\" data-picker id=\"window\" data-size=\"md\" data-block data-name=\"window\" data-time-zone data-time-zones=\"UTC,Europe/Madrid,America/New_York,Asia/Tokyo\" data-locale=\"en-US\" data-hour-cycle=\"24\" data-today=\"2026-11-25\" data-presets='[{\"label\":\"Today\",\"value\":\"today\"},{\"label\":\"Next 7 days\",\"value\":\"next-7-days\"}]'>\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"window-panel\" data-state=\"closed\"><span class=\"z-sr-only\">Maintenance window</span><span class=\"z-select__value\"></span></button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"window\" value=\"2026-11-28T22:00+01:00[Europe/Madrid]/2026-11-29T02:00+01:00[Europe/Madrid]\">\n</span>\n<div id=\"window-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel z-dtrange__panel\" role=\"dialog\" aria-label=\"Choose date and time range\"></div>",
+      "script": "document.querySelector(\"#window\").addEventListener(\"z:change\", (event) => console.log(event.detail.value));"
+    },
+    {
+      "title": "Sin zona",
+      "code": "<span class=\"z-select z-dtrange\" data-picker id=\"event-range\" data-size=\"md\" data-block data-locale=\"en-US\" data-today=\"2026-11-25\">\n  <button type=\"button\" class=\"z-select__control\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"event-range-panel\" data-state=\"closed\" data-placeholder><span class=\"z-sr-only\">Event</span><span class=\"z-select__value\">Select date and time range</span></button>\n  <span class=\"z-select__chevron\"><z-icon name=\"calendar-date-range\" size=\"16\"></z-icon></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" value=\"\">\n</span>\n<div id=\"event-range-panel\" popover=\"manual\" class=\"z-liquid z-popover z-datepicker__panel z-dtrange__panel\" role=\"dialog\" aria-label=\"Choose date and time range\"></div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: DateRangePicker con hora de Ant Design y de MUI X, y los selectores de intervalo de Grafana y Datadog."
+}

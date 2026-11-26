@@ -230,7 +230,10 @@ window.__ready = true;
           interactions += 1;
           if ((await trigger.getAttribute("aria-expanded")) !== "true") failures.push(`${id}: la sección del acordeón no se abre`);
         }
-        for (const control of await tab.locator(".z-select:not(.z-datepicker) > button.z-select__control:not([disabled])").all()) {
+        // DatePicker y los selectores con panel propio (`data-picker`: DateTimeRangePicker, QuarterPicker) no son un Select.
+        for (const control of await tab
+          .locator(".z-select:not(.z-datepicker):not([data-picker]) > button.z-select__control:not([disabled])")
+          .all()) {
           // Un Select generado desde React no trae su lista (va por portal): el contrato sin framework es el escrito a mano.
           if (!(await control.evaluate((b) => document.getElementById(b.getAttribute("aria-controls") ?? "")))) {
             failures.push(`${id}: Select sin lista en el marcado (aria-controls no apunta a nada)`);

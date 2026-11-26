@@ -1,0 +1,143 @@
+{
+  "name": "TimeRangePicker",
+  "group": "forms",
+  "description": "Rango de horas: dos TimePicker (inicio y fin) en un grupo. Comprueba que el fin sea posterior al inicio; con `allowOvernight`, admite que cruce la medianoche y lo marca con un indicador. Muestra la duración, admite duración mínima y máxima y envía `inicio/fin` al formulario.",
+  "import": "import { TimeRangePicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "{ start: string | null; end: string | null } | null",
+      "description": "Horas `HH:mm` (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "{ start: string | null; end: string | null } | null"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: TimeRange, info: TimeRangeInfo) => void",
+      "description": "Rango nuevo con su duración, si cruza la medianoche y por qué no vale."
+    },
+    {
+      "name": "allowOvernight",
+      "type": "boolean",
+      "default": false,
+      "description": "El fin puede caer al día siguiente (turno de noche)."
+    },
+    {
+      "name": "minDuration",
+      "type": "number",
+      "description": "Minutos."
+    },
+    {
+      "name": "maxDuration",
+      "type": "number",
+      "description": "Minutos."
+    },
+    {
+      "name": "showDuration",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": ["columns", "list"],
+      "default": "columns",
+      "description": "Panel de cada hora."
+    },
+    {
+      "name": "step",
+      "type": "number",
+      "default": 30,
+      "description": "Minutos entre franjas con `variant=\"list\"`."
+    },
+    {
+      "name": "minuteStep",
+      "type": "number"
+    },
+    {
+      "name": "hourCycle",
+      "type": "enum",
+      "values": ["12", "24"]
+    },
+    {
+      "name": "showSeconds",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TimeRangePickerLabels>",
+      "description": "start, end, overnight («+1 day»), overnightDescription y duration, en inglés por defecto."
+    },
+    {
+      "name": "messages",
+      "type": "Partial<TimeRangeMessages>",
+      "description": "incomplete, order, short y long: mensajes de validez del campo nativo."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "default": false,
+      "description": "Validación `required` del navegador en el campo nativo oculto."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Nombre del campo al enviar un formulario."
+    },
+    {
+      "name": "aria-labelledby",
+      "type": "string",
+      "description": "Id del texto que nombra el control; dentro de un Field, su etiqueta."
+    }
+  ],
+  "states": ["rest", "focus", "overnight", "invalid", "disabled"],
+  "tokens": ["control-bg", "control-border", "control-radius", "fg-muted", "fg-subtle", "text-small", "space-2", "info-soft", "info-text"],
+  "classes": ["z-timerange", "z-timerange__sep", "z-timerange__meta", "z-timerange__overnight", "z-timerange__duration"],
+  "a11y": "Un role=group con el nombre del Field y dos TimeField (spinbuttons por segmento) llamados «Start time» y «End time», cada uno con su panel. La duración y el indicador de día siguiente están en una región viva enlazada con aria-describedby; el indicador lleva texto para lectores («Ends the next day»). Un rango que no vale lleva su mensaje en el campo nativo (setCustomValidity): lo muestra un Field con `validate` y lleva el foco a la primera hora. Sin React: .z-timerange con dos .z-timefield.z-timepicker; emite z:change { value, info } en el grupo.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Horario de oficina",
+      "code": "<TimeRangePicker aria-label=\"Opening hours\" name=\"hours\" locale=\"en-US\" defaultValue={{ start: \"09:00\", end: \"17:30\" }} />"
+    },
+    {
+      "title": "Turno de noche",
+      "code": "<TimeRangePicker aria-label=\"Night shift\" name=\"shift\" allowOvernight locale=\"en-GB\" hourCycle={24} defaultValue={{ start: \"22:00\", end: \"06:00\" }} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Horario de oficina",
+      "code": "<div class=\"z-timerange\" role=\"group\" aria-label=\"Opening hours\" data-size=\"md\" data-name=\"hours\">\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"hours-start\" role=\"group\" aria-label=\"Start time\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-value=\"09:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Start time\" title=\"Start time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"hours-start-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"hours-start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Start time\"></div>\n  <span class=\"z-timerange__sep\" aria-hidden=\"true\"><z-icon name=\"arrow-right\" size=\"16\"></z-icon></span>\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"hours-end\" role=\"group\" aria-label=\"End time\" data-size=\"md\" data-locale=\"en-US\" data-granularity=\"minute\" data-value=\"17:30\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"End time\" title=\"End time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"hours-end-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"hours-end-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"End time\"></div>\n  <span class=\"z-timerange__meta\" aria-live=\"polite\"></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"hours\" value=\"09:00/17:30\">\n</div>"
+    },
+    {
+      "title": "Turno de noche",
+      "code": "<div class=\"z-timerange\" role=\"group\" aria-label=\"Night shift\" data-size=\"md\" data-allow-overnight data-name=\"shift\">\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"shift-start\" role=\"group\" aria-label=\"Start time\" data-size=\"md\" data-locale=\"en-GB\" data-hour-cycle=\"24\" data-granularity=\"minute\" data-value=\"22:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"Start time\" title=\"Start time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shift-start-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"shift-start-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"Start time\"></div>\n  <span class=\"z-timerange__sep\" aria-hidden=\"true\"><z-icon name=\"arrow-right\" size=\"16\"></z-icon></span>\n  <div class=\"z-input z-datefield z-timefield z-timepicker\" id=\"shift-end\" role=\"group\" aria-label=\"End time\" data-size=\"md\" data-locale=\"en-GB\" data-hour-cycle=\"24\" data-granularity=\"minute\" data-value=\"06:00\">\n    <button type=\"button\" class=\"z-input__action z-timepicker__trigger\" aria-label=\"End time\" title=\"End time\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-controls=\"shift-end-panel\"><z-icon name=\"clock\" size=\"16\"></z-icon></button>\n  </div>\n  <div id=\"shift-end-panel\" popover=\"manual\" class=\"z-liquid z-popover z-timepicker__panel\" role=\"dialog\" aria-label=\"End time\"></div>\n  <span class=\"z-timerange__meta\" aria-live=\"polite\"></span>\n  <input type=\"text\" class=\"z-native-input\" aria-hidden=\"true\" tabindex=\"-1\" name=\"shift\" value=\"22:00/06:00\">\n</div>",
+      "script": "document.querySelector(\".z-timerange\").addEventListener(\"z:change\", (event) => { if (event.target.matches(\".z-timerange\")) console.log(event.detail.value, event.detail.info); });"
+    }
+  ],
+  "origin": "Nuevo. Referencias: TimeRangePicker de Mantine y RangePicker con `picker=\"time\"` de Ant Design."
+}
