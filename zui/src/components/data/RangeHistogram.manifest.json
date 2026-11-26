@@ -1,0 +1,35 @@
+{
+  "name": "RangeHistogram",
+  "group": "data",
+  "status": "new",
+  "description": "Histograma decorativo bajo un Slider de rango: resultados por tramo, con el tramo elegido resaltado.",
+  "import": "import { RangeHistogram } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "values",
+      "type": "number[]",
+      "required": true,
+      "description": "Recuento por tramo."
+    },
+    {
+      "name": "selected",
+      "type": "[number, number]",
+      "description": "Primer y último tramo dentro del rango."
+    }
+  ],
+  "tokens": [
+    "line-strong",
+    "accent"
+  ],
+  "classes": [
+    "z-range-histogram",
+    "z-range-histogram__bar"
+  ],
+  "a11y": "aria-hidden: el valor lo anuncia el Slider. Colores forzados: GrayText y Highlight.",
+  "examples": [
+    {
+      "title": "Rango de precio",
+      "code": "<RangeHistogram values={[2, 5, 9, 14, 20, 18, 12, 7, 4, 2]} selected={[2, 6]} />"
+    }
+  ]
+}

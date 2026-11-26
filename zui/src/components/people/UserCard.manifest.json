@@ -20,18 +20,59 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": ["cover", "compact"],
-      "default": "cover"
+      "values": [
+        "cover",
+        "compact",
+        "profile",
+        "neon",
+        "portrait"
+      ],
+      "default": "cover",
+      "description": "`profile` limpia y elevada con foto de esquinas redondeadas, estadísticas en fichas y dos acciones; `neon` de color vivo con halo, ficha de rol con check y nombre en mayúsculas; `portrait` la foto entera con el nombre abajo sobre un desenfoque."
     },
     {
       "name": "headingLevel",
       "type": "enum",
-      "values": [2, 3, 4],
+      "values": [
+        2,
+        3,
+        4
+      ],
       "default": 3
     },
     {
       "name": "href",
       "type": "string"
+    },
+    {
+      "name": "tone",
+      "type": "CardTone",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "description": "Color de neon (borde, halo, subtítulo)."
+    },
+    {
+      "name": "status",
+      "type": "ReactNode",
+      "description": "Ficha de estado arriba («Available»)."
+    },
+    {
+      "name": "action",
+      "type": "ReactNode",
+      "description": "Acción de esquina (portrait, compact): un IconButton."
     }
   ],
   "tokens": [
@@ -54,23 +95,36 @@
     "text-caption",
     "weight-semibold",
     "weight-display",
-    "leading-relaxed"
+    "leading-relaxed",
+    "media-surface",
+    "media-scrim-tinted",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "elevation-2",
+    "elevation-rim",
+    "card-elevated-bg"
   ],
   "classes": [
+    "z-stat-group",
     "z-user-card",
+    "z-user-card__actions",
+    "z-user-card__avatar",
+    "z-user-card__bio",
     "z-user-card__cover",
     "z-user-card__cover-image",
-    "z-user-card__identity",
-    "z-user-card__avatar",
-    "z-user-card__presence",
-    "z-user-card__names",
-    "z-user-card__name",
     "z-user-card__handle",
+    "z-user-card__identity",
+    "z-user-card__name",
+    "z-user-card__names",
+    "z-user-card__overlay",
+    "z-user-card__photo",
+    "z-user-card__portrait",
+    "z-user-card__presence",
     "z-user-card__role",
-    "z-user-card__bio",
-    "z-user-card__stats",
     "z-user-card__stat",
-    "z-user-card__actions"
+    "z-user-card__stats",
+    "z-user-card__tagline"
   ],
   "a11y": "article con el nombre; el nombre es un encabezado (h3 por defecto). La portada es decorativa. Las estadísticas son una lista de pares (dl) que se lee «Followers 1.2k».",
   "behavior": "none",
@@ -78,6 +132,18 @@
     {
       "title": "Con portada",
       "code": "<UserCard user={{ name: \"Ana López\", handle: \"ana\", role: \"Design\", bio: \"Design systems and the odd typeface.\", presence: \"online\" }} stats={[{ label: \"Followers\", value: \"1.2k\" }, { label: \"Projects\", value: 34 }, { label: \"Reviews\", value: 210 }]} actions={<><Button variant=\"primary\" icon=\"user-plus\">Follow</Button><Button icon=\"chat-bubble-left-right\">Message</Button></>} />"
+    },
+    {
+      "title": "Perfil limpio",
+      "code": "<UserCard\n  variant=\"profile\"\n  user={{ name: \"Sam Rivers\", role: \"Photographer\", avatar: \"/img/people/sam.svg\", bio: \"Based in Sydney, I capture landscapes across the globe.\" }}\n  stats={[{ label: \"Countries\", value: 28 }, { label: \"Exhibitions\", value: 10 }, { label: \"Rating\", value: \"4.9\" }]}\n  actions={<><Button variant=\"primary\">Explore portfolio</Button><Button>Message</Button></>}\n/>"
+    },
+    {
+      "title": "Neón",
+      "code": "<UserCard variant=\"neon\" tone=\"danger\" user={{ name: \"Zainab Malik\", role: \"Marketing\", bio: \"Execution expert\", cover: \"/img/people/mia.svg\" }} href=\"/people/zainab\" />"
+    },
+    {
+      "title": "Retrato disponible",
+      "code": "<UserCard\n  variant=\"portrait\"\n  user={{ name: \"Emily Carter\", role: \"UI/UX Designer\", cover: \"/img/people/ana.svg\" }}\n  status={<Badge tone=\"success\" dot>Available</Badge>}\n  action={<IconButton variant=\"primary\" icon=\"paper-airplane\" label=\"Message Emily Carter\" />}\n/>"
     }
   ],
   "origin": "Card.Meta de Ant Design, User de HeroUI y las tarjetas de perfil de los bloques de shadcn."

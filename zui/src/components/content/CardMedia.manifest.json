@@ -23,20 +23,58 @@
     {
       "name": "placement",
       "type": "enum",
-      "values": ["top", "inset"],
+      "values": [
+        "top",
+        "inset",
+        "bleed"
+      ],
       "default": "top",
-      "description": "`top`: a sangre arriba con el radio interior de la tarjeta; `inset`: dentro del relleno con radio concéntrico."
+      "description": "`top`: a sangre arriba; `inset`: dentro del relleno con radio concéntrico; `bleed`: cubre la tarjeta y el contenido va encima, abajo, sobre el fundido."
     },
     {
       "name": "loading",
       "type": "enum",
-      "values": ["lazy", "eager"],
+      "values": [
+        "lazy",
+        "eager"
+      ],
       "default": "lazy"
+    },
+    {
+      "name": "scrim",
+      "type": "enum",
+      "values": [
+        "none",
+        "bottom",
+        "full"
+      ],
+      "description": "Fundido de legibilidad. Con bleed, bottom por defecto: cada pieza de texto va sobre el velo pleno (4.5:1 sobre cualquier imagen)."
+    },
+    {
+      "name": "tint",
+      "type": "boolean",
+      "default": false,
+      "description": "Tiñe el fundido con el tono de la tarjeta."
     }
   ],
-  "states": ["rest"],
-  "tokens": ["card-radius", "radius-xs", "surface-2", "fg-subtle"],
-  "classes": ["z-card__media", "z-aspect"],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "card-radius",
+    "radius-xs",
+    "surface-2",
+    "fg-subtle",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-fg",
+    "media-fg-muted",
+    "shadow-color"
+  ],
+  "classes": [
+    "z-card__media",
+    "z-aspect"
+  ],
   "a11y": "La imagen lleva alt; si la tarjeta ya nombra lo que muestra (título), alt=\"\" la deja como decorativa.",
   "examples": [
     {
@@ -46,6 +84,10 @@
     {
       "title": "Imagen dentro del relleno",
       "code": "<Card>\n  <CardMedia placement=\"inset\" ratio={4 / 3} src={cover} alt=\"Atlas dashboard\" />\n  <CardHeader title=\"Atlas\" />\n</Card>"
+    },
+    {
+      "title": "Foto a sangre con fundido",
+      "code": "<Card surface=\"elevated\" tone=\"success\">\n  <CardMedia placement=\"bleed\" tint src=\"/img/carousel/forest.svg\" alt=\"\" />\n  <CardHeader title=\"Lake House\" subtitle=\"Canada\" />\n</Card>"
     }
   ],
   "origin": "Card de producto de Shark UI.",

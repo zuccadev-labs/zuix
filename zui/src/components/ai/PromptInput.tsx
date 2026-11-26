@@ -7,13 +7,17 @@ import {
   type ComposerProps as CoreProps,
   type ComposerSend,
   type ComposerTool,
+  type ComposerVoice,
+  type ComposerContext,
 } from "../../core/composer-widget";
 import { useWidget } from "../agenda/vtree";
 import { withRef } from "../../react-compat";
 
 export type { ComposerModel as PromptModel, ComposerTool as PromptTool };
 
-export interface PromptInputProps extends Omit<CoreProps, "voice" | "replyTo" | "editing" | "mentions"> {
+export type { ComposerContext as PromptContext };
+
+export interface PromptInputProps extends Omit<CoreProps, "replyTo" | "editing" | "mentions"> {
   onValueChange?: (value: string) => void;
   /** Enviar el prompt (con sus adjuntos). */
   onSubmit?: (detail: ComposerSend) => void;
@@ -23,6 +27,12 @@ export interface PromptInputProps extends Omit<CoreProps, "voice" | "replyTo" | 
   onRemoveAttachment?: (detail: { id: string; name?: string }) => void;
   onModelChange?: (detail: { model: string }) => void;
   onToolToggle?: (detail: { id: string; active: boolean }) => void;
+  /** Quitar la cita (`quote`): botón de la ficha o Esc en el campo. */
+  onQuoteRemove?: () => void;
+  /** Quitar un contexto de `contexts`. */
+  onContextRemove?: (detail: { id: string }) => void;
+  /** Nota de voz grabada (`voice`). */
+  onVoice?: (detail: ComposerVoice) => void;
   id?: string;
   className?: string;
   ref?: Ref<HTMLDivElement>;
@@ -42,6 +52,9 @@ export const PromptInput = withRef(function PromptInput({
   onRemoveAttachment,
   onModelChange,
   onToolToggle,
+  onQuoteRemove,
+  onContextRemove,
+  onVoice,
   id,
   className,
   ref,
@@ -59,6 +72,9 @@ export const PromptInput = withRef(function PromptInput({
       "remove-attachment": onRemoveAttachment,
       "model-change": onModelChange,
       "tool-toggle": onToolToggle,
+      "quote-remove": onQuoteRemove,
+      "context-remove": onContextRemove,
+      voice: onVoice,
     },
   });
 });

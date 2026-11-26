@@ -1,0 +1,124 @@
+{
+  "name": "PricingCard",
+  "group": "content",
+  "status": "new",
+  "description": "Plan de precio de cristal sobre una mancha de color: precio grande, lista de características con check o cruz, CTA y, en el destacado, borde y halo del tono con su insignia.",
+  "import": "import { PricingCard, PricingTable } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "name",
+      "type": "ReactNode",
+      "required": true,
+      "description": "Nombre del plan."
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "price",
+      "type": "{ amount: number; currency: string; locale?: string; period?: ReactNode }",
+      "required": true
+    },
+    {
+      "name": "features",
+      "type": "PricingFeature[]",
+      "description": "{ label, included? }: incluida (check) o no (cruz, tachada)."
+    },
+    {
+      "name": "action",
+      "type": "ReactNode",
+      "description": "CTA (Button)."
+    },
+    {
+      "name": "featured",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "badge",
+      "type": "ReactNode",
+      "description": "Insignia del destacado («Most popular»)."
+    },
+    {
+      "name": "tone",
+      "type": "CardTone",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ]
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<PricingCardLabels>",
+      "description": "included, excluded: prefijos para lectores."
+    }
+  ],
+  "states": [
+    "rest",
+    "featured"
+  ],
+  "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "glass-bg",
+    "glass-border",
+    "accent-solid",
+    "fg-on-accent",
+    "fg-muted",
+    "line"
+  ],
+  "classes": [
+    "z-pricing-card",
+    "z-pricing-card__blob",
+    "z-pricing-card__price",
+    "z-pricing-card__features",
+    "z-pricing-card__feature"
+  ],
+  "a11y": "Lista de características: cada una dice para lectores si está incluida (no solo el icono ni el color); la no incluida va además tachada. Sin transparencias, el cristal pasa a superficie opaca.",
+  "examples": [
+    {
+      "title": "Plan destacado",
+      "code": "<PricingCard\n  featured\n  badge=\"Most popular\"\n  tone=\"info\"\n  name=\"Professional\"\n  price={{ amount: 39, currency: \"USD\", locale: \"en-US\", period: \"/ month\" }}\n  features={[{ label: \"Unlimited projects\" }, { label: \"Priority support\" }, { label: \"Audit log\", included: false }]}\n  action={<Button variant=\"primary\">Choose Professional</Button>}\n/>"
+    }
+  ]
+}

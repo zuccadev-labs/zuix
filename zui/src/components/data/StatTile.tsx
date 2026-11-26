@@ -14,8 +14,12 @@ export interface StatTileProps {
   /** Variación respecto al periodo anterior (por ejemplo "+12%"). */
   delta?: ReactNode;
   deltaTone?: Tone;
-  /** `glass` cristal, `solid` acento pleno, `soft` superficie tenue. */
-  variant?: "glass" | "solid" | "soft";
+  /** `glass` cristal, `solid` acento pleno, `soft` superficie tenue, `elevated` opaca con elevación por capas. */
+  variant?: "glass" | "solid" | "soft" | "elevated";
+  /** Color de la ficha del icono. */
+  tone?: "accent" | "info" | "success" | "warning" | "danger";
+  /** `inline`: icono a la derecha de la etiqueta; `stacked`: el icono en ficha arriba y la etiqueta debajo. */
+  layout?: "inline" | "stacked";
   /** Serie del minigráfico (tendencia) bajo el valor. */
   trend?: ReadonlyArray<number | null>;
   /** Forma, color y nombre del minigráfico. Por defecto, área con el color 1 y la etiqueta como nombre. */
@@ -34,6 +38,8 @@ export function StatTile({
   delta,
   deltaTone = "neutral",
   variant = "glass",
+  tone,
+  layout = "inline",
   trend,
   trendProps,
   onClick,
@@ -46,6 +52,8 @@ export function StatTile({
       onClick={onClick}
       className={cx("z-stat", variant === "glass" && "z-liquid", className)}
       data-variant={variant}
+      data-tone={tone}
+      data-layout={layout === "stacked" ? layout : undefined}
       data-interactive={onClick ? true : undefined}
     >
       <span className="z-stat__head">

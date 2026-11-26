@@ -2,15 +2,45 @@
   "name": "Backdrop",
   "group": "effects",
   "status": "new",
-  "description": "Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos o degradado de malla, con tres intensidades, desvanecido hacia los bordes y deriva lenta opcional. El dibujo es una capa aria-hidden sin puntero; el contenido va encima.",
+  "description": "Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos, malla de color o un patrón generado con semilla (estrellas, triángulos, cruces, píxeles, curvas de nivel, grano, semitono), con tres intensidades, desvanecido y deriva lenta opcional. El dibujo es una capa aria-hidden sin puntero; el contenido va encima.",
   "import": "import { Backdrop } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
-    { "name": "pattern", "type": "enum", "values": ["grid", "dots", "hex", "mesh"], "default": "grid" },
-    { "name": "intensity", "type": "enum", "values": ["subtle", "medium", "strong"], "default": "medium" },
+    {
+      "name": "pattern",
+      "type": "enum",
+      "values": [
+        "grid",
+        "dots",
+        "hex",
+        "mesh",
+        "stars",
+        "triangles",
+        "plus",
+        "pixels",
+        "contours",
+        "grain",
+        "halftone"
+      ],
+      "default": "grid"
+    },
+    {
+      "name": "intensity",
+      "type": "enum",
+      "values": [
+        "subtle",
+        "medium",
+        "strong"
+      ],
+      "default": "medium"
+    },
     {
       "name": "fade",
       "type": "enum",
-      "values": ["radial", "bottom", "none"],
+      "values": [
+        "radial",
+        "bottom",
+        "none"
+      ],
       "default": "radial",
       "description": "Desvanecido de la capa hacia los bordes."
     },
@@ -20,16 +50,71 @@
       "default": false,
       "description": "Deriva lenta (rejilla, puntos, hexágonos) o flujo de la malla; nunca con movimiento reducido."
     },
-    { "name": "cell", "type": "number", "default": 32, "description": "Lado de la celda en px." }
+    {
+      "name": "cell",
+      "type": "number",
+      "default": 32,
+      "description": "Lado de la celda en px."
+    },
+    {
+      "name": "seed",
+      "type": "number | string",
+      "description": "Semilla (core/pattern): la misma da siempre el mismo dibujo, en el servidor y en el navegador. Sin ella, la tesela por defecto de la hoja."
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "neutral",
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger",
+        "media"
+      ],
+      "default": "neutral",
+      "description": "Color del dibujo; `media` es claro, para una portada oscura."
+    }
   ],
-  "states": ["rest", "animated", "offscreen"],
-  "tokens": ["fg", "accent", "info", "success", "ease-standard"],
-  "classes": ["z-backdrop", "z-backdrop__layer", "z-backdrop__content"],
-  "cssVars": ["--z-backdrop-cell"],
+  "states": [
+    "rest",
+    "animated",
+    "offscreen"
+  ],
+  "tokens": [
+    "fg",
+    "accent",
+    "info",
+    "success",
+    "ease-standard",
+    "chart-3",
+    "grain-opacity",
+    "media-fg"
+  ],
+  "classes": [
+    "z-backdrop",
+    "z-backdrop__layer",
+    "z-backdrop__content"
+  ],
+  "cssVars": [
+    "--z-backdrop-cell",
+    "--z-pattern-tile",
+    "--z-pattern-size",
+    "--z-pattern-color",
+    "--z-pattern-x",
+    "--z-pattern-y",
+    "--z-pattern-rotate",
+    "--z-pattern-scale",
+    "--z-pattern-k",
+    "--z-mesh-x1",
+    "--z-mesh-y1",
+    "--z-mesh-c1"
+  ],
   "behavior": "none",
   "whenToUse": "Detrás de la cabecera de una página de producto, de un estado vacío o de una sección destacada, para dar profundidad al cristal.",
   "whenNotToUse": "Detrás de texto largo o de tablas densas: el texto de lectura va sobre una superficie opaca (Panel solid, Prose).",
-  "a11y": "Decorativo: la capa es aria-hidden y no recibe el puntero. Las líneas no pasan del 13 % del color del texto, así que el texto encima conserva su contraste. Con prefers-reduced-motion no deriva; con prefers-reduced-transparency baja a la mitad; con prefers-contrast: more y colores forzados desaparece. Fuera de pantalla la animación se detiene.",
+  "a11y": "Decorativo: la capa es aria-hidden y no recibe el puntero. Las líneas no pasan del 13 % del color del texto, así que el texto encima conserva su contraste. Con prefers-reduced-motion no deriva; con prefers-reduced-transparency baja a la mitad; con prefers-contrast: more y colores forzados desaparece. Fuera de pantalla la animación se detiene. Los patrones con semilla son teselas SVG periódicas usadas como máscara: su color sale del token, así que sirven en todas las marcas y temas.",
   "examples": [
     {
       "title": "Rejilla",
@@ -46,6 +131,14 @@
     {
       "title": "Malla de color",
       "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Liquid glass</strong></p>\n  </div>\n</Backdrop>"
+    },
+    {
+      "title": "Estrellas con semilla",
+      "code": "<Backdrop pattern=\"stars\" seed={3} fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Night sky</strong></p>\n  </div>\n</Backdrop>"
+    },
+    {
+      "title": "Curvas de nivel del acento",
+      "code": "<Backdrop pattern=\"contours\" seed=\"atlas\" tone=\"accent\" intensity=\"strong\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Atlas</strong></p>\n  </div>\n</Backdrop>"
     }
   ]
 }

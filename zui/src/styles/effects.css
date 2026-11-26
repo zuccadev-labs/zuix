@@ -11,6 +11,32 @@
     forzados las capas desaparecen y el texto vuelve a CanvasText.
   - El texto de color usa tokens -text (≥ 4,5:1). Nada en píldora: radios de tarjeta o de control.
 */
+/* Parámetros animables de los patrones: registrados para que una transición o una animación los interpole. */
+@property --z-pattern-x {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --z-pattern-y {
+  syntax: "<length-percentage>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --z-pattern-rotate {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+@property --z-pattern-scale {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --z-pattern-k {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
 @layer zui.effects {
   /* Tono de cada efecto: relleno o borde (no texto). */
   :is(.z-beam, .z-glow, .z-attention) {
@@ -92,18 +118,115 @@
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48' viewBox='0 0 28 48'%3E%3Cpath d='M14 0L28 8V24L14 32L0 24V8ZM14 32V48' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
     mask-size: var(--z-backdrop-tile-x) var(--z-backdrop-tile-y);
   }
-  /* Malla: manchas de color del acento, la información y el éxito, muy rebajadas. */
+  /* Malla: cuatro manchas de color. La semilla (core/pattern) las coloca y elige su color de la paleta de gráficos;
+     sin semilla, el reparto por defecto (acento, información, éxito y gráfico 3). */
   .z-backdrop[data-pattern="mesh"] .z-backdrop__layer::before {
     inset: -20%;
     filter: blur(var(--z-space-8));
     background:
-      radial-gradient(38% 46% at 22% 30%, color-mix(in srgb, var(--z-accent) calc(22% * var(--z-backdrop-k)), transparent), transparent 70%),
-      radial-gradient(34% 42% at 78% 22%, color-mix(in srgb, var(--z-info) calc(16% * var(--z-backdrop-k)), transparent), transparent 70%),
       radial-gradient(
-        42% 48% at 62% 82%,
-        color-mix(in srgb, var(--z-success) calc(12% * var(--z-backdrop-k)), transparent),
+        38% 46% at var(--z-mesh-x1, 22%) var(--z-mesh-y1, 30%),
+        color-mix(in srgb, var(--z-mesh-c1, var(--z-accent)) calc(22% * var(--z-backdrop-k)), transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        34% 42% at var(--z-mesh-x2, 78%) var(--z-mesh-y2, 22%),
+        color-mix(in srgb, var(--z-mesh-c2, var(--z-info)) calc(16% * var(--z-backdrop-k)), transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        42% 48% at var(--z-mesh-x3, 62%) var(--z-mesh-y3, 82%),
+        color-mix(in srgb, var(--z-mesh-c3, var(--z-success)) calc(12% * var(--z-backdrop-k)), transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        30% 36% at var(--z-mesh-x4, 12%) var(--z-mesh-y4, 88%),
+        color-mix(in srgb, var(--z-mesh-c4, var(--z-chart-3)) calc(10% * var(--z-backdrop-k)), transparent),
         transparent 72%
       );
+  }
+  /* Patrones con semilla (core/pattern): una tesela SVG periódica como máscara sobre el color del token. La hoja trae
+     la tesela de la semilla 1; `seed` en el componente (o --z-pattern-tile en el marcado) pone otra. Lo animable son
+     propiedades registradas: --z-pattern-x, --z-pattern-y, --z-pattern-rotate, --z-pattern-scale y --z-pattern-k. */
+  .z-backdrop[data-pattern="stars"] {
+    --z-pattern-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Ccircle cx='112.9' cy='0.5' r='1.09' fill-opacity='0.83'/%3E%3Ccircle cx='112.9' cy='180.5' r='1.09' fill-opacity='0.83'/%3E%3Ccircle cx='50.6' cy='110.3' r='0.67' fill-opacity='0.85'/%3E%3Ccircle cx='81.9' cy='88' r='0.65' fill-opacity='0.4'/%3E%3Ccircle cx='27.8' cy='88' r='0.65' fill-opacity='0.71'/%3E%3Ccircle cx='51.5' cy='34.4' r='0.67' fill-opacity='0.6'/%3E%3Ccircle cx='143.8' cy='53.1' r='0.84' fill-opacity='0.58'/%3E%3Ccircle cx='136.5' cy='34.7' r='0.69' fill-opacity='0.71'/%3E%3Ccircle cx='-1' cy='43.1' r='0.46' fill-opacity='0.44'/%3E%3Ccircle cx='179' cy='43.1' r='0.46' fill-opacity='0.44'/%3E%3Ccircle cx='74.4' cy='44.9' r='0.89' fill-opacity='0.6'/%3E%3Ccircle cx='22.9' cy='47.6' r='0.82' fill-opacity='0.77'/%3E%3Ccircle cx='42.9' cy='-1.9' r='0.65' fill-opacity='0.43'/%3E%3Ccircle cx='42.9' cy='178.1' r='0.65' fill-opacity='0.43'/%3E%3Ccircle cx='121.9' cy='171.5' r='0.87' fill-opacity='0.8'/%3E%3Ccircle cx='150.2' cy='168.1' r='0.38' fill-opacity='0.77'/%3E%3Ccircle cx='53' cy='158.6' r='1.05' fill-opacity='0.67'/%3E%3Cpath d='M29.9 118L30.6 121.1L33.7 121.8L30.6 122.5L29.9 125.6L29.2 122.5L26.1 121.8L29.2 121.1Z' fill-opacity='0.95'/%3E%3Ccircle cx='-4' cy='29.3' r='0.44' fill-opacity='0.49'/%3E%3Ccircle cx='176' cy='29.3' r='0.44' fill-opacity='0.49'/%3E%3Ccircle cx='58.4' cy='118.4' r='0.75' fill-opacity='0.3'/%3E%3Ccircle cx='145.4' cy='153.8' r='0.47' fill-opacity='0.43'/%3E%3Ccircle cx='160.9' cy='52.2' r='0.84' fill-opacity='0.58'/%3E%3Ccircle cx='58.4' cy='21.6' r='0.4' fill-opacity='0.43'/%3E%3Ccircle cx='121.6' cy='117.3' r='0.73' fill-opacity='0.56'/%3E%3Ccircle cx='38.1' cy='142.6' r='1.09' fill-opacity='0.82'/%3E%3Ccircle cx='156.6' cy='0.7' r='0.37' fill-opacity='0.84'/%3E%3Ccircle cx='156.6' cy='180.7' r='0.37' fill-opacity='0.84'/%3E%3Ccircle cx='59.3' cy='129.7' r='0.42' fill-opacity='0.4'/%3E%3Ccircle cx='156.6' cy='143.1' r='0.52' fill-opacity='0.31'/%3E%3Ccircle cx='26.8' cy='73.6' r='0.57' fill-opacity='0.78'/%3E%3Ccircle cx='56.2' cy='163.6' r='0.82' fill-opacity='0.65'/%3E%3Ccircle cx='42.2' cy='69.1' r='0.5' fill-opacity='0.41'/%3E%3Ccircle cx='167.6' cy='173.9' r='0.6' fill-opacity='0.3'/%3E%3Ccircle cx='6.6' cy='141.1' r='0.53' fill-opacity='0.34'/%3E%3Ccircle cx='147.8' cy='55.4' r='0.74' fill-opacity='0.51'/%3E%3Ccircle cx='123.5' cy='62.1' r='0.75' fill-opacity='0.71'/%3E%3Ccircle cx='143' cy='9.1' r='0.82' fill-opacity='0.64'/%3E%3Ccircle cx='5.4' cy='58.7' r='1' fill-opacity='0.64'/%3E%3Ccircle cx='64.6' cy='63.8' r='0.36' fill-opacity='0.8'/%3E%3Ccircle cx='97.2' cy='102.2' r='0.44' fill-opacity='0.29'/%3E%3C/svg%3E");
+    --z-pattern-size: 180px;
+  }
+  .z-backdrop[data-pattern="triangles"] {
+    --z-pattern-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpath d='M125.4 -3.9L129.3 2.8L121.6 2.8Z' fill-opacity='0.99'/%3E%3Cpath d='M125.4 196.1L129.3 202.8L121.6 202.8Z' fill-opacity='0.99'/%3E%3Cpath d='M-6.3 51.4L-2.2 58.6L-10.5 58.6Z' fill-opacity='0.8'/%3E%3Cpath d='M193.7 51.4L197.8 58.6L189.5 58.6Z' fill-opacity='0.8'/%3E%3Cpath d='M85.2 -5.2L88.8 1L81.6 1Z' fill-opacity='0.64'/%3E%3Cpath d='M85.2 194.8L88.8 201L81.6 201Z' fill-opacity='0.64'/%3E%3Cpath d='M27.8 77.4L30.7 82.4L24.9 82.4Z' fill-opacity='0.41'/%3E%3Cpath d='M97.8 9.6L101.2 15.4L94.4 15.4Z' fill-opacity='0.84'/%3E%3Cpath d='M57.2 35.7L59.3 39.4L55 39.4Z' fill-opacity='0.6'/%3E%3Cpath d='M118.1 156.2L121.1 161.5L115 161.5Z' fill-opacity='0.44'/%3E%3Cpath d='M131.6 103.8L136.3 111.9L127 111.9Z' fill-opacity='0.43'/%3E%3Cpath d='M144.2 85.4L148.9 93.5L139.5 93.5Z' fill-opacity='1'/%3E%3Cpath d='M47.9 148.5L50.4 152.9L45.3 152.9Z' fill-opacity='0.53'/%3E%3Cpath d='M82.6 46.9L85.2 51.3L80.1 51.3Z' fill-opacity='0.81'/%3E%3Cpath d='M115.3 22.1L118.2 27.1L112.3 27.1Z' fill-opacity='0.33'/%3E%3Cpath d='M124.4 169.9L127.3 174.8L121.6 174.8Z' fill-opacity='0.99'/%3E%3Cpath d='M143.7 76.9L146.7 82.2L140.6 82.2Z' fill-opacity='0.77'/%3E%3Cpath d='M190.5 179.6L195 187.2L186.1 187.2Z' fill-opacity='0.94'/%3E%3Cpath d='M166.9 184L169.3 188.2L164.5 188.2Z' fill-opacity='0.33'/%3E%3Cpath d='M173.7 53L178.8 61.8L168.7 61.8Z' fill-opacity='0.66'/%3E%3C/svg%3E");
+    --z-pattern-size: 200px;
+  }
+  .z-backdrop[data-pattern="plus"] {
+    --z-pattern-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath d='M-2.2 12.3h17.8v2.8h-17.8ZM5.3 4.8h2.8v17.8h-2.8Z' fill-opacity='0.98'/%3E%3Cpath d='M157.8 12.3h17.8v2.8h-17.8ZM165.3 4.8h2.8v17.8h-2.8Z' fill-opacity='0.98'/%3E%3Cpath d='M7.3 64.3h18v2.8h-18ZM14.9 56.7h2.8v18h-2.8Z' fill-opacity='0.65'/%3E%3Cpath d='M4 91.3h9v1.4h-9ZM7.8 87.5h1.4v9h-1.4Z' fill-opacity='0.45'/%3E%3Cpath d='M0 117.4h15.2v2.4h-15.2ZM6.4 111h2.4v15.2h-2.4Z' fill-opacity='0.54'/%3E%3Cpath d='M160 117.4h15.2v2.4h-15.2ZM166.4 111h2.4v15.2h-2.4Z' fill-opacity='0.54'/%3E%3Cpath d='M36.4 43.3h9.6v1.5h-9.6ZM40.5 39.2h1.5v9.6h-1.5Z' fill-opacity='0.48'/%3E%3Cpath d='M36.4 69.4h8.4v1.3h-8.4ZM40 65.9h1.3v8.4h-1.3Z' fill-opacity='0.82'/%3E%3Cpath d='M39.2 99.2h8.8v1.4h-8.8ZM42.9 95.5h1.4v8.8h-1.4Z' fill-opacity='0.84'/%3E%3Cpath d='M63.1 87.7h9.2v1.4h-9.2ZM67 83.8h1.4v9.2h-1.4Z' fill-opacity='0.38'/%3E%3Cpath d='M62.6 115.1h17.8v2.8h-17.8ZM70.1 107.6h2.8v17.8h-2.8Z' fill-opacity='0.82'/%3E%3Cpath d='M92.2 44.5h14.4v2.3h-14.4ZM98.3 38.4h2.3v14.4h-2.3Z' fill-opacity='0.95'/%3E%3Cpath d='M95.9 60.9h6.4v1.2h-6.4ZM98.5 58.3h1.2v6.4h-1.2Z' fill-opacity='0.91'/%3E%3Cpath d='M86.3 124.7h14.4v2.3h-14.4ZM92.4 118.6h2.3v14.4h-2.3Z' fill-opacity='0.46'/%3E%3Cpath d='M90.4 140.4h17.8v2.8h-17.8ZM97.9 132.9h2.8v17.8h-2.8Z' fill-opacity='0.46'/%3E%3Cpath d='M116.6 119.8h7v1.2h-7ZM119.5 116.9h1.2v7h-1.2Z' fill-opacity='0.88'/%3E%3Cpath d='M112.2 141.5h9.6v1.5h-9.6ZM116.3 137.4h1.5v9.6h-1.5Z' fill-opacity='0.93'/%3E%3Cpath d='M143.6 63.7h7.4v1.2h-7.4ZM146.7 60.6h1.2v7.4h-1.2Z' fill-opacity='0.44'/%3E%3Cpath d='M142.7 140.7h12v1.9h-12ZM147.8 135.6h1.9v12h-1.9Z' fill-opacity='0.69'/%3E%3C/svg%3E");
+    --z-pattern-size: 160px;
+  }
+  .z-backdrop[data-pattern="pixels"] {
+    --z-pattern-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Crect x='24' y='72' width='24' height='24' fill-opacity='0.69'/%3E%3Crect x='48' y='120' width='24' height='24' fill-opacity='0.35'/%3E%3Crect x='48' y='168' width='24' height='24' fill-opacity='0.32'/%3E%3Crect x='72' y='24' width='24' height='24' fill-opacity='0.43'/%3E%3Crect x='72' y='168' width='24' height='24' fill-opacity='0.31'/%3E%3Crect x='96' y='24' width='24' height='24' fill-opacity='0.53'/%3E%3Crect x='120' y='0' width='24' height='24' fill-opacity='0.37'/%3E%3Crect x='120' y='24' width='24' height='24' fill-opacity='0.61'/%3E%3Crect x='144' y='0' width='48' height='24' fill-opacity='0.88'/%3E%3Crect x='144' y='24' width='24' height='24' fill-opacity='0.64'/%3E%3Crect x='144' y='168' width='24' height='24' fill-opacity='0.53'/%3E%3Crect x='168' y='0' width='48' height='24' fill-opacity='0.55'/%3E%3Crect x='168' y='96' width='24' height='24' fill-opacity='0.49'/%3E%3C/svg%3E");
+    --z-pattern-size: 192px;
+  }
+  .z-backdrop[data-pattern="contours"] {
+    --z-pattern-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cpath d='M10 35L7 40M7 40L1 50M1 50L0 52M10 71L0 71M20 18L19 20M19 20L14 30M14 30L10 35M20 71L10 71M27 0L25 10M25 10L20 18M30 69L25 70M25 70L20 71M30 215L25 220M25 220L27 230M27 230L27 240M40 66L30 69M33 220L30 215M33 220L35 230M35 230L40 237M41 0L45 10M45 10L50 20M50 20L50 21M50 58L49 60M49 60L40 66M41 240L40 237M52 30L50 21M52 30L54 40M54 40L53 50M53 50L50 58M90 117L89 120M89 120L88 130M88 130L90 135M100 111L90 117M93 140L90 135M93 140L100 145M110 113L100 111M110 147L100 145M120 118L110 113M120 145L110 147M124 120L120 118M124 120L130 126M130 141L120 145M136 130L130 126M136 130L133 140M133 140L130 141M170 127L166 130M166 130L163 140M163 140L170 147M180 120L180 120M180 120L170 127M173 150L170 147M173 150L180 155M190 117L180 120M190 159L180 155M193 120L190 117M193 120L197 130M197 130L198 140M198 140L197 150M197 150L190 159M240 52L236 60M236 60L238 70M238 70L240 71M10 1L10 10M10 10L7 20M7 20L2 30M2 30L0 33M10 82L0 85M10 186L0 183M3 220L0 214M3 220L8 230M8 230L10 240M10 0L10 1M20 80L10 82M20 188L10 186M10 240L10 240M30 79L23 80M23 80L20 80M27 190L20 188M27 190L30 191M40 78L30 79M40 196L30 191M50 77L40 78M44 200L40 196M44 200L50 208M60 73L50 77M51 210L50 208M51 210L54 220M54 220L57 230M57 230L60 239M60 0L63 10M63 10L66 20M66 20L67 30M67 30L68 40M68 40L67 50M67 50L66 60M66 60L63 70M63 70L60 73M60 240L60 239M80 100L80 100M80 100L77 110M77 110L77 120M77 120L78 130M78 130L80 140M80 140L80 141M90 95L80 100M85 150L80 141M85 150L90 155M100 97L90 95M100 159L90 155M108 100L100 97M108 100L110 101M109 160L100 159M109 160L110 160M120 105L110 101M120 160L111 160M111 160L110 160M123 0L123 10M123 10L130 16M130 109L120 105M130 159L120 160M130 231L123 240M140 18L130 16M133 110L130 109M133 110L140 113M140 159L130 159M140 227L131 230M131 230L130 231M150 12L140 18M150 114L140 113M147 160L140 159M147 160L150 161M150 229L140 227M153 0L151 10M151 10L150 12M160 112L150 114M160 166L150 161M151 230L150 229M151 230L153 240M170 106L163 110M163 110L160 112M166 170L160 166M166 170L170 173M180 99L179 100M179 100L170 106M180 179L170 173M190 90L190 90M190 90L180 99M181 180L180 179M181 180L190 184M200 79L199 80M199 80L190 90M200 187L190 184M210 68L208 70M208 70L200 79M210 190L200 187M220 58L217 60M217 60L210 68M220 99L220 100M220 100L214 110M214 110L212 120M212 120L211 130M211 130L212 140M212 140L214 150M214 150L217 160M217 160L220 165M210 190L210 190M210 190L220 193M230 46L227 50M227 50L220 58M230 90L220 99M223 170L220 165M223 170L230 178M228 200L220 193M228 200L230 201M240 33L235 40M235 40L230 46M240 85L230 90M230 90L230 90M234 180L230 178M234 180L240 183M237 210L230 201M237 210L240 214M10 91L0 95M1 170L0 169M1 170L10 175M20 88L12 90M12 90L10 91M20 178L10 175M30 87L20 88M29 180L20 178M29 180L30 180M40 87L30 87M40 183L30 180M50 89L40 87M50 186L40 183M53 90L50 89M53 90L60 95M56 190L50 186M56 190L60 196M64 100L60 95M64 100L67 110M67 110L68 120M68 120L70 130M70 130L70 133M62 200L60 196M62 200L66 210M66 210L69 220M69 220L70 222M79 0L80 2M71 140L70 133M71 140L73 150M73 150L77 160M77 160L80 164M74 230L70 222M74 230L79 240M88 10L80 2M88 10L88 20M88 20L85 30M85 30L83 40M83 40L82 50M82 50L82 60M82 60L84 70M84 70L90 77M90 169L80 164M100 1L93 10M93 10L100 19M93 80L90 77M93 80L100 84M93 170L90 169M93 170L100 171M100 0L100 1M101 20L100 19M101 20L110 25M110 90L100 84M110 172L100 171M110 228L108 230M108 230L100 240M120 30L110 25M110 90L110 90M110 90L120 95M120 172L110 172M120 219L119 220M119 220L110 228M121 30L120 30M121 30L130 32M130 99L120 95M130 173L120 172M130 212L120 219M140 32L130 32M135 100L130 99M135 100L140 101M140 176L130 173M140 206L134 210M134 210L130 212M150 30L149 30M149 30L140 32M150 101L140 101M147 180L140 176M147 180L150 184M150 201L140 206M160 22L150 30M160 98L155 100M155 100L150 101M155 190L150 184M155 190L154 200M154 200L150 201M167 0L165 10M165 10L161 20M161 20L160 22M170 92L160 98M170 207L168 210M168 210L168 220M168 220L168 230M168 230L167 240M180 82L172 90M172 90L170 92M180 202L170 207M190 71L182 80M182 80L180 82M190 201L180 202M200 61L191 70M191 70L190 71M200 203L190 201M210 53L201 60M201 60L200 61M210 205L200 203M220 44L213 50M213 50L210 53M219 210L210 205M219 210L220 211M230 32L224 40M224 40L220 44M230 104L225 110M225 110L222 120M222 120L220 130M220 130L221 140M221 140L224 150M224 150L230 160M230 220L220 211M240 0L240 10M240 10L237 20M237 20L232 30M232 30L230 32M240 95L233 100M233 100L230 104M230 160L230 160M230 160L240 169M230 220L230 220M230 220L237 230M237 230L240 240M10 98L7 100M7 100L0 105M2 160L0 159M2 160L10 166M20 95L10 98M20 169L10 166M30 94L20 95M23 170L20 169M23 170L30 172M40 95L30 94M40 172L30 172M50 100L40 95M50 100L50 100M50 171L40 172M57 110L50 100M57 110L60 117M60 165L54 170M54 170L50 171M61 120L60 117M61 120L62 130M62 130L63 140M63 140L63 150M63 150L62 160M62 160L60 165M90 190L90 190M90 190L85 200M85 200L89 210M89 210L90 211M100 57L100 60M100 60L100 61M100 189L90 190M100 211L90 211M110 45L102 50M102 50L100 57M104 70L100 61M104 70L110 76M110 190L100 189M110 203L102 210M102 210L100 211M120 44L110 45M114 80L110 76M114 80L120 83M110 190L110 190M110 190L113 200M113 200L110 203M130 44L120 44M130 88L120 83M140 44L130 44M138 90L130 88M138 90L140 90M150 43L140 44M150 90L146 90M146 90L140 90M160 40L150 43M160 85L150 90M170 31L160 40M160 40L160 40M170 75L166 80M166 80L160 85M179 0L177 10M177 10L174 20M174 20L171 30M171 30L170 31M180 62L174 70M174 70L170 75M180 235L179 240M190 52L181 60M181 60L180 62M190 219L188 220M188 220L182 230M182 230L180 235M200 46L193 50M193 50L190 52M200 216L190 219M210 40L210 40M210 40L200 46M210 218L200 216M220 31L210 40M213 220L210 218M213 220L220 224M230 0L230 0M230 12L227 20M227 20L221 30M221 30L220 31M230 120L230 120M230 120L228 130M228 130L229 140M229 140L230 142M225 230L220 224M225 230L230 240M231 10L230 0M231 10L230 12M240 105L235 110M235 110L230 120M233 150L230 142M233 150L240 159M10 106L5 110M5 110L0 116M3 150L0 146M3 150L10 157M20 102L10 106M17 160L10 157M17 160L20 161M30 102L20 102M30 163L20 161M40 104L30 102M40 162L30 163M47 110L40 104M47 110L50 114M50 156L45 160M45 160L40 162M53 120L50 114M53 120L55 130M55 130L55 140M55 140L53 150M53 150L50 156M140 64L133 70M133 70L140 72M146 70L140 64M146 70L140 72M190 7L189 10M189 10L189 20M189 20L190 23M193 0L190 7M200 29L190 23M200 233L193 240M210 24L200 29M210 233L200 233M216 0L219 10M219 10L214 20M214 20L210 24M216 240L210 233M240 116L238 120M238 120L236 130M236 130L237 140M237 140L240 146M10 117L7 120M7 120L4 130M4 130L6 140M6 140L10 146M20 110L10 117M15 150L10 146M15 150L20 153M30 110L25 110M25 110L20 110M30 154L20 153M31 110L30 110M31 110L40 115M40 151L30 154M44 120L40 115M44 120L47 130M47 130L46 140M46 140L41 150M41 150L40 151' fill='none' stroke='black' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+    --z-pattern-size: 240px;
+  }
+  .z-backdrop[data-pattern="grain"] {
+    --z-pattern-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' seed='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.35'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    --z-pattern-size: 160px;
+  }
+  .z-backdrop[data-pattern="halftone"] {
+    --z-pattern-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Ccircle cx='0' cy='8' r='3'/%3E%3Ccircle cx='192' cy='8' r='3'/%3E%3Ccircle cx='8' cy='24' r='0.82'/%3E%3Ccircle cx='0' cy='40' r='0.55'/%3E%3Ccircle cx='192' cy='40' r='0.55'/%3E%3Ccircle cx='0' cy='72' r='2.32'/%3E%3Ccircle cx='192' cy='72' r='2.32'/%3E%3Ccircle cx='8' cy='88' r='6.02'/%3E%3Ccircle cx='0' cy='104' r='6.17'/%3E%3Ccircle cx='192' cy='104' r='6.17'/%3E%3Ccircle cx='8' cy='120' r='6.35'/%3E%3Ccircle cx='0' cy='136' r='2.92'/%3E%3Ccircle cx='192' cy='136' r='2.92'/%3E%3Ccircle cx='8' cy='152' r='1.39'/%3E%3Ccircle cx='0' cy='168' r='1.51'/%3E%3Ccircle cx='192' cy='168' r='1.51'/%3E%3Ccircle cx='8' cy='184' r='1.52'/%3E%3Ccircle cx='16' cy='8' r='0.74'/%3E%3Ccircle cx='24' cy='56' r='0.57'/%3E%3Ccircle cx='16' cy='72' r='3.34'/%3E%3Ccircle cx='24' cy='88' r='6.78'/%3E%3Ccircle cx='16' cy='104' r='8.28'/%3E%3Ccircle cx='24' cy='120' r='7.26'/%3E%3Ccircle cx='16' cy='136' r='4.15'/%3E%3Ccircle cx='24' cy='152' r='1.84'/%3E%3Ccircle cx='16' cy='168' r='0.56'/%3E%3Ccircle cx='24' cy='184' r='0.41'/%3E%3Ccircle cx='40' cy='56' r='1.16'/%3E%3Ccircle cx='32' cy='72' r='3.42'/%3E%3Ccircle cx='40' cy='88' r='5.22'/%3E%3Ccircle cx='32' cy='104' r='7.64'/%3E%3Ccircle cx='40' cy='120' r='5.92'/%3E%3Ccircle cx='32' cy='136' r='4.53'/%3E%3Ccircle cx='40' cy='152' r='2.72'/%3E%3Ccircle cx='32' cy='168' r='0.97'/%3E%3Ccircle cx='40' cy='184' r='1.16'/%3E%3Ccircle cx='48' cy='8' r='1.5'/%3E%3Ccircle cx='56' cy='24' r='2'/%3E%3Ccircle cx='48' cy='40' r='1.06'/%3E%3Ccircle cx='56' cy='56' r='2.11'/%3E%3Ccircle cx='48' cy='72' r='2.68'/%3E%3Ccircle cx='56' cy='88' r='2.57'/%3E%3Ccircle cx='48' cy='104' r='4.68'/%3E%3Ccircle cx='56' cy='120' r='3.36'/%3E%3Ccircle cx='48' cy='136' r='4.05'/%3E%3Ccircle cx='56' cy='152' r='3.67'/%3E%3Ccircle cx='48' cy='168' r='2.5'/%3E%3Ccircle cx='56' cy='184' r='2.76'/%3E%3Ccircle cx='64' cy='8' r='2.83'/%3E%3Ccircle cx='72' cy='24' r='3.22'/%3E%3Ccircle cx='64' cy='40' r='2.87'/%3E%3Ccircle cx='72' cy='56' r='3.35'/%3E%3Ccircle cx='64' cy='72' r='2.1'/%3E%3Ccircle cx='72' cy='88' r='0.77'/%3E%3Ccircle cx='64' cy='104' r='1.42'/%3E%3Ccircle cx='72' cy='120' r='1.32'/%3E%3Ccircle cx='64' cy='136' r='3.31'/%3E%3Ccircle cx='72' cy='152' r='4.25'/%3E%3Ccircle cx='64' cy='168' r='3.95'/%3E%3Ccircle cx='72' cy='184' r='3.56'/%3E%3Ccircle cx='80' cy='8' r='2.88'/%3E%3Ccircle cx='88' cy='24' r='3.27'/%3E%3Ccircle cx='80' cy='40' r='4.17'/%3E%3Ccircle cx='88' cy='56' r='4.62'/%3E%3Ccircle cx='80' cy='72' r='2.47'/%3E%3Ccircle cx='88' cy='88' r='0.73'/%3E%3Ccircle cx='88' cy='120' r='0.71'/%3E%3Ccircle cx='80' cy='136' r='2.88'/%3E%3Ccircle cx='88' cy='152' r='4.24'/%3E%3Ccircle cx='80' cy='168' r='4.3'/%3E%3Ccircle cx='88' cy='184' r='2.91'/%3E%3Ccircle cx='96' cy='8' r='1.87'/%3E%3Ccircle cx='104' cy='24' r='2.81'/%3E%3Ccircle cx='96' cy='40' r='4.71'/%3E%3Ccircle cx='104' cy='56' r='5.46'/%3E%3Ccircle cx='96' cy='72' r='3.56'/%3E%3Ccircle cx='104' cy='88' r='1.66'/%3E%3Ccircle cx='104' cy='120' r='1'/%3E%3Ccircle cx='96' cy='136' r='2.81'/%3E%3Ccircle cx='104' cy='152' r='3.77'/%3E%3Ccircle cx='96' cy='168' r='3.59'/%3E%3Ccircle cx='104' cy='184' r='1.78'/%3E%3Ccircle cx='112' cy='8' r='1.33'/%3E%3Ccircle cx='120' cy='24' r='3.02'/%3E%3Ccircle cx='112' cy='40' r='4.8'/%3E%3Ccircle cx='120' cy='56' r='5.44'/%3E%3Ccircle cx='112' cy='72' r='4.28'/%3E%3Ccircle cx='120' cy='88' r='2.08'/%3E%3Ccircle cx='112' cy='104' r='0.64'/%3E%3Ccircle cx='120' cy='120' r='1.08'/%3E%3Ccircle cx='112' cy='136' r='2.63'/%3E%3Ccircle cx='120' cy='152' r='3.14'/%3E%3Ccircle cx='112' cy='168' r='2.8'/%3E%3Ccircle cx='120' cy='184' r='1.71'/%3E%3Ccircle cx='128' cy='8' r='2.42'/%3E%3Ccircle cx='136' cy='24' r='4.2'/%3E%3Ccircle cx='128' cy='40' r='4.82'/%3E%3Ccircle cx='136' cy='56' r='4.51'/%3E%3Ccircle cx='128' cy='72' r='3.81'/%3E%3Ccircle cx='136' cy='88' r='1.45'/%3E%3Ccircle cx='128' cy='104' r='0.64'/%3E%3Ccircle cx='136' cy='120' r='0.57'/%3E%3Ccircle cx='128' cy='136' r='2.01'/%3E%3Ccircle cx='136' cy='152' r='2.59'/%3E%3Ccircle cx='128' cy='168' r='2.77'/%3E%3Ccircle cx='136' cy='184' r='3.16'/%3E%3Ccircle cx='144' cy='8' r='4.62'/%3E%3Ccircle cx='152' cy='24' r='5.35'/%3E%3Ccircle cx='144' cy='40' r='4.67'/%3E%3Ccircle cx='152' cy='56' r='3.04'/%3E%3Ccircle cx='144' cy='72' r='2.42'/%3E%3Ccircle cx='152' cy='88' r='0.73'/%3E%3Ccircle cx='144' cy='136' r='1.2'/%3E%3Ccircle cx='152' cy='152' r='2.16'/%3E%3Ccircle cx='144' cy='168' r='3.38'/%3E%3Ccircle cx='152' cy='184' r='4.92'/%3E%3Ccircle cx='160' cy='8' r='6.09'/%3E%3Ccircle cx='168' cy='24' r='5.13'/%3E%3Ccircle cx='160' cy='40' r='3.91'/%3E%3Ccircle cx='168' cy='56' r='1.62'/%3E%3Ccircle cx='160' cy='72' r='1.25'/%3E%3Ccircle cx='168' cy='88' r='1.36'/%3E%3Ccircle cx='160' cy='104' r='0.65'/%3E%3Ccircle cx='168' cy='120' r='1.32'/%3E%3Ccircle cx='160' cy='136' r='0.9'/%3E%3Ccircle cx='168' cy='152' r='1.75'/%3E%3Ccircle cx='160' cy='168' r='3.68'/%3E%3Ccircle cx='168' cy='184' r='5.3'/%3E%3Ccircle cx='176' cy='8' r='5.41'/%3E%3Ccircle cx='184' cy='24' r='3.22'/%3E%3Ccircle cx='176' cy='40' r='2.37'/%3E%3Ccircle cx='184' cy='56' r='0.69'/%3E%3Ccircle cx='176' cy='72' r='1.27'/%3E%3Ccircle cx='184' cy='88' r='3.59'/%3E%3Ccircle cx='176' cy='104' r='2.92'/%3E%3Ccircle cx='184' cy='120' r='3.79'/%3E%3Ccircle cx='176' cy='136' r='1.56'/%3E%3Ccircle cx='184' cy='152' r='1.43'/%3E%3Ccircle cx='176' cy='168' r='2.94'/%3E%3Ccircle cx='184' cy='184' r='3.76'/%3E%3C/svg%3E");
+    --z-pattern-size: 192px;
+  }
+  .z-backdrop:is(
+      [data-pattern="stars"],
+      [data-pattern="triangles"],
+      [data-pattern="plus"],
+      [data-pattern="pixels"],
+      [data-pattern="contours"],
+      [data-pattern="grain"],
+      [data-pattern="halftone"]
+    )
+    .z-backdrop__layer {
+    --z-backdrop-tile-x: var(--z-pattern-size);
+    --z-backdrop-tile-y: var(--z-pattern-size);
+  }
+  .z-backdrop:is(
+      [data-pattern="stars"],
+      [data-pattern="triangles"],
+      [data-pattern="plus"],
+      [data-pattern="pixels"],
+      [data-pattern="contours"],
+      [data-pattern="grain"],
+      [data-pattern="halftone"]
+    )
+    .z-backdrop__layer::before {
+    background-color: var(--z-pattern-color, color-mix(in srgb, var(--z-fg) 32%, transparent));
+    mask-image: var(--z-pattern-tile);
+    mask-size: var(--z-pattern-size) var(--z-pattern-size);
+    opacity: min(1, calc(0.7 * var(--z-backdrop-k) * var(--z-pattern-k, 1)));
+    transform: translate(var(--z-pattern-x, 0px), var(--z-pattern-y, 0px)) rotate(var(--z-pattern-rotate, 0deg)) scale(var(--z-pattern-scale, 1));
+    transform-origin: 50% 50%;
+  }
+  .z-backdrop[data-tone="accent"] {
+    --z-pattern-color: var(--z-accent);
+  }
+  .z-backdrop[data-tone="info"] {
+    --z-pattern-color: var(--z-info);
+  }
+  .z-backdrop[data-tone="success"] {
+    --z-pattern-color: var(--z-success);
+  }
+  .z-backdrop[data-tone="warning"] {
+    --z-pattern-color: var(--z-warning);
+  }
+  .z-backdrop[data-tone="danger"] {
+    --z-pattern-color: var(--z-danger);
+  }
+  .z-backdrop[data-tone="media"] {
+    --z-pattern-color: var(--z-media-fg);
+  }
+  .z-backdrop[data-pattern="grain"] .z-backdrop__layer::before {
+    background-color: var(--z-pattern-color, var(--z-fg));
+    opacity: calc(var(--z-grain-opacity) * var(--z-backdrop-k) * var(--z-pattern-k, 1));
   }
   @media (prefers-reduced-motion: no-preference) {
     .z-backdrop[data-animated]:not([data-pattern="mesh"]) .z-backdrop__layer::before {

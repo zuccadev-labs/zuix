@@ -89,6 +89,7 @@ const COVERED = [
   "zui/src/core/carousel-effects.ts",
   "zui/src/core/carousel-loop.ts",
   "zui/src/core/keylines.ts",
+  "zui/src/core/pattern.ts",
   "zui/src/core/stories.ts",
   "zui/src/core/zoom.ts",
   "zui/src/core/skeleton.ts",

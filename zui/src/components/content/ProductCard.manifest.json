@@ -1,0 +1,147 @@
+{
+  "name": "ProductCard",
+  "group": "content",
+  "status": "new",
+  "description": "Tarjeta de producto o de alojamiento: foto a sangre que se funde hacia el tono con el precio grande encima y una acción de cristal, o foto inset con sus propias esquinas, el texto debajo y la acción a todo el ancho.",
+  "import": "import { ProductCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "subtitle",
+      "type": "ReactNode"
+    },
+    {
+      "name": "image",
+      "type": "{ src: string; alt?: string }",
+      "description": "Foto; alt vacío si el título ya nombra lo que se ve."
+    },
+    {
+      "name": "media",
+      "type": "ReactNode",
+      "description": "Media propia si no hay foto."
+    },
+    {
+      "name": "price",
+      "type": "{ amount, currency, locale?, previous?, unit?, trimZeros? }",
+      "description": "Precio (PriceTag)."
+    },
+    {
+      "name": "layout",
+      "type": "enum",
+      "values": [
+        "bleed",
+        "inset"
+      ],
+      "default": "bleed"
+    },
+    {
+      "name": "tone",
+      "type": "CardTone",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "description": "Color del fundido y del brillo."
+    },
+    {
+      "name": "badge",
+      "type": "ReactNode",
+      "description": "Ficha arriba a la izquierda (valoración)."
+    },
+    {
+      "name": "corner",
+      "type": "ReactNode",
+      "description": "Acción arriba a la derecha (favorito)."
+    },
+    {
+      "name": "action",
+      "type": "ReactNode",
+      "description": "Acción principal: Button glass sobre la foto, primary en inset."
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "description": "El título enlaza y cubre la tarjeta."
+    },
+    {
+      "name": "ratio",
+      "type": "number | string",
+      "description": "Proporción de la foto (inset, 4 / 3) o de la zona de foto (bleed, 1)."
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus"
+  ],
+  "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset"
+  ],
+  "classes": [
+    "z-product-card",
+    "z-product-card__body",
+    "z-product-card__price",
+    "z-product-card__badge",
+    "z-card__corner",
+    "z-card__media"
+  ],
+  "a11y": "article. A sangre, cada pieza de texto va sobre el velo pleno (media-scrim o media-scrim-tinted): 4.5:1 sobre cualquier foto. El precio anterior se anuncia con PriceTag. La ficha y el favorito quedan por encima del enlace extendido.",
+  "examples": [
+    {
+      "title": "A sangre con precio y CTA de cristal",
+      "code": "<ProductCard\n  tone=\"info\"\n  image={{ src: \"/img/carousel/glacier.svg\", alt: \"\" }}\n  title=\"Glacier shell jacket\"\n  subtitle=\"Wind-proof, packable\"\n  price={{ amount: 256, currency: \"USD\", locale: \"en-US\", trimZeros: true }}\n  action={<Button variant=\"glass\">Buy now</Button>}\n  href=\"/shop/glacier\"\n/>"
+    },
+    {
+      "title": "Alojamiento con valoración y favorito",
+      "code": "<ProductCard\n  tone=\"success\"\n  image={{ src: \"/img/carousel/forest.svg\", alt: \"\" }}\n  title=\"Lake House, Canada\"\n  price={{ amount: 96, currency: \"USD\", locale: \"en-US\", unit: \"/ night\", trimZeros: true }}\n  badge=\"4.96 · 18 reviews\"\n  corner={<IconButton variant=\"glass\" icon=\"heart\" label=\"Save\" />}\n/>"
+    },
+    {
+      "title": "Inset con datos y reserva",
+      "code": "<ProductCard\n  layout=\"inset\"\n  image={{ src: \"/img/carousel/mist.svg\", alt: \"\" }}\n  title=\"Iceland Cabin\"\n  price={{ amount: 680, currency: \"USD\", locale: \"en-US\", unit: \"per night\", trimZeros: true }}\n  subtitle=\"Cozy cabin with views of the mountains and the northern lights.\"\n  action={<Button variant=\"primary\" size=\"lg\">Reserve</Button>}\n>\n  <StatGroup items={[{ label: \"Days\", value: 3 }, { label: \"Rating\", value: \"4.9\" }]} />\n</ProductCard>"
+    }
+  ]
+}

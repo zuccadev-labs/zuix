@@ -1,0 +1,92 @@
+{
+  "name": "PaymentCard",
+  "group": "dashboard",
+  "status": "new",
+  "description": "Tarjeta bancaria de metal cepillado con grano, chip EMV en CSS, símbolo sin contacto y el número oculto salvo las cuatro últimas cifras.",
+  "import": "import { PaymentCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "last4",
+      "type": "string",
+      "required": true,
+      "description": "Últimas cuatro cifras; el resto no se pinta nunca."
+    },
+    {
+      "name": "holder",
+      "type": "string"
+    },
+    {
+      "name": "expires",
+      "type": "string"
+    },
+    {
+      "name": "issuer",
+      "type": "ReactNode"
+    },
+    {
+      "name": "network",
+      "type": "ReactNode",
+      "description": "Logotipo de la red (lo aporta la aplicación)."
+    },
+    {
+      "name": "contactless",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ],
+      "default": "accent"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<PaymentCardLabels>",
+      "description": "card («Card ending in {last4}»), holder, expires."
+    }
+  ],
+  "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "fg-on-accent",
+    "accent-solid",
+    "font-mono"
+  ],
+  "classes": [
+    "z-payment-card",
+    "z-payment-card__chip",
+    "z-payment-card__number",
+    "z-payment-card__field"
+  ],
+  "a11y": "article con nombre «Card ending in 4242». Los puntos del número son aria-hidden; el lector oye las cuatro cifras.",
+  "examples": [
+    {
+      "title": "Tarjeta de metal",
+      "code": "<PaymentCard issuer=\"zuix bank\" holder=\"Ana Ruiz\" last4=\"4242\" expires=\"08/29\" />"
+    }
+  ]
+}

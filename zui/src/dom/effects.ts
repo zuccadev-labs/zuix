@@ -2,7 +2,9 @@
 //
 // DotMatrix   .z-dotmatrix[data-pattern]: si llega sin puntos, los dibuja (data-cols, data-rows); en pausa fuera de
 //             pantalla. setDotMatrixPattern(el, patrón, { cols, rows }) lo redibuja.
-// Backdrop    .z-backdrop[data-animated]: en pausa fuera de pantalla.
+// Backdrop    .z-backdrop[data-animated]: en pausa fuera de pantalla. .z-backdrop[data-seed]: si llega sin la tesela de
+//             su semilla (--z-pattern-tile o las manchas de la malla), la escribe. setBackdropPattern(el, patrón, semilla)
+//             cambia de dibujo.
 // BorderBeam  .z-beam: en pausa fuera de pantalla. Si llega sin anillo, lo añade.
 // Glow        .z-glow: escribe --z-glow-x/--z-glow-y al mover un puntero que no es táctil (un fotograma por vez).
 // Attention   .z-attention[data-active]: en pausa fuera de pantalla.
@@ -10,6 +12,7 @@
 //             el texto entero para los lectores); con data-trigger="visible" espera a entrar en pantalla.
 import { dotDuration, dotGrid, dotMatrixCells, dotMotion, dotValue, isDotPattern, type DotPattern } from "../core/dotmatrix";
 import { glowPoint, splitText, type TextSplit } from "../core/effects";
+import { patternVars, type PatternName } from "../core/pattern";
 import { pauseOffscreen } from "../core/visibility";
 import { inDom } from "./forms-popup";
 import type { Listen } from "./shared";
@@ -40,6 +43,17 @@ export function setDotMatrixPattern(el: HTMLElement, pattern: DotPattern, size: 
       return dot;
     }),
   );
+}
+
+const PATTERN_VARS = ["--z-pattern-tile", "--z-pattern-size", ...[1, 2, 3, 4].flatMap((i) => [`--z-mesh-x${i}`, `--z-mesh-y${i}`, `--z-mesh-c${i}`])];
+
+/** Cambia el dibujo de un Backdrop: patrón y semilla (core/pattern). Sin semilla, el de la hoja. */
+export function setBackdropPattern(el: HTMLElement, pattern: PatternName, seed?: number | string): void {
+  for (const name of PATTERN_VARS) el.style.removeProperty(name);
+  el.dataset.pattern = pattern;
+  if (seed === undefined) delete el.dataset.seed;
+  else el.dataset.seed = String(seed);
+  for (const [name, value] of Object.entries(seed === undefined ? {} : patternVars(pattern, seed))) el.style.setProperty(name, value);
 }
 
 /** Parte el texto de un TextEffect de aparición en piezas (si llega sin partir). */
@@ -133,6 +147,10 @@ export function hydrate(root: ParentNode): void {
       el.append(ring);
     }
     pauseOffscreen(el);
+  }
+  for (const el of pick(root, ".z-backdrop[data-seed]")) {
+    const has = el.style.getPropertyValue("--z-pattern-tile") || el.style.getPropertyValue("--z-mesh-x1");
+    if (!has) setBackdropPattern(el, (el.dataset.pattern ?? "grid") as PatternName, el.dataset.seed);
   }
   for (const el of pick(root, ".z-backdrop[data-animated], .z-attention[data-active], .z-texteffect[data-animated]")) pauseOffscreen(el);
   for (const el of pick(root, '.z-texteffect:is([data-effect="reveal"], [data-effect="blur"])')) {

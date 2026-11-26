@@ -1,0 +1,94 @@
+{
+  "name": "OfferCard",
+  "group": "content",
+  "status": "new",
+  "description": "Tarjeta elevada de oferta o de perfil profesional: avatar, título, datos con icono, fichas de estado, tarifa destacada, descripción y fila de acciones.",
+  "import": "import { OfferCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "avatar",
+      "type": "{ name: string; src?: string }"
+    },
+    {
+      "name": "meta",
+      "type": "OfferCardMeta[]",
+      "description": "{ icon?, label }: ubicación, guardado hace…"
+    },
+    {
+      "name": "tags",
+      "type": "ReactNode",
+      "description": "Fichas (Badge)."
+    },
+    {
+      "name": "aside",
+      "type": "ReactNode",
+      "description": "Dato destacado a la derecha (tarifa)."
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode"
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "description": "El título enlaza y cubre la tarjeta."
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3"
+    }
+  ],
+  "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "success-text",
+    "fg-muted"
+  ],
+  "classes": [
+    "z-offer-card",
+    "z-offer-card__head",
+    "z-offer-card__meta",
+    "z-offer-card__aside",
+    "z-offer-card__actions"
+  ],
+  "a11y": "article. Los datos llevan texto además del icono; la tarifa usa success-text (4.5:1).",
+  "examples": [
+    {
+      "title": "Oferta con fichas",
+      "code": "<OfferCard\n  title=\"Landing page designer\"\n  meta={[{ icon: \"bookmark\", label: \"Saved 2 days ago\" }]}\n  tags={<><Badge tone=\"success\" icon=\"banknotes\">$600</Badge><Badge tone=\"info\" icon=\"clock\">1 week</Badge></>}\n  description=\"A clean, modern landing page for a dental SaaS product.\"\n  actions={<><Button variant=\"primary\" icon=\"paper-airplane\">Apply</Button><Button variant=\"danger\" icon=\"trash\">Remove</Button></>}\n/>"
+    }
+  ]
+}

@@ -48,3 +48,5 @@ export {
   type FilterOption,
   type FilterValue,
 } from "./FilterBar";
+export { StatGroup, type StatGroupProps, type StatGroupItem } from "./StatGroup";
+export { RangeHistogram, type RangeHistogramProps } from "./RangeHistogram";

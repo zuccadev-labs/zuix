@@ -1,0 +1,71 @@
+{
+  "name": "CategoryTile",
+  "group": "content",
+  "status": "new",
+  "description": "Mosaico de categoría: un enlace con relleno de color pleno, icono en ficha, flecha en la esquina, título y cifra.",
+  "import": "import { CategoryTile } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "count",
+      "type": "ReactNode"
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "required": true
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ],
+      "default": "accent"
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus"
+  ],
+  "tokens": [
+    "accent-solid",
+    "success-solid",
+    "info-solid",
+    "warning-solid",
+    "danger-solid",
+    "fg-on-accent",
+    "card-radius",
+    "elevation-2",
+    "elevation-3",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-category-tile",
+    "z-category-tile__icon",
+    "z-category-tile__arrow",
+    "z-category-tile__title",
+    "z-category-tile__count"
+  ],
+  "a11y": "Un solo enlace: su nombre es el título y la cifra. Texto fg-on-accent sobre *-solid. La flecha se refleja en RTL.",
+  "examples": [
+    {
+      "title": "Hoteles",
+      "code": "<CategoryTile href=\"/hotels\" icon=\"building-office\" title=\"Hotels\" count=\"1.4k\" />"
+    }
+  ]
+}

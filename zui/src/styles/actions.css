@@ -127,6 +127,24 @@
     --z-btn-line: var(--z-line-strong);
     --z-btn-shine: 0 0 transparent;
   }
+  /* Cristal sobre una foto o una portada oscura: velo oscuro desenfocado con texto claro (media-fg sobre media-chip-bg,
+     4.5:1 sobre cualquier imagen). Sin transparencias, el velo opaco del fundido. */
+  .z-btn--glass {
+    --z-btn-bg: var(--z-media-chip-bg);
+    --z-btn-bg-hover: var(--z-media-scrim);
+    --z-btn-fg: var(--z-media-fg);
+    --z-btn-line: color-mix(in srgb, var(--z-media-fg) 26%, transparent);
+    --z-btn-shine: inset 0 1px 0 color-mix(in srgb, var(--z-media-fg) 30%, transparent);
+    -webkit-backdrop-filter: blur(var(--z-space-4)) saturate(160%);
+    backdrop-filter: blur(var(--z-space-4)) saturate(160%);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .z-btn--glass {
+      --z-btn-bg: var(--z-media-scrim);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
   /* Enlace: texto de acento subrayado al pasar. Sigue siendo un botón (acción, no navegación). */
   .z-btn--link {
     --z-btn-bg: transparent;

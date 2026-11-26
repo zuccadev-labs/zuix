@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 237,
+ "count": 249,
  "groups": {
   "actions": [
    "Button",
@@ -36,6 +36,7 @@
    "BranchPicker",
    "Citation",
    "Markdown",
+   "ModelPicker",
    "PromptInput",
    "Reasoning",
    "Sources",
@@ -83,11 +84,14 @@
    "AspectRatio",
    "Callout",
    "Card",
+   "CardBanner",
    "CardFooter",
    "CardHeader",
    "CardMedia",
+   "CategoryTile",
    "CodeBlock",
    "Divider",
+   "FeatureCard",
    "FormatByte",
    "FormatDate",
    "FormatDuration",
@@ -95,7 +99,11 @@
    "Highlight",
    "JsonTree",
    "Marquee",
+   "OfferCard",
    "Panel",
+   "PricingCard",
+   "PricingTable",
+   "ProductCard",
    "Prose",
    "RelativeTime",
    "ScrollArea",
@@ -103,6 +111,7 @@
   ],
   "dashboard": [
    "ActivityFeed",
+   "BalanceCard",
    "BarList",
    "DashboardGrid",
    "DeltaBadge",
@@ -112,6 +121,7 @@
    "Leaderboard",
    "MetricCard",
    "MetricGroup",
+   "PaymentCard",
    "ProgressGoal",
    "Tracker"
   ],
@@ -130,9 +140,11 @@
    "PriceBreakdown",
    "PriceTag",
    "Progress",
+   "RangeHistogram",
    "Rating",
    "ReviewCard",
    "ReviewSummary",
+   "StatGroup",
    "StatTile",
    "StatusDot",
    "SummaryList",
@@ -294,10 +306,11 @@
       "outline",
       "ghost",
       "link",
-      "danger"
+      "danger",
+      "glass"
      ],
      "default": "secondary",
-     "description": "Intención. `outline`: contorno sin relleno. `link`: aspecto de enlace para una acción secundaria dentro de un texto o una barra (sigue siendo un botón; para navegar, `Link`)."
+     "description": "Intención. `outline`: contorno sin relleno. `link`: aspecto de enlace para una acción secundaria dentro de un texto o una barra (sigue siendo un botón; para navegar, `Link`). `glass`: velo oscuro desenfocado con texto claro, para ir sobre una foto o una portada."
     },
     {
      "name": "size",
@@ -395,7 +408,10 @@
     "space-2",
     "space-5",
     "text-caption",
-    "text-title"
+    "text-title",
+    "media-chip-bg",
+    "media-fg",
+    "media-scrim"
    ],
    "classes": [
     "z-btn"
@@ -965,9 +981,11 @@
       "secondary",
       "outline",
       "ghost",
-      "danger"
+      "danger",
+      "glass"
      ],
-     "default": "ghost"
+     "default": "ghost",
+     "description": "`glass`: velo oscuro desenfocado con texto claro, para ir sobre una foto o una portada."
     },
     {
      "name": "size",
@@ -1060,7 +1078,10 @@
     "control-height-xs",
     "control-height-xl",
     "control-radius-xl",
-    "radius-xs"
+    "radius-xs",
+    "media-chip-bg",
+    "media-fg",
+    "media-scrim"
    ],
    "classes": [
     "z-btn",
@@ -3421,6 +3442,99 @@
    "file": "zui/src/components/ai/Markdown.manifest.json"
   },
   {
+   "name": "ModelPicker",
+   "group": "ai",
+   "status": "new",
+   "description": "Selector de modelo como menú: interruptores de opciones (Auto, varios modelos), modelos con su marca y etiqueta (Beta, Soon) y la marca del elegido al final, submenú «More models» e interruptor al pie (chat temporal).",
+   "import": "import { ModelPicker } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "models",
+     "type": "ModelPickerModel[]",
+     "required": true,
+     "description": "{ id, label, icon?, media?, badge?, disabled? }"
+    },
+    {
+     "name": "more",
+     "type": "ModelPickerModel[]",
+     "description": "Submenú."
+    },
+    {
+     "name": "value",
+     "type": "string"
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(id: string) => void"
+    },
+    {
+     "name": "options",
+     "type": "ModelPickerToggle[]",
+     "description": "{ id, label, icon?, checked }: interruptores encima."
+    },
+    {
+     "name": "toggles",
+     "type": "ModelPickerToggle[]",
+     "description": "Interruptores al pie."
+    },
+    {
+     "name": "onToggle",
+     "type": "(detail: { id, checked }) => void"
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "sm"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ModelPickerLabels>",
+     "description": "trigger («Model: {model}»), options, models, more."
+    }
+   ],
+   "states": [
+    "closed",
+    "open"
+   ],
+   "tokens": [
+    "accent-soft",
+    "accent-solid",
+    "fg-on-accent",
+    "control-border",
+    "control-bg",
+    "line",
+    "surface-3"
+   ],
+   "classes": [
+    "z-model-picker",
+    "z-menu__switch",
+    "z-menu__badge"
+   ],
+   "behavior": "dom",
+   "a11y": "Patrón APG «menu button» de Menu: modelos como menuitemradio, interruptores como menuitemcheckbox (Espacio los cambia sin cerrar). Las marcas de los modelos las aporta la aplicación y son decorativas.",
+   "examples": [
+    {
+     "title": "Modelos y opciones",
+     "code": "<ModelPicker\n  defaultValue=\"aurora-3\"\n  options={[{ id: \"auto\", label: \"Auto\", checked: false }]}\n  models={[\n    { id: \"aurora-3\", label: \"Aurora 3\", icon: \"sparkles\", badge: \"Beta\" },\n    { id: \"orbit\", label: \"Orbit 5\", icon: \"cpu-chip\" },\n  ]}\n  more={[{ id: \"nova\", label: \"Nova 4\", badge: \"Soon\", disabled: true }]}\n  toggles={[{ id: \"temporary\", label: \"Temporary chat\", icon: \"clock\", checked: true }]}\n/>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Modelos y opciones",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--ghost z-model-picker\" data-size=\"sm\" aria-label=\"Model: Aurora 3\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#models\">\n  <z-icon name=\"sparkles\" size=\"16\"></z-icon>\n  <span class=\"z-model-picker__label\">Aurora 3</span>\n  <span class=\"z-model-picker__badge\">Beta</span>\n  <z-icon name=\"chevron-up-down\" size=\"14\"></z-icon>\n</button>\n\n<div id=\"models\" popover class=\"z-liquid z-menu z-model-picker__menu\" role=\"menu\" aria-label=\"Model\" data-size=\"lg\">\n  <div class=\"z-menu__label\">Options</div>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">Auto</span>\n    <span class=\"z-menu__switch\" aria-hidden=\"true\"></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"models-list\">\n    <div class=\"z-menu__label\" id=\"models-list\">Models</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"aurora-3\">\n      <span class=\"z-menu__icon\" aria-hidden=\"true\"><z-icon name=\"sparkles\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Aurora 3</span>\n      <span class=\"z-menu__badge\">Beta</span>\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" data-end aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"orbit\">\n      <span class=\"z-menu__icon\" aria-hidden=\"true\"><z-icon name=\"cpu-chip\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Orbit 5</span>\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" data-end aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Temporary chat</span>\n    <span class=\"z-menu__switch\" aria-hidden=\"true\"></span>\n  </button>\n</div>"
+    }
+   ],
+   "file": "zui/src/components/ai/ModelPicker.manifest.json"
+  },
+  {
    "name": "PromptInput",
    "group": "ai",
    "description": "Entrada de un asistente: campo que crece (Intro envía sin enviar durante un IME), adjuntos, selector de modelo, herramientas activables, uso de contexto y enviar ↔ parar en el mismo sitio. Es la misma pieza que Composer en su forma de prompt.",
@@ -3503,6 +3617,40 @@
     {
      "name": "labels",
      "type": "Partial<ComposerLabels>"
+    },
+    {
+     "name": "quote",
+     "type": "{ id?: string; text: string }",
+     "description": "Texto citado de la respuesta, en una ficha del acento sobre el campo, con «Quitar» (y Esc)."
+    },
+    {
+     "name": "contexts",
+     "type": "PromptContext[]",
+     "description": "{ id, label, icon? }: contextos adjuntos en fichas de borde punteado, cada una con «Quitar»."
+    },
+    {
+     "name": "halo",
+     "type": "boolean",
+     "default": false,
+     "description": "Halo suave de destellos encima de la caja (decorativo)."
+    },
+    {
+     "name": "voice",
+     "type": "boolean",
+     "default": false,
+     "description": "Micrófono junto a enviar (si el navegador puede grabar): barra de grabación con temporizador."
+    },
+    {
+     "name": "onQuoteRemove",
+     "type": "() => void"
+    },
+    {
+     "name": "onContextRemove",
+     "type": "(detail: { id: string }) => void"
+    },
+    {
+     "name": "onVoice",
+     "type": "(detail: ComposerVoice) => void"
     }
    ],
    "states": [
@@ -3529,21 +3677,31 @@
     "surface-3",
     "line",
     "warning",
-    "danger"
+    "danger",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "card-elevated-bg",
+    "card-sheen",
+    "radius-panel"
    ],
    "classes": [
-    "z-prompt-input",
     "z-composer",
+    "z-composer__context-chip",
+    "z-composer__contexts",
+    "z-composer__drop",
+    "z-composer__footer",
     "z-composer__form",
     "z-composer__input",
+    "z-composer__mic",
+    "z-composer__model",
     "z-composer__send",
     "z-composer__stop",
-    "z-composer__footer",
-    "z-composer__model",
-    "z-composer__toolset",
     "z-composer__tool",
+    "z-composer__toolset",
     "z-composer__usage",
-    "z-composer__usage-meter"
+    "z-composer__usage-meter",
+    "z-prompt-input"
    ],
    "a11y": "Como Composer: textarea etiquetado, Intro envía salvo con un IME componiendo, botón siempre presente. Mientras responde, el botón pasa a «Stop generating» en el mismo sitio (el foco no se pierde) y al pulsarlo se anuncia «Stopped». El modelo es un select nativo con nombre; las herramientas, botones con aria-pressed; el uso, un <meter> con nombre «12K of 200K tokens (6 %)». Sin React: .z-prompt-input con data-status, data-model, data-placeholder y models/tools/usage en <script type=\"application/json\" data-props>; emite z:send, z:stop, z:modelchange, z:tooltoggle y z:attach.",
    "behavior": "dom",
@@ -3551,6 +3709,10 @@
     {
      "title": "Con modelo, herramientas y uso",
      "code": "<PromptInput models={[{ id: \"fast\", label: \"Fast\" }, { id: \"deep\", label: \"Deep reasoning\" }]} tools={[{ id: \"web\", label: \"Web search\", icon: \"globe-alt\" }]} usage={{ used: 12400, limit: 200000 }} onSubmit={({ text }) => ask(text)} />"
+    },
+    {
+     "title": "Cita y contexto",
+     "code": "<PromptInput\n  quote={{ text: \"enhance user confidence in AI-driven responses\" }}\n  contexts={[{ id: \"kickoff\", label: \"Project kickoff\", icon: \"video-camera\" }]}\n  models={[{ id: \"aurora-3\", label: \"Aurora 3\" }]}\n/>"
     }
    ],
    "html": [
@@ -3699,8 +3861,14 @@
     },
     {
      "name": "layout",
-     "type": "\"row\" | \"grid\"",
-     "default": "row"
+     "type": "enum",
+     "values": [
+      "row",
+      "grid",
+      "list"
+     ],
+     "default": "row",
+     "description": "`list`: panel de cristal en columna con flecha delante, ↑ ↓ para recorrer y Esc para cerrar."
     },
     {
      "name": "label",
@@ -3710,6 +3878,17 @@
     {
      "name": "onSelect",
      "type": "(detail: { id?, text }) => void"
+    },
+    {
+     "name": "hints",
+     "type": "boolean",
+     "default": false,
+     "description": "Pistas de teclado sobre la lista (solo list)."
+    },
+    {
+     "name": "onDismiss",
+     "type": "() => void",
+     "description": "Esc dentro de la lista."
     }
    ],
    "states": [
@@ -3740,6 +3919,10 @@
     {
      "title": "Rejilla de inicio",
      "code": "<Suggestions layout=\"grid\" items={[{ text: \"Summarize this thread\", icon: \"document-text\", description: \"Key points and decisions\" }, { text: \"Draft release notes\", icon: \"pencil\", description: \"From the last 20 commits\" }, { text: \"Plan the week\", icon: \"calendar-days\", description: \"With the team's calendar\" }]} onSelect={({ text }) => ask(text)} />"
+    },
+    {
+     "title": "Lista con pistas de teclado",
+     "code": "<Suggestions layout=\"list\" hints label=\"Follow-up questions\" items={[\"How should AI show uncertainty?\", \"Which UI elements build trust?\"]} />"
     }
    ],
    "html": [
@@ -8854,7 +9037,7 @@
   {
    "name": "Card",
    "group": "content",
-   "description": "Superficie que agrupa contenido relacionado.",
+   "description": "Superficie que agrupa contenido relacionado, con seis materiales (plain, elevated, glass, tinted, neon, metal), tono, brillo, grano y enlace extendido.",
    "import": "import { Card, CardHeader, CardFooter } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -8882,7 +9065,64 @@
      "name": "interactive",
      "type": "boolean",
      "default": false,
-     "description": "Respuesta al puntero y al foco; añadir onClick, role y tabIndex, o envolver un enlace."
+     "description": "Respuesta al puntero y al foco. Con un enlace .z-card__link dentro (CardHeader href), toda la tarjeta es su objetivo; si no, añadir onClick, role y tabIndex."
+    },
+    {
+     "name": "surface",
+     "type": "enum",
+     "values": [
+      "plain",
+      "elevated",
+      "glass",
+      "tinted",
+      "neon",
+      "metal"
+     ],
+     "default": "plain",
+     "description": "Material: `elevated` opaca con elevación por capas y canto luminoso; `glass` cristal líquido; `tinted` teñida; `neon` borde y halo del tono; `metal` relleno pleno cepillado con texto claro."
+    },
+    {
+     "name": "tone",
+     "type": "CardTone",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "description": "Tono de tinted, neon, metal y del brillo (metal admite los tonos de estado y el acento)."
+    },
+    {
+     "name": "glow",
+     "type": "boolean",
+     "default": false,
+     "description": "Halo suave del tono."
+    },
+    {
+     "name": "grain",
+     "type": "boolean",
+     "default": false,
+     "description": "Grano fino (ruido SVG) sobre la superficie."
+    },
+    {
+     "name": "as",
+     "type": "enum",
+     "values": [
+      "div",
+      "article",
+      "section",
+      "li"
+     ],
+     "default": "div"
     },
     {
      "name": "...rest",
@@ -8929,12 +9169,26 @@
     "space-3-5",
     "space-5",
     "text-title",
-    "tracking-snug"
+    "tracking-snug",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "grain-opacity",
+    "fg-on-accent",
+    "accent-solid"
    ],
    "classes": [
-    "z-card"
+    "z-card",
+    "z-card__corner",
+    "z-card__link"
    ],
-   "a11y": "div sin rol. Si es activable, quien la usa aporta rol, tabIndex y teclado.",
+   "a11y": "div (o el elemento de `as`). Tarjeta entera clicable: un solo enlace en el título (CardHeader href) con la zona de clic extendida; botones y enlaces de dentro quedan por encima. El foco se dibuja en la tarjeta. Sin transparencias, glass pasa a opaca; colores forzados: borde del sistema, sin sombras, halo ni grano.",
    "examples": [
     {
      "title": "Con cabecera y pie",
@@ -8943,10 +9197,80 @@
     {
      "title": "Activable",
      "code": "<Card interactive variant=\"outlined\" role=\"button\" tabIndex={0} onClick={() => openProject(\"atlas\")}>\n  <CardHeader title=\"Atlas\" subtitle=\"Ana Ruiz\" />\n</Card>"
+    },
+    {
+     "title": "Materiales",
+     "code": "<>\n  <Card surface=\"elevated\"><CardHeader title=\"Elevated\" subtitle=\"Layered shadows\" /></Card>\n  <Card surface=\"tinted\" tone=\"info\"><CardHeader title=\"Tinted\" subtitle=\"Washed with its tone\" /></Card>\n  <Card surface=\"neon\" tone=\"danger\"><CardHeader title=\"Neon\" subtitle=\"Rim and halo\" /></Card>\n  <Card surface=\"metal\" grain><CardHeader title=\"Metal\" subtitle=\"Brushed with grain\" /></Card>\n</>"
+    },
+    {
+     "title": "Tarjeta entera clicable",
+     "code": "<Card surface=\"elevated\" as=\"article\">\n  <CardHeader title=\"Atlas\" subtitle=\"Design tokens rollout\" href=\"/projects/atlas\" />\n  <CardFooter>\n    <Button size=\"sm\">Share</Button>\n  </CardFooter>\n</Card>"
     }
    ],
    "origin": "Card del design system base con la superficie de tarjeta de zutool.",
    "file": "zui/src/components/content/Card.manifest.json"
+  },
+  {
+   "name": "CardBanner",
+   "group": "content",
+   "status": "new",
+   "description": "Cinta de color que asoma por detrás de una tarjeta, arriba o abajo, con un icono y un mensaje (una cuenta atrás con Countdown, «Available now»).",
+   "import": "import { CardBanner } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "message",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "icon",
+     "type": "IconName"
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "success",
+      "info",
+      "warning",
+      "danger"
+     ],
+     "default": "success"
+    },
+    {
+     "name": "position",
+     "type": "enum",
+     "values": [
+      "top",
+      "bottom"
+     ],
+     "default": "bottom"
+    }
+   ],
+   "tokens": [
+    "accent-solid",
+    "success-solid",
+    "info-solid",
+    "warning-solid",
+    "danger-solid",
+    "fg-on-accent",
+    "card-radius",
+    "elevation-1"
+   ],
+   "classes": [
+    "z-card-banner",
+    "z-card-banner__strip",
+    "z-card-banner__card"
+   ],
+   "a11y": "La cinta es texto (fg-on-accent sobre *-solid, 4.5:1) en el orden del documento: arriba antes de la tarjeta, abajo después. Una cuenta atrás dentro toma su color.",
+   "examples": [
+    {
+     "title": "Disponible ahora",
+     "code": "<CardBanner tone=\"info\" position=\"top\" icon=\"clock\" message=\"Available now, open to new projects\">\n  <OfferCard title=\"Amine Tiffrent\" meta={[{ icon: \"map-pin\", label: \"Algiers\" }]} aside=\"$20/hour\" />\n</CardBanner>"
+    }
+   ],
+   "file": "zui/src/components/content/CardBanner.manifest.json"
   },
   {
    "name": "CardFooter",
@@ -9018,6 +9342,11 @@
      "name": "icon",
      "type": "IconName",
      "description": "Icono en una baldosa delante del título (decorativo)."
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "El título es un enlace (.z-card__link) cuya zona de clic cubre la tarjeta; los demás controles siguen por encima."
     }
    ],
    "states": [
@@ -9091,10 +9420,11 @@
      "type": "enum",
      "values": [
       "top",
-      "inset"
+      "inset",
+      "bleed"
      ],
      "default": "top",
-     "description": "`top`: a sangre arriba con el radio interior de la tarjeta; `inset`: dentro del relleno con radio concéntrico."
+     "description": "`top`: a sangre arriba; `inset`: dentro del relleno con radio concéntrico; `bleed`: cubre la tarjeta y el contenido va encima, abajo, sobre el fundido."
     },
     {
      "name": "loading",
@@ -9104,6 +9434,22 @@
       "eager"
      ],
      "default": "lazy"
+    },
+    {
+     "name": "scrim",
+     "type": "enum",
+     "values": [
+      "none",
+      "bottom",
+      "full"
+     ],
+     "description": "Fundido de legibilidad. Con bleed, bottom por defecto: cada pieza de texto va sobre el velo pleno (4.5:1 sobre cualquier imagen)."
+    },
+    {
+     "name": "tint",
+     "type": "boolean",
+     "default": false,
+     "description": "Tiñe el fundido con el tono de la tarjeta."
     }
    ],
    "states": [
@@ -9113,7 +9459,12 @@
     "card-radius",
     "radius-xs",
     "surface-2",
-    "fg-subtle"
+    "fg-subtle",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-fg",
+    "media-fg-muted",
+    "shadow-color"
    ],
    "classes": [
     "z-card__media",
@@ -9128,6 +9479,10 @@
     {
      "title": "Imagen dentro del relleno",
      "code": "<Card>\n  <CardMedia placement=\"inset\" ratio={4 / 3} src={cover} alt=\"Atlas dashboard\" />\n  <CardHeader title=\"Atlas\" />\n</Card>"
+    },
+    {
+     "title": "Foto a sangre con fundido",
+     "code": "<Card surface=\"elevated\" tone=\"success\">\n  <CardMedia placement=\"bleed\" tint src=\"/img/carousel/forest.svg\" alt=\"\" />\n  <CardHeader title=\"Lake House\" subtitle=\"Canada\" />\n</Card>"
     }
    ],
    "origin": "Card de producto de Shark UI.",
@@ -9139,6 +9494,78 @@
     }
    ],
    "file": "zui/src/components/content/CardMedia.manifest.json"
+  },
+  {
+   "name": "CategoryTile",
+   "group": "content",
+   "status": "new",
+   "description": "Mosaico de categoría: un enlace con relleno de color pleno, icono en ficha, flecha en la esquina, título y cifra.",
+   "import": "import { CategoryTile } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "count",
+     "type": "ReactNode"
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "required": true
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger"
+     ],
+     "default": "accent"
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "required": true
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "accent-solid",
+    "success-solid",
+    "info-solid",
+    "warning-solid",
+    "danger-solid",
+    "fg-on-accent",
+    "card-radius",
+    "elevation-2",
+    "elevation-3",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-category-tile",
+    "z-category-tile__icon",
+    "z-category-tile__arrow",
+    "z-category-tile__title",
+    "z-category-tile__count"
+   ],
+   "a11y": "Un solo enlace: su nombre es el título y la cifra. Texto fg-on-accent sobre *-solid. La flecha se refleja en RTL.",
+   "examples": [
+    {
+     "title": "Hoteles",
+     "code": "<CategoryTile href=\"/hotels\" icon=\"building-office\" title=\"Hotels\" count=\"1.4k\" />"
+    }
+   ],
+   "file": "zui/src/components/content/CategoryTile.manifest.json"
   },
   {
    "name": "CodeBlock",
@@ -9331,6 +9758,167 @@
    ],
    "origin": "Divider de zutool.",
    "file": "zui/src/components/content/Divider.manifest.json"
+  },
+  {
+   "name": "FeatureCard",
+   "group": "content",
+   "status": "new",
+   "description": "Tarjeta de característica: portada con un patrón generado por semilla (estrellas, triángulos, cruces, píxeles, curvas de nivel, malla, grano o semitono) o con una imagen, y el texto centrado abajo sobre un fundido de legibilidad.",
+   "import": "import { FeatureCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "eyebrow",
+     "type": "ReactNode",
+     "description": "Línea corta encima del título."
+    },
+    {
+     "name": "pattern",
+     "type": "enum",
+     "values": [
+      "grid",
+      "dots",
+      "hex",
+      "mesh",
+      "stars",
+      "triangles",
+      "plus",
+      "pixels",
+      "contours",
+      "grain",
+      "halftone"
+     ],
+     "default": "stars",
+     "description": "Dibujo de la portada (core/pattern)."
+    },
+    {
+     "name": "seed",
+     "type": "number | string",
+     "description": "Semilla: la misma da siempre la misma portada."
+    },
+    {
+     "name": "tone",
+     "type": "CardTone",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "description": "Tono de la portada y del dibujo."
+    },
+    {
+     "name": "cover",
+     "type": "ReactNode",
+     "description": "Portada propia (imagen, vídeo) en lugar del dibujo; decorativa."
+    },
+    {
+     "name": "animated",
+     "type": "boolean",
+     "default": false,
+     "description": "Deriva lenta del dibujo; nunca con movimiento reducido."
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "El título es un enlace que cubre la tarjeta."
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode",
+     "description": "Acciones bajo el texto, por encima del enlace."
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "center",
+      "start"
+     ],
+     "default": "center"
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      "2",
+      "3",
+      "4"
+     ],
+     "default": "3"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "font-display",
+    "text-heading-lg",
+    "text-small"
+   ],
+   "classes": [
+    "z-feature-card",
+    "z-feature-card__cover",
+    "z-feature-card__body",
+    "z-feature-card__title",
+    "z-feature-card__description",
+    "z-card__link"
+   ],
+   "a11y": "article con su encabezado. El texto va sobre media-surface pleno (media-fg y media-fg-muted pasan de 4.5:1 en todas las marcas); el dibujo es aria-hidden. Con href, un solo enlace (el título) cubre la tarjeta y el foco se dibuja en la tarjeta. Colores forzados: sin dibujo, texto del sistema sobre Canvas.",
+   "examples": [
+    {
+     "title": "Cielo de estrellas",
+     "code": "<FeatureCard\n  pattern=\"stars\"\n  seed={3}\n  tone=\"info\"\n  title=\"Fingerprint security\"\n  description=\"Biometric sign-in keeps every account unique and safe.\"\n  href=\"/security\"\n/>"
+    },
+    {
+     "title": "Curvas de nivel",
+     "code": "<FeatureCard pattern=\"contours\" seed={7} tone=\"success\" title=\"Maps that stay readable\" description=\"Contour lines drawn from a seed, the same on every render.\" />"
+    },
+    {
+     "title": "Malla de color con grano",
+     "code": "<FeatureCard pattern=\"mesh\" seed={21} tone={3} eyebrow=\"New\" title=\"Liquid gradients\" description=\"Four soft blobs from the chart palette.\" />"
+    }
+   ],
+   "file": "zui/src/components/content/FeatureCard.manifest.json"
   },
   {
    "name": "FormatByte",
@@ -9831,6 +10419,101 @@
    "file": "zui/src/components/content/Marquee.manifest.json"
   },
   {
+   "name": "OfferCard",
+   "group": "content",
+   "status": "new",
+   "description": "Tarjeta elevada de oferta o de perfil profesional: avatar, título, datos con icono, fichas de estado, tarifa destacada, descripción y fila de acciones.",
+   "import": "import { OfferCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "avatar",
+     "type": "{ name: string; src?: string }"
+    },
+    {
+     "name": "meta",
+     "type": "OfferCardMeta[]",
+     "description": "{ icon?, label }: ubicación, guardado hace…"
+    },
+    {
+     "name": "tags",
+     "type": "ReactNode",
+     "description": "Fichas (Badge)."
+    },
+    {
+     "name": "aside",
+     "type": "ReactNode",
+     "description": "Dato destacado a la derecha (tarifa)."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode"
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "El título enlaza y cubre la tarjeta."
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      "2",
+      "3",
+      "4"
+     ],
+     "default": "3"
+    }
+   ],
+   "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "success-text",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-offer-card",
+    "z-offer-card__head",
+    "z-offer-card__meta",
+    "z-offer-card__aside",
+    "z-offer-card__actions"
+   ],
+   "a11y": "article. Los datos llevan texto además del icono; la tarifa usa success-text (4.5:1).",
+   "examples": [
+    {
+     "title": "Oferta con fichas",
+     "code": "<OfferCard\n  title=\"Landing page designer\"\n  meta={[{ icon: \"bookmark\", label: \"Saved 2 days ago\" }]}\n  tags={<><Badge tone=\"success\" icon=\"banknotes\">$600</Badge><Badge tone=\"info\" icon=\"clock\">1 week</Badge></>}\n  description=\"A clean, modern landing page for a dental SaaS product.\"\n  actions={<><Button variant=\"primary\" icon=\"paper-airplane\">Apply</Button><Button variant=\"danger\" icon=\"trash\">Remove</Button></>}\n/>"
+    }
+   ],
+   "file": "zui/src/components/content/OfferCard.manifest.json"
+  },
+  {
    "name": "Panel",
    "group": "content",
    "description": "Panel de cristal líquido: la pieza de cromo sobre la que flota la interfaz.",
@@ -9934,6 +10617,317 @@
    ],
    "origin": "GlassPanel de ui-glass sobre el material liquid de zutool.",
    "file": "zui/src/components/content/Panel.manifest.json"
+  },
+  {
+   "name": "PricingCard",
+   "group": "content",
+   "status": "new",
+   "description": "Plan de precio de cristal sobre una mancha de color: precio grande, lista de características con check o cruz, CTA y, en el destacado, borde y halo del tono con su insignia.",
+   "import": "import { PricingCard, PricingTable } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "name",
+     "type": "ReactNode",
+     "required": true,
+     "description": "Nombre del plan."
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "price",
+     "type": "{ amount: number; currency: string; locale?: string; period?: ReactNode }",
+     "required": true
+    },
+    {
+     "name": "features",
+     "type": "PricingFeature[]",
+     "description": "{ label, included? }: incluida (check) o no (cruz, tachada)."
+    },
+    {
+     "name": "action",
+     "type": "ReactNode",
+     "description": "CTA (Button)."
+    },
+    {
+     "name": "featured",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "badge",
+     "type": "ReactNode",
+     "description": "Insignia del destacado («Most popular»)."
+    },
+    {
+     "name": "tone",
+     "type": "CardTone",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ]
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      "2",
+      "3",
+      "4"
+     ],
+     "default": "3"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<PricingCardLabels>",
+     "description": "included, excluded: prefijos para lectores."
+    }
+   ],
+   "states": [
+    "rest",
+    "featured"
+   ],
+   "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "glass-bg",
+    "glass-border",
+    "accent-solid",
+    "fg-on-accent",
+    "fg-muted",
+    "line"
+   ],
+   "classes": [
+    "z-pricing-card",
+    "z-pricing-card__blob",
+    "z-pricing-card__price",
+    "z-pricing-card__features",
+    "z-pricing-card__feature"
+   ],
+   "a11y": "Lista de características: cada una dice para lectores si está incluida (no solo el icono ni el color); la no incluida va además tachada. Sin transparencias, el cristal pasa a superficie opaca.",
+   "examples": [
+    {
+     "title": "Plan destacado",
+     "code": "<PricingCard\n  featured\n  badge=\"Most popular\"\n  tone=\"info\"\n  name=\"Professional\"\n  price={{ amount: 39, currency: \"USD\", locale: \"en-US\", period: \"/ month\" }}\n  features={[{ label: \"Unlimited projects\" }, { label: \"Priority support\" }, { label: \"Audit log\", included: false }]}\n  action={<Button variant=\"primary\">Choose Professional</Button>}\n/>"
+    }
+   ],
+   "file": "zui/src/components/content/PricingCard.manifest.json"
+  },
+  {
+   "name": "PricingTable",
+   "group": "content",
+   "status": "new",
+   "description": "Fila de PricingCard sobre una malla de color desenfocada (Backdrop mesh con semilla); se reparte por el ancho y se apila en estrecho.",
+   "import": "import { PricingCard, PricingTable } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre de la región para lectores."
+    },
+    {
+     "name": "seed",
+     "type": "number | string",
+     "description": "Semilla de la malla del fondo."
+    }
+   ],
+   "tokens": [
+    "panel-radius",
+    "accent",
+    "info",
+    "success",
+    "chart-3"
+   ],
+   "classes": [
+    "z-pricing-table",
+    "z-pricing-table__plans"
+   ],
+   "a11y": "section con nombre. La malla es aria-hidden.",
+   "examples": [
+    {
+     "title": "Tres planes",
+     "code": "<PricingTable label=\"Plans\" seed={11}>\n  <PricingCard tone=\"success\" name=\"Basic\" price={{ amount: 29, currency: \"USD\", locale: \"en-US\", period: \"/ month\" }} features={[{ label: \"3 projects\" }, { label: \"Custom brands\", included: false }]} action={<Button>Choose Basic</Button>} />\n  <PricingCard featured badge=\"Most popular\" tone=\"info\" name=\"Professional\" price={{ amount: 39, currency: \"USD\", locale: \"en-US\", period: \"/ month\" }} features={[{ label: \"Unlimited projects\" }, { label: \"Custom brands\" }]} action={<Button variant=\"primary\">Choose Professional</Button>} />\n</PricingTable>"
+    }
+   ],
+   "file": "zui/src/components/content/PricingTable.manifest.json"
+  },
+  {
+   "name": "ProductCard",
+   "group": "content",
+   "status": "new",
+   "description": "Tarjeta de producto o de alojamiento: foto a sangre que se funde hacia el tono con el precio grande encima y una acción de cristal, o foto inset con sus propias esquinas, el texto debajo y la acción a todo el ancho.",
+   "import": "import { ProductCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "required": true
+    },
+    {
+     "name": "subtitle",
+     "type": "ReactNode"
+    },
+    {
+     "name": "image",
+     "type": "{ src: string; alt?: string }",
+     "description": "Foto; alt vacío si el título ya nombra lo que se ve."
+    },
+    {
+     "name": "media",
+     "type": "ReactNode",
+     "description": "Media propia si no hay foto."
+    },
+    {
+     "name": "price",
+     "type": "{ amount, currency, locale?, previous?, unit?, trimZeros? }",
+     "description": "Precio (PriceTag)."
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "bleed",
+      "inset"
+     ],
+     "default": "bleed"
+    },
+    {
+     "name": "tone",
+     "type": "CardTone",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "description": "Color del fundido y del brillo."
+    },
+    {
+     "name": "badge",
+     "type": "ReactNode",
+     "description": "Ficha arriba a la izquierda (valoración)."
+    },
+    {
+     "name": "corner",
+     "type": "ReactNode",
+     "description": "Acción arriba a la derecha (favorito)."
+    },
+    {
+     "name": "action",
+     "type": "ReactNode",
+     "description": "Acción principal: Button glass sobre la foto, primary en inset."
+    },
+    {
+     "name": "href",
+     "type": "string",
+     "description": "El título enlaza y cubre la tarjeta."
+    },
+    {
+     "name": "ratio",
+     "type": "number | string",
+     "description": "Proporción de la foto (inset, 4 / 3) o de la zona de foto (bleed, 1)."
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      "2",
+      "3",
+      "4"
+     ],
+     "default": "3"
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset"
+   ],
+   "classes": [
+    "z-product-card",
+    "z-product-card__body",
+    "z-product-card__price",
+    "z-product-card__badge",
+    "z-card__corner",
+    "z-card__media"
+   ],
+   "a11y": "article. A sangre, cada pieza de texto va sobre el velo pleno (media-scrim o media-scrim-tinted): 4.5:1 sobre cualquier foto. El precio anterior se anuncia con PriceTag. La ficha y el favorito quedan por encima del enlace extendido.",
+   "examples": [
+    {
+     "title": "A sangre con precio y CTA de cristal",
+     "code": "<ProductCard\n  tone=\"info\"\n  image={{ src: \"/img/carousel/glacier.svg\", alt: \"\" }}\n  title=\"Glacier shell jacket\"\n  subtitle=\"Wind-proof, packable\"\n  price={{ amount: 256, currency: \"USD\", locale: \"en-US\", trimZeros: true }}\n  action={<Button variant=\"glass\">Buy now</Button>}\n  href=\"/shop/glacier\"\n/>"
+    },
+    {
+     "title": "Alojamiento con valoración y favorito",
+     "code": "<ProductCard\n  tone=\"success\"\n  image={{ src: \"/img/carousel/forest.svg\", alt: \"\" }}\n  title=\"Lake House, Canada\"\n  price={{ amount: 96, currency: \"USD\", locale: \"en-US\", unit: \"/ night\", trimZeros: true }}\n  badge=\"4.96 · 18 reviews\"\n  corner={<IconButton variant=\"glass\" icon=\"heart\" label=\"Save\" />}\n/>"
+    },
+    {
+     "title": "Inset con datos y reserva",
+     "code": "<ProductCard\n  layout=\"inset\"\n  image={{ src: \"/img/carousel/mist.svg\", alt: \"\" }}\n  title=\"Iceland Cabin\"\n  price={{ amount: 680, currency: \"USD\", locale: \"en-US\", unit: \"per night\", trimZeros: true }}\n  subtitle=\"Cozy cabin with views of the mountains and the northern lights.\"\n  action={<Button variant=\"primary\" size=\"lg\">Reserve</Button>}\n>\n  <StatGroup items={[{ label: \"Days\", value: 3 }, { label: \"Rating\", value: \"4.9\" }]} />\n</ProductCard>"
+    }
+   ],
+   "file": "zui/src/components/content/ProductCard.manifest.json"
   },
   {
    "name": "Prose",
@@ -10434,6 +11428,93 @@
    ],
    "origin": "Activity de los bloques de shadcn, Timeline de Carbon y los feeds de GitHub y Linear.",
    "file": "zui/src/components/dashboard/ActivityFeed.manifest.json"
+  },
+  {
+   "name": "BalanceCard",
+   "group": "dashboard",
+   "status": "new",
+   "description": "Tarjeta de saldo con el degradado de la marca: cifra grande con los decimales atenuados, variación, gráfico de tendencia y acciones rápidas.",
+   "import": "import { BalanceCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "required": true
+    },
+    {
+     "name": "value",
+     "type": "number",
+     "required": true
+    },
+    {
+     "name": "currency",
+     "type": "string",
+     "required": true,
+     "description": "ISO 4217."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    },
+    {
+     "name": "delta",
+     "type": "number",
+     "description": "Variación como fracción (0.084 = 8,4 %)."
+    },
+    {
+     "name": "deltaText",
+     "type": "ReactNode"
+    },
+    {
+     "name": "trend",
+     "type": "(number | null)[]"
+    },
+    {
+     "name": "header",
+     "type": "ReactNode",
+     "description": "Titular, avatar o moneda."
+    },
+    {
+     "name": "actions",
+     "type": "BalanceAction[]",
+     "description": "{ id, label, icon, onClick?, href? }"
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      "2",
+      "3",
+      "4"
+     ],
+     "default": "2"
+    }
+   ],
+   "tokens": [
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "shadow-color",
+    "panel-radius",
+    "elevation-3",
+    "control-radius-xl"
+   ],
+   "classes": [
+    "z-balance-card",
+    "z-balance-card__value",
+    "z-balance-card__fraction",
+    "z-balance-card__trend",
+    "z-balance-card__actions",
+    "z-balance-card__action"
+   ],
+   "a11y": "article con nombre. Todo el texto es fg-on-accent sobre accent-solid (4.5:1); los decimales atenuados no bajan de 3:1 (texto grande). Cada acción es un botón o enlace con su texto visible.",
+   "examples": [
+    {
+     "title": "Saldo con acciones",
+     "code": "<BalanceCard\n  label=\"Total balance\"\n  value={84250.8}\n  currency=\"USD\"\n  locale=\"en-US\"\n  delta={0.0842}\n  deltaText=\"+$6,540.20 this month\"\n  trend={[42, 44, 41, 47, 52, 50, 58, 63, 71]}\n  actions={[\n    { id: \"send\", label: \"Send\", icon: \"arrow-up-tray\" },\n    { id: \"request\", label: \"Request\", icon: \"arrow-down-tray\" },\n    { id: \"top-up\", label: \"Top up\", icon: \"plus\" },\n  ]}\n/>"
+    }
+   ],
+   "file": "zui/src/components/dashboard/BalanceCard.manifest.json"
   },
   {
    "name": "BarList",
@@ -11456,6 +12537,99 @@
    ],
    "origin": "Fila de KPI de los bloques dashboard-01 de shadcn y de las plantillas de Tremor.",
    "file": "zui/src/components/dashboard/MetricGroup.manifest.json"
+  },
+  {
+   "name": "PaymentCard",
+   "group": "dashboard",
+   "status": "new",
+   "description": "Tarjeta bancaria de metal cepillado con grano, chip EMV en CSS, símbolo sin contacto y el número oculto salvo las cuatro últimas cifras.",
+   "import": "import { PaymentCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "last4",
+     "type": "string",
+     "required": true,
+     "description": "Últimas cuatro cifras; el resto no se pinta nunca."
+    },
+    {
+     "name": "holder",
+     "type": "string"
+    },
+    {
+     "name": "expires",
+     "type": "string"
+    },
+    {
+     "name": "issuer",
+     "type": "ReactNode"
+    },
+    {
+     "name": "network",
+     "type": "ReactNode",
+     "description": "Logotipo de la red (lo aporta la aplicación)."
+    },
+    {
+     "name": "contactless",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger"
+     ],
+     "default": "accent"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<PaymentCardLabels>",
+     "description": "card («Card ending in {last4}»), holder, expires."
+    }
+   ],
+   "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "fg-on-accent",
+    "accent-solid",
+    "font-mono"
+   ],
+   "classes": [
+    "z-payment-card",
+    "z-payment-card__chip",
+    "z-payment-card__number",
+    "z-payment-card__field"
+   ],
+   "a11y": "article con nombre «Card ending in 4242». Los puntos del número son aria-hidden; el lector oye las cuatro cifras.",
+   "examples": [
+    {
+     "title": "Tarjeta de metal",
+     "code": "<PaymentCard issuer=\"zuix bank\" holder=\"Ana Ruiz\" last4=\"4242\" expires=\"08/29\" />"
+    }
+   ],
+   "file": "zui/src/components/dashboard/PaymentCard.manifest.json"
   },
   {
    "name": "ProgressGoal",
@@ -13677,6 +14851,42 @@
    "file": "zui/src/components/data/Progress.manifest.json"
   },
   {
+   "name": "RangeHistogram",
+   "group": "data",
+   "status": "new",
+   "description": "Histograma decorativo bajo un Slider de rango: resultados por tramo, con el tramo elegido resaltado.",
+   "import": "import { RangeHistogram } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "values",
+     "type": "number[]",
+     "required": true,
+     "description": "Recuento por tramo."
+    },
+    {
+     "name": "selected",
+     "type": "[number, number]",
+     "description": "Primer y último tramo dentro del rango."
+    }
+   ],
+   "tokens": [
+    "line-strong",
+    "accent"
+   ],
+   "classes": [
+    "z-range-histogram",
+    "z-range-histogram__bar"
+   ],
+   "a11y": "aria-hidden: el valor lo anuncia el Slider. Colores forzados: GrayText y Highlight.",
+   "examples": [
+    {
+     "title": "Rango de precio",
+     "code": "<RangeHistogram values={[2, 5, 9, 14, 20, 18, 12, 7, 4, 2]} selected={[2, 6]} />"
+    }
+   ],
+   "file": "zui/src/components/data/RangeHistogram.manifest.json"
+  },
+  {
    "name": "Rating",
    "group": "data",
    "description": "Valoración con estrellas: lectura (admite decimales) o entrada.",
@@ -14015,6 +15225,72 @@
    "file": "zui/src/components/data/ReviewSummary.manifest.json"
   },
   {
+   "name": "StatGroup",
+   "group": "data",
+   "status": "new",
+   "description": "Datos en fila dentro de una tarjeta (días, valoración, países): fichas, separadores o sin marco.",
+   "import": "import { StatGroup } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "StatGroupItem[]",
+     "required": true,
+     "description": "{ label, value, hint? }"
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "tiles",
+      "divided",
+      "plain"
+     ],
+     "default": "tiles"
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "center",
+      "start"
+     ],
+     "default": "center"
+    },
+    {
+     "name": "itemClassName",
+     "type": "string",
+     "description": "Clase de cada dato."
+    }
+   ],
+   "tokens": [
+    "inset",
+    "line",
+    "radius-md",
+    "fg-muted",
+    "fg-subtle",
+    "font-display",
+    "text-heading-lg"
+   ],
+   "classes": [
+    "z-stat-group",
+    "z-stat-group__item",
+    "z-stat-group__label",
+    "z-stat-group__value"
+   ],
+   "a11y": "Lista de descripción (dl): cada dato es dt + dd.",
+   "examples": [
+    {
+     "title": "Fichas",
+     "code": "<StatGroup items={[{ label: \"Countries\", value: 28 }, { label: \"Exhibitions\", value: 10 }, { label: \"Rating\", value: \"4.9\" }]} />"
+    },
+    {
+     "title": "Con separadores",
+     "code": "<StatGroup variant=\"divided\" align=\"start\" items={[{ label: \"Followers\", value: \"12.4k\" }, { label: \"Following\", value: 380 }]} />"
+    }
+   ],
+   "file": "zui/src/components/data/StatGroup.manifest.json"
+  },
+  {
    "name": "StatTile",
    "group": "data",
    "description": "Tesela de indicador: etiqueta, valor destacado y contexto.",
@@ -14062,10 +15338,11 @@
      "values": [
       "glass",
       "solid",
-      "soft"
+      "soft",
+      "elevated"
      ],
      "default": "glass",
-     "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta."
+     "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta, `elevated` opaca con elevación por capas."
     },
     {
      "name": "trend",
@@ -14081,6 +15358,28 @@
      "name": "onClick",
      "type": "() => void",
      "description": "Vuelve la tesela un botón."
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger"
+     ],
+     "description": "Color de la ficha del icono."
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "inline",
+      "stacked"
+     ],
+     "default": "inline",
+     "description": "`stacked`: el icono en ficha arriba y la etiqueta debajo."
     }
    ],
    "states": [
@@ -14150,7 +15449,11 @@
     "weight-display",
     "weight-medium",
     "chart-1",
-    "chart-area-opacity"
+    "chart-area-opacity",
+    "elevation-2",
+    "elevation-rim",
+    "card-elevated-bg",
+    "card-sheen"
    ],
    "classes": [
     "z-stat",
@@ -14169,6 +15472,10 @@
     {
      "title": "Con tendencia",
      "code": "<StatTile label=\"Revenue\" value=\"$112k\" delta=\"+15%\" deltaTone=\"success\" trend={[42, 48, 45, 61, 66, 72, 69, 84, 90, 88, 97, 112]} />"
+    },
+    {
+     "title": "Ficha de icono apilada",
+     "code": "<StatTile variant=\"elevated\" layout=\"stacked\" tone=\"success\" icon=\"banknotes\" label=\"Income\" value=\"$12,850\" />"
     }
    ],
    "origin": "StatTile de ui-glass y tarjeta KPI de zutool.",
@@ -14710,7 +16017,7 @@
    "name": "Backdrop",
    "group": "effects",
    "status": "new",
-   "description": "Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos o degradado de malla, con tres intensidades, desvanecido hacia los bordes y deriva lenta opcional. El dibujo es una capa aria-hidden sin puntero; el contenido va encima.",
+   "description": "Fondo decorativo en CSS detrás de una sección: rejilla, puntos, hexágonos, malla de color o un patrón generado con semilla (estrellas, triángulos, cruces, píxeles, curvas de nivel, grano, semitono), con tres intensidades, desvanecido y deriva lenta opcional. El dibujo es una capa aria-hidden sin puntero; el contenido va encima.",
    "import": "import { Backdrop } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -14720,7 +16027,14 @@
       "grid",
       "dots",
       "hex",
-      "mesh"
+      "mesh",
+      "stars",
+      "triangles",
+      "plus",
+      "pixels",
+      "contours",
+      "grain",
+      "halftone"
      ],
      "default": "grid"
     },
@@ -14756,6 +16070,26 @@
      "type": "number",
      "default": 32,
      "description": "Lado de la celda en px."
+    },
+    {
+     "name": "seed",
+     "type": "number | string",
+     "description": "Semilla (core/pattern): la misma da siempre el mismo dibujo, en el servidor y en el navegador. Sin ella, la tesela por defecto de la hoja."
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "neutral",
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "media"
+     ],
+     "default": "neutral",
+     "description": "Color del dibujo; `media` es claro, para una portada oscura."
     }
    ],
    "states": [
@@ -14768,7 +16102,10 @@
     "accent",
     "info",
     "success",
-    "ease-standard"
+    "ease-standard",
+    "chart-3",
+    "grain-opacity",
+    "media-fg"
    ],
    "classes": [
     "z-backdrop",
@@ -14776,12 +16113,23 @@
     "z-backdrop__content"
    ],
    "cssVars": [
-    "--z-backdrop-cell"
+    "--z-backdrop-cell",
+    "--z-pattern-tile",
+    "--z-pattern-size",
+    "--z-pattern-color",
+    "--z-pattern-x",
+    "--z-pattern-y",
+    "--z-pattern-rotate",
+    "--z-pattern-scale",
+    "--z-pattern-k",
+    "--z-mesh-x1",
+    "--z-mesh-y1",
+    "--z-mesh-c1"
    ],
    "behavior": "none",
    "whenToUse": "Detrás de la cabecera de una página de producto, de un estado vacío o de una sección destacada, para dar profundidad al cristal.",
    "whenNotToUse": "Detrás de texto largo o de tablas densas: el texto de lectura va sobre una superficie opaca (Panel solid, Prose).",
-   "a11y": "Decorativo: la capa es aria-hidden y no recibe el puntero. Las líneas no pasan del 13 % del color del texto, así que el texto encima conserva su contraste. Con prefers-reduced-motion no deriva; con prefers-reduced-transparency baja a la mitad; con prefers-contrast: more y colores forzados desaparece. Fuera de pantalla la animación se detiene.",
+   "a11y": "Decorativo: la capa es aria-hidden y no recibe el puntero. Las líneas no pasan del 13 % del color del texto, así que el texto encima conserva su contraste. Con prefers-reduced-motion no deriva; con prefers-reduced-transparency baja a la mitad; con prefers-contrast: more y colores forzados desaparece. Fuera de pantalla la animación se detiene. Los patrones con semilla son teselas SVG periódicas usadas como máscara: su color sale del token, así que sirven en todas las marcas y temas.",
    "examples": [
     {
      "title": "Rejilla",
@@ -14798,6 +16146,14 @@
     {
      "title": "Malla de color",
      "code": "<Backdrop pattern=\"mesh\" animated>\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Liquid glass</strong></p>\n  </div>\n</Backdrop>"
+    },
+    {
+     "title": "Estrellas con semilla",
+     "code": "<Backdrop pattern=\"stars\" seed={3} fade=\"bottom\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Night sky</strong></p>\n  </div>\n</Backdrop>"
+    },
+    {
+     "title": "Curvas de nivel del acento",
+     "code": "<Backdrop pattern=\"contours\" seed=\"atlas\" tone=\"accent\" intensity=\"strong\">\n  <div style={{ padding: \"48px 24px\" }}>\n    <p><strong>Atlas</strong></p>\n  </div>\n</Backdrop>"
     }
    ],
    "file": "zui/src/components/effects/Backdrop.manifest.json"
@@ -30126,9 +31482,13 @@
      "type": "enum",
      "values": [
       "cover",
-      "compact"
+      "compact",
+      "profile",
+      "neon",
+      "portrait"
      ],
-     "default": "cover"
+     "default": "cover",
+     "description": "`profile` limpia y elevada con foto de esquinas redondeadas, estadísticas en fichas y dos acciones; `neon` de color vivo con halo, ficha de rol con check y nombre en mayúsculas; `portrait` la foto entera con el nombre abajo sobre un desenfoque."
     },
     {
      "name": "headingLevel",
@@ -30143,6 +31503,36 @@
     {
      "name": "href",
      "type": "string"
+    },
+    {
+     "name": "tone",
+     "type": "CardTone",
+     "values": [
+      "accent",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "description": "Color de neon (borde, halo, subtítulo)."
+    },
+    {
+     "name": "status",
+     "type": "ReactNode",
+     "description": "Ficha de estado arriba («Available»)."
+    },
+    {
+     "name": "action",
+     "type": "ReactNode",
+     "description": "Acción de esquina (portrait, compact): un IconButton."
     }
    ],
    "tokens": [
@@ -30165,23 +31555,36 @@
     "text-caption",
     "weight-semibold",
     "weight-display",
-    "leading-relaxed"
+    "leading-relaxed",
+    "media-surface",
+    "media-scrim-tinted",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "elevation-2",
+    "elevation-rim",
+    "card-elevated-bg"
    ],
    "classes": [
+    "z-stat-group",
     "z-user-card",
+    "z-user-card__actions",
+    "z-user-card__avatar",
+    "z-user-card__bio",
     "z-user-card__cover",
     "z-user-card__cover-image",
-    "z-user-card__identity",
-    "z-user-card__avatar",
-    "z-user-card__presence",
-    "z-user-card__names",
-    "z-user-card__name",
     "z-user-card__handle",
+    "z-user-card__identity",
+    "z-user-card__name",
+    "z-user-card__names",
+    "z-user-card__overlay",
+    "z-user-card__photo",
+    "z-user-card__portrait",
+    "z-user-card__presence",
     "z-user-card__role",
-    "z-user-card__bio",
-    "z-user-card__stats",
     "z-user-card__stat",
-    "z-user-card__actions"
+    "z-user-card__stats",
+    "z-user-card__tagline"
    ],
    "a11y": "article con el nombre; el nombre es un encabezado (h3 por defecto). La portada es decorativa. Las estadísticas son una lista de pares (dl) que se lee «Followers 1.2k».",
    "behavior": "none",
@@ -30189,6 +31592,18 @@
     {
      "title": "Con portada",
      "code": "<UserCard user={{ name: \"Ana López\", handle: \"ana\", role: \"Design\", bio: \"Design systems and the odd typeface.\", presence: \"online\" }} stats={[{ label: \"Followers\", value: \"1.2k\" }, { label: \"Projects\", value: 34 }, { label: \"Reviews\", value: 210 }]} actions={<><Button variant=\"primary\" icon=\"user-plus\">Follow</Button><Button icon=\"chat-bubble-left-right\">Message</Button></>} />"
+    },
+    {
+     "title": "Perfil limpio",
+     "code": "<UserCard\n  variant=\"profile\"\n  user={{ name: \"Sam Rivers\", role: \"Photographer\", avatar: \"/img/people/sam.svg\", bio: \"Based in Sydney, I capture landscapes across the globe.\" }}\n  stats={[{ label: \"Countries\", value: 28 }, { label: \"Exhibitions\", value: 10 }, { label: \"Rating\", value: \"4.9\" }]}\n  actions={<><Button variant=\"primary\">Explore portfolio</Button><Button>Message</Button></>}\n/>"
+    },
+    {
+     "title": "Neón",
+     "code": "<UserCard variant=\"neon\" tone=\"danger\" user={{ name: \"Zainab Malik\", role: \"Marketing\", bio: \"Execution expert\", cover: \"/img/people/mia.svg\" }} href=\"/people/zainab\" />"
+    },
+    {
+     "title": "Retrato disponible",
+     "code": "<UserCard\n  variant=\"portrait\"\n  user={{ name: \"Emily Carter\", role: \"UI/UX Designer\", cover: \"/img/people/ana.svg\" }}\n  status={<Badge tone=\"success\" dot>Available</Badge>}\n  action={<IconButton variant=\"primary\" icon=\"paper-airplane\" label=\"Message Emily Carter\" />}\n/>"
     }
    ],
    "origin": "Card.Meta de Ant Design, User de HeroUI y las tarjetas de perfil de los bloques de shadcn.",

@@ -1,0 +1,92 @@
+{
+  "name": "ModelPicker",
+  "group": "ai",
+  "status": "new",
+  "description": "Selector de modelo como menú: interruptores de opciones (Auto, varios modelos), modelos con su marca y etiqueta (Beta, Soon) y la marca del elegido al final, submenú «More models» e interruptor al pie (chat temporal).",
+  "import": "import { ModelPicker } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "models",
+      "type": "ModelPickerModel[]",
+      "required": true,
+      "description": "{ id, label, icon?, media?, badge?, disabled? }"
+    },
+    {
+      "name": "more",
+      "type": "ModelPickerModel[]",
+      "description": "Submenú."
+    },
+    {
+      "name": "value",
+      "type": "string"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(id: string) => void"
+    },
+    {
+      "name": "options",
+      "type": "ModelPickerToggle[]",
+      "description": "{ id, label, icon?, checked }: interruptores encima."
+    },
+    {
+      "name": "toggles",
+      "type": "ModelPickerToggle[]",
+      "description": "Interruptores al pie."
+    },
+    {
+      "name": "onToggle",
+      "type": "(detail: { id, checked }) => void"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "sm"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ModelPickerLabels>",
+      "description": "trigger («Model: {model}»), options, models, more."
+    }
+  ],
+  "states": [
+    "closed",
+    "open"
+  ],
+  "tokens": [
+    "accent-soft",
+    "accent-solid",
+    "fg-on-accent",
+    "control-border",
+    "control-bg",
+    "line",
+    "surface-3"
+  ],
+  "classes": [
+    "z-model-picker",
+    "z-menu__switch",
+    "z-menu__badge"
+  ],
+  "behavior": "dom",
+  "a11y": "Patrón APG «menu button» de Menu: modelos como menuitemradio, interruptores como menuitemcheckbox (Espacio los cambia sin cerrar). Las marcas de los modelos las aporta la aplicación y son decorativas.",
+  "examples": [
+    {
+      "title": "Modelos y opciones",
+      "code": "<ModelPicker\n  defaultValue=\"aurora-3\"\n  options={[{ id: \"auto\", label: \"Auto\", checked: false }]}\n  models={[\n    { id: \"aurora-3\", label: \"Aurora 3\", icon: \"sparkles\", badge: \"Beta\" },\n    { id: \"orbit\", label: \"Orbit 5\", icon: \"cpu-chip\" },\n  ]}\n  more={[{ id: \"nova\", label: \"Nova 4\", badge: \"Soon\", disabled: true }]}\n  toggles={[{ id: \"temporary\", label: \"Temporary chat\", icon: \"clock\", checked: true }]}\n/>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Modelos y opciones",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--ghost z-model-picker\" data-size=\"sm\" aria-label=\"Model: Aurora 3\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#models\">\n  <z-icon name=\"sparkles\" size=\"16\"></z-icon>\n  <span class=\"z-model-picker__label\">Aurora 3</span>\n  <span class=\"z-model-picker__badge\">Beta</span>\n  <z-icon name=\"chevron-up-down\" size=\"14\"></z-icon>\n</button>\n\n<div id=\"models\" popover class=\"z-liquid z-menu z-model-picker__menu\" role=\"menu\" aria-label=\"Model\" data-size=\"lg\">\n  <div class=\"z-menu__label\">Options</div>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">Auto</span>\n    <span class=\"z-menu__switch\" aria-hidden=\"true\"></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"models-list\">\n    <div class=\"z-menu__label\" id=\"models-list\">Models</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"aurora-3\">\n      <span class=\"z-menu__icon\" aria-hidden=\"true\"><z-icon name=\"sparkles\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Aurora 3</span>\n      <span class=\"z-menu__badge\">Beta</span>\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" data-end aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"orbit\">\n      <span class=\"z-menu__icon\" aria-hidden=\"true\"><z-icon name=\"cpu-chip\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Orbit 5</span>\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" data-end aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Temporary chat</span>\n    <span class=\"z-menu__switch\" aria-hidden=\"true\"></span>\n  </button>\n</div>"
+    }
+  ]
+}

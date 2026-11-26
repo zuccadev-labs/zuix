@@ -13,7 +13,7 @@ import { withRef } from "../../react-compat";
 
 export type { ComposerFile, ComposerLabels, ComposerSend, ComposerVoice };
 
-export interface ComposerProps extends Omit<CoreProps, "status" | "models" | "model" | "tools" | "usage"> {
+export interface ComposerProps extends Omit<CoreProps, "status" | "models" | "model" | "tools" | "usage" | "quote" | "contexts" | "halo"> {
   /** Texto cambiado (cada pulsación). */
   onValueChange?: (value: string) => void;
   /** Enviar: texto con las menciones como `<@id>`, adjuntos y a qué responde o qué edita. */

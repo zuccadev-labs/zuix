@@ -1,0 +1,160 @@
+{
+  "name": "FeatureCard",
+  "group": "content",
+  "status": "new",
+  "description": "Tarjeta de característica: portada con un patrón generado por semilla (estrellas, triángulos, cruces, píxeles, curvas de nivel, malla, grano o semitono) o con una imagen, y el texto centrado abajo sobre un fundido de legibilidad.",
+  "import": "import { FeatureCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "required": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "eyebrow",
+      "type": "ReactNode",
+      "description": "Línea corta encima del título."
+    },
+    {
+      "name": "pattern",
+      "type": "enum",
+      "values": [
+        "grid",
+        "dots",
+        "hex",
+        "mesh",
+        "stars",
+        "triangles",
+        "plus",
+        "pixels",
+        "contours",
+        "grain",
+        "halftone"
+      ],
+      "default": "stars",
+      "description": "Dibujo de la portada (core/pattern)."
+    },
+    {
+      "name": "seed",
+      "type": "number | string",
+      "description": "Semilla: la misma da siempre la misma portada."
+    },
+    {
+      "name": "tone",
+      "type": "CardTone",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "description": "Tono de la portada y del dibujo."
+    },
+    {
+      "name": "cover",
+      "type": "ReactNode",
+      "description": "Portada propia (imagen, vídeo) en lugar del dibujo; decorativa."
+    },
+    {
+      "name": "animated",
+      "type": "boolean",
+      "default": false,
+      "description": "Deriva lenta del dibujo; nunca con movimiento reducido."
+    },
+    {
+      "name": "href",
+      "type": "string",
+      "description": "El título es un enlace que cubre la tarjeta."
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "Acciones bajo el texto, por encima del enlace."
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "center",
+        "start"
+      ],
+      "default": "center"
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3"
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus"
+  ],
+  "tokens": [
+    "card-radius",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "media-scrim",
+    "media-scrim-tinted",
+    "media-surface",
+    "media-fg",
+    "media-fg-muted",
+    "media-chip-bg",
+    "grain-opacity",
+    "accent-ring",
+    "focus-width",
+    "focus-offset",
+    "font-display",
+    "text-heading-lg",
+    "text-small"
+  ],
+  "classes": [
+    "z-feature-card",
+    "z-feature-card__cover",
+    "z-feature-card__body",
+    "z-feature-card__title",
+    "z-feature-card__description",
+    "z-card__link"
+  ],
+  "a11y": "article con su encabezado. El texto va sobre media-surface pleno (media-fg y media-fg-muted pasan de 4.5:1 en todas las marcas); el dibujo es aria-hidden. Con href, un solo enlace (el título) cubre la tarjeta y el foco se dibuja en la tarjeta. Colores forzados: sin dibujo, texto del sistema sobre Canvas.",
+  "examples": [
+    {
+      "title": "Cielo de estrellas",
+      "code": "<FeatureCard\n  pattern=\"stars\"\n  seed={3}\n  tone=\"info\"\n  title=\"Fingerprint security\"\n  description=\"Biometric sign-in keeps every account unique and safe.\"\n  href=\"/security\"\n/>"
+    },
+    {
+      "title": "Curvas de nivel",
+      "code": "<FeatureCard pattern=\"contours\" seed={7} tone=\"success\" title=\"Maps that stay readable\" description=\"Contour lines drawn from a seed, the same on every render.\" />"
+    },
+    {
+      "title": "Malla de color con grano",
+      "code": "<FeatureCard pattern=\"mesh\" seed={21} tone={3} eyebrow=\"New\" title=\"Liquid gradients\" description=\"Four soft blobs from the chart palette.\" />"
+    }
+  ]
+}

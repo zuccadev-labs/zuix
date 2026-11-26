@@ -7,6 +7,22 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Tarjetas de la 0.5 (apartado «Tarjetas» de la guía de zui):
+  - `Card` con `surface` (`plain`, `elevated`, `glass`, `tinted`, `neon`, `metal`), `tone`, `glow`, `grain` y `as`;
+    `CardHeader href` hace de la tarjeta entera un enlace (enlace extendido) con los demás controles por encima.
+  - `CardMedia placement="bleed"` con fundido de legibilidad (`scrim`, `tint`): el texto claro llega a 4.5:1 sobre
+    cualquier foto.
+  - `Backdrop` con siete patrones generados por semilla (`stars`, `triangles`, `plus`, `pixels`, `contours`, `grain`,
+    `halftone`), malla con semilla y `tone`. Motor en `core/pattern` (`patternSvg`, `patternUrl`, `patternVars`,
+    `meshVars`, `seedOf`) y `setBackdropPattern` en `/dom/effects`. Lo animable son propiedades registradas
+    (`--z-pattern-x`, `--z-pattern-y`, `--z-pattern-rotate`, `--z-pattern-scale`, `--z-pattern-k`).
+  - Componentes nuevos: `FeatureCard`, `ProductCard`, `PricingCard`, `PricingTable`, `OfferCard`, `CardBanner`,
+    `CategoryTile`, `StatGroup`, `RangeHistogram`, `BalanceCard`, `PaymentCard` y `ModelPicker`.
+  - `UserCard` con las variantes `profile`, `neon` y `portrait` y las props `tone`, `status` y `action`; `StatTile`
+    con `variant="elevated"`, `tone` y `layout="stacked"`; `Button` e `IconButton` con `variant="glass"`.
+  - `PromptInput` con `quote`, `contexts`, `voice`, `halo` y zona de soltar con borde punteado; barra de grabación
+    con rótulo y temporizador grande (también en `Composer`). `Suggestions` con `layout="list"`, `hints` y
+    `onDismiss`. Las entradas de `Menu` aceptan `appearance: "switch"`, `badge`, `media` e `indicator: "end"`.
 - Conector para editores visuales de páginas por bloques: `@zuccadev-labs/zuix-zui/editor` (sin React) y
   `@zuccadev-labs/zuix-zui/editor/react`. Lo describe
   [Conectar un editor visual](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/12-conectar-un-editor.md).

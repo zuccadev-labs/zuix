@@ -81,9 +81,49 @@
     {
       "name": "labels",
       "type": "Partial<ComposerLabels>"
+    },
+    {
+      "name": "quote",
+      "type": "{ id?: string; text: string }",
+      "description": "Texto citado de la respuesta, en una ficha del acento sobre el campo, con «Quitar» (y Esc)."
+    },
+    {
+      "name": "contexts",
+      "type": "PromptContext[]",
+      "description": "{ id, label, icon? }: contextos adjuntos en fichas de borde punteado, cada una con «Quitar»."
+    },
+    {
+      "name": "halo",
+      "type": "boolean",
+      "default": false,
+      "description": "Halo suave de destellos encima de la caja (decorativo)."
+    },
+    {
+      "name": "voice",
+      "type": "boolean",
+      "default": false,
+      "description": "Micrófono junto a enviar (si el navegador puede grabar): barra de grabación con temporizador."
+    },
+    {
+      "name": "onQuoteRemove",
+      "type": "() => void"
+    },
+    {
+      "name": "onContextRemove",
+      "type": "(detail: { id: string }) => void"
+    },
+    {
+      "name": "onVoice",
+      "type": "(detail: ComposerVoice) => void"
     }
   ],
-  "states": ["ready", "submitted", "streaming", "error", "with-attachments"],
+  "states": [
+    "ready",
+    "submitted",
+    "streaming",
+    "error",
+    "with-attachments"
+  ],
   "tokens": [
     "popup-bg",
     "popup-blur",
@@ -101,21 +141,31 @@
     "surface-3",
     "line",
     "warning",
-    "danger"
+    "danger",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "card-elevated-bg",
+    "card-sheen",
+    "radius-panel"
   ],
   "classes": [
-    "z-prompt-input",
     "z-composer",
+    "z-composer__context-chip",
+    "z-composer__contexts",
+    "z-composer__drop",
+    "z-composer__footer",
     "z-composer__form",
     "z-composer__input",
+    "z-composer__mic",
+    "z-composer__model",
     "z-composer__send",
     "z-composer__stop",
-    "z-composer__footer",
-    "z-composer__model",
-    "z-composer__toolset",
     "z-composer__tool",
+    "z-composer__toolset",
     "z-composer__usage",
-    "z-composer__usage-meter"
+    "z-composer__usage-meter",
+    "z-prompt-input"
   ],
   "a11y": "Como Composer: textarea etiquetado, Intro envía salvo con un IME componiendo, botón siempre presente. Mientras responde, el botón pasa a «Stop generating» en el mismo sitio (el foco no se pierde) y al pulsarlo se anuncia «Stopped». El modelo es un select nativo con nombre; las herramientas, botones con aria-pressed; el uso, un <meter> con nombre «12K of 200K tokens (6 %)». Sin React: .z-prompt-input con data-status, data-model, data-placeholder y models/tools/usage en <script type=\"application/json\" data-props>; emite z:send, z:stop, z:modelchange, z:tooltoggle y z:attach.",
   "behavior": "dom",
@@ -123,6 +173,10 @@
     {
       "title": "Con modelo, herramientas y uso",
       "code": "<PromptInput models={[{ id: \"fast\", label: \"Fast\" }, { id: \"deep\", label: \"Deep reasoning\" }]} tools={[{ id: \"web\", label: \"Web search\", icon: \"globe-alt\" }]} usage={{ used: 12400, limit: 200000 }} onSubmit={({ text }) => ask(text)} />"
+    },
+    {
+      "title": "Cita y contexto",
+      "code": "<PromptInput\n  quote={{ text: \"enhance user confidence in AI-driven responses\" }}\n  contexts={[{ id: \"kickoff\", label: \"Project kickoff\", icon: \"video-camera\" }]}\n  models={[{ id: \"aurora-3\", label: \"Aurora 3\" }]}\n/>"
     }
   ],
   "html": [

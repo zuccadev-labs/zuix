@@ -6,7 +6,7 @@ export { AssistantMessage, type AiLabels, type AssistantMessageProps, type Assis
 export { BranchPicker, type BranchPickerProps } from "./BranchPicker";
 export { Citation, type CitationProps } from "./Citation";
 export { Markdown, type MarkdownProps } from "./Markdown";
-export { PromptInput, type PromptFile, type PromptInputProps, type PromptModel, type PromptSubmit, type PromptTool } from "./PromptInput";
+export { PromptInput, type PromptContext, type PromptFile, type PromptInputProps, type PromptModel, type PromptSubmit, type PromptTool } from "./PromptInput";
 export { Reasoning, type ReasoningProps } from "./Reasoning";
 export { Sources, type SourcesProps } from "./Sources";
 export { Suggestions, type Suggestion, type SuggestionsProps } from "./Suggestions";
@@ -17,3 +17,4 @@ export type { BranchNode, BranchSelection } from "../../core/branches";
 // Árbol de la conversación (ramas al editar o regenerar) y acumulador de texto en streaming.
 export { activePath, addBranch, branchInfo, selectBranch, siblings, stepBranch } from "../../core/branches";
 export { createTextStream, provisional } from "../../core/stream-text";
+export { ModelPicker, type ModelPickerProps, type ModelPickerModel, type ModelPickerToggle, type ModelPickerLabels } from "./ModelPicker";

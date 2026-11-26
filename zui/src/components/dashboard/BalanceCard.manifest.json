@@ -1,0 +1,86 @@
+{
+  "name": "BalanceCard",
+  "group": "dashboard",
+  "status": "new",
+  "description": "Tarjeta de saldo con el degradado de la marca: cifra grande con los decimales atenuados, variación, gráfico de tendencia y acciones rápidas.",
+  "import": "import { BalanceCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "required": true,
+      "description": "ISO 4217."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    },
+    {
+      "name": "delta",
+      "type": "number",
+      "description": "Variación como fracción (0.084 = 8,4 %)."
+    },
+    {
+      "name": "deltaText",
+      "type": "ReactNode"
+    },
+    {
+      "name": "trend",
+      "type": "(number | null)[]"
+    },
+    {
+      "name": "header",
+      "type": "ReactNode",
+      "description": "Titular, avatar o moneda."
+    },
+    {
+      "name": "actions",
+      "type": "BalanceAction[]",
+      "description": "{ id, label, icon, onClick?, href? }"
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "2"
+    }
+  ],
+  "tokens": [
+    "accent-solid",
+    "accent-solid-hover",
+    "fg-on-accent",
+    "shadow-color",
+    "panel-radius",
+    "elevation-3",
+    "control-radius-xl"
+  ],
+  "classes": [
+    "z-balance-card",
+    "z-balance-card__value",
+    "z-balance-card__fraction",
+    "z-balance-card__trend",
+    "z-balance-card__actions",
+    "z-balance-card__action"
+  ],
+  "a11y": "article con nombre. Todo el texto es fg-on-accent sobre accent-solid (4.5:1); los decimales atenuados no bajan de 3:1 (texto grande). Cada acción es un botón o enlace con su texto visible.",
+  "examples": [
+    {
+      "title": "Saldo con acciones",
+      "code": "<BalanceCard\n  label=\"Total balance\"\n  value={84250.8}\n  currency=\"USD\"\n  locale=\"en-US\"\n  delta={0.0842}\n  deltaText=\"+$6,540.20 this month\"\n  trend={[42, 44, 41, 47, 52, 50, 58, 63, 71]}\n  actions={[\n    { id: \"send\", label: \"Send\", icon: \"arrow-up-tray\" },\n    { id: \"request\", label: \"Request\", icon: \"arrow-down-tray\" },\n    { id: \"top-up\", label: \"Top up\", icon: \"plus\" },\n  ]}\n/>"
+    }
+  ]
+}

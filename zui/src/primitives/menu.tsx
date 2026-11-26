@@ -69,6 +69,7 @@ function ItemBody({ entry, sub }: { entry: MenuItemEntry; sub?: boolean }) {
     <>
       <span className="z-menu__icon">{entry.icon ? <Icon name={entry.icon} size={14} /> : null}</span>
       <span className="z-menu__text">{entry.label}</span>
+      {entry.badge ? <span className="z-menu__badge">{entry.badge}</span> : null}
       {entry.shortcut ? <kbd className="z-menu__shortcut">{entry.shortcut}</kbd> : null}
       {sub ? (
         <span className="z-menu__chevron">
@@ -238,9 +239,14 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
           tree.close(true);
         }}
       >
-        <CheckMark kind="checkbox" />
+        {entry.appearance === "switch" ? (
+          <span className="z-menu__icon">{entry.icon ? <Icon name={entry.icon} size={14} /> : null}</span>
+        ) : (
+          <CheckMark kind="checkbox" />
+        )}
         <span className="z-menu__text">{entry.label}</span>
         {entry.shortcut ? <kbd className="z-menu__shortcut">{entry.shortcut}</kbd> : null}
+        {entry.appearance === "switch" ? <span className="z-menu__switch" aria-hidden="true" /> : null}
       </button>
     );
   };
@@ -264,9 +270,21 @@ function Level({ tree, items, depth, id, anchorRect, placement, gap, label, labe
           tree.close(true);
         }}
       >
-        <CheckMark kind="radio" />
+        {group.indicator === "end" ? (
+          <span className="z-menu__icon" aria-hidden="true">
+            {item.media ?? (item.icon ? <Icon name={item.icon} size={14} /> : null)}
+          </span>
+        ) : (
+          <CheckMark kind="radio" />
+        )}
         <span className="z-menu__text">{item.label}</span>
+        {item.badge ? <span className="z-menu__badge">{item.badge}</span> : null}
         {item.shortcut ? <kbd className="z-menu__shortcut">{item.shortcut}</kbd> : null}
+        {group.indicator === "end" ? (
+          <span className="z-menu__icon z-menu__check" data-kind="checkbox" data-end="" aria-hidden="true">
+            <Icon name="check" size={14} />
+          </span>
+        ) : null}
       </button>
     );
     return (

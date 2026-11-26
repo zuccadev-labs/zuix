@@ -1,33 +1,104 @@
 {
   "name": "Card",
   "group": "content",
-  "description": "Superficie que agrupa contenido relacionado.",
+  "description": "Superficie que agrupa contenido relacionado, con seis materiales (plain, elevated, glass, tinted, neon, metal), tono, brillo, grano y enlace extendido.",
   "import": "import { Card, CardHeader, CardFooter } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
       "name": "variant",
       "type": "enum",
-      "values": ["elevated", "outlined", "filled"],
+      "values": [
+        "elevated",
+        "outlined",
+        "filled"
+      ],
       "default": "elevated"
     },
     {
       "name": "padding",
       "type": "enum",
-      "values": ["none", "sm", "md", "lg"],
+      "values": [
+        "none",
+        "sm",
+        "md",
+        "lg"
+      ],
       "default": "md"
     },
     {
       "name": "interactive",
       "type": "boolean",
       "default": false,
-      "description": "Respuesta al puntero y al foco; añadir onClick, role y tabIndex, o envolver un enlace."
+      "description": "Respuesta al puntero y al foco. Con un enlace .z-card__link dentro (CardHeader href), toda la tarjeta es su objetivo; si no, añadir onClick, role y tabIndex."
+    },
+    {
+      "name": "surface",
+      "type": "enum",
+      "values": [
+        "plain",
+        "elevated",
+        "glass",
+        "tinted",
+        "neon",
+        "metal"
+      ],
+      "default": "plain",
+      "description": "Material: `elevated` opaca con elevación por capas y canto luminoso; `glass` cristal líquido; `tinted` teñida; `neon` borde y halo del tono; `metal` relleno pleno cepillado con texto claro."
+    },
+    {
+      "name": "tone",
+      "type": "CardTone",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "description": "Tono de tinted, neon, metal y del brillo (metal admite los tonos de estado y el acento)."
+    },
+    {
+      "name": "glow",
+      "type": "boolean",
+      "default": false,
+      "description": "Halo suave del tono."
+    },
+    {
+      "name": "grain",
+      "type": "boolean",
+      "default": false,
+      "description": "Grano fino (ruido SVG) sobre la superficie."
+    },
+    {
+      "name": "as",
+      "type": "enum",
+      "values": [
+        "div",
+        "article",
+        "section",
+        "li"
+      ],
+      "default": "div"
     },
     {
       "name": "...rest",
       "type": "HTMLAttributes<HTMLDivElement>"
     }
   ],
-  "states": ["rest", "hover", "focus", "active"],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active"
+  ],
   "tokens": [
     "space-4",
     "space-3",
@@ -62,10 +133,26 @@
     "space-3-5",
     "space-5",
     "text-title",
-    "tracking-snug"
+    "tracking-snug",
+    "card-elevated-bg",
+    "card-sheen",
+    "card-hue",
+    "card-tinted-bg",
+    "card-neon-bg",
+    "elevation-1",
+    "elevation-2",
+    "elevation-3",
+    "elevation-rim",
+    "grain-opacity",
+    "fg-on-accent",
+    "accent-solid"
   ],
-  "classes": ["z-card"],
-  "a11y": "div sin rol. Si es activable, quien la usa aporta rol, tabIndex y teclado.",
+  "classes": [
+    "z-card",
+    "z-card__corner",
+    "z-card__link"
+  ],
+  "a11y": "div (o el elemento de `as`). Tarjeta entera clicable: un solo enlace en el título (CardHeader href) con la zona de clic extendida; botones y enlaces de dentro quedan por encima. El foco se dibuja en la tarjeta. Sin transparencias, glass pasa a opaca; colores forzados: borde del sistema, sin sombras, halo ni grano.",
   "examples": [
     {
       "title": "Con cabecera y pie",
@@ -74,6 +161,14 @@
     {
       "title": "Activable",
       "code": "<Card interactive variant=\"outlined\" role=\"button\" tabIndex={0} onClick={() => openProject(\"atlas\")}>\n  <CardHeader title=\"Atlas\" subtitle=\"Ana Ruiz\" />\n</Card>"
+    },
+    {
+      "title": "Materiales",
+      "code": "<>\n  <Card surface=\"elevated\"><CardHeader title=\"Elevated\" subtitle=\"Layered shadows\" /></Card>\n  <Card surface=\"tinted\" tone=\"info\"><CardHeader title=\"Tinted\" subtitle=\"Washed with its tone\" /></Card>\n  <Card surface=\"neon\" tone=\"danger\"><CardHeader title=\"Neon\" subtitle=\"Rim and halo\" /></Card>\n  <Card surface=\"metal\" grain><CardHeader title=\"Metal\" subtitle=\"Brushed with grain\" /></Card>\n</>"
+    },
+    {
+      "title": "Tarjeta entera clicable",
+      "code": "<Card surface=\"elevated\" as=\"article\">\n  <CardHeader title=\"Atlas\" subtitle=\"Design tokens rollout\" href=\"/projects/atlas\" />\n  <CardFooter>\n    <Button size=\"sm\">Share</Button>\n  </CardFooter>\n</Card>"
     }
   ],
   "origin": "Card del design system base con la superficie de tarjeta de zutool."

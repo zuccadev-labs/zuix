@@ -30,15 +30,27 @@
     {
       "name": "deltaTone",
       "type": "enum",
-      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
+      "values": [
+        "neutral",
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
       "default": "neutral"
     },
     {
       "name": "variant",
       "type": "enum",
-      "values": ["glass", "solid", "soft"],
+      "values": [
+        "glass",
+        "solid",
+        "soft",
+        "elevated"
+      ],
       "default": "glass",
-      "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta."
+      "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta, `elevated` opaca con elevación por capas."
     },
     {
       "name": "trend",
@@ -54,9 +66,36 @@
       "name": "onClick",
       "type": "() => void",
       "description": "Vuelve la tesela un botón."
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": [
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ],
+      "description": "Color de la ficha del icono."
+    },
+    {
+      "name": "layout",
+      "type": "enum",
+      "values": [
+        "inline",
+        "stacked"
+      ],
+      "default": "inline",
+      "description": "`stacked`: el icono en ficha arriba y la etiqueta debajo."
     }
   ],
-  "states": ["rest", "hover", "focus", "active"],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active"
+  ],
   "tokens": [
     "fg-muted",
     "surface-3",
@@ -118,9 +157,16 @@
     "weight-display",
     "weight-medium",
     "chart-1",
-    "chart-area-opacity"
+    "chart-area-opacity",
+    "elevation-2",
+    "elevation-rim",
+    "card-elevated-bg",
+    "card-sheen"
   ],
-  "classes": ["z-stat", "z-sparkline"],
+  "classes": [
+    "z-stat",
+    "z-sparkline"
+  ],
   "a11y": "div; con onClick pasa a ser button con todo el contenido como nombre.",
   "examples": [
     {
@@ -134,6 +180,10 @@
     {
       "title": "Con tendencia",
       "code": "<StatTile label=\"Revenue\" value=\"$112k\" delta=\"+15%\" deltaTone=\"success\" trend={[42, 48, 45, 61, 66, 72, 69, 84, 90, 88, 97, 112]} />"
+    },
+    {
+      "title": "Ficha de icono apilada",
+      "code": "<StatTile variant=\"elevated\" layout=\"stacked\" tone=\"success\" icon=\"banknotes\" label=\"Income\" value=\"$12,850\" />"
     }
   ],
   "origin": "StatTile de ui-glass y tarjeta KPI de zutool."

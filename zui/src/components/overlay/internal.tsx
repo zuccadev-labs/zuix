@@ -46,6 +46,8 @@ export interface MenuItemEntry {
   href?: string;
   /** Submenú. */
   items?: MenuEntry[];
+  /** Etiqueta corta tras el texto («Beta», «Soon»). */
+  badge?: string;
 }
 
 /** Opción de encendido y apagado (`menuitemcheckbox`). Intro la cambia y cierra; Espacio la cambia y deja el menú abierto. */
@@ -57,6 +59,9 @@ export interface MenuCheckboxEntry {
   checked: boolean;
   onCheckedChange?: (checked: boolean) => void;
   disabled?: boolean;
+  icon?: IconName;
+  /** `check` (por defecto): marca delante; `switch`: interruptor al final, para ajustes que se encienden y apagan. */
+  appearance?: "check" | "switch";
 }
 
 /** Opción de un grupo de radio (`menuitemradio`). */
@@ -65,6 +70,11 @@ export interface MenuRadioItem {
   label: ReactNode;
   shortcut?: string;
   disabled?: boolean;
+  icon?: IconName;
+  /** Marca propia delante del texto (logotipo de un modelo); decorativa. Gana a `icon`. */
+  media?: ReactNode;
+  /** Etiqueta corta tras el texto («Beta», «Soon»). */
+  badge?: string;
 }
 
 /** Grupo de opciones excluyentes (`role="group"` con nombre); elegir cierra el menú. */
@@ -76,6 +86,8 @@ export interface MenuRadioGroupEntry {
   value: string;
   onValueChange?: (value: string) => void;
   items: MenuRadioItem[];
+  /** Dónde va la marca de la opción elegida: delante (por defecto) o al final, con el icono de la opción delante. */
+  indicator?: "start" | "end";
 }
 
 export type MenuEntry =

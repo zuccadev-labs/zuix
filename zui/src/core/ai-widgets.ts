@@ -1222,25 +1222,59 @@ export interface Suggestion {
   icon?: string;
   description?: string;
 }
+export interface SuggestionsLabels {
+  /** Pista de ↑ ↓. */
+  navigate: string;
+  /** Pista de Intro. */
+  select: string;
+  /** Pista de Esc. */
+  close: string;
+}
+export const SUGGESTIONS_LABELS: SuggestionsLabels = { navigate: "to navigate", select: "to select", close: "to close" };
 export interface SuggestionsProps {
   items?: readonly (Suggestion | string)[];
   label?: string;
-  /** `row` desplazable (por defecto) o `grid` (pantalla de inicio). */
-  layout?: "row" | "grid";
-  labels?: Partial<AiLabels>;
+  /**
+   * `row` desplazable (por defecto), `grid` (pantalla de inicio) o `list`: panel de cristal en columna con flecha
+   * delante de cada sugerencia, ↑ ↓ para recorrerlas y Esc para cerrar (evento `dismiss`).
+   */
+  layout?: "row" | "grid" | "list";
+  /** Pistas de teclado sobre la lista (↑ ↓, Intro, Esc). Solo con `layout="list"`. */
+  hints?: boolean;
+  labels?: Partial<AiLabels> & { hints?: Partial<SuggestionsLabels> };
 }
-export const suggestionsWidget = simple<SuggestionsProps, { items: Suggestion[]; label: string; layout: "row" | "grid"; labels: AiLabels }>(
+type SuggestionsConfig = {
+  items: Suggestion[];
+  label: string;
+  layout: "row" | "grid" | "list";
+  hints: boolean;
+  hintLabels: SuggestionsLabels;
+  labels: AiLabels;
+};
+const kbd = (text: string, label?: string) => h("kbd", { class: "z-kbd", "data-size": "sm", "aria-label": label }, text);
+const suggestionsBase = simple<SuggestionsProps, SuggestionsConfig>(
   "z-suggestions",
   (p) => ({
     items: (p.items ?? []).map((it) => (typeof it === "string" ? { text: it } : it)),
     label: p.label ?? "Suggestions",
-    layout: p.layout === "grid" ? "grid" : "row",
+    layout: p.layout === "grid" || p.layout === "list" ? p.layout : "row",
+    hints: Boolean(p.hints) && p.layout === "list",
+    hintLabels: { ...SUGGESTIONS_LABELS, ...p.labels?.hints },
     labels: labelsOf(p),
   }),
   (c) =>
     h(
       "div",
-      { class: "z-suggestions", "data-layout": c.layout },
+      { class: c.layout === "list" ? "z-suggestions z-liquid" : "z-suggestions", "data-layout": c.layout },
+      c.hints
+        ? h(
+            "p",
+            { class: "z-suggestions__hints", "aria-hidden": "true" },
+            h("span", { class: "z-suggestions__hint" }, kbd("↑"), kbd("↓"), c.hintLabels.navigate),
+            h("span", { class: "z-suggestions__hint" }, kbd("↵"), c.hintLabels.select),
+            h("span", { class: "z-suggestions__hint", "data-end": "" }, kbd("esc"), c.hintLabels.close),
+          )
+        : null,
       h(
         "ul",
         { class: "z-suggestions__list", "aria-label": c.label },
@@ -1251,7 +1285,9 @@ export const suggestionsWidget = simple<SuggestionsProps, { items: Suggestion[];
             h(
               "button",
               { type: "button", class: "z-suggestion", "data-id": it.id, "data-text": it.text },
-              it.icon ? h("span", { class: "z-suggestion__icon", "aria-hidden": "true" }, icon(it.icon, 16)) : null,
+              it.icon || c.layout === "list"
+                ? h("span", { class: "z-suggestion__icon", "aria-hidden": "true" }, icon(it.icon ?? "arrow-right", 16))
+                : null,
               h(
                 "span",
                 { class: "z-suggestion__body" },
@@ -1266,10 +1302,42 @@ export const suggestionsWidget = simple<SuggestionsProps, { items: Suggestion[];
   (el, j) => ({
     items: j.items as Suggestion[] | undefined,
     label: el.dataset.label,
-    layout: el.dataset.layout === "grid" ? "grid" : undefined,
-    labels: j.labels as Partial<AiLabels>,
+    layout: el.dataset.layout === "grid" || el.dataset.layout === "list" ? el.dataset.layout : undefined,
+    hints: yes(el.dataset.hints),
+    labels: j.labels as SuggestionsProps["labels"],
   }),
 );
+/** En `list`: ↑ ↓ (y Inicio, Fin) recorren las sugerencias y Esc pide cerrar el panel (`dismiss`). */
+export const suggestionsWidget: typeof suggestionsBase = {
+  ...suggestionsBase,
+  attach(el, host) {
+    const off = suggestionsBase.attach?.(el, host);
+    const onKey = (event: KeyboardEvent) => {
+      if (host.config().layout !== "list") return;
+      const items = [...el.querySelectorAll<HTMLButtonElement>(".z-suggestion")];
+      const at = items.indexOf(event.target as HTMLButtonElement);
+      if (at < 0) return;
+      const to =
+        event.key === "ArrowDown" ? (at + 1) % items.length
+        : event.key === "ArrowUp" ? (at - 1 + items.length) % items.length
+        : event.key === "Home" ? 0
+        : event.key === "End" ? items.length - 1
+        : -1;
+      if (to >= 0) {
+        event.preventDefault();
+        items[to]?.focus();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        host.emit("dismiss", {});
+      }
+    };
+    el.addEventListener("keydown", onKey);
+    return () => {
+      off?.();
+      el.removeEventListener("keydown", onKey);
+    };
+  },
+};
 
 export interface AgentStatusLabels {
   idle: string;

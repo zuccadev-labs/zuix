@@ -1,0 +1,37 @@
+{
+  "name": "PricingTable",
+  "group": "content",
+  "status": "new",
+  "description": "Fila de PricingCard sobre una malla de color desenfocada (Backdrop mesh con semilla); se reparte por el ancho y se apila en estrecho.",
+  "import": "import { PricingCard, PricingTable } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre de la región para lectores."
+    },
+    {
+      "name": "seed",
+      "type": "number | string",
+      "description": "Semilla de la malla del fondo."
+    }
+  ],
+  "tokens": [
+    "panel-radius",
+    "accent",
+    "info",
+    "success",
+    "chart-3"
+  ],
+  "classes": [
+    "z-pricing-table",
+    "z-pricing-table__plans"
+  ],
+  "a11y": "section con nombre. La malla es aria-hidden.",
+  "examples": [
+    {
+      "title": "Tres planes",
+      "code": "<PricingTable label=\"Plans\" seed={11}>\n  <PricingCard tone=\"success\" name=\"Basic\" price={{ amount: 29, currency: \"USD\", locale: \"en-US\", period: \"/ month\" }} features={[{ label: \"3 projects\" }, { label: \"Custom brands\", included: false }]} action={<Button>Choose Basic</Button>} />\n  <PricingCard featured badge=\"Most popular\" tone=\"info\" name=\"Professional\" price={{ amount: 39, currency: \"USD\", locale: \"en-US\", period: \"/ month\" }} features={[{ label: \"Unlimited projects\" }, { label: \"Custom brands\" }]} action={<Button variant=\"primary\">Choose Professional</Button>} />\n</PricingTable>"
+    }
+  ]
+}

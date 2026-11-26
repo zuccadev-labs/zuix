@@ -894,6 +894,72 @@
   .z-menu__item[aria-checked="true"] > .z-menu__check[data-kind="radio"]::before {
     border-color: currentColor;
   }
+  /* Opción elegida con la marca al final (indicator="end"): un menú de modelos con su icono delante. */
+  .z-menu__item[aria-checked="true"]:has(> .z-menu__check[data-end]) {
+    background: var(--z-accent-soft);
+  }
+  .z-menu__badge {
+    flex-shrink: 0;
+    padding: 0 var(--z-space-1-5);
+    border: 1px solid var(--z-line-strong);
+    border-radius: var(--z-radius-xs);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-fine);
+    font-weight: var(--z-weight-semibold);
+    letter-spacing: var(--z-tracking-wide);
+    line-height: var(--z-leading-ui);
+    text-transform: uppercase;
+  }
+  /* Interruptor de una opción de encendido: pista y botón; encendido, el relleno del acento. */
+  .z-menu__switch {
+    position: relative;
+    flex-shrink: 0;
+    inline-size: 32px;
+    block-size: 18px;
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-radius-full);
+    background: var(--z-control-bg);
+    transition: background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-menu__switch::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-start: 2px;
+    inline-size: 12px;
+    block-size: 12px;
+    border-radius: var(--z-radius-full);
+    background: var(--z-fg-muted);
+    transition: translate var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-menu__item[aria-checked="true"] > .z-menu__switch {
+    border-color: transparent;
+    background: var(--z-accent-solid);
+  }
+  .z-menu__item[aria-checked="true"] > .z-menu__switch::after {
+    translate: 14px 0;
+    background: var(--z-fg-on-accent);
+  }
+  .z-menu__item[aria-checked="true"]:dir(rtl) > .z-menu__switch::after {
+    translate: -14px 0;
+  }
+  @media (forced-colors: active) {
+    .z-menu__switch {
+      border-color: CanvasText;
+    }
+    .z-menu__switch::after {
+      background: CanvasText;
+    }
+    .z-menu__item[aria-checked="true"] > .z-menu__switch {
+      background: Highlight;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-menu__switch,
+    .z-menu__switch::after {
+      transition: none;
+    }
+  }
   .z-menu__group {
     display: flex;
     flex-direction: column;

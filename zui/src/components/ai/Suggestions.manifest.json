@@ -10,8 +10,14 @@
     },
     {
       "name": "layout",
-      "type": "\"row\" | \"grid\"",
-      "default": "row"
+      "type": "enum",
+      "values": [
+        "row",
+        "grid",
+        "list"
+      ],
+      "default": "row",
+      "description": "`list`: panel de cristal en columna con flecha delante, ↑ ↓ para recorrer y Esc para cerrar."
     },
     {
       "name": "label",
@@ -21,10 +27,33 @@
     {
       "name": "onSelect",
       "type": "(detail: { id?, text }) => void"
+    },
+    {
+      "name": "hints",
+      "type": "boolean",
+      "default": false,
+      "description": "Pistas de teclado sobre la lista (solo list)."
+    },
+    {
+      "name": "onDismiss",
+      "type": "() => void",
+      "description": "Esc dentro de la lista."
     }
   ],
-  "states": ["row", "grid"],
-  "tokens": ["surface-solid", "surface-2", "line", "line-strong", "radius-md", "fg", "fg-muted", "accent-text"],
+  "states": [
+    "row",
+    "grid"
+  ],
+  "tokens": [
+    "surface-solid",
+    "surface-2",
+    "line",
+    "line-strong",
+    "radius-md",
+    "fg",
+    "fg-muted",
+    "accent-text"
+  ],
   "classes": [
     "z-suggestions",
     "z-suggestions__list",
@@ -39,6 +68,10 @@
     {
       "title": "Rejilla de inicio",
       "code": "<Suggestions layout=\"grid\" items={[{ text: \"Summarize this thread\", icon: \"document-text\", description: \"Key points and decisions\" }, { text: \"Draft release notes\", icon: \"pencil\", description: \"From the last 20 commits\" }, { text: \"Plan the week\", icon: \"calendar-days\", description: \"With the team's calendar\" }]} onSelect={({ text }) => ask(text)} />"
+    },
+    {
+      "title": "Lista con pistas de teclado",
+      "code": "<Suggestions layout=\"list\" hints label=\"Follow-up questions\" items={[\"How should AI show uncertainty?\", \"Which UI elements build trust?\"]} />"
     }
   ],
   "html": [

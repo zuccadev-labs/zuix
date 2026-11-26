@@ -1,0 +1,65 @@
+{
+  "name": "StatGroup",
+  "group": "data",
+  "status": "new",
+  "description": "Datos en fila dentro de una tarjeta (días, valoración, países): fichas, separadores o sin marco.",
+  "import": "import { StatGroup } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "StatGroupItem[]",
+      "required": true,
+      "description": "{ label, value, hint? }"
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "tiles",
+        "divided",
+        "plain"
+      ],
+      "default": "tiles"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "center",
+        "start"
+      ],
+      "default": "center"
+    },
+    {
+      "name": "itemClassName",
+      "type": "string",
+      "description": "Clase de cada dato."
+    }
+  ],
+  "tokens": [
+    "inset",
+    "line",
+    "radius-md",
+    "fg-muted",
+    "fg-subtle",
+    "font-display",
+    "text-heading-lg"
+  ],
+  "classes": [
+    "z-stat-group",
+    "z-stat-group__item",
+    "z-stat-group__label",
+    "z-stat-group__value"
+  ],
+  "a11y": "Lista de descripción (dl): cada dato es dt + dd.",
+  "examples": [
+    {
+      "title": "Fichas",
+      "code": "<StatGroup items={[{ label: \"Countries\", value: 28 }, { label: \"Exhibitions\", value: 10 }, { label: \"Rating\", value: \"4.9\" }]} />"
+    },
+    {
+      "title": "Con separadores",
+      "code": "<StatGroup variant=\"divided\" align=\"start\" items={[{ label: \"Followers\", value: \"12.4k\" }, { label: \"Following\", value: 380 }]} />"
+    }
+  ]
+}

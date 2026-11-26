@@ -60,6 +60,16 @@ export interface ComposerLabels {
   /** «{used} of {limit} tokens ({percent})». */
   usage: string;
   stopped: string;
+  /** Título de la cita en PromptInput. */
+  quoting: string;
+  removeQuote: string;
+  /** Contextos adjuntos (lista). */
+  contexts: string;
+  /** Zona de soltar archivos. */
+  dropTitle: string;
+  dropHint: string;
+  /** Texto sobre la barra de grabación. */
+  recordingHint: string;
   picker?: Partial<EmojiPickerLabels>;
 }
 
@@ -89,6 +99,12 @@ export const COMPOSER_LABELS: ComposerLabels = {
   tools: "Tools",
   usage: "{used} of {limit} tokens ({percent})",
   stopped: "Stopped",
+  quoting: "Quoting",
+  removeQuote: "Remove quote",
+  contexts: "Context",
+  dropTitle: "Drop files here",
+  dropHint: "Images, documents, audio and more",
+  recordingHint: "Recording a voice note",
 };
 
 export const PROMPT_INPUT_LABELS: ComposerLabels = { ...COMPOSER_LABELS, field: "Prompt", placeholder: "Ask anything" };
@@ -133,6 +149,12 @@ export interface ComposerTool {
   active?: boolean;
 }
 
+export interface ComposerContext {
+  id: string;
+  label: string;
+  icon?: string;
+}
+
 export interface ComposerProps {
   /** Texto controlado. */
   value?: string;
@@ -161,6 +183,12 @@ export interface ComposerProps {
   model?: string;
   tools?: readonly ComposerTool[];
   usage?: { used: number; limit: number };
+  /** PromptInput: texto citado de la respuesta, en una ficha sobre el campo (con «Quitar»). */
+  quote?: { id?: string; text: string };
+  /** PromptInput: contextos adjuntos (reunión, documento) en fichas de borde punteado, cada una con «Quitar». */
+  contexts?: readonly ComposerContext[];
+  /** PromptInput: halo suave de destellos encima de la caja. */
+  halo?: boolean;
   locale?: string;
   labels?: Partial<ComposerLabels>;
 }
@@ -188,6 +216,9 @@ interface Config {
   model?: string;
   tools: readonly ComposerTool[];
   usage?: { used: number; limit: number };
+  quote?: { id?: string; text: string };
+  contexts: readonly ComposerContext[];
+  halo: boolean;
   locale?: string;
   labels: ComposerLabels;
 }
@@ -472,9 +503,9 @@ function attach(root: HTMLElement, host: Host): () => void {
         return;
       }
     }
-    if (event.key === "Escape" && (c.replyTo || c.editing)) {
+    if (event.key === "Escape" && (c.replyTo || c.editing || (c.kind === "prompt" && c.quote))) {
       event.preventDefault();
-      host.emit(c.editing ? "cancel-edit" : "cancel-reply", {});
+      host.emit(c.editing ? "cancel-edit" : c.kind === "prompt" && c.quote ? "quote-remove" : "cancel-reply", {});
       return;
     }
     if (event.key !== "Enter") return;
@@ -522,7 +553,14 @@ function attach(root: HTMLElement, host: Host): () => void {
       return;
     }
     if (target.closest(".z-composer__cancel-context")) {
-      host.emit(host.config().editing ? "cancel-edit" : "cancel-reply", {});
+      const c = host.config();
+      host.emit(c.editing ? "cancel-edit" : c.kind === "prompt" && c.quote ? "quote-remove" : "cancel-reply", {});
+      field()?.focus();
+      return;
+    }
+    const ctx = target.closest<HTMLElement>(".z-composer__context-remove");
+    if (ctx?.dataset.id) {
+      host.emit("context-remove", { id: ctx.dataset.id });
       field()?.focus();
       return;
     }
@@ -638,10 +676,28 @@ function tree(kind: "chat" | "prompt") {
     const isBusy = busy(c);
     const empty = !s.text.trim() && !s.files.length;
     const recordable = kind === "chat" && c.voice && s.canRecord && empty && !c.editing;
+    // En PromptInput, el micrófono va junto a enviar (no lo sustituye).
+    const micButton: VNode =
+      kind === "prompt" && c.voice && s.canRecord && !s.recording && !isBusy
+        ? h(
+            "button",
+            {
+              type: "button",
+              class: "z-btn z-btn--ghost z-btn--icon z-composer__record z-composer__mic",
+              "data-size": "md",
+              "aria-label": labels.record,
+              title: labels.record,
+              disabled: c.disabled,
+            },
+            icon("microphone", 18),
+          )
+        : null;
     const remaining = c.maxLength ? c.maxLength - s.text.length : null;
     const context = c.editing
       ? { icon: "pencil", title: labels.editing, text: c.editing.text, cancel: labels.cancelEdit }
-      : c.replyTo
+      : kind === "prompt" && c.quote
+        ? { icon: "arrow-turn-down-left", title: labels.quoting, text: c.quote.text, cancel: labels.removeQuote, quote: true }
+        : c.replyTo
         ? {
             icon: "arrow-turn-up-left",
             title: fill(labels.replyingTo, { name: c.replyTo.author ?? "" }),
@@ -701,6 +757,7 @@ function tree(kind: "chat" | "prompt") {
         "data-status": kind === "prompt" ? c.status : undefined,
         "data-disabled": on(c.disabled),
         "data-recording": on(Boolean(s.recording)),
+        "data-halo": on(kind === "prompt" && c.halo),
       },
       h(
         "form",
@@ -708,7 +765,7 @@ function tree(kind: "chat" | "prompt") {
         context
           ? h(
               "div",
-              { class: "z-composer__context" },
+              { class: "z-composer__context", "data-quote": on(Boolean((context as { quote?: boolean }).quote)) },
               h("span", { class: "z-composer__context-icon", "aria-hidden": "true" }, icon(context.icon, 16)),
               h(
                 "span",
@@ -726,6 +783,31 @@ function tree(kind: "chat" | "prompt") {
                   title: context.cancel,
                 },
                 icon("x-mark", 14),
+              ),
+            )
+          : null,
+        kind === "prompt" && c.contexts.length
+          ? h(
+              "ul",
+              { class: "z-composer__contexts", "aria-label": labels.contexts },
+              ...c.contexts.map((x) =>
+                h(
+                  "li",
+                  { class: "z-composer__context-chip", key: x.id },
+                  x.icon ? h("span", { class: "z-composer__context-chip-icon", "aria-hidden": "true" }, icon(x.icon, 14)) : null,
+                  h("span", { class: "z-composer__context-chip-label" }, x.label),
+                  h(
+                    "button",
+                    {
+                      type: "button",
+                      class: "z-composer__context-remove",
+                      "data-id": x.id,
+                      "aria-label": fill(labels.remove, { name: x.label }),
+                      title: fill(labels.remove, { name: x.label }),
+                    },
+                    icon("x-mark", 12),
+                  ),
+                ),
               ),
             )
           : null,
@@ -765,6 +847,7 @@ function tree(kind: "chat" | "prompt") {
           ? h(
               "div",
               { class: "z-composer__recording" },
+              h("span", { class: "z-composer__rec-hint", "aria-hidden": "true" }, labels.recordingHint),
               h(
                 "button",
                 {
@@ -873,6 +956,7 @@ function tree(kind: "chat" | "prompt") {
                     )
                   : null,
               ),
+              micButton,
               sendButton,
             ),
         kind === "prompt" && (c.models.length || c.tools.length || c.usage)
@@ -935,6 +1019,15 @@ function tree(kind: "chat" | "prompt") {
                     h("span", { class: "z-composer__usage-text", "aria-hidden": "true" }, percentText(ratio, c.locale)),
                   )
                 : null,
+            )
+          : null,
+        c.attach
+          ? h(
+              "div",
+              { class: "z-composer__drop", "aria-hidden": "true" },
+              h("span", { class: "z-composer__drop-icon" }, icon("arrow-up-tray", 20)),
+              h("span", { class: "z-composer__drop-title" }, labels.dropTitle),
+              h("span", { class: "z-composer__drop-hint" }, labels.dropHint),
             )
           : null,
         c.attach
@@ -1016,6 +1109,9 @@ function makeWidget(root: "z-composer" | "z-prompt-input", kind: "chat" | "promp
         model: p.model,
         tools: p.tools ?? [],
         usage: p.usage,
+        quote: p.quote,
+        contexts: p.contexts ?? [],
+        halo: Boolean(p.halo),
         locale: p.locale,
         labels,
       };
@@ -1088,6 +1184,9 @@ function makeWidget(root: "z-composer" | "z-prompt-input", kind: "chat" | "promp
         model: d.model,
         tools: json.tools as ComposerTool[] | undefined,
         usage: json.usage as ComposerProps["usage"],
+        quote: json.quote as ComposerProps["quote"],
+        contexts: json.contexts as ComposerProps["contexts"],
+        halo: yes(d.halo),
         locale: d.locale,
         labels: json.labels as Partial<ComposerLabels> | undefined,
       };

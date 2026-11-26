@@ -1,14 +1,22 @@
 "use client";
 import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { cx } from "../../cx";
+import { patternVars, type PatternName } from "../../core/pattern";
 import { useOffscreenRef } from "../../primitives/offscreen";
 import { withRef } from "../../react-compat";
 
-export type BackdropPattern = "grid" | "dots" | "hex" | "mesh";
+export type BackdropPattern = PatternName;
 
 export interface BackdropProps extends HTMLAttributes<HTMLDivElement> {
-  /** Dibujo del fondo: rejilla, puntos, hexágonos o degradado de malla. */
+  /**
+   * Dibujo del fondo: rejilla, puntos, hexágonos, malla de color, o un patrón generado con semilla (`stars`,
+   * `triangles`, `plus`, `pixels`, `contours`, `grain`, `halftone`).
+   */
   pattern?: BackdropPattern;
+  /** Semilla del dibujo: la misma da siempre el mismo (malla y patrones generados). Sin ella, el de la hoja. */
+  seed?: number | string;
+  /** Color del dibujo: el texto (`neutral`, por defecto), un tono de la marca o `media` (claro, sobre una portada oscura). */
+  tone?: "neutral" | "accent" | "info" | "success" | "warning" | "danger" | "media";
   /** Cuánto se nota el dibujo. Ninguna intensidad toca el color del texto que va encima. */
   intensity?: "subtle" | "medium" | "strong";
   /** Desvanecido hacia los bordes: elipse centrada, hacia abajo o ninguno. */
@@ -22,7 +30,8 @@ export interface BackdropProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Fondo decorativo en CSS detrás del contenido: rejilla, puntos, hexágonos o malla de color. La capa es
+ * Fondo decorativo en CSS detrás del contenido: rejilla, puntos, hexágonos, malla de color o un patrón con semilla
+ * (estrellas, triángulos, cruces, píxeles, curvas de nivel, grano y semitono). La capa es
  * `aria-hidden` y no recibe el puntero; el contenido va encima, en su propia capa.
  */
 export const Backdrop = withRef(function Backdrop({
@@ -31,6 +40,8 @@ export const Backdrop = withRef(function Backdrop({
   fade = "radial",
   animated,
   cell,
+  seed,
+  tone,
   className,
   style,
   children,
@@ -38,7 +49,11 @@ export const Backdrop = withRef(function Backdrop({
   ...rest
 }: BackdropProps) {
   const own = useOffscreenRef(ref, Boolean(animated));
-  const vars = cell ? ({ ...style, "--z-backdrop-cell": `${cell}px` } as CSSProperties) : style;
+  const vars = {
+    ...(seed !== undefined ? patternVars(pattern, seed) : {}),
+    ...(cell ? { "--z-backdrop-cell": `${cell}px` } : {}),
+    ...style,
+  } as CSSProperties;
   return (
     <div
       {...rest}
@@ -47,6 +62,8 @@ export const Backdrop = withRef(function Backdrop({
       data-pattern={pattern}
       data-intensity={intensity}
       data-fade={fade}
+      data-tone={tone && tone !== "neutral" ? tone : undefined}
+      data-seed={seed === undefined ? undefined : String(seed)}
       data-animated={animated ? "" : undefined}
       style={vars}
     >

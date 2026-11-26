@@ -963,8 +963,8 @@
   /* ---- Entrada de prompt ---- */
   .z-prompt-input .z-composer__form {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas: "context context context" "files files files" "field field field" "tools footer send";
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: "context context context context" "contexts contexts contexts contexts" "files files files files" "field field field field" "tools footer mic send";
     align-items: center;
     gap: var(--z-space-2);
     padding: var(--z-space-2-5) var(--z-space-2-5) var(--z-space-2);
@@ -1083,6 +1083,301 @@
   }
   .z-composer__usage-meter {
     inline-size: 56px;
+  }
+
+  /* Superficie de gama alta: opaca y elevada por capas, con canto luminoso y un anillo del acento al escribir. */
+  .z-prompt-input .z-composer__form {
+    position: relative;
+    padding: var(--z-space-3) var(--z-space-3) var(--z-space-2-5);
+    border-color: var(--z-line);
+    border-radius: var(--z-radius-panel);
+    background: var(--z-card-sheen), var(--z-card-elevated-bg);
+    box-shadow:
+      var(--z-elevation-rim),
+      var(--z-elevation-2);
+    transition:
+      border-color var(--z-duration-fast) var(--z-ease-standard),
+      box-shadow var(--z-duration-normal) var(--z-ease-standard);
+  }
+  .z-prompt-input .z-composer__form:focus-within {
+    border-color: color-mix(in srgb, var(--z-accent) 60%, transparent);
+    box-shadow:
+      var(--z-elevation-rim),
+      0 0 0 4px color-mix(in srgb, var(--z-accent) 16%, transparent),
+      var(--z-elevation-3);
+  }
+  .z-prompt-input .z-composer__mic {
+    grid-area: mic;
+  }
+  /* Cita: ficha del acento sobre el campo, con flecha de respuesta y «Quitar». */
+  .z-prompt-input .z-composer__context[data-quote] {
+    padding: var(--z-space-1-5) var(--z-space-1-5) var(--z-space-1-5) var(--z-space-3);
+    border: 0;
+    border-radius: var(--z-radius-md);
+    background: var(--z-accent-soft);
+  }
+  .z-prompt-input .z-composer__context[data-quote] .z-composer__context-title {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .z-prompt-input .z-composer__context[data-quote] .z-composer__context-text {
+    color: var(--z-accent-text);
+    font-size: var(--z-text-body);
+  }
+  .z-composer__contexts {
+    grid-area: contexts;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--z-space-1-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .z-composer__context-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1-5);
+    min-block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2) var(--z-space-1);
+    border: 1px dashed var(--z-line-strong);
+    border-radius: var(--z-control-radius);
+    background: var(--z-surface);
+    font-size: var(--z-text-small);
+    font-weight: var(--z-weight-medium);
+  }
+  .z-composer__context-chip-icon {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-space-5);
+    block-size: var(--z-space-5);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-composer__context-remove {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-control-height-xs);
+    block-size: var(--z-control-height-xs);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-control-radius-sm);
+    background: transparent;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .z-composer__context-remove:hover {
+      background: var(--z-surface-3);
+      color: var(--z-fg);
+    }
+  }
+  .z-composer__context-remove:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: -2px;
+  }
+  /* Zona de soltar: borde punteado del acento sobre toda la caja mientras se arrastra un archivo encima. */
+  .z-composer__drop {
+    position: absolute;
+    inset: var(--z-space-1-5);
+    z-index: var(--z-layer-raised);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--z-space-1);
+    border: 2px dashed color-mix(in srgb, var(--z-accent) 70%, transparent);
+    border-radius: calc(var(--z-radius-panel) - var(--z-space-1-5));
+    background: color-mix(in srgb, var(--z-accent) 10%, var(--z-surface-solid));
+    color: var(--z-fg);
+    text-align: center;
+    pointer-events: none;
+  }
+  .z-composer[data-drop] .z-composer__drop {
+    display: flex;
+  }
+  .z-composer__drop-icon {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-control-height-lg);
+    block-size: var(--z-control-height-lg);
+    border-radius: var(--z-control-radius-lg);
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-composer__drop-title {
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-composer__drop-hint {
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-small);
+  }
+  /* Grabación: rótulo arriba, punto que late y temporizador grandes, cancelar y enviar a los lados. */
+  .z-prompt-input .z-composer__recording {
+    grid-column: 1 / -1;
+  }
+  .z-composer__recording {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "cancel hint hint send" "cancel dot time send";
+    align-items: center;
+    column-gap: var(--z-space-2);
+    padding: var(--z-space-2);
+    border-radius: var(--z-radius-lg);
+  }
+  .z-composer__rec-hint {
+    grid-area: hint;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-composer__record-cancel {
+    grid-area: cancel;
+  }
+  .z-composer__rec-dot {
+    grid-area: dot;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--z-danger) 22%, transparent);
+  }
+  .z-composer__rec-time {
+    grid-area: time;
+    font-size: var(--z-text-heading);
+  }
+  .z-composer__rec-wave {
+    display: none;
+  }
+  .z-composer__record-send {
+    grid-area: send;
+  }
+  /* Halo: destellos suaves del acento encima de la caja (decorativo). */
+  .z-prompt-input[data-halo] {
+    isolation: isolate;
+  }
+  .z-prompt-input[data-halo]::before {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(var(--z-space-16) * -1);
+    inset-inline: 12%;
+    z-index: var(--z-layer-below);
+    block-size: calc(var(--z-space-20) + var(--z-space-4));
+    background:
+      radial-gradient(60% 80% at 50% 100%, color-mix(in srgb, var(--z-info) 70%, transparent), transparent 72%),
+      radial-gradient(30% 50% at 50% 100%, color-mix(in srgb, var(--z-accent) 30%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .z-prompt-input[data-halo]::after {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(var(--z-space-16) * -1);
+    inset-inline: 18%;
+    z-index: var(--z-layer-below);
+    block-size: var(--z-space-20);
+    background: var(--z-fg);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Ccircle cx='158.4' cy='8.5' r='0.41' fill-opacity='0.71'/%3E%3Ccircle cx='105.9' cy='107.1' r='0.55' fill-opacity='0.58'/%3E%3Ccircle cx='42.9' cy='18.4' r='0.71' fill-opacity='0.73'/%3E%3Ccircle cx='193.6' cy='71.2' r='0.57' fill-opacity='0.65'/%3E%3Ccircle cx='115.8' cy='183' r='0.36' fill-opacity='0.78'/%3E%3Ccircle cx='68.3' cy='206.1' r='0.67' fill-opacity='0.68'/%3E%3Ccircle cx='34' cy='80.9' r='0.35' fill-opacity='0.26'/%3E%3Ccircle cx='105.2' cy='189.9' r='0.86' fill-opacity='0.72'/%3E%3Ccircle cx='128.6' cy='128' r='0.63' fill-opacity='0.57'/%3E%3Ccircle cx='184.5' cy='90.9' r='0.72' fill-opacity='0.59'/%3E%3Ccircle cx='170.7' cy='188.2' r='0.63' fill-opacity='0.66'/%3E%3Cpath d='M154 97.6L155 101.6L159 102.6L155 103.6L154 107.6L153 103.6L149 102.6L153 101.6Z' fill-opacity='0.95'/%3E%3Cpath d='M156.8 144.2L157.7 148.1L161.6 149L157.7 149.9L156.8 153.8L155.9 149.9L152 149L155.9 148.1Z' fill-opacity='0.95'/%3E%3Ccircle cx='12.5' cy='14.6' r='1' fill-opacity='0.46'/%3E%3Ccircle cx='118.8' cy='63.8' r='0.76' fill-opacity='0.6'/%3E%3Ccircle cx='86' cy='166.4' r='1.06' fill-opacity='0.64'/%3E%3Ccircle cx='165.1' cy='169.4' r='0.66' fill-opacity='0.34'/%3E%3Ccircle cx='152' cy='170.3' r='1.09' fill-opacity='0.84'/%3E%3Ccircle cx='215.7' cy='128.2' r='1.06' fill-opacity='0.74'/%3E%3Cpath d='M69.5 133.5L70.3 136.9L73.7 137.7L70.3 138.5L69.5 141.9L68.7 138.5L65.3 137.7L68.7 136.9Z' fill-opacity='0.95'/%3E%3Ccircle cx='131.8' cy='31' r='0.76' fill-opacity='0.4'/%3E%3Ccircle cx='193.9' cy='10.8' r='0.42' fill-opacity='0.5'/%3E%3Ccircle cx='195.7' cy='6.4' r='0.43' fill-opacity='0.42'/%3E%3Ccircle cx='-1.5' cy='115.1' r='0.35' fill-opacity='0.34'/%3E%3Ccircle cx='218.5' cy='115.1' r='0.35' fill-opacity='0.34'/%3E%3Ccircle cx='142.7' cy='138.6' r='0.87' fill-opacity='0.73'/%3E%3Ccircle cx='27.6' cy='42.4' r='0.81' fill-opacity='0.66'/%3E%3Ccircle cx='127.1' cy='160.2' r='1.06' fill-opacity='0.31'/%3E%3Ccircle cx='212.2' cy='42.9' r='0.72' fill-opacity='0.51'/%3E%3Ccircle cx='121.3' cy='61.2' r='0.36' fill-opacity='0.53'/%3E%3Ccircle cx='171.5' cy='74.1' r='0.63' fill-opacity='0.84'/%3E%3Ccircle cx='17.3' cy='22.7' r='0.45' fill-opacity='0.77'/%3E%3Ccircle cx='169.6' cy='184.6' r='0.4' fill-opacity='0.45'/%3E%3Ccircle cx='57.3' cy='29.4' r='0.66' fill-opacity='0.39'/%3E%3Ccircle cx='4.2' cy='120.3' r='0.64' fill-opacity='0.83'/%3E%3Ccircle cx='196.8' cy='198.6' r='0.59' fill-opacity='0.42'/%3E%3Ccircle cx='44.8' cy='168.7' r='0.5' fill-opacity='0.48'/%3E%3Ccircle cx='-3.2' cy='68.3' r='0.47' fill-opacity='0.61'/%3E%3Ccircle cx='216.8' cy='68.3' r='0.47' fill-opacity='0.61'/%3E%3Cpath d='M178.9 1.2L179.7 4.5L183 5.3L179.7 6.1L178.9 9.4L178.1 6.1L174.8 5.3L178.1 4.5Z' fill-opacity='0.95'/%3E%3Ccircle cx='18.7' cy='3.1' r='0.86' fill-opacity='0.77'/%3E%3Ccircle cx='18.7' cy='223.1' r='0.86' fill-opacity='0.77'/%3E%3Ccircle cx='119.1' cy='125.5' r='0.82' fill-opacity='0.77'/%3E%3Ccircle cx='189.6' cy='132.3' r='0.78' fill-opacity='0.83'/%3E%3Ccircle cx='113.8' cy='43.8' r='0.76' fill-opacity='0.38'/%3E%3Ccircle cx='135.8' cy='189.3' r='0.96' fill-opacity='0.65'/%3E%3Ccircle cx='69.7' cy='50.9' r='0.9' fill-opacity='0.52'/%3E%3Ccircle cx='195.4' cy='92.7' r='0.69' fill-opacity='0.46'/%3E%3Ccircle cx='170.7' cy='84.2' r='0.52' fill-opacity='0.71'/%3E%3Cpath d='M98.8 146.1L99.8 150.1L103.8 151.1L99.8 152.1L98.8 156.1L97.8 152.1L93.8 151.1L97.8 150.1Z' fill-opacity='0.95'/%3E%3Ccircle cx='187.6' cy='88' r='0.4' fill-opacity='0.37'/%3E%3Cpath d='M149.9 137.3L150.7 140.5L153.9 141.3L150.7 142.1L149.9 145.3L149.1 142.1L145.9 141.3L149.1 140.5Z' fill-opacity='0.95'/%3E%3Ccircle cx='158' cy='56.7' r='0.52' fill-opacity='0.53'/%3E%3Ccircle cx='139.4' cy='184.9' r='0.4' fill-opacity='0.76'/%3E%3Ccircle cx='51.3' cy='196.9' r='0.88' fill-opacity='0.69'/%3E%3Ccircle cx='91.2' cy='15.3' r='0.79' fill-opacity='0.58'/%3E%3Ccircle cx='116.7' cy='136.1' r='1.02' fill-opacity='0.67'/%3E%3C/svg%3E"), radial-gradient(50% 90% at 50% 100%, var(--z-fg), transparent);
+    mask-composite: intersect;
+    mask-size: 220px 220px, 100% 100%;
+    pointer-events: none;
+  }
+
+  /* ---- ModelPicker ---- */
+  .z-model-picker {
+    gap: var(--z-space-1-5);
+    padding-inline: var(--z-space-2);
+    border: 1px solid var(--z-line);
+    color: var(--z-fg);
+  }
+  .z-model-picker__media {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 16px;
+    block-size: 16px;
+  }
+  .z-model-picker__badge {
+    padding: 0 var(--z-space-1);
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-fine);
+  }
+  .z-model-picker__menu .z-menu__icon > :is(img, svg) {
+    inline-size: 16px;
+    block-size: 16px;
+  }
+
+  /* ---- Sugerencias en lista (panel de cristal con pistas de teclado) ---- */
+  .z-suggestions[data-layout="list"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-1);
+    padding: var(--z-space-2);
+    border-radius: var(--z-radius-panel);
+  }
+  .z-suggestions__hints {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--z-space-1) var(--z-space-4);
+    margin: 0;
+    padding: var(--z-space-1) var(--z-space-2) var(--z-space-1-5);
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+  }
+  .z-suggestions__hint {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+  }
+  .z-suggestions__hint[data-end] {
+    margin-inline-start: auto;
+  }
+  .z-suggestions[data-layout="list"] .z-suggestions__list {
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    padding: 0;
+    overflow: visible;
+  }
+  .z-suggestions[data-layout="list"] .z-suggestion {
+    gap: var(--z-space-3);
+    inline-size: auto;
+    padding: var(--z-space-2) var(--z-space-3);
+    border-color: transparent;
+    border-radius: var(--z-radius-md);
+    background: transparent;
+    font-size: var(--z-text-body);
+    white-space: normal;
+  }
+  .z-suggestions[data-layout="list"] .z-suggestion__icon {
+    color: var(--z-fg-muted);
+  }
+  .z-suggestions[data-layout="list"] .z-suggestion:is(:focus-visible, :hover) {
+    background: var(--z-surface-3);
+  }
+  .z-suggestions[data-layout="list"] .z-suggestion:focus-visible {
+    outline-offset: -2px;
+  }
+  [dir="rtl"] .z-suggestions[data-layout="list"] .z-suggestion__icon {
+    scale: -1 1;
+  }
+  @media (forced-colors: active) {
+    .z-composer__drop {
+      border-color: Highlight;
+      background: Canvas;
+    }
+    .z-composer__context-chip {
+      border-color: CanvasText;
+    }
+    .z-prompt-input[data-halo]::before,
+    .z-prompt-input[data-halo]::after {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .z-prompt-input[data-halo]::before,
+    .z-prompt-input[data-halo]::after {
+      display: none;
+    }
   }
 
   /* ---- Medidor (UsageMeter y PromptInput) ---- */
