@@ -7,6 +7,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Tokens de tarjetas: elevación por capas (`elevation-1`, `elevation-2`, `elevation-3`, `elevation-rim`, sobre
+  `shadow-color` y `shadow-k`, que sube a 3 en los temas oscuros), materiales (`card-elevated-bg`, `card-sheen`,
+  `card-hue`, `card-tinted-bg`, `card-neon-bg`), texto sobre foto (`media-scrim`, `media-scrim-tinted`,
+  `media-surface`, `media-chip-bg`, `media-fg`, `media-fg-muted`) y `grain-opacity`. `pnpm tokens` mide las superficies
+  `card-elevated`, `card-tinted` y `card-neon` y los pares de texto claro sobre los velos.
 - Escala divergente del mapa de calor (`HeatmapChart` con `scale="diverging"`): `heatmap-neg-hue` (de
   `warning-text`) y `heatmap-pos-hue` (de `info-text`), cada una con cuatro niveles (`heatmap-neg-1…4`,
   `heatmap-pos-1…4`) mezclados con `surface-solid`. Ámbar y azul se distinguen con daltonismo y no dependen del

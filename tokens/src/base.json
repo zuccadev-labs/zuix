@@ -129,7 +129,9 @@
     "fg-prose": "color-mix(in srgb, {fg} 88%, transparent)",
     "glass-blur": "36px",
     "glass-blur-elevated": "48px",
-    "glass-saturate": "180%"
+    "glass-saturate": "180%",
+    "shadow-color": "color-mix(in srgb, {canvas} 16%, black)",
+    "shadow-k": "1"
   },
   "coarse": {
     "touch-target": "40px",
@@ -166,6 +168,22 @@
     "card-border": "{line}",
     "card-radius": "{radius-xl}",
     "card-shadow": "{shadow-sm}",
+    "elevation-1": "0 0 0 1px color-mix(in srgb, {shadow-color} calc(4% * {shadow-k}), transparent), 0 1px 2px color-mix(in srgb, {shadow-color} calc(6% * {shadow-k}), transparent), 0 3px 6px -2px color-mix(in srgb, {shadow-color} calc(6% * {shadow-k}), transparent)",
+    "elevation-2": "0 0 0 1px color-mix(in srgb, {shadow-color} calc(4% * {shadow-k}), transparent), 0 1px 2px color-mix(in srgb, {shadow-color} calc(5% * {shadow-k}), transparent), 0 4px 8px -2px color-mix(in srgb, {shadow-color} calc(6% * {shadow-k}), transparent), 0 12px 24px -6px color-mix(in srgb, {shadow-color} calc(8% * {shadow-k}), transparent), 0 28px 48px -18px color-mix(in srgb, {shadow-color} calc(12% * {shadow-k}), transparent)",
+    "elevation-3": "0 0 0 1px color-mix(in srgb, {shadow-color} calc(4% * {shadow-k}), transparent), 0 2px 4px color-mix(in srgb, {shadow-color} calc(5% * {shadow-k}), transparent), 0 12px 24px -8px color-mix(in srgb, {shadow-color} calc(10% * {shadow-k}), transparent), 0 32px 64px -20px color-mix(in srgb, {shadow-color} calc(16% * {shadow-k}), transparent), 0 64px 112px -40px color-mix(in srgb, {shadow-color} calc(20% * {shadow-k}), transparent)",
+    "elevation-rim": "inset 0 1px 0 {glass-highlight}, inset 0 0 0 1px color-mix(in srgb, {fg} 4%, transparent)",
+    "card-elevated-bg": "{surface-solid}",
+    "card-sheen": "linear-gradient(180deg, {glass-specular}, transparent 46%)",
+    "card-hue": "{accent}",
+    "card-tinted-bg": "color-mix(in srgb, {card-hue} 9%, {surface-solid})",
+    "card-neon-bg": "color-mix(in srgb, {card-hue} 9%, {surface-solid})",
+    "media-scrim": "color-mix(in srgb, {shadow-color} 80%, transparent)",
+    "media-fg": "#FFFFFF",
+    "media-fg-muted": "rgba(255, 255, 255, 0.84)",
+    "media-scrim-tinted": "color-mix(in srgb, color-mix(in srgb, {card-hue} 30%, {shadow-color}) 84%, transparent)",
+    "media-surface": "color-mix(in srgb, {card-hue} 18%, {shadow-color})",
+    "media-chip-bg": "color-mix(in srgb, {shadow-color} 66%, transparent)",
+    "grain-opacity": "0.14",
 
     "panel-radius": "{radius-panel}",
     "popup-bg": "{overlay}",
@@ -310,7 +328,10 @@
       "card-on-solid": { "layers": ["surface-solid", "card-bg"] },
       "reading": { "over": "canvas", "layers": ["reading-bg"] },
       "code-on-reading": { "over": "canvas", "layers": ["reading-bg", "code-bg"] },
-      "control-on-glass": { "over": "canvas", "layers": ["glass-bg", "control-bg"] }
+      "control-on-glass": { "over": "canvas", "layers": ["glass-bg", "control-bg"] },
+      "card-elevated": { "layers": ["card-elevated-bg"] },
+      "card-tinted": { "layers": ["surface-solid", "card-tinted-bg"] },
+      "card-neon": { "layers": ["surface-solid", "card-neon-bg"] }
     },
     "text": ["fg", "fg-prose", "fg-muted", "fg-subtle", "accent-text", "success-text", "warning-text", "danger-text", "info-text"],
     "canvasText": ["canvas-fg", "canvas-fg-muted"],
@@ -334,7 +355,14 @@
       { "fg": "fg-on-accent", "bg": "event-solid-6", "min": 4.5 },
       { "fg": "fg-on-accent", "bg": "calendar-now-label-bg", "min": 4.5 },
       { "fg": "fg-on-accent", "bg": "perpetual-side-bg", "min": 4.5 },
-      { "fg": "perpetual-side-bg", "bg": "fg-on-accent", "min": 4.5 }
+      { "fg": "perpetual-side-bg", "bg": "fg-on-accent", "min": 4.5 },
+      { "fg": "media-fg", "bg": "media-scrim", "min": 4.5 },
+      { "fg": "media-fg-muted", "bg": "media-scrim", "min": 4.5 },
+      { "fg": "media-fg", "bg": "media-scrim-tinted", "min": 4.5 },
+      { "fg": "media-fg-muted", "bg": "media-scrim-tinted", "min": 4.5 },
+      { "fg": "media-fg", "bg": "media-surface", "min": 4.5 },
+      { "fg": "media-fg-muted", "bg": "media-surface", "min": 4.5 },
+      { "fg": "media-fg", "bg": "media-chip-bg", "min": 4.5 }
     ],
     "nonText": [
       "control-border",
@@ -380,6 +408,20 @@
       {
         "selector": ".z-event[data-dragging]",
         "reason": "Como el seleccionado: fg-on-accent sobre event-solid-N, medido en pairs."
+      },
+      {
+        "selector": ".z-card[data-surface=\"metal\"]",
+        "reason": "El fondo es el relleno pleno del tono (accent-solid o *-solid) bajo un brillo cepillado de un 9 % como máximo: fg-on-accent / *-solid se mide en pairs."
+      },
+      {
+        "selector": ".z-card:has(> .z-card__media[data-placement=\"bleed\"])",
+        "fg": "media-fg",
+        "reason": "Texto sobre una foto a sangre: cada pieza va sobre el velo pleno (media-scrim o media-scrim-tinted); media-fg / media-scrim(-tinted) se mide en pairs."
+      },
+      {
+        "selector": ".z-card:has(> .z-card__media[data-placement=\"bleed\"])",
+        "fg": "media-fg-muted",
+        "reason": "Como media-fg: media-fg-muted / media-scrim(-tinted) se mide en pairs."
       }
     ]
   }
