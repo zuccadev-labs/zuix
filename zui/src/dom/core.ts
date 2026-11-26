@@ -93,7 +93,7 @@ let ownIcons = false;
 function registerOwnIcons(): void {
   if (ownIcons) return;
   ownIcons = true;
-  registerIcons([xMark, exclamationTriangle, informationCircle, ellipsisHorizontal]);
+  registerIcons([xMark, exclamationTriangle, informationCircle]);
 }
 
 /* ---------- Piezas registradas ---------- */
@@ -866,7 +866,8 @@ function setupTabsMenu(tabs: HTMLElement): void {
   const list = tabs.querySelector<HTMLElement>('.z-tabs__list[data-overflow="menu"]');
   if (!list || list.closest(".z-tabs") !== tabs || tabMenus.has(list)) return;
   tabMenus.add(list);
-  registerOwnIcons();
+  // El icono del botón, aquí y no con los propios del núcleo: quien solo usa toast() no lo arrastra.
+  registerIcons([ellipsisHorizontal]);
   let strip = list.parentElement;
   if (!strip?.classList.contains("z-tabs__strip")) {
     strip = document.createElement("div");
