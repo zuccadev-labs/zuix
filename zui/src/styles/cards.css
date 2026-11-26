@@ -261,14 +261,17 @@
   }
   .z-card > .z-card__media[data-placement="bleed"] + :not(.z-card__corner),
   .z-card > .z-card__media[data-placement="bleed"] + .z-card__corner + * {
-    margin-block-start: calc(var(--z-space-20) * -1);
-    padding-block-start: var(--z-space-20);
+    --z-scrim-fade: calc(var(--z-space-16) * 2);
+    margin-block-start: calc(var(--z-scrim-fade) * -1);
+    padding-block-start: var(--z-scrim-fade);
+    /* Fundido suavizado (ease-in) de 128 px: sin escalón visible sobre una foto clara. */
     background: linear-gradient(
       to bottom,
       transparent,
-      color-mix(in srgb, var(--z-card-scrim) 30%, transparent) calc(var(--z-space-20) * 0.35),
-      color-mix(in srgb, var(--z-card-scrim) 75%, transparent) calc(var(--z-space-20) * 0.7),
-      var(--z-card-scrim) var(--z-space-20)
+      color-mix(in srgb, var(--z-card-scrim) 6%, transparent) calc(var(--z-scrim-fade) * 0.25),
+      color-mix(in srgb, var(--z-card-scrim) 22%, transparent) calc(var(--z-scrim-fade) * 0.5),
+      color-mix(in srgb, var(--z-card-scrim) 55%, transparent) calc(var(--z-scrim-fade) * 0.75),
+      var(--z-card-scrim) var(--z-scrim-fade)
     );
   }
   .z-card > .z-card__media[data-placement="bleed"] ~ :last-child {
@@ -455,7 +458,7 @@
   .z-product-card[data-layout="bleed"] .z-product-card__subtitle {
     color: var(--z-media-fg-muted);
   }
-  .z-product-card[data-layout="bleed"] .z-product-card__price {
+  .z-product-card[data-layout="bleed"] :is(.z-product-card__price, .z-product-card__price .z-price__current) {
     color: var(--z-media-fg);
   }
   .z-product-card[data-layout="bleed"] .z-product-card__price .z-price__current {
