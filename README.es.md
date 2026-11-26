@@ -38,7 +38,7 @@ y el modo sin framework.
 | `@zuccadev-labs/zuix` | [`suite/`](./suite/README.md) | Paraguas: instala los cuatro siguientes y los reexporta bajo subrutas | Sí |
 | `@zuccadev-labs/zuix-tokens` | [`tokens/`](./tokens/README.md) | Fuente única de valores de diseño. Una marca es un archivo | Sí |
 | `@zuccadev-labs/zuix-zicon` | [`zicon/`](./zicon/README.md) | 366 iconos en `outline` y `solid`, elemento `<z-icon>` y componente de React | Sí |
-| `@zuccadev-labs/zuix-zui` | [`zui/`](./zui/README.md) | 237 componentes accesibles que solo leen tokens | Sí |
+| `@zuccadev-labs/zuix-zui` | [`zui/`](./zui/README.md) | 249 componentes accesibles que solo leen tokens | Sí |
 | `@zuccadev-labs/zuix-zout` | [`zout/`](./zout/README.md) | 30 layouts: shell, paneles divididos, pestañas de trabajo, rejillas, layouts de página | Sí |
 | `@zuccadev-labs/zuix-zudocs` | `zudocs/` | Estándar de documentación y plantilla Docusaurus | No |
 

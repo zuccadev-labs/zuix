@@ -133,7 +133,7 @@ se señala con su número de línea. El del sitio de zuix:
     "areas": [{ "id": "users", "label": "Uso", "icon": "book", "description": "Qué es cada paquete y cómo se usa." }]
   },
   "pages": { "components": true, "icons": true, "tokens": true },
-  "home": { "eyebrow": "Suite de UI/UX · este sitio usa la marca {brand}", "title": "Un estándar.", "emphasis": "Cualquier marca.", "suite": true },
+  "home": { "eyebrow": "Suite de UI/UX de código abierto", "title": "Un estándar.", "emphasis": "Cualquier marca.", "suite": true },
   "llms": { "append": "llms.append.md" },
   "search": { "enabled": true, "languages": ["es", "en"] },
   "navbar": [{ "label": "Componentes", "to": "/components" }],

@@ -1,6 +1,6 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 237 componentes en 19 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 249 componentes en 19 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
 React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
@@ -19,10 +19,10 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Acciones | Button, ButtonGroup, CopyButton, DownloadTrigger, Fab, FabMenu, IconButton, Link, SegmentedControl, SplitButton, Swap, Toggle, ToggleGroup, Toolbar |
 | Formularios | Calendar, Cascader, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, DateTimeRangePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MaskedInput, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, QuarterPicker, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, TimeRangePicker, TransferList, TreeSelect, WeekPicker, YearPicker |
 | Agenda | CalendarHeatmap, EventCalendar, FreeBusy, HabitCalendar, PerpetualYear, SlotPicker, TimelineView |
-| Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, FilterBar, Item, Kbd, Meter, PriceBreakdown, PriceTag, Progress, Rating, ReviewCard, ReviewSummary, StatTile, StatusDot, SummaryList, Table, Timeline |
+| Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, FilterBar, Item, Kbd, Meter, PriceBreakdown, PriceTag, Progress, RangeHistogram, Rating, ReviewCard, ReviewSummary, StatGroup, StatTile, StatusDot, SummaryList, Table, Timeline |
 | Gráficos | AnimatedNumber, AreaChart, BarChart, BulletChart, CategoryBar, ComboChart, DonutChart, HeatmapChart, LineChart, PieChart, RadarChart, ScatterChart, Sparkline |
 | Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, NotificationBadge, NotificationCenter, Skeleton, Spinner |
-| Contenido | AspectRatio, Callout, Card, CardFooter, CardHeader, CardMedia, CodeBlock, Divider, FormatByte, FormatDate, FormatDuration, FormatNumber, Highlight, JsonTree, Marquee, Panel, Prose, RelativeTime, ScrollArea, Timer |
+| Contenido | AspectRatio, Callout, Card, CardBanner, CardFooter, CardHeader, CardMedia, CategoryTile, CodeBlock, Divider, FeatureCard, FormatByte, FormatDate, FormatDuration, FormatNumber, Highlight, JsonTree, Marquee, OfferCard, Panel, PricingCard, PricingTable, ProductCard, Prose, RelativeTime, ScrollArea, Timer |
 | Medios | CompareSlider, ImageCropper, ImageList, Masonry, QRCode, SignaturePad |
 | Efectos | AttentionRing, Backdrop, BorderBeam, Confetti, Glow, TextEffect |
 | Capas | ActionBar, Command, CommandPalette, ConfirmDialog, ContextMenu, Drawer, HoverCard, Menu, Modal, Popover, Toast, Toggletip, Tooltip, Tour |
@@ -31,8 +31,8 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Tiempo | AnalogClock, Clock, Countdown, DurationField, TimeZoneSelect, WorldClock |
 | Terminal y código | CodeViewer, DiffViewer, LogConsole, Terminal |
 | Chat y mensajería | CallCard, ChatHeader, Composer, ConversationList, DeliveryStatus, EmojiPicker, MessageBubble, MessageList, PinnedBar, Reactions, ThreadSummary, TypingIndicator, VoiceNote |
-| IA y agentes | AgentPlan, AgentStatus, ApprovalCard, Artifact, AssistantMessage, BranchPicker, Citation, Markdown, PromptInput, Reasoning, Sources, Suggestions, ToolCall, UsageMeter |
-| Dashboard y tableros | ActivityFeed, BarList, DashboardGrid, DeltaBadge, FunnelChart, Gauge, KanbanBoard, Leaderboard, MetricCard, MetricGroup, ProgressGoal, Tracker |
+| IA y agentes | AgentPlan, AgentStatus, ApprovalCard, Artifact, AssistantMessage, BranchPicker, Citation, Markdown, ModelPicker, PromptInput, Reasoning, Sources, Suggestions, ToolCall, UsageMeter |
+| Dashboard y tableros | ActivityFeed, BalanceCard, BarList, DashboardGrid, DeltaBadge, FunnelChart, Gauge, KanbanBoard, Leaderboard, MetricCard, MetricGroup, PaymentCard, ProgressGoal, Tracker |
 | Usuarios y perfiles | AccountMenu, MemberList, Persona, PresenceBadge, ProfileEditor, ProfileHeader, SettingsSection, UserCard |
 | Nodos | Node, NodeCanvas, NodeControls, NodeListView, NodeMinimap |
 
@@ -40,8 +40,8 @@ Cada componente declara en el contrato qué necesita para funcionar:
 
 | `behavior` | Significado | Cuántos |
 |---|---|---|
-| `none` | Solo CSS. Basta el marcado | 73 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 163 |
+| `none` | Solo CSS. Basta el marcado | 84 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 164 |
 | `react` | Solo funciona con el binding de React. Hoy ninguno | 0 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
@@ -651,6 +651,89 @@ export function Load({ cells, orders }: { cells: { day: string; hour: string; va
 Sin React, `setWidgetProps(el, { value: 1500 })` cambia el número y lo hace contar, y `setWidgetProps(el, { data })`
 repinta un gráfico con datos nuevos.
 
+## Tarjetas (0.5)
+
+Las tarjetas tienen materiales, portadas generadas y composiciones listas. Todo sale de tokens por marca y tema, y
+`pnpm tokens` mide el contraste de cada superficie nueva.
+
+### Materiales de Card
+
+`Card` gana `surface`: `plain` (la de siempre), `elevated` (opaca, con elevación por capas y canto luminoso), `glass`
+(cristal líquido), `tinted` (teñida con su tono), `neon` (borde y halo del tono) y `metal` (relleno pleno cepillado,
+texto claro). `tone` elige el tono (`accent`, uno de estado o un color de gráfico del 1 al 8), `glow` añade un halo y
+`grain` un grano fino de ruido SVG. La elevación son cuatro tokens: `elevation-1`, `elevation-2`, `elevation-3` (sombras
+compuestas suaves que se intensifican en oscuro con `shadow-k`) y `elevation-rim` (el canto interior).
+
+```tsx
+<Card surface="elevated" as="article">
+  <CardHeader title="Atlas" subtitle="Design tokens rollout" href="/projects/atlas" />
+  <CardFooter>
+    <Button size="sm">Share</Button>
+  </CardFooter>
+</Card>
+```
+
+Con `href`, el título de `CardHeader` es el único enlace y su zona de clic cubre la tarjeta (enlace extendido); los
+botones de dentro siguen por encima y el foco se dibuja en la tarjeta. En HTML es la clase `z-card__link` en el enlace
+del título:
+
+```html
+<article class="z-card" data-surface="elevated" data-variant="elevated" data-padding="md">
+  <div class="z-card__header">
+    <div class="z-card__heading">
+      <h3 class="z-card__title"><a class="z-card__link" href="/projects/atlas">Atlas</a></h3>
+    </div>
+  </div>
+</article>
+```
+
+`CardMedia placement="bleed"` pone la foto a sangre y el contenido encima, abajo. Cada pieza de texto va sobre el
+velo pleno (`media-scrim`, o `media-scrim-tinted` con `tint`), que arranca con un fundido por encima de la primera
+línea: el texto claro llega a 4.5:1 sobre cualquier imagen. `Button variant="glass"` es el botón para ir sobre una foto.
+
+### Portadas con patrón
+
+`Backdrop` dibuja, además de rejilla, puntos, hexágonos y malla, siete patrones generados con semilla: `stars`,
+`triangles`, `plus`, `pixels`, `contours` (curvas de nivel), `grain` y `halftone`. La misma `seed` da siempre el mismo
+dibujo. El patrón es una tesela SVG periódica usada como máscara: el color lo pone el token (`tone`), así que sirve en
+todas las marcas y temas. Lo animable son propiedades registradas (`--z-pattern-x`, `--z-pattern-y`,
+`--z-pattern-rotate`, `--z-pattern-scale`, `--z-pattern-k`); con movimiento reducido no deriva y con colores forzados
+desaparece. Sin framework, `setBackdropPattern(el, "stars", 3)` de `/dom/effects` cambia el dibujo, y las funciones de
+la raíz (`patternSvg`, `patternUrl`, `patternVars`) dan la tesela para usarla en cualquier sitio.
+
+```tsx
+<FeatureCard pattern="contours" seed={7} tone="success" title="Maps that stay readable" href="/maps" />
+```
+
+### Composiciones
+
+| Componente | Qué es |
+|---|---|
+| FeatureCard | Portada con patrón (o imagen) y el texto centrado abajo sobre un fundido. |
+| ProductCard | Foto a sangre teñida con el precio grande y CTA de cristal, o foto inset con datos y CTA a todo el ancho. |
+| PricingCard, PricingTable | Planes de cristal sobre una mancha de color, con checks y cruces dichos en texto y el plan destacado. |
+| OfferCard | Oferta o perfil profesional: avatar, datos con icono, fichas, tarifa, descripción y acciones. |
+| CardBanner | Cinta de color que asoma por detrás de una tarjeta, con un mensaje o un Countdown. |
+| CategoryTile | Mosaico de categoría: enlace con relleno de color, icono en ficha, flecha y cifra. |
+| StatGroup | Datos en fila dentro de una tarjeta (fichas, separadores o sin marco). |
+| RangeHistogram | Histograma decorativo bajo un Slider de rango. |
+| BalanceCard | Saldo con el degradado de la marca, decimales atenuados, gráfico y acciones. |
+| PaymentCard | Tarjeta bancaria de metal con grano, chip en CSS y el número oculto salvo las cuatro últimas cifras. |
+| ModelPicker | Selector de modelo como menú: interruptores, modelos con etiqueta, submenú y chat temporal. |
+
+`UserCard` suma las variantes `profile` (limpia, con estadísticas en fichas y dos acciones), `neon` (color vivo con
+halo, rol con check y nombre en mayúsculas) y `portrait` (la foto entera con el nombre sobre un desenfoque), con
+`tone`, `status` y `action`. `StatTile` suma `variant="elevated"`, `tone` y `layout="stacked"`.
+
+`PromptInput` suma `quote` (cita del acento con «Quitar»), `contexts` (fichas de borde punteado), `voice` (micrófono y
+barra de grabación con temporizador), `halo` y una zona de soltar archivos con borde punteado. `Suggestions` suma
+`layout="list"` con `hints`: pistas de teclado, ↑ ↓ para recorrer y Esc para cerrar. Las entradas de `Menu` aceptan
+`appearance: "switch"`, `badge`, `media` e `indicator: "end"`.
+
+Accesibilidad: nada depende solo del color (las características no incluidas lo dicen en texto, el estado lleva
+icono y texto), sin transparencias el cristal pasa a opaco y los desenfoques se quitan, y con colores forzados las
+tarjetas quedan con borde del sistema, sin sombras, halos, grano ni dibujo.
+
 ## Dirección de escritura
 
 Dentro de un contenedor con `dir="rtl"` las hojas se reflejan (usan propiedades lógicas), los iconos
@@ -830,6 +913,7 @@ fuera de ellos. Son funciones puras salvo los hooks; las firmas están en las de
 | Atajos de teclado | `parseShortcut`, `normalizeShortcut`, `matchesShortcut`, `shortcutFromEvent`, `shortcutLabels`, `formatShortcutValue`, `ariaKeyshortcuts`, `isApplePlatform` |
 | Descargas | `download`, `mimeFromName` |
 | Medios y efectos | `qrcodeSvg`, `cropImage`, `cropImageBlob`, `signatureValue`, `signatureBlob`, `confetti`, `DOT_PATTERNS` |
+| Patrones de portada | `patternSvg`, `patternUrl`, `patternVars`, `meshVars`, `seedOf`, `SEEDED_PATTERNS`, `PATTERN_TILE` |
 | Chat | `mergeDelivery`, `toggleReaction`, `encodeMentions`, `mentionParts`, `linkify`, `safeHref`, `searchEmoji`, `peaksFrom`, `EMOJI_SET`, `QUICK_REACTIONS` |
 | IA | `createTextStream`, `provisional`, `activePath`, `addBranch`, `branchInfo`, `selectBranch`, `stepBranch`, `siblings` |
 | Dashboard | `computeDelta`, `computePace`, `elapsedFraction`, `funnelStages`, `normalizeLayout`, `parseLayout`, `serializeLayout`, `sortLayout`, `compactLayout`, `fitColumns`, `moveGridItem`, `resizeGridItem`, `moveCard`, `locateCard` |

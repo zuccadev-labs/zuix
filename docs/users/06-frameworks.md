@@ -215,7 +215,7 @@ init(datesModule, chartsModule);
 | `/dom/charts` | AnimatedNumber, AreaChart, BarChart, BulletChart, CategoryBar, ComboChart, DonutChart, HeatmapChart, LineChart, PieChart, RadarChart, ScatterChart, Sparkline | `chartsModule`, `setWidgetProps` |
 | `/dom/color` | ColorPicker, ColorArea, ColorSlider, ColorSwatchPicker, ColorField, ColorPickerTrigger | `colorModule`, `setColorValue` |
 | `/dom/media` | Carousel, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider, ShortcutInput, Confetti | `mediaModule`, `carousel`… |
-| `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
+| `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setBackdropPattern`, `setDotMatrixPattern` |
 | `/dom/time` | Clock, AnalogClock, WorldClock, Countdown, DurationField, TimeZoneSelect (sobre el Combobox del núcleo) | `timeModule`, `refreshTimeZoneSelect`, `formatDuration` |
 | `/dom/terminal` | Terminal, LogConsole, CodeViewer, DiffViewer | `terminalModule`, `terminal(el)`, `appendLogEntries`, `setWidgetProps` |
 | `/dom/chat` | ConversationList, MessageList, Composer, EmojiPicker, VoiceNote, Reactions, CallCard, PinnedBar | `chatModule`, `messageList(el)`, `setWidgetProps`, `linkify`, `encodeMentions`, `chatRows` |
@@ -451,7 +451,7 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | `/dom/color` | Color | `setColorValue` |
 | `/dom/media` | Carrusel e historias | `carousel`, `storiesWidget`, `lightbox`, `openLightbox` |
 | | Medios | `setCompareValue`, `cropImage`, `cropImageBlob`, `signatureValue`, `signatureBlob`, `qrcodeSvg`, `confetti` |
-| `/dom/effects` | Efectos | `setDotMatrixPattern` |
+| `/dom/effects` | Efectos | `setBackdropPattern`, `setDotMatrixPattern` |
 | `/dom/time` | Tiempo | `refreshTimeZoneSelect`, `formatDuration`, `parseISODuration`, `toISODuration`, `durationToMs` |
 | `/dom/terminal` | Terminal | `terminal`, `appendLogEntries`, `parseAnsi`, `stripAnsi`, `createAnsiScreen` |
 | `/dom/chat` | Lista y entrega | `messageList`, `chatRows`, `dayLabel`, `arrivalText`, `typingText`, `mergeDelivery`, `toggleReaction` |
