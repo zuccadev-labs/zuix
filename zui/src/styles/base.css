@@ -1,4 +1,25 @@
 /* Base común: tipografía, foco, selección y barras de desplazamiento. Origen: capa base de zutool. */
+/* Tamaño de los fundidos de las listas que desplazan: registrados para que se animen (sin registrar no interpolan). */
+@property --z-fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --z-fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes z-fade-start {
+  to {
+    --z-fade-start: var(--z-fade-size);
+  }
+}
+@keyframes z-fade-end {
+  from {
+    --z-fade-end: var(--z-fade-size);
+  }
+}
 @layer zui.base {
   /* Tira con desplazamiento horizontal: el lado con contenido oculto se difumina (data-scroll-edges lo pone el
      binding al desplazar y al cambiar de tamaño). Sin transparencia o con colores forzados, un canto normal. */
@@ -44,6 +65,50 @@
     }
     [data-scroll-edges~="end"] {
       border-inline-end: 1px solid var(--z-line-strong);
+    }
+  }
+  /* Listas que desplazan en vertical (opciones, comandos, listas virtuales): el borde con más filas se difumina, sin
+     guion: una animación ligada al propio desplazamiento hace crecer cada fundido al alejarse de ese extremo. Sin
+     contenido que desplazar no hay fundido. Mejora progresiva: sin animaciones de desplazamiento, un canto normal. */
+  @supports (animation-timeline: scroll()) {
+    :is(
+        .z-listbox__viewport,
+        .z-transfer__options,
+        .z-palette__list,
+        .z-tree[data-virtual],
+        .z-member-list__scroll,
+        .z-conversation-list__items[data-virtual]
+      ) {
+      --z-fade-size: var(--z-space-6);
+      -webkit-mask:
+        linear-gradient(var(--z-fg), var(--z-fg)) no-clip subtract,
+        linear-gradient(to bottom, var(--z-fg), transparent) 0 0 / 100% var(--z-fade-start) no-repeat no-clip,
+        linear-gradient(to bottom, transparent, var(--z-fg)) 0 100% / 100% var(--z-fade-end) no-repeat no-clip;
+      mask:
+        linear-gradient(var(--z-fg), var(--z-fg)) no-clip subtract,
+        linear-gradient(to bottom, var(--z-fg), transparent) 0 0 / 100% var(--z-fade-start) no-repeat no-clip,
+        linear-gradient(to bottom, transparent, var(--z-fg)) 0 100% / 100% var(--z-fade-end) no-repeat no-clip;
+      animation:
+        z-fade-start linear both,
+        z-fade-end linear both;
+      animation-timeline: scroll(self block);
+      animation-range:
+        0 var(--z-fade-size),
+        calc(100% - var(--z-fade-size)) 100%;
+      scroll-padding-block: var(--z-fade-size);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    :is(
+        .z-listbox__viewport,
+        .z-transfer__options,
+        .z-palette__list,
+        .z-tree[data-virtual],
+        .z-member-list__scroll,
+        .z-conversation-list__items[data-virtual]
+      ) {
+      -webkit-mask: none;
+      mask: none;
     }
   }
   /* Texto de interfaz 14/20 (`text-body` en rem: respeta el tamaño de letra de la persona). */

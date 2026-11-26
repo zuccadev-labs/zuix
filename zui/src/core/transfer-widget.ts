@@ -184,7 +184,15 @@ function panel(c: Config, s: State, uid: string, side: Side, all: TransferItem[]
               ),
             );
           })
-        : [h("div", { class: "z-transfer__empty", role: "presentation" }, s.query[side] ? c.labels.noMatches : c.labels.empty)]),
+        : // Una lista vacía sigue siendo un listbox: el aviso va como opción deshabilitada (un listbox sin opciones no
+          // es válido) y el teclado no la recorre (recorre los datos).
+          [
+            h(
+              "div",
+              { class: "z-transfer__empty", role: "option", "aria-disabled": "true", "aria-selected": "false" },
+              s.query[side] ? c.labels.noMatches : c.labels.empty,
+            ),
+          ]),
       spacerNode("div", "after", win.after),
     ),
   );
