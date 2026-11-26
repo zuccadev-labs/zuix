@@ -3,7 +3,7 @@ export type Tone = "neutral" | "accent" | "success" | "warning" | "danger" | "in
 export type ControlSize = "sm" | "md" | "lg";
 export type Intent = "primary" | "secondary" | "ghost" | "danger";
 /** Variantes de Button: las intenciones más el contorno y el aspecto de enlace. */
-export type ButtonVariant = Intent | "outline" | "link";
+export type ButtonVariant = Intent | "tonal" | "outline" | "link";
 /** Tamaños de Button e IconButton: los de control más `xs` (24 px) y `xl` (48 px). */
 export type ButtonSize = "xs" | ControlSize | "xl";
 

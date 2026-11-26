@@ -161,6 +161,9 @@
     "button-primary-bg": "{accent-solid}",
     "button-primary-bg-hover": "{accent-solid-hover}",
     "button-primary-fg": "{fg-on-accent}",
+    "button-tonal-bg": "{accent-soft}",
+    "button-tonal-bg-hover": "color-mix(in srgb, {accent} 26%, transparent)",
+    "button-tonal-fg": "{accent-text}",
 
     "card-bg": "{surface}",
     "card-border": "{line}",

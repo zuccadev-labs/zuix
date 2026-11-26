@@ -473,6 +473,70 @@
       rotate: 1turn;
     }
   }
+  /* Ondulado (Material 3 Expressive): el `<progress>` sigue siendo el control accesible, pero lo dibuja un SVG. El arco
+     hecho es una onda; lo que falta, un anillo plano tras un hueco. Los dos miden 100 (pathLength), como el valor. */
+  .z-progress-ring[data-variant="wavy"] {
+    --z-ring-gap: 4;
+    /* Grosor en unidades del lienzo de 100: el del anillo a escala de su tamaño. */
+    --z-ring-stroke: 10;
+  }
+  .z-progress-ring[data-variant="wavy"][data-size="sm"] {
+    --z-ring-stroke: 12.5;
+  }
+  .z-progress-ring[data-variant="wavy"][data-size="lg"] {
+    --z-ring-stroke: 9.375;
+  }
+  .z-progress-ring[data-variant="wavy"][data-size="xl"] {
+    --z-ring-stroke: 8.333;
+  }
+  .z-progress-ring[data-variant="wavy"] .z-progress-ring__bar {
+    opacity: 0;
+  }
+  .z-progress-ring__wave {
+    grid-area: 1 / 1;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    fill: none;
+    stroke-linecap: round;
+  }
+  .z-progress-ring__wave > * {
+    stroke-width: var(--z-ring-stroke);
+  }
+  .z-progress-ring__arc {
+    stroke: var(--z-ring-fill);
+    stroke-dasharray: var(--z-ring-value) 100;
+  }
+  .z-progress-ring__rest {
+    stroke: var(--z-ring-track);
+    transform-origin: 50% 50%;
+    rotate: -90deg;
+    stroke-dasharray: max(0, 100 - var(--z-ring-value) - 2 * var(--z-ring-gap)) 100;
+    stroke-dashoffset: calc(-1 * (var(--z-ring-value) + var(--z-ring-gap)));
+  }
+  .z-progress-ring[data-variant="wavy"][data-state="complete"] .z-progress-ring__rest {
+    stroke: none;
+  }
+  .z-progress-ring[data-variant="wavy"][data-state="indeterminate"] .z-progress-ring__arc {
+    stroke-dasharray: 25 100;
+  }
+  .z-progress-ring[data-variant="wavy"][data-state="indeterminate"] .z-progress-ring__rest {
+    display: none;
+  }
+  .z-progress-ring[data-variant="wavy"][data-state="indeterminate"] .z-progress-ring__wave {
+    animation: z-ring-spin 1.4s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-progress-ring[data-variant="wavy"][data-state="indeterminate"] .z-progress-ring__wave {
+      animation-duration: 4s;
+    }
+  }
+  @media (forced-colors: active) {
+    .z-progress-ring__wave {
+      --z-ring-fill: CanvasText;
+      --z-ring-track: GrayText;
+    }
+  }
   .z-progress-ring__content {
     grid-area: 1 / 1;
     max-width: calc(100% - var(--z-ring-thickness) * 2 - 4px);

@@ -35,6 +35,11 @@ export interface SliderProps extends Omit<ComponentProps<"span">, "children" | "
    * la marca. Las marcas son decorativas: el valor lo anuncia el tirador.
    */
   marks?: boolean | ReadonlyArray<number | { value: number; label?: string }>;
+  /**
+   * `center` (Material 3 Expressive): con un solo tirador, la pista se rellena desde el punto medio entre `min` y
+   * `max` hasta el valor, hacia un lado o hacia el otro. Para ajustes con cero en medio (balance, desfase, ±).
+   */
+  origin?: "start" | "center";
 }
 
 /** Deslizador de uno o varios valores (patrón APG «slider»; rango con dos tiradores). */
@@ -49,6 +54,7 @@ export const Slider = withRef(function Slider({
   minStepsBetweenThumbs = 0,
   orientation = "horizontal",
   inverted,
+  origin = "start",
   disabled,
   name,
   form,
@@ -133,8 +139,11 @@ export const Slider = withRef(function Slider({
   // del texto, así que en RTL la pista crece hacia la izquierda sin leer el DOM en el render.
   const start = vertical ? (inverted ? "top" : "bottom") : inverted ? "insetInlineEnd" : "insetInlineStart";
   const end = vertical ? (inverted ? "bottom" : "top") : inverted ? "insetInlineStart" : "insetInlineEnd";
-  const low = values.length > 1 ? percent(Math.min(...values), min, max) : 0;
-  const high = percent(Math.max(...values, min), min, max);
+  // Con origen en el centro (un tirador), la pista va del punto medio al valor.
+  const centered = origin === "center" && values.length === 1;
+  const middle = (min + max) / 2;
+  const low = values.length > 1 ? percent(Math.min(...values), min, max) : centered ? percent(Math.min(middle, values[0]!), min, max) : 0;
+  const high = centered ? percent(Math.max(middle, values[0]!), min, max) : percent(Math.max(...values, min), min, max);
   const rangeStyle = { [start]: `${low}%`, [end]: `${100 - high}%` } as CSSProperties;
   const steps = Math.round((max - min) / step);
   const markList: Array<{ value: number; label?: string }> =
@@ -146,8 +155,8 @@ export const Slider = withRef(function Slider({
         ? marks.map((mark) => (typeof mark === "number" ? { value: mark } : mark))
         : [];
   const labelled = markList.some((mark) => mark.label);
-  const lowest = values.length > 1 ? Math.min(...values) : min;
-  const highest = Math.max(...values, min);
+  const lowest = values.length > 1 ? Math.min(...values) : centered ? Math.min(middle, values[0]!) : min;
+  const highest = centered ? Math.max(middle, values[0]!) : Math.max(...values, min);
 
   return (
     <span
@@ -163,6 +172,7 @@ export const Slider = withRef(function Slider({
       data-value={values.join(",")}
       data-disabled={disabled ? "" : undefined}
       data-inverted={inverted ? "" : undefined}
+      data-origin={centered ? "center" : undefined}
       data-marks={markList.length ? (labelled ? "labels" : "") : undefined}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

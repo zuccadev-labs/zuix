@@ -1,4 +1,11 @@
 /* Datos: tablas, etiquetas, fichas, avatares, indicadores y medidores. Origen: zutool, ui-glass y design system base. */
+/* Desfase de la onda del Progress ondulado: animable (registrado fuera de las capas: @property no se puede anidar). */
+@property --z-wave-shift {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 @layer zui.data {
   /* ---- Table / DataTable ---- */
   .z-table-wrap {
@@ -720,6 +727,103 @@
     font-size: var(--z-text-caption);
     font-variant-numeric: tabular-nums;
     text-align: end;
+  }
+
+  /* ---- Progress ondulado (Material 3 Expressive) ----
+     Lo hecho es una onda de grosor fijo; lo que falta, una línea plana que empieza tras un hueco. La onda son dos
+     filas de arcos (degradados radiales en una máscara: solo cuenta el alfa, así que el color es cualquier token
+     opaco), una arriba y otra abajo de la línea media, desfasadas media onda. Con s = un cuarto de la longitud de
+     onda y m la curvatura, cada arco tiene radio s·√(m²+1) y altura s·(√(m²+1) − m): aquí 32 px de onda y 2,5 px de
+     amplitud en md. La onda avanza moviendo la máscara una longitud de onda; con movimiento reducido se queda quieta. */
+  .z-progress[data-variant="wavy"] {
+    --z-wave-b: 4px;
+    --z-wave-s: 8px;
+    --z-wave-m: 1.444;
+    --z-wave-k: 1.7565;
+    --z-wave-gap: var(--z-space-1);
+    --z-wave-a: calc(var(--z-wave-s) * (var(--z-wave-k) - var(--z-wave-m)));
+    --z-wave-h: calc(var(--z-wave-a) + var(--z-wave-b));
+    --z-progress-height: calc(var(--z-wave-h) * 2);
+  }
+  .z-progress[data-variant="wavy"][data-size="sm"] {
+    --z-wave-b: 3px;
+    --z-wave-s: 6px;
+  }
+  .z-progress[data-variant="wavy"][data-size="lg"] {
+    --z-wave-b: 6px;
+    --z-wave-s: 10px;
+  }
+  .z-progress[data-variant="wavy"] .z-progress__track {
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  /* Lo que falta: una línea plana centrada, del grosor de la onda, tras el hueco. */
+  .z-progress[data-variant="wavy"] .z-progress__track::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline: calc(var(--z-progress-value, 0%) + var(--z-wave-gap)) 0;
+    block-size: var(--z-wave-b);
+    translate: 0 -50%;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-surface-3);
+    box-shadow: inset 0 0 0 1px var(--z-line);
+    transition: inset-inline-start var(--z-duration-slow) var(--z-ease-standard);
+  }
+  .z-progress[data-variant="wavy"][data-state="complete"] .z-progress__track::before {
+    display: none;
+  }
+  .z-progress[data-variant="wavy"] .z-progress__fill {
+    --z-wave-r: calc(var(--z-wave-s) * var(--z-wave-k) + var(--z-wave-b) / 2);
+    --z-wave-g: transparent calc(99% - var(--z-wave-b)), var(--z-fg) calc(101% - var(--z-wave-b)) 99%, transparent 101%;
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    border-radius: 0;
+    mask:
+      radial-gradient(var(--z-wave-r) at left 50% bottom calc(-1 * var(--z-wave-m) * var(--z-wave-s)), var(--z-wave-g))
+        calc(50% - 2 * var(--z-wave-s) + var(--z-wave-shift)) calc(50% - var(--z-wave-h) / 2) / calc(4 * var(--z-wave-s))
+        var(--z-wave-h) repeat-x,
+      radial-gradient(var(--z-wave-r) at left 50% top calc(-1 * var(--z-wave-m) * var(--z-wave-s)), var(--z-wave-g))
+        calc(50% + var(--z-wave-shift)) calc(50% + var(--z-wave-h) / 2) / calc(4 * var(--z-wave-s)) var(--z-wave-h) repeat-x;
+  }
+  .z-progress[data-variant="wavy"]:not([data-state="complete"]) .z-progress__fill {
+    animation: z-wave-flow 1s linear infinite;
+  }
+  .z-progress[data-variant="wavy"][data-state="indeterminate"] .z-progress__fill {
+    inset-inline-start: auto;
+    width: 40%;
+    animation:
+      z-progress-slide 1.6s var(--z-ease-standard) infinite,
+      z-wave-flow 1s linear infinite;
+  }
+  .z-progress[data-variant="wavy"][data-state="indeterminate"] .z-progress__track::before {
+    inset-inline-start: 0;
+  }
+  @keyframes z-wave-flow {
+    to {
+      --z-wave-shift: calc(4 * var(--z-wave-s));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-progress[data-variant="wavy"]:not([data-state="complete"]) .z-progress__fill {
+      animation: none;
+    }
+    .z-progress[data-variant="wavy"][data-state="indeterminate"] .z-progress__fill {
+      animation: z-progress-slide 3s var(--z-ease-standard) infinite;
+    }
+    .z-progress[data-variant="wavy"] .z-progress__track::before {
+      transition: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .z-progress[data-variant="wavy"] .z-progress__fill {
+      background: CanvasText;
+    }
+    .z-progress[data-variant="wavy"] .z-progress__track::before {
+      background: GrayText;
+    }
   }
 
   /* ---- Meter ---- */

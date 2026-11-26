@@ -1,6 +1,8 @@
 {
   "name": "ButtonGroup",
-  "exports": ["ButtonGroupSeparator"],
+  "exports": [
+    "ButtonGroupSeparator"
+  ],
   "group": "actions",
   "description": "Botones relacionados en un bloque: unidos (canto compartido y radios en los extremos) o separados, en horizontal o vertical.",
   "import": "import { ButtonGroup, ButtonGroupSeparator } from \"@zuccadev-labs/zuix-zui\"",
@@ -13,7 +15,10 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": ["horizontal", "vertical"],
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
       "default": "horizontal"
     },
     {
@@ -23,14 +28,28 @@
       "description": "Une las piezas. Con `false` quedan separadas por 8 px."
     },
     {
+      "name": "connected",
+      "type": "boolean",
+      "default": false,
+      "description": "Grupo conectado (Material 3 Expressive): 2 px entre piezas, esquinas interiores cerradas y la pieza pulsada con sus cuatro esquinas. Manda sobre `attached`."
+    },
+    {
       "name": "children",
       "type": "ReactNode",
       "description": "Button, IconButton, el disparador de un Menu, un Input o ButtonGroupSeparator."
     }
   ],
-  "states": ["rest"],
-  "tokens": ["space-2", "line-strong"],
-  "classes": ["z-btn-group", "z-btn-group__separator"],
+  "states": [
+    "rest"
+  ],
+  "tokens": [
+    "space-2",
+    "line-strong"
+  ],
+  "classes": [
+    "z-btn-group",
+    "z-btn-group__separator"
+  ],
   "a11y": "Contenedor `role=\"group\"` con nombre por `label`. Cada botón conserva su parada de Tab y su nombre; el grupo no añade teclado propio. Para un conjunto con estado (activado o no) y una sola parada de tabulación, ToggleGroup.",
   "examples": [
     {
@@ -48,6 +67,10 @@
     {
       "title": "Separado",
       "code": "<ButtonGroup label=\"Actions\" attached={false}>\n  <Button variant=\"outline\">Cancel</Button>\n  <Button variant=\"primary\">Save</Button>\n</ButtonGroup>"
+    },
+    {
+      "title": "Conectado",
+      "code": "<ButtonGroup label=\"View\" connected>\n  <Button aria-pressed=\"false\" icon=\"list-bullet\">List</Button>\n  <Button aria-pressed=\"true\" icon=\"squares-2x2\">Grid</Button>\n  <Button aria-pressed=\"false\" icon=\"calendar-days\">Calendar</Button>\n</ButtonGroup>"
     }
   ],
   "origin": "Nuevo. Referencia de variantes: Button Group de Shark UI (horizontal, vertical, separador). Forma del estándar liquid glass."

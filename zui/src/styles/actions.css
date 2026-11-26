@@ -101,6 +101,14 @@
     --z-btn-shine: inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 28%, transparent);
     --z-btn-shadow: var(--z-shadow-sm);
   }
+  /* Tonal (Material 3 Expressive): relleno suave del acento, entre el primario y el secundario. */
+  .z-btn--tonal {
+    --z-btn-bg: var(--z-button-tonal-bg);
+    --z-btn-bg-hover: var(--z-button-tonal-bg-hover);
+    --z-btn-fg: var(--z-button-tonal-fg);
+    --z-btn-line: transparent;
+    --z-btn-shine: 0 0 transparent;
+  }
   .z-btn--ghost {
     --z-btn-bg: transparent;
     --z-btn-bg-hover: var(--z-surface-2);
@@ -220,6 +228,48 @@
   .z-btn-group[data-attached][data-orientation="vertical"] > :not(:last-child) {
     border-end-start-radius: 0;
     border-end-end-radius: 0;
+  }
+  /* Conectado (Material 3 Expressive): 2 px entre piezas, esquinas interiores de 4 px y exteriores con el radio de la
+     pieza. La pulsada recupera sus cuatro esquinas con una transición de forma. */
+  .z-btn-group[data-connected] {
+    gap: 2px;
+    align-items: stretch;
+  }
+  .z-btn-group[data-connected] > * {
+    transition:
+      border-radius var(--z-duration-normal) var(--z-ease-emphasized),
+      background var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-btn-group[data-connected]:not([data-orientation="vertical"]) > :not(:first-child) {
+    border-start-start-radius: var(--z-radius-xs);
+    border-end-start-radius: var(--z-radius-xs);
+  }
+  .z-btn-group[data-connected]:not([data-orientation="vertical"]) > :not(:last-child) {
+    border-start-end-radius: var(--z-radius-xs);
+    border-end-end-radius: var(--z-radius-xs);
+  }
+  .z-btn-group[data-connected][data-orientation="vertical"] > :not(:first-child) {
+    border-start-start-radius: var(--z-radius-xs);
+    border-start-end-radius: var(--z-radius-xs);
+  }
+  .z-btn-group[data-connected][data-orientation="vertical"] > :not(:last-child) {
+    border-end-start-radius: var(--z-radius-xs);
+    border-end-end-radius: var(--z-radius-xs);
+  }
+  .z-btn-group[data-connected] > :is([aria-pressed="true"], [data-state="on"], [data-active]) {
+    border-radius: var(--z-btn-radius, var(--z-button-radius));
+  }
+  /* La pulsada se rellena como el primario: en un grupo conectado el estado se lee por color y por forma. */
+  .z-btn-group[data-connected] > .z-btn[aria-pressed="true"] {
+    --z-btn-bg: var(--z-button-primary-bg);
+    --z-btn-bg-hover: var(--z-button-primary-bg-hover);
+    --z-btn-fg: var(--z-button-primary-fg);
+    --z-btn-line: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-btn-group[data-connected] > * {
+      transition: background var(--z-duration-fast) var(--z-ease-standard);
+    }
   }
   /* Separador: una línea de 1 px entre dos piezas unidas, del color del canto. */
   .z-btn-group__separator {

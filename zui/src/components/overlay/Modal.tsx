@@ -15,6 +15,11 @@ export interface ModalProps {
   /** Nombre accesible cuando no hay `title` visible. */
   label?: string;
   size?: "sm" | "md" | "lg";
+  /**
+   * A pantalla completa (Material 3 Expressive): `compact` solo en ventanas estrechas (menos de 600 px, un teléfono en
+   * vertical), `always` siempre. Ocupa todo el alto con el pie fijo abajo y respeta las zonas seguras.
+   */
+  fullScreen?: "none" | "compact" | "always";
   footer?: ReactNode;
   /** Escape y clic en el velo cierran. */
   dismissible?: boolean;
@@ -34,6 +39,7 @@ export function Modal({
   description,
   label = "Dialog",
   size = "md",
+  fullScreen = "none",
   footer,
   dismissible = true,
   hideClose,
@@ -57,6 +63,7 @@ export function Modal({
         trigger={triggerRef}
         className={cx("z-liquid z-modal", className)}
         data-size={size}
+        data-fullscreen={fullScreen === "none" ? undefined : fullScreen}
         aria-labelledby={title ? titleId : undefined}
         aria-label={title ? undefined : label}
         aria-describedby={description ? descriptionId : undefined}

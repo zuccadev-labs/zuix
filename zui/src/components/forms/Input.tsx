@@ -3,7 +3,7 @@ import type { InputHTMLAttributes, ReactNode, Ref } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
-import { useFieldControl } from "./Field";
+import { useFieldControl, useFieldFloating } from "./Field";
 import { withRef } from "../../react-compat";
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -34,6 +34,8 @@ export const Input = withRef(function Input({
   ...rest
 }: InputProps) {
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
+  // Con etiqueta flotante, un marcador vacío deja a CSS saber si el campo está vacío (`:placeholder-shown`).
+  const floating = useFieldFloating();
   return (
     <span
       className={cx("z-input", className)}
@@ -47,7 +49,12 @@ export const Input = withRef(function Input({
           <Icon name={icon} size={ICON_SIZE[size]} />
         </span>
       ) : null}
-      <input {...rest} {...control} className={cx("z-input__control", inputClassName)} />
+      <input
+        {...rest}
+        {...control}
+        placeholder={rest.placeholder ?? (floating ? " " : undefined)}
+        className={cx("z-input__control", inputClassName)}
+      />
       {trailing ? <span className="z-input__trailing">{trailing}</span> : null}
     </span>
   );

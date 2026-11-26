@@ -55,6 +55,76 @@
     font-weight: var(--z-weight-medium);
   }
 
+  /* ---- Etiqueta flotante (Material 3 Expressive) ----
+     La etiqueta va dentro del campo, a la altura del texto, mientras el control está vacío y sin foco; al enfocar, al
+     escribir o cuando el navegador lo autocompleta sube a la parte alta del campo. «Vacío» es `:placeholder-shown`
+     (el control lleva un marcador, aunque sea un espacio), que también deja de cumplirse con el valor autocompletado;
+     `:autofill` cubre la vista previa de Chrome. Sin `:has()`, la etiqueta se queda arriba. */
+  .z-field[data-label-placement="floating"] {
+    --z-float-pad: var(--z-space-3);
+    position: relative;
+    gap: 0;
+  }
+  .z-field[data-label-placement="floating"]:has(.z-input__icon) {
+    --z-float-pad: calc(var(--z-space-3) + 16px + var(--z-space-2));
+  }
+  .z-field[data-label-placement="floating"] .z-input {
+    --z-input-height: var(--z-control-height-xl);
+    align-items: stretch;
+  }
+  .z-field[data-label-placement="floating"] .z-input__icon {
+    align-self: center;
+  }
+  .z-field[data-label-placement="floating"] .z-input__control {
+    padding-block: var(--z-space-4) 0;
+  }
+  .z-field[data-label-placement="floating"] > .z-field__label {
+    position: absolute;
+    inset-block-start: var(--z-space-1-5);
+    inset-inline-start: calc(var(--z-float-pad) + 1px);
+    z-index: var(--z-layer-raised);
+    max-inline-size: calc(100% - var(--z-float-pad) * 2);
+    overflow: hidden;
+    color: var(--z-fg-muted);
+    font-size: var(--z-text-caption);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+    transition:
+      inset-block-start var(--z-duration-fast) var(--z-ease-emphasized),
+      font-size var(--z-duration-fast) var(--z-ease-emphasized),
+      color var(--z-duration-fast) var(--z-ease-standard);
+  }
+  .z-field[data-label-placement="floating"]:has(
+      .z-input__control:placeholder-shown:not(:focus):not(:is(:autofill, :-webkit-autofill))
+    )
+    > .z-field__label {
+    inset-block-start: calc(var(--z-control-height-xl) / 2);
+    translate: 0 -50%;
+    font-size: var(--z-text-body);
+  }
+  .z-field[data-label-placement="floating"]:focus-within > .z-field__label {
+    color: var(--z-accent-text);
+  }
+  .z-field[data-label-placement="floating"][data-invalid] > .z-field__label {
+    color: var(--z-danger-text);
+  }
+  .z-field[data-label-placement="floating"]:has(.z-input[data-disabled]) > .z-field__label {
+    color: var(--z-fg-subtle);
+  }
+  /* El marcador propio solo se ve con la etiqueta arriba y el foco dentro: nunca encima de la etiqueta. */
+  .z-field[data-label-placement="floating"] .z-input__control:not(:focus)::placeholder {
+    color: transparent;
+  }
+  .z-field[data-label-placement="floating"] > .z-field__body {
+    gap: var(--z-space-1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-field[data-label-placement="floating"] > .z-field__label {
+      transition: color var(--z-duration-fast) var(--z-ease-standard);
+    }
+  }
+
   /* ---- Input (también DateInput y SearchInput) ---- */
   .z-input {
     --z-input-height: var(--z-control-height-md);
@@ -1436,6 +1506,25 @@
     height: 100%;
     border-radius: inherit;
     background: var(--z-accent);
+  }
+  /* Origen en el centro (Material 3 Expressive): una marca en el punto medio, de donde sale el relleno. */
+  .z-slider[data-origin="center"] .z-slider__track::after {
+    content: "";
+    position: absolute;
+    inset-block: calc(var(--z-slider-track) * -1);
+    inset-inline-start: 50%;
+    inline-size: 2px;
+    translate: -50% 0;
+    border-radius: var(--z-radius-xs);
+    background: var(--z-fg-muted);
+  }
+  .z-slider[data-origin="center"][data-orientation="vertical"] .z-slider__track::after {
+    inset-block: auto;
+    inset-block-start: 50%;
+    inset-inline: calc(var(--z-slider-track) * -1);
+    inline-size: auto;
+    block-size: 2px;
+    translate: 0 -50%;
   }
   .z-slider[data-orientation="vertical"] .z-slider__range {
     width: 100%;

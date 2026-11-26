@@ -7,14 +7,28 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": ["primary", "secondary", "outline", "ghost", "link", "danger"],
+      "values": [
+        "primary",
+        "secondary",
+        "tonal",
+        "outline",
+        "ghost",
+        "link",
+        "danger"
+      ],
       "default": "secondary",
       "description": "Intención. `outline`: contorno sin relleno. `link`: aspecto de enlace para una acción secundaria dentro de un texto o una barra (sigue siendo un botón; para navegar, `Link`)."
     },
     {
       "name": "size",
       "type": "enum",
-      "values": ["xs", "sm", "md", "lg", "xl"],
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
       "default": "md",
       "description": "Altura: 24, 28, 34, 40 o 48 px, con su radio concéntrico (6, 8, 10, 12, 14)."
     },
@@ -46,7 +60,14 @@
       "description": "Atributos nativos de button (onClick, type, disabled, ref)."
     }
   ],
-  "states": ["rest", "hover", "focus", "active", "disabled", "loading"],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "loading"
+  ],
   "tokens": [
     "surface-2",
     "surface-3",
@@ -94,9 +115,14 @@
     "space-2",
     "space-5",
     "text-caption",
-    "text-title"
+    "text-title",
+    "button-tonal-bg",
+    "button-tonal-bg-hover",
+    "button-tonal-fg"
   ],
-  "classes": ["z-btn"],
+  "classes": [
+    "z-btn"
+  ],
   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
   "examples": [
     {
@@ -122,6 +148,10 @@
     {
       "title": "Escala de tamaños",
       "code": "<>\n  <Button size=\"xs\">Extra small</Button>\n  <Button size=\"sm\">Small</Button>\n  <Button>Medium</Button>\n  <Button size=\"lg\">Large</Button>\n  <Button size=\"xl\" variant=\"primary\">Extra large</Button>\n</>"
+    },
+    {
+      "title": "Tonal",
+      "code": "<div style={{ display: \"flex\", gap: 8 }}>\n  <Button variant=\"primary\">Publish</Button>\n  <Button variant=\"tonal\" icon=\"eye\">Preview</Button>\n  <Button variant=\"secondary\">Save draft</Button>\n</div>"
     }
   ],
   "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes de zutool; forma (rectángulo de radios concéntricos) del estándar liquid glass."

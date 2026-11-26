@@ -291,6 +291,7 @@
      "values": [
       "primary",
       "secondary",
+      "tonal",
       "outline",
       "ghost",
       "link",
@@ -395,7 +396,10 @@
     "space-2",
     "space-5",
     "text-caption",
-    "text-title"
+    "text-title",
+    "button-tonal-bg",
+    "button-tonal-bg-hover",
+    "button-tonal-fg"
    ],
    "classes": [
     "z-btn"
@@ -425,6 +429,10 @@
     {
      "title": "Escala de tamaños",
      "code": "<>\n  <Button size=\"xs\">Extra small</Button>\n  <Button size=\"sm\">Small</Button>\n  <Button>Medium</Button>\n  <Button size=\"lg\">Large</Button>\n  <Button size=\"xl\" variant=\"primary\">Extra large</Button>\n</>"
+    },
+    {
+     "title": "Tonal",
+     "code": "<div style={{ display: \"flex\", gap: 8 }}>\n  <Button variant=\"primary\">Publish</Button>\n  <Button variant=\"tonal\" icon=\"eye\">Preview</Button>\n  <Button variant=\"secondary\">Save draft</Button>\n</div>"
     }
    ],
    "origin": "Button del design system base (tamaños, carga, ancho completo) con las variantes de zutool; forma (rectángulo de radios concéntricos) del estándar liquid glass.",
@@ -460,6 +468,12 @@
      "description": "Une las piezas. Con `false` quedan separadas por 8 px."
     },
     {
+     "name": "connected",
+     "type": "boolean",
+     "default": false,
+     "description": "Grupo conectado (Material 3 Expressive): 2 px entre piezas, esquinas interiores cerradas y la pieza pulsada con sus cuatro esquinas. Manda sobre `attached`."
+    },
+    {
      "name": "children",
      "type": "ReactNode",
      "description": "Button, IconButton, el disparador de un Menu, un Input o ButtonGroupSeparator."
@@ -493,6 +507,10 @@
     {
      "title": "Separado",
      "code": "<ButtonGroup label=\"Actions\" attached={false}>\n  <Button variant=\"outline\">Cancel</Button>\n  <Button variant=\"primary\">Save</Button>\n</ButtonGroup>"
+    },
+    {
+     "title": "Conectado",
+     "code": "<ButtonGroup label=\"View\" connected>\n  <Button aria-pressed=\"false\" icon=\"list-bullet\">List</Button>\n  <Button aria-pressed=\"true\" icon=\"squares-2x2\">Grid</Button>\n  <Button aria-pressed=\"false\" icon=\"calendar-days\">Calendar</Button>\n</ButtonGroup>"
     }
    ],
    "origin": "Nuevo. Referencia de variantes: Button Group de Shark UI (horizontal, vertical, separador). Forma del estándar liquid glass.",
@@ -543,6 +561,7 @@
      "values": [
       "primary",
       "secondary",
+      "tonal",
       "outline",
       "ghost",
       "danger"
@@ -833,6 +852,10 @@
     {
      "title": "Tamaños y extendido",
      "code": "<div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 16, alignItems: \"center\" }}>\n  <Fab icon=\"plus\" label=\"New\" size=\"sm\" />\n  <Fab icon=\"pencil\" label=\"Compose\" />\n  <Fab icon=\"plus\" label=\"Create\" size=\"lg\" variant=\"secondary\" />\n  <Fab icon=\"pencil-square\" label=\"New message\" extended />\n</div>"
+    },
+    {
+     "title": "Extendido en tres tallas",
+     "code": "<div style={{ display: \"flex\", flexWrap: \"wrap\", gap: 16, alignItems: \"center\" }}>\n  <Fab icon=\"pencil\" label=\"Compose\" extended size=\"sm\" />\n  <Fab icon=\"pencil\" label=\"Compose\" extended />\n  <Fab icon=\"pencil\" label=\"Compose\" extended size=\"lg\" />\n</div>"
     }
    ],
    "origin": "FAB, medium/large FAB y extended FAB de Material 3; FloatButton de Ant Design.",
@@ -963,6 +986,7 @@
      "values": [
       "primary",
       "secondary",
+      "tonal",
       "outline",
       "ghost",
       "danger"
@@ -12217,6 +12241,16 @@
      "name": "valueText",
      "type": "string",
      "description": "aria-valuetext cuando el centro muestra el valor de otra forma."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "flat",
+      "wavy"
+     ],
+     "default": "flat",
+     "description": "`wavy` (Material 3 Expressive): el arco hecho es una onda y lo que falta, un anillo plano tras un hueco. El `<progress>` sigue siendo el control accesible."
     }
    ],
    "states": [
@@ -12255,6 +12289,10 @@
     {
      "title": "Tonos, grosor y contenido propio",
      "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Storage\" value={92} tone=\"danger\" showValue />\n  <CircularProgress label=\"Files\" value={3} max={5} size=\"xl\" thickness={10} tone=\"success\" valueText=\"3 of 5 files\">3/5</CircularProgress>\n</div>"
+    },
+    {
+     "title": "Ondulado",
+     "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Upload\" value={72} variant=\"wavy\" size=\"lg\" showValue />\n  <CircularProgress label=\"Loading\" variant=\"wavy\" size=\"lg\" />\n</div>"
     }
    ],
    "origin": "Circular Progress de Shark y NeonBlade; anillo hecho con `<progress>` nativo, conic-gradient y máscara.",
@@ -13607,6 +13645,16 @@
      "name": "valueText",
      "type": "string",
      "description": "aria-valuetext («3 of 5 steps»)."
+    },
+    {
+     "name": "variant",
+     "type": "enum",
+     "values": [
+      "flat",
+      "wavy"
+     ],
+     "default": "flat",
+     "description": "`wavy` (Material 3 Expressive): lo hecho es una onda que avanza mientras hay trabajo y lo que falta, una línea plana tras un hueco. Quieta con movimiento reducido. Solo en horizontal y sin tramos."
     }
    ],
    "states": [
@@ -13671,6 +13719,10 @@
     {
      "title": "Vertical",
      "code": "<div style={{ height: 120, display: \"flex\", gap: 16 }}>\n  <Progress label=\"CPU\" value={72} orientation=\"vertical\" showValue />\n  <Progress label=\"Memory\" value={38} orientation=\"vertical\" tone=\"info\" showValue />\n  <Progress label=\"Disk\" value={4} max={5} segments={5} orientation=\"vertical\" tone=\"warning\" />\n</div>"
+    },
+    {
+     "title": "Ondulada",
+     "code": "<div style={{ display: \"grid\", gap: 16 }}>\n  <Progress label=\"Exporting\" value={64} variant=\"wavy\" showValue />\n  <Progress label=\"Syncing\" variant=\"wavy\" />\n</div>"
     }
    ],
    "origin": "Barra de progreso de zutool.",
@@ -20521,6 +20573,16 @@
      "default": "stacked"
     },
     {
+     "name": "labelPlacement",
+     "type": "enum",
+     "values": [
+      "top",
+      "floating"
+     ],
+     "default": "top",
+     "description": "`floating` (Material 3 Expressive): la etiqueta va dentro del campo mientras está vacío y sube al enfocar, al escribir o al autocompletar. Sigue siendo un `<label for>`. Con `Input`; sin efecto en `layout=\"inline\"`."
+    },
+    {
      "name": "validate",
      "type": "boolean | ValidityMessages",
      "description": "Muestra el error de la validación nativa del control (required, type, pattern, minLength, min, max…) tras interactuar: al salir del campo si se editó, o al enviar. Se quita en cuanto el valor es válido. `true` usa los mensajes del navegador; un objeto los sustituye por motivo de ValidityState (`valueMissing`, `typeMismatch`, `patternMismatch`, `tooShort`…). `error` manda sobre él."
@@ -20571,6 +20633,10 @@
     {
      "title": "Mensajes por ValidityState",
      "code": "<Form>\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Subscribe</Button>\n</Form>"
+    },
+    {
+     "title": "Etiqueta flotante con autocompletado",
+     "code": "<form style={{ display: \"grid\", gap: 16, maxWidth: 360 }}>\n  <Field label=\"Email\" labelPlacement=\"floating\">\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Full name\" labelPlacement=\"floating\" hint=\"As it appears on your ID.\">\n    <Input name=\"name\" autoComplete=\"name\" icon=\"user\" />\n  </Field>\n</form>"
     }
    ],
    "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común.",
@@ -23120,6 +23186,16 @@
      "description": "La pista crece en sentido contrario: de derecha a izquierda (o de arriba abajo)."
     },
     {
+     "name": "origin",
+     "type": "enum",
+     "values": [
+      "start",
+      "center"
+     ],
+     "default": "start",
+     "description": "`center` (Material 3 Expressive): con un tirador, la pista se rellena desde el punto medio hasta el valor. Para ajustes con cero en medio."
+    },
+    {
      "name": "size",
      "type": "enum",
      "values": [
@@ -23203,6 +23279,10 @@
     {
      "title": "Con marcas y etiquetas",
      "code": "<Field label=\"Quality\">\n  <Slider\n    defaultValue={[50]}\n    step={25}\n    marks={[\n      { value: 0, label: \"Low\" },\n      { value: 25 },\n      { value: 50, label: \"Medium\" },\n      { value: 75 },\n      { value: 100, label: \"High\" },\n    ]}\n  />\n</Field>"
+    },
+    {
+     "title": "Desde el centro",
+     "code": "<Slider aria-label=\"Balance\" defaultValue={[-20]} min={-50} max={50} step={5} origin=\"center\" marks={[{ value: -50, label: \"L\" }, { value: 0, label: \"0\" }, { value: 50, label: \"R\" }]} />"
     }
    ],
    "html": [
@@ -23218,6 +23298,10 @@
     {
      "title": "Con marcas y etiquetas",
      "code": "<span class=\"z-slider\" id=\"quality\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"100\" data-step=\"25\" data-value=\"50\" data-marks=\"labels\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__marks\" aria-hidden=\"true\">\n    <span class=\"z-slider__mark\" data-value=\"0\" data-in-range style=\"inset-inline-start:calc(0.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Low</span></span>\n    <span class=\"z-slider__mark\" data-value=\"25\" data-in-range style=\"inset-inline-start:calc(0.25 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"50\" data-in-range style=\"inset-inline-start:calc(0.5 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Medium</span></span>\n    <span class=\"z-slider__mark\" data-value=\"75\" style=\"inset-inline-start:calc(0.75 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"100\" style=\"inset-inline-start:calc(1.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">High</span></span>\n  </span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Quality\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"50\" aria-orientation=\"horizontal\"></span>\n</span>"
+    },
+    {
+     "title": "Desde el centro",
+     "code": "<span class=\"z-slider\" id=\"balance\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"-50\" data-max=\"50\" data-step=\"5\" data-value=\"-20\" data-origin=\"center\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Balance\" aria-valuemin=\"-50\" aria-valuemax=\"50\" aria-valuenow=\"-20\" aria-orientation=\"horizontal\"></span>\n  <input type=\"hidden\" name=\"balance\" value=\"-20\" />\n</span>"
     }
    ],
    "origin": "Nuevo, con primitiva propia (patrón APG).",
@@ -28488,6 +28572,17 @@
      "description": "Ancho máximo: 400, 560 o 720 px."
     },
     {
+     "name": "fullScreen",
+     "type": "enum",
+     "values": [
+      "none",
+      "compact",
+      "always"
+     ],
+     "default": "none",
+     "description": "A pantalla completa (Material 3 Expressive): `compact` en ventanas de menos de 600 px, `always` siempre. Todo el alto, el pie fijo abajo y las zonas seguras."
+    },
+    {
      "name": "footer",
      "type": "ReactNode",
      "description": "Fila de acciones alineada a la derecha."
@@ -28584,6 +28679,10 @@
     {
      "title": "Controlado, tamaño grande",
      "code": "<Modal open={open} onOpenChange={setOpen} size=\"lg\" title=\"Release notes\">\n  <p>Version 2.4 brings a new command palette.</p>\n</Modal>"
+    },
+    {
+     "title": "A pantalla completa en el teléfono",
+     "code": "<Modal\n  trigger={<button type=\"button\">New event</button>}\n  title=\"New event\"\n  fullScreen=\"compact\"\n  footer={<button type=\"button\">Save</button>}\n>\n  <p>Fields of the event.</p>\n</Modal>"
     }
    ],
    "origin": "Tamaños y API de Modal de design system base; material y animación de los diálogos de zutool; accesibilidad según el patrón APG, con primitivas propias.",
@@ -28592,6 +28691,10 @@
     {
      "title": "Modal con pie",
      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#edit-profile\">Edit profile</button>\n\n<dialog id=\"edit-profile\" class=\"z-liquid z-modal\" data-size=\"md\" aria-labelledby=\"edit-profile-title\">\n  <header class=\"z-modal__header\">\n    <div class=\"z-modal__heading\">\n      <h2 id=\"edit-profile-title\" class=\"z-modal__title\">Edit profile</h2>\n      <p class=\"z-modal__description\">Changes apply to your whole workspace.</p>\n    </div>\n  </header>\n  <div class=\"z-modal__body\">Your content.</div>\n  <footer class=\"z-modal__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"secondary\" data-z-close>Cancel</button>\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close value=\"save\">Save</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-modal__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
+    },
+    {
+     "title": "A pantalla completa en el teléfono",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#new-event\">New event</button>\n\n<dialog id=\"new-event\" class=\"z-liquid z-modal\" data-size=\"md\" data-fullscreen=\"compact\" aria-labelledby=\"new-event-title\">\n  <header class=\"z-modal__header\">\n    <div class=\"z-modal__heading\">\n      <h2 id=\"new-event-title\" class=\"z-modal__title\">New event</h2>\n    </div>\n  </header>\n  <div class=\"z-modal__body\">Fields of the event.</div>\n  <footer class=\"z-modal__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"secondary\" data-z-close>Cancel</button>\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close value=\"save\">Save</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-modal__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
     }
    ],
    "file": "zui/src/components/overlay/Modal.manifest.json"

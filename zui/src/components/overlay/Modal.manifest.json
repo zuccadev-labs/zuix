@@ -40,9 +40,24 @@
     {
       "name": "size",
       "type": "enum",
-      "values": ["sm", "md", "lg"],
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
       "default": "md",
       "description": "Ancho máximo: 400, 560 o 720 px."
+    },
+    {
+      "name": "fullScreen",
+      "type": "enum",
+      "values": [
+        "none",
+        "compact",
+        "always"
+      ],
+      "default": "none",
+      "description": "A pantalla completa (Material 3 Expressive): `compact` en ventanas de menos de 600 px, `always` siempre. Todo el alto, el pie fijo abajo y las zonas seguras."
     },
     {
       "name": "footer",
@@ -70,7 +85,10 @@
       "type": "ReactNode"
     }
   ],
-  "states": ["open", "closed"],
+  "states": [
+    "open",
+    "closed"
+  ],
   "tokens": [
     "duration-fast",
     "duration-normal",
@@ -138,6 +156,10 @@
     {
       "title": "Controlado, tamaño grande",
       "code": "<Modal open={open} onOpenChange={setOpen} size=\"lg\" title=\"Release notes\">\n  <p>Version 2.4 brings a new command palette.</p>\n</Modal>"
+    },
+    {
+      "title": "A pantalla completa en el teléfono",
+      "code": "<Modal\n  trigger={<button type=\"button\">New event</button>}\n  title=\"New event\"\n  fullScreen=\"compact\"\n  footer={<button type=\"button\">Save</button>}\n>\n  <p>Fields of the event.</p>\n</Modal>"
     }
   ],
   "origin": "Tamaños y API de Modal de design system base; material y animación de los diálogos de zutool; accesibilidad según el patrón APG, con primitivas propias.",
@@ -146,6 +168,10 @@
     {
       "title": "Modal con pie",
       "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#edit-profile\">Edit profile</button>\n\n<dialog id=\"edit-profile\" class=\"z-liquid z-modal\" data-size=\"md\" aria-labelledby=\"edit-profile-title\">\n  <header class=\"z-modal__header\">\n    <div class=\"z-modal__heading\">\n      <h2 id=\"edit-profile-title\" class=\"z-modal__title\">Edit profile</h2>\n      <p class=\"z-modal__description\">Changes apply to your whole workspace.</p>\n    </div>\n  </header>\n  <div class=\"z-modal__body\">Your content.</div>\n  <footer class=\"z-modal__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"secondary\" data-z-close>Cancel</button>\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close value=\"save\">Save</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-modal__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
+    },
+    {
+      "title": "A pantalla completa en el teléfono",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#new-event\">New event</button>\n\n<dialog id=\"new-event\" class=\"z-liquid z-modal\" data-size=\"md\" data-fullscreen=\"compact\" aria-labelledby=\"new-event-title\">\n  <header class=\"z-modal__header\">\n    <div class=\"z-modal__heading\">\n      <h2 id=\"new-event-title\" class=\"z-modal__title\">New event</h2>\n    </div>\n  </header>\n  <div class=\"z-modal__body\">Fields of the event.</div>\n  <footer class=\"z-modal__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"secondary\" data-z-close>Cancel</button>\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close value=\"save\">Save</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-modal__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>"
     }
   ]
 }

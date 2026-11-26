@@ -23,7 +23,12 @@
     {
       "name": "size",
       "type": "enum",
-      "values": ["sm", "md", "lg", "xl"],
+      "values": [
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
       "default": "md",
       "description": "24, 40, 64 y 96 px. En `sm` no hay contenido central."
     },
@@ -35,7 +40,13 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": ["accent", "success", "warning", "danger", "info"],
+      "values": [
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
       "default": "accent"
     },
     {
@@ -53,9 +64,23 @@
       "name": "valueText",
       "type": "string",
       "description": "aria-valuetext cuando el centro muestra el valor de otra forma."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "flat",
+        "wavy"
+      ],
+      "default": "flat",
+      "description": "`wavy` (Material 3 Expressive): el arco hecho es una onda y lo que falta, un anillo plano tras un hueco. El `<progress>` sigue siendo el control accesible."
     }
   ],
-  "states": ["loading", "complete", "indeterminate"],
+  "states": [
+    "loading",
+    "complete",
+    "indeterminate"
+  ],
   "tokens": [
     "accent",
     "success",
@@ -69,7 +94,11 @@
     "duration-slow",
     "ease-standard"
   ],
-  "classes": ["z-progress-ring", "z-progress-ring__bar", "z-progress-ring__content"],
+  "classes": [
+    "z-progress-ring",
+    "z-progress-ring__bar",
+    "z-progress-ring__content"
+  ],
   "a11y": "El <progress> nativo da el rol progressbar, el valor y el estado indeterminado (sin `value`). El centro repite el valor y va con aria-hidden; si lo muestra de otra forma, `valueText` lo da como aria-valuetext. Con colores forzados, el anillo se pinta con CanvasText sobre GrayText. El giro indeterminado se ralentiza con prefers-reduced-motion y la transición del valor solo se anima sin esa preferencia.",
   "examples": [
     {
@@ -83,6 +112,10 @@
     {
       "title": "Tonos, grosor y contenido propio",
       "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Storage\" value={92} tone=\"danger\" showValue />\n  <CircularProgress label=\"Files\" value={3} max={5} size=\"xl\" thickness={10} tone=\"success\" valueText=\"3 of 5 files\">3/5</CircularProgress>\n</div>"
+    },
+    {
+      "title": "Ondulado",
+      "code": "<div style={{ display: \"flex\", gap: 16, alignItems: \"center\" }}>\n  <CircularProgress label=\"Upload\" value={72} variant=\"wavy\" size=\"lg\" showValue />\n  <CircularProgress label=\"Loading\" variant=\"wavy\" size=\"lg\" />\n</div>"
     }
   ],
   "origin": "Circular Progress de Shark y NeonBlade; anillo hecho con `<progress>` nativo, conic-gradient y máscara.",

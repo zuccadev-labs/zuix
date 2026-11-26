@@ -18,6 +18,11 @@ export interface ProgressProps extends Omit<HTMLAttributes<HTMLDivElement>, "chi
   segments?: number;
   /** Texto del valor para lectores de pantalla («3 of 5 steps»). */
   valueText?: string;
+  /**
+   * `wavy`: el tramo hecho es una onda (Material 3 Expressive) y lo que falta, una línea plana separada por un hueco.
+   * La onda avanza mientras hay trabajo; con movimiento reducido se queda quieta. Solo en horizontal y sin tramos.
+   */
+  variant?: "flat" | "wavy";
 }
 
 /** Claves estables de los tramos (el tramo n es siempre el mismo elemento). */
@@ -35,16 +40,22 @@ export function Progress({
   orientation = "horizontal",
   segments,
   valueText,
+  variant = "flat",
   className,
+  style,
   ...rest
 }: ProgressProps) {
   const determinate = typeof value === "number";
   const percent = determinate ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
   const count = determinate && segments !== undefined && segments > 1 ? Math.min(100, Math.floor(segments)) : 0;
+  const wavy = variant === "wavy" && orientation !== "vertical" && !count;
   return (
     <div
       {...rest}
       className={cx("z-progress", className)}
+      data-variant={wavy ? "wavy" : undefined}
+      // La onda necesita el valor también en la pista (donde empieza la línea plana de lo que falta).
+      style={wavy ? ({ ...style, "--z-progress-value": `${percent}%` } as CSSProperties) : style}
       data-size={size}
       data-tone={tone}
       data-state={determinate ? (percent >= 100 ? "complete" : "loading") : "indeterminate"}
@@ -71,7 +82,7 @@ export function Progress({
             );
           })
         ) : (
-          <div className="z-progress__fill" style={{ "--z-progress-value": `${percent}%` } as CSSProperties} />
+          <div className="z-progress__fill" style={wavy ? undefined : ({ "--z-progress-value": `${percent}%` } as CSSProperties)} />
         )}
       </div>
       {showValue && determinate ? <span className="z-progress__value">{Math.round(percent)}%</span> : null}

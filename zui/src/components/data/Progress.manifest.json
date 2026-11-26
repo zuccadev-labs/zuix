@@ -23,13 +23,23 @@
     {
       "name": "size",
       "type": "enum",
-      "values": ["sm", "md", "lg"],
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
       "default": "md"
     },
     {
       "name": "tone",
       "type": "enum",
-      "values": ["accent", "success", "warning", "danger", "info"],
+      "values": [
+        "accent",
+        "success",
+        "warning",
+        "danger",
+        "info"
+      ],
       "default": "accent"
     },
     {
@@ -41,7 +51,10 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": ["horizontal", "vertical"],
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
       "default": "horizontal",
       "description": "`vertical` crece de abajo arriba y ocupa el alto del contenedor (mínimo 96 px)."
     },
@@ -54,9 +67,23 @@
       "name": "valueText",
       "type": "string",
       "description": "aria-valuetext («3 of 5 steps»)."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "flat",
+        "wavy"
+      ],
+      "default": "flat",
+      "description": "`wavy` (Material 3 Expressive): lo hecho es una onda que avanza mientras hay trabajo y lo que falta, una línea plana tras un hueco. Quieta con movimiento reducido. Solo en horizontal y sin tramos."
     }
   ],
-  "states": ["loading", "complete", "indeterminate"],
+  "states": [
+    "loading",
+    "complete",
+    "indeterminate"
+  ],
   "tokens": [
     "fg-muted",
     "surface-3",
@@ -90,7 +117,13 @@
     "warning-solid",
     "warning-text"
   ],
-  "classes": ["z-progress", "z-progress__track", "z-progress__fill", "z-progress__segment", "z-progress__value"],
+  "classes": [
+    "z-progress",
+    "z-progress__track",
+    "z-progress__fill",
+    "z-progress__segment",
+    "z-progress__value"
+  ],
   "a11y": "role=\"progressbar\" con aria-valuenow (y aria-valuetext si se da); sin valor queda indeterminada. En vertical y por tramos sigue siendo una sola barra para las tecnologías de apoyo: los tramos son decorativos.",
   "examples": [
     {
@@ -108,6 +141,10 @@
     {
       "title": "Vertical",
       "code": "<div style={{ height: 120, display: \"flex\", gap: 16 }}>\n  <Progress label=\"CPU\" value={72} orientation=\"vertical\" showValue />\n  <Progress label=\"Memory\" value={38} orientation=\"vertical\" tone=\"info\" showValue />\n  <Progress label=\"Disk\" value={4} max={5} segments={5} orientation=\"vertical\" tone=\"warning\" />\n</div>"
+    },
+    {
+      "title": "Ondulada",
+      "code": "<div style={{ display: \"grid\", gap: 16 }}>\n  <Progress label=\"Exporting\" value={64} variant=\"wavy\" showValue />\n  <Progress label=\"Syncing\" variant=\"wavy\" />\n</div>"
     }
   ],
   "origin": "Barra de progreso de zutool."

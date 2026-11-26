@@ -37,8 +37,21 @@
     {
       "name": "layout",
       "type": "enum",
-      "values": ["stacked", "inline"],
+      "values": [
+        "stacked",
+        "inline"
+      ],
       "default": "stacked"
+    },
+    {
+      "name": "labelPlacement",
+      "type": "enum",
+      "values": [
+        "top",
+        "floating"
+      ],
+      "default": "top",
+      "description": "`floating` (Material 3 Expressive): la etiqueta va dentro del campo mientras está vacío y sube al enfocar, al escribir o al autocompletar. Sigue siendo un `<label for>`. Con `Input`; sin efecto en `layout=\"inline\"`."
     },
     {
       "name": "validate",
@@ -52,7 +65,10 @@
       "description": "El control (Input, Select, Textarea, Checkbox, etc.)."
     }
   ],
-  "states": ["rest", "invalid"],
+  "states": [
+    "rest",
+    "invalid"
+  ],
   "tokens": [
     "space-4",
     "control-height-md",
@@ -68,7 +84,9 @@
     "text-caption",
     "danger-text"
   ],
-  "classes": ["z-field"],
+  "classes": [
+    "z-field"
+  ],
   "a11y": "label enlazado por htmlFor; ayuda y error por aria-describedby; el error usa role=\"alert\". Los controles que `<label for>` no puede nombrar (RadioGroup, OTPInput, Slider) se enlazan con aria-labelledby a la etiqueta. `useFieldControl` y `useFieldLabel` permiten conectar controles propios. Con `validate`, el error solo se enlaza (aria-describedby) y se marca (aria-invalid) mientras existe, como :user-invalid: no se anuncia antes de interactuar ni en cada tecla.",
   "examples": [
     {
@@ -86,6 +104,10 @@
     {
       "title": "Mensajes por ValidityState",
       "code": "<Form>\n  <Field label=\"Email\" required validate={{ valueMissing: \"Enter your email address.\", typeMismatch: \"Enter an email in the format you@example.com.\" }}>\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Button type=\"submit\" variant=\"primary\">Subscribe</Button>\n</Form>"
+    },
+    {
+      "title": "Etiqueta flotante con autocompletado",
+      "code": "<form style={{ display: \"grid\", gap: 16, maxWidth: 360 }}>\n  <Field label=\"Email\" labelPlacement=\"floating\">\n    <Input type=\"email\" name=\"email\" autoComplete=\"email\" />\n  </Field>\n  <Field label=\"Full name\" labelPlacement=\"floating\" hint=\"As it appears on your ID.\">\n    <Input name=\"name\" autoComplete=\"name\" icon=\"user\" />\n  </Field>\n</form>"
     }
   ],
   "origin": "Etiqueta, pista y error del Input del design system base, extraídos a una envoltura común."

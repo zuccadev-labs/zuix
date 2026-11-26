@@ -9,6 +9,7 @@ interface FieldContextValue {
   describedBy?: string;
   invalid: boolean;
   required: boolean;
+  floating?: boolean;
 }
 
 const FieldContext = createContext<FieldContextValue | null>(null);
@@ -39,6 +40,11 @@ export function useFieldLabel(): string | undefined {
   return useContext(FieldContext)?.labelId;
 }
 
+/** Verdadero dentro de un `Field` con etiqueta flotante (el control necesita un `placeholder` para saber si está vacío). */
+export function useFieldFloating(): boolean {
+  return Boolean(useContext(FieldContext)?.floating);
+}
+
 export interface FieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   label?: ReactNode;
   /** Ayuda bajo el control. */
@@ -52,6 +58,12 @@ export interface FieldProps extends Omit<HTMLAttributes<HTMLDivElement>, "childr
   htmlFor?: string;
   /** `inline` coloca la etiqueta a la izquierda del control. */
   layout?: "stacked" | "inline";
+  /**
+   * `floating` (Material 3 Expressive): la etiqueta va dentro del campo mientras está vacío y sube al enfocarlo, al
+   * escribir o cuando el navegador lo autocompleta. Sigue siendo un `<label for>`. Con `Input` (también con icono);
+   * sin efecto con `layout="inline"`.
+   */
+  labelPlacement?: "top" | "floating";
   /**
    * Muestra el error de la validación nativa del control (required, type, pattern, minLength, min, max…) tras
    * interactuar: al salir del campo si se editó, o al intentar enviar. Se quita en cuanto el valor es válido.
@@ -74,6 +86,7 @@ export function Field({
   optionalLabel,
   htmlFor,
   layout = "stacked",
+  labelPlacement = "top",
   validate,
   className,
   children,
@@ -126,9 +139,10 @@ export function Field({
   const errorId = shown ? `${auto}-error` : undefined;
   const labelId = label ? `${auto}-label` : undefined;
   const describedBy = [errorId, hintId].filter(Boolean).join(" ") || undefined;
+  const floating = labelPlacement === "floating" && layout !== "inline" && Boolean(label);
   const value = useMemo<FieldContextValue>(
-    () => ({ id, labelId, describedBy, invalid: Boolean(shown), required }),
-    [id, labelId, describedBy, shown, required],
+    () => ({ id, labelId, describedBy, invalid: Boolean(shown), required, floating }),
+    [id, labelId, describedBy, shown, required, floating],
   );
 
   return (
@@ -137,6 +151,7 @@ export function Field({
       ref={root}
       className={cx("z-field", className)}
       data-layout={layout}
+      data-label-placement={floating ? "floating" : undefined}
       data-invalid={shown ? true : undefined}
       data-validate={validate ? "" : undefined}
       // Mensajes propios legibles por el modo DOM (data-msg-value-missing…).

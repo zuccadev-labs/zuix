@@ -46,7 +46,10 @@
     {
       "name": "orientation",
       "type": "enum",
-      "values": ["horizontal", "vertical"],
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
       "default": "horizontal"
     },
     {
@@ -56,9 +59,22 @@
       "description": "La pista crece en sentido contrario: de derecha a izquierda (o de arriba abajo)."
     },
     {
+      "name": "origin",
+      "type": "enum",
+      "values": [
+        "start",
+        "center"
+      ],
+      "default": "start",
+      "description": "`center` (Material 3 Expressive): con un tirador, la pista se rellena desde el punto medio hasta el valor. Para ajustes con cero en medio."
+    },
+    {
       "name": "size",
       "type": "enum",
-      "values": ["sm", "md"],
+      "values": [
+        "sm",
+        "md"
+      ],
       "default": "md"
     },
     {
@@ -92,7 +108,13 @@
       "description": "Marcas sobre la pista: `true` una por paso (hasta 21), una lista de valores o `{ value, label }` con texto bajo la marca. Decorativas: el valor lo anuncia el tirador."
     }
   ],
-  "states": ["rest", "hover", "focus", "active", "disabled"],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled"
+  ],
   "tokens": [
     "space-20",
     "radius-full",
@@ -113,7 +135,9 @@
     "space-1",
     "space-4"
   ],
-  "classes": ["z-slider"],
+  "classes": [
+    "z-slider"
+  ],
   "a11y": "Patrón APG «slider»: role slider por tirador; flechas, Inicio, Fin y Re/Av Pág. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo teclado; con Mayús o Re/Av Pág el paso es diez veces mayor.",
   "behavior": "dom",
   "examples": [
@@ -128,6 +152,10 @@
     {
       "title": "Con marcas y etiquetas",
       "code": "<Field label=\"Quality\">\n  <Slider\n    defaultValue={[50]}\n    step={25}\n    marks={[\n      { value: 0, label: \"Low\" },\n      { value: 25 },\n      { value: 50, label: \"Medium\" },\n      { value: 75 },\n      { value: 100, label: \"High\" },\n    ]}\n  />\n</Field>"
+    },
+    {
+      "title": "Desde el centro",
+      "code": "<Slider aria-label=\"Balance\" defaultValue={[-20]} min={-50} max={50} step={5} origin=\"center\" marks={[{ value: -50, label: \"L\" }, { value: 0, label: \"0\" }, { value: 50, label: \"R\" }]} />"
     }
   ],
   "html": [
@@ -143,6 +171,10 @@
     {
       "title": "Con marcas y etiquetas",
       "code": "<span class=\"z-slider\" id=\"quality\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"100\" data-step=\"25\" data-value=\"50\" data-marks=\"labels\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__marks\" aria-hidden=\"true\">\n    <span class=\"z-slider__mark\" data-value=\"0\" data-in-range style=\"inset-inline-start:calc(0.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Low</span></span>\n    <span class=\"z-slider__mark\" data-value=\"25\" data-in-range style=\"inset-inline-start:calc(0.25 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"50\" data-in-range style=\"inset-inline-start:calc(0.5 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Medium</span></span>\n    <span class=\"z-slider__mark\" data-value=\"75\" style=\"inset-inline-start:calc(0.75 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"100\" style=\"inset-inline-start:calc(1.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">High</span></span>\n  </span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Quality\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"50\" aria-orientation=\"horizontal\"></span>\n</span>"
+    },
+    {
+      "title": "Desde el centro",
+      "code": "<span class=\"z-slider\" id=\"balance\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"-50\" data-max=\"50\" data-step=\"5\" data-value=\"-20\" data-origin=\"center\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Balance\" aria-valuemin=\"-50\" aria-valuemax=\"50\" aria-valuenow=\"-20\" aria-orientation=\"horizontal\"></span>\n  <input type=\"hidden\" name=\"balance\" value=\"-20\" />\n</span>"
     }
   ],
   "origin": "Nuevo, con primitiva propia (patrón APG)."

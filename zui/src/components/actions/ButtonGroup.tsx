@@ -8,6 +8,12 @@ export interface ButtonGroupProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: "horizontal" | "vertical";
   /** Une las piezas en un solo bloque (bordes compartidos y radios solo en los extremos). Con `false`, separadas. */
   attached?: boolean;
+  /**
+   * Grupo conectado (Material 3 Expressive): piezas separadas por 2 px, con las esquinas interiores cerradas y las
+   * exteriores redondeadas. La pieza pulsada (`aria-pressed`, `data-state="on"` o `data-active`) recupera sus cuatro
+   * esquinas. Manda sobre `attached`.
+   */
+  connected?: boolean;
   ref?: Ref<HTMLDivElement>;
   children?: ReactNode;
 }
@@ -20,6 +26,7 @@ export const ButtonGroup = withRef(function ButtonGroup({
   label,
   orientation = "horizontal",
   attached = true,
+  connected,
   className,
   children,
   ...rest
@@ -31,7 +38,8 @@ export const ButtonGroup = withRef(function ButtonGroup({
       {...rest}
       className={cx("z-btn-group", className)}
       data-orientation={orientation}
-      data-attached={attached || undefined}
+      data-attached={(attached && !connected) || undefined}
+      data-connected={connected || undefined}
     >
       {children}
     </div>

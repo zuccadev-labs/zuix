@@ -72,6 +72,17 @@
   }
   .z-fab[data-extended] {
     padding-inline: var(--z-space-4) var(--z-space-5);
+    font-size: var(--z-text-title);
+  }
+  /* Extendido de Material 3 Expressive: el texto crece con la talla (pequeño, mediano y grande). */
+  .z-fab[data-extended][data-size="sm"] {
+    padding-inline: var(--z-space-3) var(--z-space-4);
+    font-size: var(--z-text-body);
+  }
+  .z-fab[data-extended][data-size="lg"] {
+    gap: var(--z-space-3);
+    padding-inline: var(--z-space-6) var(--z-space-8);
+    font-size: var(--z-text-heading-lg);
   }
   .z-fab__label {
     overflow: hidden;
@@ -117,9 +128,16 @@
       transition: none;
     }
   }
-  /* El menú del FAB: entradas altas, con su icono en baldosa. */
-  .z-fab-menu {
-    min-inline-size: 13rem;
+  .z-fab > svg.z-icon[data-icon="plus"] {
+    transition: rotate var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  .z-fab[aria-expanded="true"] > svg.z-icon[data-icon="plus"] {
+    rotate: 45deg;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-fab > svg.z-icon[data-icon="plus"] {
+      transition: none;
+    }
   }
 
   /* ---- SplitButton ---- */
@@ -302,6 +320,74 @@
     }
     .z-masonry > * {
       margin: 0;
+    }
+  }
+}
+
+/* El menú del FAB va en la capa de las capas flotantes: manda sobre el aspecto de Menu. */
+@layer zui.overlay {
+  /* El menú del FAB (Material 3 Expressive): sin panel, una columna de acciones opacas alineadas al borde del FAB, que
+     entran escalonadas; el «+» del FAB gira y queda como cierre. Con movimiento reducido, sin escalonado ni giro. */
+  .z-menu.z-fab-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--z-space-1);
+    min-inline-size: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    overflow: visible;
+  }
+  .z-fab-menu .z-menu__item {
+    inline-size: auto;
+    min-block-size: var(--z-fab-size, 56px);
+    padding-inline: var(--z-space-4) var(--z-space-5);
+    border-radius: var(--z-radius-lg);
+    background: color-mix(in srgb, var(--z-accent) 18%, var(--z-surface-solid));
+    color: var(--z-accent-text);
+    box-shadow: var(--z-shadow-md);
+    font-size: var(--z-text-title);
+    font-weight: var(--z-weight-semibold);
+  }
+  .z-fab-menu .z-menu__item:is([data-highlighted], :focus-visible) {
+    background: color-mix(in srgb, var(--z-accent) 30%, var(--z-surface-solid));
+    color: var(--z-accent-text);
+  }
+  .z-fab-menu .z-menu__item:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: var(--z-focus-offset);
+  }
+  .z-fab-menu .z-menu__icon {
+    color: inherit;
+  }
+  .z-fab-menu:popover-open .z-menu__item {
+    animation: z-fab-item-in var(--z-duration-normal) var(--z-ease-emphasized) both;
+  }
+  .z-fab-menu:popover-open .z-menu__item:nth-last-child(2) {
+    animation-delay: 30ms;
+  }
+  .z-fab-menu:popover-open .z-menu__item:nth-last-child(3) {
+    animation-delay: 60ms;
+  }
+  .z-fab-menu:popover-open .z-menu__item:nth-last-child(4) {
+    animation-delay: 90ms;
+  }
+  .z-fab-menu:popover-open .z-menu__item:nth-last-child(n + 5) {
+    animation-delay: 120ms;
+  }
+  @keyframes z-fab-item-in {
+    from {
+      opacity: 0;
+      translate: 0 var(--z-space-3);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-fab-menu:popover-open .z-menu__item {
+      animation: none;
     }
   }
 }

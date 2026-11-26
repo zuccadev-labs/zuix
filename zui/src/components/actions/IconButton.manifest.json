@@ -18,19 +18,35 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": ["primary", "secondary", "outline", "ghost", "danger"],
+      "values": [
+        "primary",
+        "secondary",
+        "tonal",
+        "outline",
+        "ghost",
+        "danger"
+      ],
       "default": "ghost"
     },
     {
       "name": "size",
       "type": "enum",
-      "values": ["xs", "sm", "md", "lg", "xl"],
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
       "default": "md"
     },
     {
       "name": "iconVariant",
       "type": "enum",
-      "values": ["outline", "solid"],
+      "values": [
+        "outline",
+        "solid"
+      ],
       "default": "outline"
     },
     {
@@ -50,7 +66,15 @@
       "type": "ButtonHTMLAttributes"
     }
   ],
-  "states": ["rest", "hover", "focus", "active", "disabled", "active", "loading"],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "active",
+    "disabled",
+    "active",
+    "loading"
+  ],
   "tokens": [
     "surface-2",
     "surface-3",
@@ -97,7 +121,10 @@
     "control-radius-xl",
     "radius-xs"
   ],
-  "classes": ["z-btn", "z-btn--icon"],
+  "classes": [
+    "z-btn",
+    "z-btn--icon"
+  ],
   "a11y": "aria-label y title toman `label`. El icono es decorativo.",
   "examples": [
     {

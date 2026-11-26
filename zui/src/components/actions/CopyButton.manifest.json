@@ -5,7 +5,11 @@
   "import": "import { CopyButton } from \"@zuccadev-labs/zuix-zui\"",
   "behavior": "dom",
   "props": [
-    { "name": "value", "type": "string | (() => string)", "description": "Texto que se copia." },
+    {
+      "name": "value",
+      "type": "string | (() => string)",
+      "description": "Texto que se copia."
+    },
     {
       "name": "target",
       "type": "string",
@@ -17,16 +21,68 @@
       "default": "Copy",
       "description": "Nombre accesible del botón de solo icono. Di qué se copia («Copy API key»): varios «Copy» iguales no se distinguen."
     },
-    { "name": "copiedLabel", "type": "string", "default": "Copied" },
-    { "name": "failedLabel", "type": "string", "default": "Copy failed" },
-    { "name": "timeout", "type": "number", "default": 2000, "description": "Milisegundos que dura la confirmación." },
-    { "name": "variant", "type": "enum", "values": ["primary", "secondary", "outline", "ghost", "danger"], "default": "ghost" },
-    { "name": "size", "type": "enum", "values": ["xs", "sm", "md", "lg", "xl"], "default": "sm" },
-    { "name": "children", "type": "ReactNode", "description": "Texto visible: entonces es el nombre del botón." },
-    { "name": "onCopied", "type": "(text: string) => void" },
-    { "name": "onCopyError", "type": "() => void" }
+    {
+      "name": "copiedLabel",
+      "type": "string",
+      "default": "Copied"
+    },
+    {
+      "name": "failedLabel",
+      "type": "string",
+      "default": "Copy failed"
+    },
+    {
+      "name": "timeout",
+      "type": "number",
+      "default": 2000,
+      "description": "Milisegundos que dura la confirmación."
+    },
+    {
+      "name": "variant",
+      "type": "enum",
+      "values": [
+        "primary",
+        "secondary",
+        "tonal",
+        "outline",
+        "ghost",
+        "danger"
+      ],
+      "default": "ghost"
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
+      "default": "sm"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "description": "Texto visible: entonces es el nombre del botón."
+    },
+    {
+      "name": "onCopied",
+      "type": "(text: string) => void"
+    },
+    {
+      "name": "onCopyError",
+      "type": "() => void"
+    }
   ],
-  "states": ["rest", "hover", "focus", "copied", "failed"],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "copied",
+    "failed"
+  ],
   "tokens": [
     "success-text",
     "danger-text",
@@ -46,11 +102,22 @@
     "ease-standard",
     "ease-spring"
   ],
-  "classes": ["z-copy", "z-copy__button", "z-copy__status", "z-btn"],
+  "classes": [
+    "z-copy",
+    "z-copy__button",
+    "z-copy__status",
+    "z-btn"
+  ],
   "a11y": "button type=\"button\" de al menos 24 × 24 px con nombre (aria-label en el de solo icono). El resultado («Copied» o «Copy failed») se escribe en una burbuja `role=\"status\"` fuera del botón: es a la vez la confirmación visible y la anunciada; el icono cambia además a una marca, así que no depende del color. No se deshabilita mientras confirma (copiar es repetible) y un mensaje repetido se vuelve a anunciar en VoiceOver. Copia con la API asíncrona del portapapeles y, si falta o la rechaza el navegador, con la copia heredada.",
   "examples": [
-    { "title": "Solo icono", "code": "<CopyButton value=\"zx_live_4f9c2a\" label=\"Copy API key\" />" },
-    { "title": "Con texto", "code": "<CopyButton value=\"pnpm add @zuccadev-labs/zuix\" variant=\"outline\">Copy command</CopyButton>" },
+    {
+      "title": "Solo icono",
+      "code": "<CopyButton value=\"zx_live_4f9c2a\" label=\"Copy API key\" />"
+    },
+    {
+      "title": "Con texto",
+      "code": "<CopyButton value=\"pnpm add @zuccadev-labs/zuix\" variant=\"outline\">Copy command</CopyButton>"
+    },
     {
       "title": "Copiar otro elemento",
       "code": "<>\n  <code id=\"invite-link\">https://example.com/i/8d2k</code>\n  <CopyButton target=\"invite-link\" label=\"Copy invite link\" />\n</>"

@@ -50,6 +50,17 @@ function sliderConfig(slider: HTMLElement) {
 /** Sentido del eje horizontal: -1 si la pista crece hacia la izquierda (RTL, o `data-inverted` en LTR). */
 const sliderDir = (slider: HTMLElement): 1 | -1 => (isRtl(slider) !== slider.hasAttribute("data-inverted") ? -1 : 1);
 
+/** Valores entre los que se rellena la pista: del menor al mayor, o del punto medio al valor con origen en el centro. */
+function rangeOf(slider: HTMLElement, values: number[], min: number, max: number): [number, number] {
+  if (values.length > 1) return [Math.min(...values), Math.max(...values)];
+  const value = values[0] ?? min;
+  if (slider.dataset.origin === "center") {
+    const middle = (min + max) / 2;
+    return [Math.min(middle, value), Math.max(middle, value)];
+  }
+  return [min, Math.max(value, min)];
+}
+
 function paintSlider(slider: HTMLElement, values: number[]): void {
   const { min, max, thumbs, vertical, disabled } = sliderConfig(slider);
   const percent = (value: number) => percentOf(value, min, max);
@@ -67,9 +78,10 @@ function paintSlider(slider: HTMLElement, values: number[]): void {
   slider.dataset.orientation = vertical ? "vertical" : "horizontal";
   const range = slider.querySelector<HTMLElement>(".z-slider__range");
   if (range) {
-    // Un tirador: de 0 al valor. Varios: del menor al mayor.
-    const low = values.length > 1 ? percent(Math.min(...values)) : 0;
-    const high = percent(Math.max(...values, min));
+    // Un tirador: de 0 al valor (o del punto medio al valor con data-origin="center"). Varios: del menor al mayor.
+    const [lo, hi] = rangeOf(slider, values, min, max);
+    const low = values.length > 1 || slider.dataset.origin === "center" ? percent(lo) : 0;
+    const high = percent(hi);
     range.style.setProperty(start!, `${low}%`);
     range.style.setProperty(end!, `${100 - high}%`);
   }
@@ -89,8 +101,7 @@ function paintSlider(slider: HTMLElement, values: number[]): void {
     thumb.tabIndex = disabled ? -1 : 0;
   });
   // Marcas dentro del rango elegido, de acento.
-  const low = values.length > 1 ? Math.min(...values) : min;
-  const high = Math.max(...values, min);
+  const [low, high] = rangeOf(slider, values, min, max);
   for (const mark of slider.querySelectorAll<HTMLElement>(".z-slider__mark[data-value]")) {
     const v = Number(mark.dataset.value);
     flag(mark, "data-in-range", v >= low && v <= high);
