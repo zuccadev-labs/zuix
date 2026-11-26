@@ -661,9 +661,13 @@
   }
 
   @media (forced-colors: active) {
-    .z-edge[data-color] .z-edge__path,
+    /* Tonos, colores libres y troncales pierden su color; el tipo de línea y el grosor siguen distinguiéndolas. */
+    :is(.z-node-canvas, .z-diagram-legend) .z-edge:is([data-tone], [data-color], [data-double]) .z-edge__path,
     .z-edge .z-edge__path {
       stroke: CanvasText;
+    }
+    .z-node-canvas .z-edge[data-selected] .z-edge__path {
+      stroke: Highlight;
     }
     .z-edge__core {
       stroke: Canvas;

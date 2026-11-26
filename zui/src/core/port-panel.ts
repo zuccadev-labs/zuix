@@ -1,7 +1,7 @@
 // Cara de un equipo de red: conectores RJ45, SFP, QSFP o coaxial numerados, con estado (libre, enlazado,
 // deshabilitado, expuesto), marcas de VLAN (barra alta = sin etiquetar, barras cortas = etiquetadas, color por VLAN)
 // y la etiqueta de destino bajo cada puerto. Es una lista de opciones (listbox horizontal, foco itinerante): las
-// flechas, Inicio y Fin van de puerto en puerto y cada uno se anuncia entero («Port 3, connected to Desk, untagged
+// flechas, Inicio y Fin van de puerto en puerto y cada uno se anuncia entero («Port 3 Desk, connected, untagged
 // VLAN 10 LAN, 1G»). Cada conector lleva `data-port-anchor`: dentro de un NodeCanvas, las aristas salen de él. Marcado
 // (core/vnode) y textos, sin documento.
 
@@ -14,6 +14,8 @@ export type PortState = "free" | "linked" | "disabled" | "exposed";
 
 export interface PanelVlan {
   id: string;
+  /** Número de VLAN (802.1Q). Si el id es un número, ese. */
+  vlan?: number;
   /** Nombre corto («LAN»). */
   name?: string;
   /** Tono, token (`chart-1`) o color libre. */
@@ -50,7 +52,7 @@ export interface PortPanelLabels {
   /** «Port {label}». */
   port: string;
   free: string;
-  /** «connected to {to}». */
+  /** «connected». El destino va justo tras el rótulo («Port 2 Desk»), como se ve. */
   linked: string;
   disabled: string;
   /** «exposed to the internet». */
@@ -67,7 +69,7 @@ export const PORT_PANEL_LABELS: PortPanelLabels = {
   ports: "Ports",
   port: "Port {label}",
   free: "free",
-  linked: "connected to {to}",
+  linked: "connected",
   disabled: "disabled",
   exposed: "exposed to the internet",
   untagged: "untagged {vlan}",
@@ -81,11 +83,12 @@ export const mergePortPanelLabels = (l?: Partial<PortPanelLabels>): PortPanelLab
 export const portState = (p: PanelPort): PortState => p.state ?? (p.to ? "linked" : "free");
 export const portConnector = (p: PanelPort): PortConnector => p.connector ?? "rj45";
 
-/** Nombre legible de una VLAN («VLAN 10 LAN»). */
+/** Nombre legible de una VLAN («VLAN 10 LAN», o su nombre si no tiene número). */
 export function vlanName(id: string, vlans: readonly PanelVlan[] = []): string {
   const v = vlans.find((x) => x.id === id);
-  const num = /^\d+$/.test(id) ? `VLAN ${id}` : id;
-  return v?.name && v.name !== id ? `${num} ${v.name}` : num;
+  const num = v?.vlan ?? (/^\d+$/.test(id) ? Number(id) : undefined);
+  if (num === undefined) return v?.name ?? id;
+  return v?.name && v.name !== String(num) ? `VLAN ${num} ${v.name}` : `VLAN ${num}`;
 }
 
 export interface VlanMark {
@@ -109,7 +112,10 @@ export function vlanMarks(p: PanelPort, vlans: readonly PanelVlan[] = []): VlanM
   return out;
 }
 
-/** Descripción completa de un puerto para lectores de pantalla. */
+/**
+ * Descripción completa de un puerto para lectores de pantalla. Empieza por lo que se ve, en el mismo orden (rótulo y
+ * destino: «Port 2 Desk»), así el nombre contiene la etiqueta visible (WCAG 2.5.3).
+ */
 export function describePort(
   p: PanelPort,
   index: number,
@@ -117,12 +123,12 @@ export function describePort(
   labels: PortPanelLabels = PORT_PANEL_LABELS,
   locale?: string,
 ): string {
-  const parts = [fill(labels.port, { label: p.label ?? String(index + 1) })];
-  if (portConnector(p) !== "rj45") parts.push(labels.connectors[portConnector(p)]);
   const state = portState(p);
-  if (state === "free") parts.push(labels.free);
-  else if (state === "disabled") parts.push(labels.disabled);
-  if (p.to && state !== "free") parts.push(fill(labels.linked, { to: p.to }));
+  const shown = p.to ?? (state === "free" ? labels.free : "");
+  const parts = [`${fill(labels.port, { label: p.label ?? String(index + 1) })}${shown ? ` ${shown}` : ""}`];
+  if (state === "linked" || (state === "exposed" && p.to)) parts.push(labels.linked);
+  if (state === "disabled") parts.push(labels.disabled);
+  if (portConnector(p) !== "rj45") parts.push(labels.connectors[portConnector(p)]);
   if (state === "exposed") parts.push(labels.exposed);
   if (p.untagged) parts.push(fill(labels.untagged, { vlan: vlanName(p.untagged, vlans) }));
   const tagged = (p.tagged ?? []).filter((t) => t !== p.untagged);

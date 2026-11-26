@@ -51,7 +51,7 @@
     {
       "name": "labels",
       "type": "Partial<PortPanelLabels>",
-      "description": "Textos: port («Port {label}»), free, linked («connected to {to}»), disabled, exposed, untagged, tagged y los nombres de los conectores."
+      "description": "Textos: port («Port {label}»), free, linked («connected»), disabled, exposed, untagged («untagged {vlan}»), tagged («tagged {list}») y los nombres de los conectores."
     },
     {
       "name": "locale",
@@ -99,7 +99,7 @@
     "z-port__vlan",
     "z-port__to"
   ],
-  "a11y": "Listbox horizontal con foco itinerante (una parada de tabulación): flechas, Inicio y Fin van de puerto en puerto; Intro, Espacio o un clic lo eligen. Cada opción se anuncia entera («Port 2, connected to Desk, untagged VLAN 10 LAN, 1G»); el color de las VLAN y del conector no es la única pista. La cara del equipo no se refleja en RTL. Con forced-colors las marcas se pintan con CanvasText y conservan su altura.",
+  "a11y": "Listbox horizontal con foco itinerante (una parada de tabulación): flechas, Inicio y Fin van de puerto en puerto; Intro, Espacio o un clic lo eligen. Cada opción se anuncia entera («Port 2 Desk, connected, untagged VLAN 10 LAN, 1G»): el nombre empieza por lo que se ve, rótulo y destino, en el mismo orden; el color de las VLAN y del conector no es la única pista. La cara del equipo no se refleja en RTL. Con forced-colors las marcas se pintan con CanvasText y conservan su altura.",
   "behavior": "dom",
   "examples": [
     {

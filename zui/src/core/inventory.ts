@@ -481,7 +481,7 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
     zoneX += width + 48;
   }
 
-  const vlans: PanelVlan[] = (inv.networks ?? []).map((n) => ({ id: n.id, name: n.name, color: n.color }));
+  const vlans: PanelVlan[] = (inv.networks ?? []).map((n) => ({ id: n.id, vlan: n.vlan, name: n.name, color: n.color }));
   const used = new Set(edges.map((e) => e.kind).filter(Boolean) as string[]);
   const legendKinds = Object.fromEntries(Object.entries(kinds).filter(([k]) => used.has(k)));
   return { nodes, edges, vlans, legend: { kinds: legendKinds } };

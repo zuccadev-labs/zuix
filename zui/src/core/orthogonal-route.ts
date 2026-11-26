@@ -39,29 +39,43 @@ const NORMAL: Record<Side, Point> = { left: { x: -1, y: 0 }, right: { x: 1, y: 0
 
 /** Índice espacial de rectángulos por celdas (consultas de tramos en tiempo casi constante). */
 class RectIndex {
-  private cells = new Map<string, number[]>();
+  private cells = new Map<number, number[]>();
+  private stamp: Uint32Array;
+  private round = 0;
   constructor(
     readonly rects: readonly (Rect & { id: string })[],
     private cell = 160,
   ) {
+    this.stamp = new Uint32Array(rects.length);
     rects.forEach((r, i) => {
-      for (const k of this.keys(r)) {
+      this.each(r, (k) => {
         const list = this.cells.get(k);
         if (list) list.push(i);
         else this.cells.set(k, [i]);
-      }
+      });
     });
   }
-  private *keys(r: Rect) {
+  /** Celdas que toca `r` (clave numérica: x e y desplazados a positivo). */
+  private each(r: Rect, fn: (key: number) => void) {
     const c = this.cell;
-    for (let x = Math.floor(r.x / c); x <= Math.floor((r.x + r.width) / c); x++)
-      for (let y = Math.floor(r.y / c); y <= Math.floor((r.y + r.height) / c); y++) yield `${x},${y}`;
+    const x0 = Math.floor(r.x / c);
+    const x1 = Math.floor((r.x + r.width) / c);
+    const y0 = Math.floor(r.y / c);
+    const y1 = Math.floor((r.y + r.height) / c);
+    for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) fn((x + 32768) * 65536 + (y + 32768));
   }
-  /** Índices de los rectángulos que pueden tocar `r`. */
+  /** Índices de los rectángulos que pueden tocar `r`, sin repetir (el orden no importa a quien los usa). */
   near(r: Rect): number[] {
-    const out = new Set<number>();
-    for (const k of this.keys(r)) for (const i of this.cells.get(k) ?? []) out.add(i);
-    return [...out].sort((a, b) => a - b);
+    const out: number[] = [];
+    const round = ++this.round;
+    this.each(r, (k) => {
+      for (const i of this.cells.get(k) ?? []) {
+        if (this.stamp[i] === round) continue;
+        this.stamp[i] = round;
+        out.push(i);
+      }
+    });
+    return out;
   }
 }
 
@@ -102,10 +116,47 @@ function cost(points: readonly Point[], bend: number): number {
 
 const horizontal = (s: Side) => s === "left" || s === "right";
 
-/** Coordenadas de los pasillos (bordes de obstáculos con margen) entre `lo` y `hi`, más cercanas primero a `mid`. */
-function lanes(values: number[], lo: number, hi: number, mid: number, limit = 12): number[] {
-  const out = [...new Set(values.filter((v) => v >= lo && v <= hi).map((v) => Math.round(v)))];
-  return out.sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid) || a - b).slice(0, limit);
+/** Valores únicos y ordenados (redondeados al píxel). */
+function sortedUnique(values: number[]): number[] {
+  const out = values.map((v) => Math.round(v)).sort((a, b) => a - b);
+  let n = 0;
+  for (let i = 0; i < out.length; i++) if (i === 0 || out[i] !== out[n - 1]) out[n++] = out[i]!;
+  out.length = n;
+  return out;
+}
+
+/**
+ * Coordenadas de los pasillos (bordes de obstáculos con margen) entre `lo` y `hi`, las `limit` más cercanas a `mid`
+ * (primero la más cercana; a igual distancia, la menor). `sorted` va ordenado y sin repetidos.
+ */
+function lanes(sorted: readonly number[], lo: number, hi: number, mid: number, limit = 12): number[] {
+  let r = 0;
+  let a = sorted.length;
+  while (r < a) {
+    const m = (r + a) >> 1;
+    if (sorted[m]! < mid) r = m + 1;
+    else a = m;
+  }
+  let left = r - 1;
+  let right = r;
+  const out: number[] = [];
+  while (out.length < limit && (left >= 0 || right < sorted.length)) {
+    const lv = left >= 0 ? sorted[left]! : Number.NaN;
+    const rv = right < sorted.length ? sorted[right]! : Number.NaN;
+    const takeLeft = right >= sorted.length || (left >= 0 && Math.abs(lv - mid) <= Math.abs(rv - mid));
+    const v = takeLeft ? lv : rv;
+    if (takeLeft) left--;
+    else right++;
+    if (v < lo || v > hi) {
+      if ((takeLeft && v < lo) || (!takeLeft && v > hi)) {
+        if (takeLeft) left = -1;
+        else right = sorted.length;
+      }
+      continue;
+    }
+    out.push(v);
+  }
+  return out;
 }
 
 /** Formas sencillas: la escalonada estándar y sus variantes con el tramo central en otro pasillo. */
@@ -116,8 +167,8 @@ function candidates(ends: EdgeEnds, offset: number, near: readonly Rect[], margi
   const a = { x: s.x + n1.x * offset, y: s.y + n1.y * offset };
   const b = { x: t.x + n2.x * offset, y: t.y + n2.y * offset };
   const out: Point[][] = [orthogonalPoints(ends, offset)];
-  const xs = near.flatMap((r) => [r.x - margin / 2, r.x + r.width + margin / 2]);
-  const ys = near.flatMap((r) => [r.y - margin / 2, r.y + r.height + margin / 2]);
+  const xs = sortedUnique(near.flatMap((r) => [r.x - margin / 2, r.x + r.width + margin / 2]));
+  const ys = sortedUnique(near.flatMap((r) => [r.y - margin / 2, r.y + r.height + margin / 2]));
   const lo = (u: number, v: number) => Math.min(u, v) - 400;
   const hi = (u: number, v: number) => Math.max(u, v) + 400;
   // Tramo central vertical (x variable) y horizontal (y variable), con dos o tres giros.
@@ -315,16 +366,11 @@ function routeAround(
     .near(area)
     .map((k) => index.rects[k]!)
     .filter((r) => !skip.has(r.id));
-  let best: Point[] | null = null;
-  let bestCost = Infinity;
-  for (const c of candidates(req.ends, o.offset, near, pad)) {
-    const k = cost(c, o.bendCost);
-    if (k < bestCost && !blocked(c, index, skip)) {
-      best = c;
-      bestCost = k;
-    }
-  }
-  if (best) return best;
+  // De la más barata a la más cara: la primera libre gana (orden estable: a igual coste, la de antes).
+  const ranked = candidates(req.ends, o.offset, near, pad)
+    .map((points, i) => ({ points, i, k: cost(points, o.bendCost) }))
+    .sort((a, b) => a.k - b.k || a.i - b.i);
+  for (const c of ranked) if (!blocked(c.points, index, skip)) return c.points;
   return gridRoute(req.ends, o.offset, index, skip, pad, o.bendCost, o.maxGrid) ?? orthogonalPoints(req.ends, o.offset);
 }
 
