@@ -1,6 +1,8 @@
 // Estados de una respuesta de asistente y de sus herramientas: qué transiciones valen, cuáles son finales, qué cambio
 // merece un anuncio (el final de la respuesta, una herramienta que espera aprobación o falla; nunca los intermedios) y
 // la duración como texto. También el progreso de un plan de pasos. Puro.
+import { localize } from "./locale";
+import { format } from "./locale";
 
 export type ResponseState = "submitted" | "streaming" | "done" | "error" | "stopped";
 export type ToolStatus = "pending" | "input-streaming" | "running" | "awaiting-approval" | "success" | "error" | "cancelled";
@@ -48,13 +50,13 @@ export const AGENT_ANNOUNCE_LABELS: AgentAnnounceLabels = {
   toolFailed: "{name} failed",
 };
 
-const put = (t: string, v: Record<string, string>) => t.replace(/\{(\w+)\}/g, (_, k: string) => v[k] ?? `{${k}}`);
+const put = (t: string, v: Record<string, string>) => format(t, v);
 
 /** Anuncio de un cambio de estado de la respuesta, o `""` si no se dice nada (empezar, cada trozo). */
 export function responseAnnouncement(
   from: ResponseState | undefined,
   to: ResponseState,
-  labels: AgentAnnounceLabels = AGENT_ANNOUNCE_LABELS,
+  labels: AgentAnnounceLabels = localize("agentAnnounce", AGENT_ANNOUNCE_LABELS),
   summary?: string,
 ): string {
   if (from === to || (from !== undefined && !isBusy(from))) return "";
@@ -69,7 +71,7 @@ export function toolAnnouncement(
   from: ToolStatus | undefined,
   to: ToolStatus,
   name: string,
-  labels: AgentAnnounceLabels = AGENT_ANNOUNCE_LABELS,
+  labels: AgentAnnounceLabels = localize("agentAnnounce", AGENT_ANNOUNCE_LABELS),
 ): string {
   if (from === to) return "";
   if (to === "awaiting-approval") return put(labels.approval, { name });

@@ -94,3 +94,12 @@ export function isoOf(at: number | string | Date): string | undefined {
   const t = toInstant(at);
   return t === null ? undefined : new Date(t).toISOString();
 }
+
+export interface ActivityFeedLabels {
+  today: string;
+  yesterday: string;
+  loadMore: string;
+  empty: string;
+}
+
+export const ACTIVITY_LABELS: ActivityFeedLabels = { today: "Today", yesterday: "Yesterday", loadMore: "Load more", empty: "No activity yet" };

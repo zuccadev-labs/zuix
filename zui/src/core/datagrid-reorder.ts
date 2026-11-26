@@ -3,6 +3,7 @@
 // (`data-drop` = before|after) y mueve al soltar; con el teclado, Espacio o Intro la cogen (aria-pressed), ←/→ la mueven
 // una posición cada vez (anunciado), Espacio o Intro la sueltan y Escape la devuelve a su sitio. Quien lo usa cambia el
 // orden (`onMove`); el asa recupera el foco tras volver a pintar. Lo comparten React y el modo DOM; sin efectos al importar.
+import { localize } from "./locale";
 
 import { fill } from "./vnode";
 
@@ -39,7 +40,7 @@ const GRIP = ".z-table__grip";
 
 /** Conecta el reordenado de columnas a una tabla. Devuelve la función que lo desconecta. */
 export function bindColumnReorder(table: HTMLTableElement, o: ReorderOptions): () => void {
-  const labels = { ...REORDER_LABELS, ...o.labels };
+  const labels = { ...localize("columnReorder", REORDER_LABELS), ...o.labels };
   let grab: { key: string; from: number } | null = null;
   let drag: { key: string; pointer: number; drop: { key: string; side: "before" | "after" } | null; x: number; started: boolean } | null =
     null;

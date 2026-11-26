@@ -1,3 +1,4 @@
+import { localize } from "../../core/locale";
 import { deliveryNode } from "../../core/chat-tree";
 import { DELIVERY_LABELS, type DeliveryLabels, type DeliveryState } from "../../core/delivery";
 import { staticNode } from "./static";
@@ -12,5 +13,5 @@ export interface DeliveryStatusProps {
 
 /** Estado de entrega: enviando (reloj), enviado, entregado (dos marcas), leído (dos marcas y otro texto) o fallido. */
 export function DeliveryStatus({ status, labels, className }: DeliveryStatusProps) {
-  return staticNode(deliveryNode(status, { ...DELIVERY_LABELS, ...labels }), { className });
+  return staticNode(deliveryNode(status, { ...localize("delivery", DELIVERY_LABELS), ...labels }), { className });
 }

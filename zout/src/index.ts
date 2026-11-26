@@ -51,3 +51,4 @@ export {
 export { KanbanLayout, type KanbanLayoutProps } from "./layouts/KanbanLayout";
 export { MailLayout, type MailLayoutProps } from "./layouts/MailLayout";
 export { activeSection, appBarProgress } from "./logic";
+export { loadZoutLocale } from "./locale";

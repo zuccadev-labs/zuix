@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "../../locale";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { announce } from "../../core/announcer";
@@ -139,7 +140,7 @@ export function Tree({
   className,
 }: TreeProps) {
   const multiple = selectionMode === "multiple";
-  const labels = { ...TREE_DRAG_LABELS, ...dragLabels };
+  const labels = { ...useLocale().messages("treeDrag", TREE_DRAG_LABELS), ...dragLabels };
   const [ownExpanded, setOwnExpanded] = useState<string[]>(defaultExpanded ?? []);
   const [ownSelected, setOwnSelected] = useState<string | null>(defaultSelected);
   const [ownSelectedIds, setOwnSelectedIds] = useState<string[]>(defaultSelectedIds ?? []);

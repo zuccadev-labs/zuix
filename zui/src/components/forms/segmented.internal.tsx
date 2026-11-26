@@ -1,6 +1,7 @@
 "use client";
 // Binding de React del campo por segmentos que comparten DateField, TimeField y TimePicker. La lógica (orden de los
 // segmentos, teclado, pegado, validez) vive en ../../core/segments; aquí solo se pinta y se conectan los eventos.
+import { useLocale } from "../../locale";
 import {
   useEffect,
   useMemo,
@@ -121,6 +122,7 @@ const MESSAGES: Record<Validity, "incomplete" | "invalid" | "range" | null> = {
 
 /** Campo por segmentos (spinbuttons de APG en un `role="group"`). Uso interno: DateField, TimeField, TimePicker. */
 export const SegmentedField = withRef(function SegmentedField(props: InternalProps) {
+  const segmentNames = useLocale().messages("segment", SEGMENT_LABELS);
   const {
     value,
     defaultValue,
@@ -411,7 +413,7 @@ export const SegmentedField = withRef(function SegmentedField(props: InternalPro
               autoCorrect="off"
               autoCapitalize="off"
               enterKeyHint="next"
-              aria-label={segmentLabels?.[type] ?? SEGMENT_LABELS[type]}
+              aria-label={segmentLabels?.[type] ?? segmentNames[type]}
               aria-valuemin={lo}
               aria-valuemax={hi}
               aria-valuenow={state.values[type]}

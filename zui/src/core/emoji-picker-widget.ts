@@ -3,6 +3,7 @@
 // tono de piel y la vista de la opción activa con su nombre. ↑/↓ por filas, ←/→ por opciones con el campo vacío,
 // Intro elige y Escape cierra. El conjunto es el propio de la suite (core/emoji-data) o el que pase la aplicación, ya
 // cargado o como promesa que se resuelve al abrir. Lo usan EmojiPicker y la caja de texto del chat.
+import { localize } from "./locale";
 
 import { EMOJI_SET, pushRecent, searchEmoji, SKIN_TONES, withTone, type Emoji, type EmojiSet } from "./emoji-data";
 import { isRtl, logicalKey } from "./dir";
@@ -68,7 +69,7 @@ export const emojiPickerConfig = (p: EmojiPickerProps): EmojiPickerConfig => ({
   recent: p.recent ?? [],
   tone: Math.max(0, Math.min(5, Math.floor(p.defaultTone ?? 0))),
   columns: Math.max(4, Math.min(12, Math.floor(p.columns ?? 8))),
-  labels: { ...EMOJI_PICKER_LABELS, ...p.labels },
+  labels: { ...localize("emojiPicker", EMOJI_PICKER_LABELS), ...p.labels },
 });
 
 export const emojiPickerInitial = (c: EmojiPickerConfig): EmojiPickerState => ({

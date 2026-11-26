@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "../../locale";
 import { useState, type HTMLAttributes } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { initialsOf } from "../../core/initials";
@@ -30,6 +31,7 @@ const initials = (name: string) => initialsOf(name);
 /** Imagen de persona o entidad, con iniciales o icono como respaldo. */
 export function Avatar({ src, name, alt, size = "md", shape = "circle", status, statusLabel, className, ...rest }: AvatarProps) {
   const [failed, setFailed] = useState<string | null>(null);
+  const presence = useLocale().messages("presence", PRESENCE_LABELS);
   // La fuente se valida como URL de imagen: un esquema que no es de imagen (`javascript:`) se queda en las iniciales.
   const image = safeSrc(src);
   const showImage = image !== null && failed !== image;
@@ -64,7 +66,7 @@ export function Avatar({ src, name, alt, size = "md", shape = "circle", status, 
         <Icon name="user" size={ICON_PX[size]} />
       )}
       {status ? (
-        <span className="z-avatar__status" data-status={status} role="img" aria-label={statusLabel ?? PRESENCE_LABELS[status] ?? status}>
+        <span className="z-avatar__status" data-status={status} role="img" aria-label={statusLabel ?? presence[status] ?? status}>
           {/* La forma dice el estado además del color: marca, reloj, raya, aspa o flecha dentro del punto. */}
           {PRESENCE_ICON[status] && size !== "xs" && size !== "sm" ? (
             <Icon name={PRESENCE_ICON[status] as IconName} size={size === "xl" ? 12 : 8} />

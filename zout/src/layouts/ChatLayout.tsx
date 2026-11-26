@@ -2,6 +2,7 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
+import { useZoutLocale } from "../locale";
 import { CHAT_LAYOUT_LABELS, historyStep, isChatView, nextPane, type ChatLayoutLabels, type ChatView } from "../chat-layout";
 
 export { CHAT_LAYOUT_LABELS };
@@ -74,7 +75,7 @@ export function ChatLayout({
   labels,
   className,
 }: ChatLayoutProps) {
-  const l = { ...CHAT_LAYOUT_LABELS, ...labels };
+  const l = { ...useZoutLocale().messages("chatLayout", CHAT_LAYOUT_LABELS), ...labels };
   const uid = useId();
   const root = useRef<HTMLDivElement | null>(null);
   const launcher = useRef<HTMLButtonElement | null>(null);

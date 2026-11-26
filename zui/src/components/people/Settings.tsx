@@ -1,6 +1,10 @@
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import { localize } from "../../core/locale";
+import { SETTING_ROW_LABELS, type SettingRowLabels } from "../../core/profile";
 import { cx } from "../../cx";
+
+export type { SettingRowLabels };
 
 export interface SettingsSectionProps {
   title: string;
@@ -48,14 +52,6 @@ export function SettingsSection({
   );
 }
 
-export interface SettingRowLabels {
-  saving: string;
-  saved: string;
-  error: string;
-}
-
-const SETTING_ROW_LABELS: SettingRowLabels = { saving: "Saving…", saved: "Saved", error: "Couldn't save" };
-
 export interface SettingRowProps {
   label: ReactNode;
   description?: ReactNode;
@@ -90,7 +86,7 @@ export function SettingRow({
   className,
   id,
 }: SettingRowProps) {
-  const labels = { ...SETTING_ROW_LABELS, ...labelsProp };
+  const labels = { ...localize("settingRow", SETTING_ROW_LABELS), ...labelsProp };
   const base = htmlFor ?? id;
   const descId = description && base ? `${base}-description` : undefined;
   const wired =

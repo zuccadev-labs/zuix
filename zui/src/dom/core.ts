@@ -55,6 +55,22 @@ import { byRef, listener, logicalKey, notePress, pressedOnBackdrop, setMarkup, t
 import { popoverOpen, closestOpenPopover, showPopover } from "../core/popover";
 
 export type { DomModule, DomPart } from "./shared";
+export { localeOf, setLocale, type SetLocaleOptions } from "./locale";
+export { loadLocale, LOCALES, type LocaleId } from "../locales/load";
+export {
+  format as formatMessage,
+  formatDate,
+  formatList,
+  formatNumber,
+  localize,
+  pluralRules,
+  registerLocale,
+  registeredLocales,
+  resolveLocale,
+  type LocaleMessages,
+  type LocalePack,
+  type Messages,
+} from "../core/locale";
 export { download, downloadBlob, downloadUrl, mimeFromName, type DownloadSource } from "../core/download";
 export { matchesShortcut, normalizeShortcut, parseShortcut, shortcutLabels } from "../core/shortcut";
 export { reorderUpload, setOtpValue, setSliderValue } from "./forms-controls";

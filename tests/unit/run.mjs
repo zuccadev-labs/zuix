@@ -26,6 +26,8 @@ if (!files.length) {
 
 // Lógica pura que debe quedar cubierta. Un módulo nuevo de lógica se añade aquí con su prueba.
 const COVERED = [
+  "zui/src/core/locale.ts",
+  "zui/src/locales/load.ts",
   "tokens/src/color.mjs",
   "tokens/src/schema.mjs",
   "tokens/src/pairs.mjs",

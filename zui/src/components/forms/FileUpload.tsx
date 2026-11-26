@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "../../locale";
 import {
   useEffect,
   useId,
@@ -274,7 +275,7 @@ export function FileUpload({
   // Orden provisional mientras se reordena con el teclado (Escape lo descarta; soltar lo confirma).
   const [preview, setPreview] = useState<ReadonlyArray<File> | null>(null);
   const list = preview ?? filesProp ?? inner;
-  const reorderText = { ...REORDER_LABELS, ...reorderLabels };
+  const reorderText = { ...useLocale().messages("reorder", REORDER_LABELS), ...reorderLabels };
   const filesHint = useId();
   const grab = useRef<{ file: File; origin: number } | null>(null);
   const [grabbed, setGrabbed] = useState<File | null>(null);

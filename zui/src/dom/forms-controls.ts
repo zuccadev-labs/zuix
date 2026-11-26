@@ -1,4 +1,6 @@
 // Slider, OTPInput y FileUpload sin framework.
+import { localize } from "../core/locale";
+import { localeOf } from "./locale";
 import { matchesAccept } from "../core/accept";
 import { announce } from "../core/announcer";
 import { isRtl } from "../core/dir";
@@ -283,9 +285,9 @@ const repainting = new WeakSet<HTMLElement>();
 
 function reorderLabels(zone: HTMLElement): ReorderLabels {
   try {
-    return { ...REORDER_LABELS, ...(JSON.parse(zone.dataset.reorderLabels ?? "{}") as Partial<ReorderLabels>) };
+    return { ...localize("reorder", REORDER_LABELS, localeOf(zone)), ...(JSON.parse(zone.dataset.reorderLabels ?? "{}") as Partial<ReorderLabels>) };
   } catch {
-    return REORDER_LABELS;
+    return localize("reorder", REORDER_LABELS, localeOf(zone));
   }
 }
 const zoneFiles = (zone: HTMLElement) =>

@@ -1,6 +1,7 @@
 // Árbol de nodos sin framework que comparten las vistas de la agenda (EventCalendar, línea temporal, año perpetuo,
 // franjas, mapa de calor, rachas): el binding de React lo convierte en elementos y el modo DOM en nodos (el texto
 // siempre como texto, nunca como marcado). Un solo origen para el contrato HTML de las dos vías. Sin documento.
+import { format } from "./locale";
 
 export type VAttr = string | number | boolean | null | undefined;
 export interface VEl {
@@ -41,8 +42,7 @@ export const icon = (name: string, size = 16, variant?: "solid"): VSlot => ({
 });
 /** Atributo booleano de estado: `""` si es verdadero, ausente si no. */
 export const on = (v: boolean | undefined) => (v ? "" : undefined);
-export const fill = (template: string, values: Record<string, string | number>) =>
-  template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? `{${k}}`));
+export const fill = (template: string, values: Record<string, string | number>) => format(template, values);
 
 /** HTML del árbol (para el contrato HTML y las pruebas). Escapa texto y atributos. */
 export function toHTML(

@@ -1,6 +1,7 @@
 // QRCode: el código de `core/qr` dibujado como un único `path` de SVG, oscuro sobre claro siempre (los lectores
 // esperan ese contraste) con su zona de silencio. Imagen con nombre; un icono opcional en el centro, que sube la
 // corrección a H. Un solo árbol (core/vnode) para React (sin estado: vale en un Server Component) y el modo DOM.
+import { localize } from "./locale";
 
 import { encodeQr, isQrLevel, logoModules, qrPath, type QrLevel } from "./qr";
 import { fill, h, icon, type VEl } from "./vnode";
@@ -31,7 +32,7 @@ export interface QRCodeProps {
 }
 
 export function qrcodeTree(p: QRCodeProps): VEl {
-  const labels = { ...QRCODE_LABELS, ...p.labels };
+  const labels = { ...localize("qrCode", QRCODE_LABELS), ...p.labels };
   const value = String(p.value ?? "");
   const level: QrLevel = p.icon ? "H" : isQrLevel(p.level) ? p.level : "M";
   const margin = Number.isFinite(p.margin) ? Math.max(0, Math.min(8, Math.floor(p.margin!))) : 4;

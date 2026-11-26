@@ -2,6 +2,7 @@
 // fija u opcional y forma rectangular o circular. Teclado en el área (flechas mueven, Mayúsculas + flechas
 // redimensionan, Alt multiplica el paso) con anuncio del recorte en una región viva. Un solo árbol (core/vnode) y una
 // sola interacción para React y el modo DOM (core/widget). La salida se dibuja con `cropImage` / `cropImageBlob`.
+import { localize } from "./locale";
 
 import { clampCrop, CROP_HANDLES, cropPixels, initialCrop, keyCrop, moveCrop, resizeCrop, type Crop, type CropHandle } from "./crop";
 import { isRtl } from "./dir";
@@ -225,7 +226,7 @@ export const imageCropperWidget: Widget<ImageCropperProps, Config, State> = {
   root: "z-cropper",
   configure: (p) => ({
     ...p,
-    labels: { ...IMAGE_CROPPER_LABELS, ...p.labels },
+    labels: { ...localize("imageCropper", IMAGE_CROPPER_LABELS), ...p.labels },
     min: Number.isFinite(p.minSize) ? Math.min(0.9, Math.max(0.01, p.minSize!)) : 0.05,
   }),
   initial: (c) => ({ crop: c.crop ?? null, imageAspect: c.aspect ?? 1, natural: { width: 0, height: 0 }, prop: key(c.crop) }),

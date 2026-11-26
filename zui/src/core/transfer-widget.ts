@@ -2,6 +2,7 @@
 // marcado o todo lo visible. Cada lista es un listbox de selección múltiple con foco por aria-activedescendant: flechas,
 // Inicio y Fin recorren, Espacio marca, Mayús+flechas marca un rango, Ctrl+A marca lo visible e Intro mueve lo marcado
 // a la otra lista; doble clic mueve una opción. Un solo árbol y una sola interacción para React y el modo DOM.
+import { localize } from "./locale";
 
 import { filterTransfer, moveTransfer, rangeTransfer, splitTransfer, type TransferItem } from "./transfer";
 import { virtualizeAttr, wantsVirtual } from "./virtual";
@@ -398,7 +399,7 @@ function after(root: HTMLElement, host: Host): void {
 
 export const transferListWidget: Widget<TransferListProps, Config, State> = {
   root: "z-transfer",
-  configure: (p) => ({ ...p, items: p.items ?? [], labels: { ...TRANSFER_LABELS, ...p.labels } }),
+  configure: (p) => ({ ...p, items: p.items ?? [], labels: { ...localize("transfer", TRANSFER_LABELS), ...p.labels } }),
   initial: (c) => ({
     value: [...(c.value ?? c.defaultValue ?? [])],
     checked: { source: [], target: [] },

@@ -2,6 +2,7 @@
 // vista unificada o lado a lado, con las palabras cambiadas marcadas y las regiones sin cambios plegadas (se
 // despliegan con un botón). Cada línea dice su tipo en texto oculto («added», «removed»), no solo con color ni con el
 // signo. Una tabla con cabeceras por archivo. El texto se pinta como nodos, nunca como marcado.
+import { localize } from "./locale";
 
 import {
   changePairs,
@@ -199,7 +200,7 @@ export const diffViewerWidget: Widget<DiffViewerProps, Config, State> = {
       defaultMode: p.defaultMode === "split" ? "split" : "unified",
       words: p.wordDiff !== false,
       toggle: !p.hideModeToggle,
-      labels: { ...DIFF_VIEWER_LABELS, ...p.labels },
+      labels: { ...localize("diffViewer", DIFF_VIEWER_LABELS), ...p.labels },
     };
   },
   initial: (c) => ({ mode: c.mode ?? c.defaultMode, expanded: [] }),

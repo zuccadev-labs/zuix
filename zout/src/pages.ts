@@ -89,3 +89,22 @@ export function wireScrollspy(nav: HTMLElement, onChange?: (id: string) => void)
     cancelAnimationFrame(frame);
   };
 }
+
+export interface DocsLayoutLabels {
+  nav: string;
+  toc: string;
+  /** Título del índice en estrecho (desplegable). */
+  onThisPage: string;
+  previous: string;
+  next: string;
+  pager: string;
+}
+
+export const DOCS_LABELS: DocsLayoutLabels = {
+  nav: "Documentation",
+  toc: "On this page",
+  onThisPage: "On this page",
+  previous: "Previous",
+  next: "Next",
+  pager: "Pages",
+};

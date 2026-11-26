@@ -3,6 +3,7 @@
 //   zui/dist/zui.css            estilos de componentes        zout/dist/zout.css   estilos de layouts
 //   zui/dist/zui.dom.js         comportamiento (@zuccadev-labs/zuix-zui/dom)
 //   zui/dist/zui.dom.carousel-gl.js  modo WebGL del Carousel; zui.dom.js lo importa solo si un carrusel lo pide
+//   zui/dist/zui.locale.<id>.js textos de un idioma; zui.dom.js lo importa al pedirlo setLocale() o loadLocale()
 //   zicon/dist/zicon.element.js <z-icon> con el set completo
 //   */dist/*.compat.css         modo compat (tools/compat.mjs): zui, zout y los tokens, para navegadores anteriores
 // Los tokens ya se publican en tokens/dist/; su versión compat sale de aquí porque resuelve también las mezclas
@@ -19,6 +20,7 @@ const targets = [
   ["zout/src/styles/index.css", "zout/dist/zout.css"],
   ["zui/src/dom/index.ts", "zui/dist/zui.dom.js"],
   ["zui/src/dom/carousel-gl.ts", "zui/dist/zui.dom.carousel-gl.js"],
+  ...["es", "pt", "fr", "de"].map((id) => [`zui/src/locales/${id}.ts`, `zui/dist/zui.locale.${id}.js`]),
   ["zout/src/dom/index.ts", "zout/dist/zout.dom.js"],
   ["zicon/src/element.ts", "zicon/dist/zicon.element.js"],
 ];
@@ -29,6 +31,12 @@ const lazy = {
   setup(b) {
     b.onResolve({ filter: /^\.\/carousel-gl$/ }, (args) =>
       args.kind === "dynamic-import" ? { path: LAZY[args.path], external: true } : null,
+    );
+    // Los idiomas que importa locales/load.ts: cada uno en su archivo.
+    b.onResolve({ filter: /^\.\/(es|pt|fr|de)$/ }, (args) =>
+      args.kind === "dynamic-import" && /[\\/]locales$/.test(args.resolveDir)
+        ? { path: `./zui.locale.${args.path.slice(2)}.js`, external: true }
+        : null,
     );
   },
 };

@@ -2,6 +2,7 @@
 // marcador opcional sobre la misma escala, rótulos acumulados en los límites y leyenda. Cada tramo es enfocable con su
 // nombre («Good: 30 (30%)»): una parada de Tab, flechas entre tramos y tooltip al pasar o enfocar. Un solo árbol
 // (core/vnode) para React y para el modo DOM. Sin documento al importar.
+import { localize } from "./locale";
 
 import { numberFormat, r3, segmentLayout } from "./chart";
 import { fill, h, on, type VEl, type VNode } from "./vnode";
@@ -94,7 +95,7 @@ export const categoryBarWidget: Widget<CategoryBarProps, CategoryBarConfig, Cate
       label: p.label ?? "",
       valueFormat: p.valueFormat ?? {},
       locale: p.locale,
-      labels: { ...CATEGORY_BAR_LABELS, ...p.labels },
+      labels: { ...localize("categoryBar", CATEGORY_BAR_LABELS), ...p.labels },
     };
   },
   initial: () => ({ active: null, tip: false }),

@@ -3,6 +3,7 @@
 // RePág/AvPág de diez en diez, Inicio/Fin al mínimo y al máximo, ←/→ entre segmentos, las cifras se teclean y
 // Retroceso borra. Se puede pegar «1:30», «90m» o «PT1H30M». Preajustes opcionales (15 min, 30 min, 1 h). El valor
 // público es ISO 8601 (`PT1H30M`), que también viaja en el campo oculto del formulario.
+import { localize } from "./locale";
 
 import { logicalKey } from "./dir";
 import { balance, formatDuration, toISODuration, toMs, type DurationUnit } from "./duration";
@@ -267,7 +268,7 @@ export const durationFieldWidget: Widget<DurationFieldProps, Config, State> = {
     size: p.size === "sm" || p.size === "lg" ? p.size : "md",
     label: p.label ?? "Duration",
     locale: p.locale,
-    labels: { ...DURATION_FIELD_LABELS, ...p.labels },
+    labels: { ...localize("durationField", DURATION_FIELD_LABELS), ...p.labels },
   }),
   initial: (c) => ({ ms: truncate(toMs(c.value ?? c.defaultValue), c.units), active: 0, buffer: "", prop: c.value }),
   control: (c, s) => (c.value !== undefined && c.value !== s.prop ? { ...s, ms: truncate(toMs(c.value), c.units), prop: c.value } : s),

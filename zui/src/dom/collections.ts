@@ -16,6 +16,8 @@
 //                 z:change { value }.
 // data-z-hotkey   "mod+k" (mod = Ctrl o Cmd), "ctrl+shift+p", varias separadas por espacio. En un <dialog> lo
 //                 alterna; en cualquier otro elemento equivale a pulsarlo.
+import { localize } from "../core/locale";
+import { localeOf } from "./locale";
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowDown } from "@zuccadev-labs/zuix-zicon/icons/arrow-down";
 import { arrowUp } from "@zuccadev-labs/zuix-zicon/icons/arrow-up";
@@ -524,13 +526,13 @@ export function renameTreeItem(item: HTMLElement): void {
 
 /* ---------- Árbol: mover nodos (data-draggable) ---------- */
 
-const dragLabels = (tree: HTMLElement): TreeDragLabels => ({
-  grabbed: tree.dataset.dragGrabbedLabel ?? TREE_DRAG_LABELS.grabbed,
-  before: tree.dataset.dragBeforeLabel ?? TREE_DRAG_LABELS.before,
-  inside: tree.dataset.dragInsideLabel ?? TREE_DRAG_LABELS.inside,
-  after: tree.dataset.dragAfterLabel ?? TREE_DRAG_LABELS.after,
-  dropped: tree.dataset.dragDroppedLabel ?? TREE_DRAG_LABELS.dropped,
-  cancelled: tree.dataset.dragCancelledLabel ?? TREE_DRAG_LABELS.cancelled,
+const dragLabels = (tree: HTMLElement, base = localize("treeDrag", TREE_DRAG_LABELS, localeOf(tree))): TreeDragLabels => ({
+  grabbed: tree.dataset.dragGrabbedLabel ?? base.grabbed,
+  before: tree.dataset.dragBeforeLabel ?? base.before,
+  inside: tree.dataset.dragInsideLabel ?? base.inside,
+  after: tree.dataset.dragAfterLabel ?? base.after,
+  dropped: tree.dataset.dragDroppedLabel ?? base.dropped,
+  cancelled: tree.dataset.dragCancelledLabel ?? base.cancelled,
 });
 const itemByValue = (tree: HTMLElement, value: string) => treeItems(tree).find((item) => treeValue(item) === value);
 

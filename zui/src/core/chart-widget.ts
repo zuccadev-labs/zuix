@@ -5,6 +5,7 @@
 // resumen para lectores de pantalla, un punto enfocable por posición del eje (flechas, Inicio/Fin) con su nombre
 // completo, leyenda que oculta series, tabla de datos alternativa y marcas o tramas además del color. Sin documento
 // al importar.
+import { localize, formatList } from "./locale";
 
 import {
   arcCentroid,
@@ -156,7 +157,7 @@ export const chartWidget: Widget<ChartProps, ChartConfig, ChartState> = {
         return (v instanceof Date || typeof v === "string") && Number.isFinite(toTime(v));
       });
     const xType = p.xType === "time" || p.xType === "number" || p.xType === "category" ? p.xType : auto ? "time" : "category";
-    const labels = { ...CHART_LABELS, ...p.labels, types: { ...CHART_LABELS.types, ...p.labels?.types } };
+    const labels = { ...localize("chart", CHART_LABELS), ...p.labels, types: { ...localize("chart", CHART_LABELS).types, ...p.labels?.types } };
     return {
       type,
       data,
@@ -701,7 +702,7 @@ function summarize(
     fill(labels.summary, {
       type: labels.types[config.type],
       count: visible.length,
-      names: visible.map((s) => s.label).join(", "),
+      names: formatList(visible.map((s) => s.label)),
       points: xs.length,
       first: xs[0] ?? "",
       last: xs[xs.length - 1] ?? "",

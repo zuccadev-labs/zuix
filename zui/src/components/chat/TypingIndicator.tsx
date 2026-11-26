@@ -1,3 +1,4 @@
+import { localize } from "../../core/locale";
 import type { ChatPerson } from "../../core/chat-group";
 import { CHAT_LABELS, typingNode } from "../../core/chat-tree";
 import type { TypingLabels } from "../../core/chat-group";
@@ -16,7 +17,7 @@ export interface TypingIndicatorProps {
 export function TypingIndicator({ people, avatars, labels, className }: TypingIndicatorProps) {
   const node = typingNode(
     people.map((p) => p.name),
-    { ...CHAT_LABELS, ...labels },
+    { ...localize("chat", CHAT_LABELS), ...labels },
     { people: avatars ? people : undefined },
   );
   return node ? staticNode(node, { className }) : null;

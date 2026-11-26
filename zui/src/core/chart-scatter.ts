@@ -1,6 +1,7 @@
 // Dispersión y burbujas (ScatterChart) como árbol de core/chart-widget: puntos en HTML colocados por fracciones (forma
 // por serie, tamaño por área con `sizeKey`), recta de regresión opcional en SVG y cada punto enfocable con su nombre
 // completo. Las flechas recorren la serie en orden de x y ↑↓ cambian de serie. Sin documento al importar.
+import { formatList } from "./locale";
 
 import { axisNumberOptions, bubbleRadius, extent, linearRegression, niceTicks, numberFormat, r3, type Regression } from "./chart";
 import {
@@ -239,7 +240,7 @@ export function scatterTree(config: ChartConfig, state: ChartState, uid: string)
           fill(labels.summary, {
             type: labels.types.scatter,
             count: m.visible.length,
-            names: m.visible.map((i) => m.series[i]!.label).join(", "),
+            names: formatList(m.visible.map((i) => m.series[i]!.label)),
             points: n,
             first: xFmt.format(m.points.reduce((a, p) => Math.min(a, p.x), Number.POSITIVE_INFINITY)),
             last: xFmt.format(m.points.reduce((a, p) => Math.max(a, p.x), Number.NEGATIVE_INFINITY)),

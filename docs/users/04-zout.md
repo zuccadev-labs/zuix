@@ -112,6 +112,13 @@ ventana estrecha no enseña un instante los paneles acoplados.
 2. Las pantallas no definen anchos fijos para las zonas del `Shell`.
 3. La separación se pide por paso de la escala (`gap={4}`).
 
+## Idiomas
+
+`ChatLayout` y `DocsLayout` tienen sus textos en `@zuccadev-labs/zuix-zout/locales/<id>` (`en`, `es`, `pt`, `fr`,
+`de`). Dentro de un `LocaleProvider` de zui los cargan solos; para que salgan desde el primer pintado, pasa el
+paquete en `messages` junto al de zui. `loadZoutLocale(id)` los carga y registra sin React. Ver
+[Idiomas](./13-idiomas.md).
+
 ## Relación con zudocs
 
 El sitio de documentación no usa `Shell`: aplica el mismo material y las mismas medidas como estilo

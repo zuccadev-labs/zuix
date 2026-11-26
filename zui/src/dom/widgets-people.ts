@@ -3,6 +3,8 @@
 // cada campo y al guardar, unidos con `aria-describedby` solo mientras existen; contador de la biografía; vista previa
 // de la foto) y emite `z:submit { values }`. Persona, UserCard, ProfileHeader, SettingRow y PresenceBadge son solo
 // marcado; AvatarGroup con lista y AccountMenu usan el popover y el menú del núcleo (`data-z-open`).
+import { localize } from "../core/locale";
+import { localeOf } from "./locale";
 import { iconElement, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowLeft } from "@zuccadev-labs/zuix-zicon/icons/arrow-left";
 import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
@@ -42,7 +44,7 @@ interface EditorEntry {
 const editors = new Map<HTMLFormElement, EditorEntry>();
 
 function labelsOf(form: HTMLFormElement): Partial<ProfileLabels> {
-  const out: Partial<ProfileLabels> = {};
+  const out: Partial<ProfileLabels> = { ...localize("profile", PROFILE_LABELS, localeOf(form)) };
   for (const key of Object.keys(PROFILE_LABELS) as (keyof ProfileLabels)[]) {
     const v = form.dataset[`${key}Label`];
     if (v !== undefined) out[key] = v;

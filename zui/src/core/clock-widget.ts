@@ -2,6 +2,7 @@
 // paso del tiempo con el temporizador compartido (core/ticker), que se para fuera de pantalla y con la pestaña oculta.
 // Ninguno es una región viva: un reloj no se anuncia solo. El nombre de la esfera cambia una vez por minuto, nunca por
 // segundo (el segundero es decorativo). Con `value` el reloj queda fijo en ese instante.
+import { localize } from "./locale";
 
 import {
   clockDate,
@@ -382,7 +383,7 @@ export const worldClockWidget: Widget<WorldClockProps, WorldConfig, TickState> =
     hourCycle: cycleOf(p.hourCycle),
     removable: Boolean(p.removable),
     locale: p.locale,
-    labels: { ...WORLD_CLOCK_LABELS, ...p.labels },
+    labels: { ...localize("worldClock", WORLD_CLOCK_LABELS), ...p.labels },
   }),
   initial: (c) => ({ now: c.fixed ?? Date.now() }),
   control: (c, s) => (c.fixed !== null && c.fixed !== s.now ? { now: c.fixed } : s),

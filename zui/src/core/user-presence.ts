@@ -1,6 +1,7 @@
 // Presencia de una persona: estados (los de Fluent más «fuera de la oficina»), su orden de prioridad para ordenar
 // listas, el texto que lo dice (la presencia nunca va solo por color) y «visto hace…» con core/relative. Sin documento.
 // (core/presence es otra cosa: la animación de salida de las capas.)
+import { localize } from "./locale";
 
 import { formatRelative, toInstant } from "./relative";
 
@@ -47,7 +48,7 @@ export function presenceText(
   status: unknown,
   options: { lastSeen?: number | string | Date; now?: number; locale?: string; labels?: Partial<PresenceLabels> } = {},
 ): string {
-  const labels = { ...PRESENCE_LABELS, ...options.labels };
+  const labels = { ...localize("presence", PRESENCE_LABELS), ...options.labels };
   const s = presenceOf(status);
   const base = labels[s];
   const seen = toInstant(options.lastSeen ?? null);

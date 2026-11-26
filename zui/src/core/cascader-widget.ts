@@ -5,6 +5,7 @@
 // dejan paso a una lista de rutas. `multiple` pone casillas con estado mixto (las de ./tree). En una ventana estrecha
 // se ve una columna cada vez, con un botón para volver al nivel anterior. Un solo árbol y una sola interacción para
 // React y el modo DOM.
+import { localize } from "./locale";
 import { openAnchored, type Anchored } from "./anchored";
 import { chip, nativeInputs, PICKER_ICON, syncNatives } from "./picker-parts";
 import {
@@ -815,7 +816,7 @@ export const cascaderWidget: Widget<CascaderProps, Config, State> = {
   configure: (p) => ({
     ...p,
     options: p.options ?? [],
-    labels: { ...CASCADER_LABELS, ...p.labels },
+    labels: { ...localize("cascader", CASCADER_LABELS), ...p.labels },
     displaySeparator: p.displaySeparator ?? " / ",
     separator: p.separator ?? "/",
     showCheckedStrategy: p.showCheckedStrategy ?? "parent",

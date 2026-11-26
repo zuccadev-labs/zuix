@@ -2,6 +2,7 @@
 // leyenda, nombre accesible por celda («14 contributions on Thursday, 12 November»), etiqueta visible al enfocar o
 // pasar, tabla alternativa («View as table») y variante por tamaño (`encoding="size"`): el nivel no depende solo del
 // color. Sin documento al importar.
+import { localize } from "./locale";
 
 import { followScrollEdges } from "./edges";
 import { addDays, addMonths, diffDays, localeWeekInfo, parse, startOfWeek, todayISO, valid } from "./date";
@@ -125,7 +126,7 @@ export const heatmapWidget: Widget<CalendarHeatmapProps, HeatmapConfig, HeatmapS
       locale: p.locale,
       weekStart: ws,
       today,
-      labels: { ...HEATMAP_LABELS, ...p.labels },
+      labels: { ...localize("heatmap", HEATMAP_LABELS), ...p.labels },
     };
   },
   initial(config) {

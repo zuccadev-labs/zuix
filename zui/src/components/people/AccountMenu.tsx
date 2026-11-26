@@ -1,11 +1,15 @@
 "use client";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import { ACCOUNT_MENU_LABELS, type AccountMenuLabels } from "../../core/profile";
 import { presenceOf, PRESENCE_LABELS, type PresenceStatus } from "../../core/user-presence";
+import { useLocale } from "../../locale";
 import { cx } from "../../cx";
 import { Avatar } from "../data/Avatar";
 import type { MenuEntry } from "../overlay/internal";
 import { Menu } from "../overlay/Menu";
 import { Persona } from "./Persona";
+
+export type { AccountMenuLabels };
 
 export interface AccountUser {
   id?: string;
@@ -14,29 +18,6 @@ export interface AccountUser {
   avatar?: string;
   presence?: PresenceStatus;
 }
-
-export interface AccountMenuLabels {
-  /** Nombre del botón: «Account of {name}». */
-  trigger: string;
-  accounts: string;
-  theme: string;
-  light: string;
-  dark: string;
-  system: string;
-  signOut: string;
-  addAccount: string;
-}
-
-const ACCOUNT_MENU_LABELS: AccountMenuLabels = {
-  trigger: "Account of {name}",
-  accounts: "Switch account",
-  theme: "Theme",
-  light: "Light",
-  dark: "Dark",
-  system: "System",
-  signOut: "Sign out",
-  addAccount: "Add account",
-};
 
 export interface AccountMenuProps {
   user: AccountUser;
@@ -81,7 +62,8 @@ export function AccountMenu({
   labels: labelsProp,
   className,
 }: AccountMenuProps) {
-  const l = { ...ACCOUNT_MENU_LABELS, ...labelsProp };
+  const locale = useLocale();
+  const l = { ...locale.messages("accountMenu", ACCOUNT_MENU_LABELS), ...labelsProp };
   const entries: MenuEntry[] = [
     {
       type: "label",
@@ -93,7 +75,7 @@ export function AccountMenu({
           avatar={user.avatar}
           secondary={user.email}
           presence={user.presence}
-          presenceLabels={PRESENCE_LABELS}
+          presenceLabels={locale.messages("presence", PRESENCE_LABELS)}
         />
       ),
     },

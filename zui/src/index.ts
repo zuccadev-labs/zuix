@@ -107,3 +107,20 @@ export { presenceText, presenceRank, PRESENCE_LABELS, type PresenceLabels as Pre
 export { initialsOf } from "./core/initials";
 export { filterMembers, groupMembers, sortByName, sortByPresence } from "./core/members";
 export { validateProfile, validHandle, bioCounter } from "./core/profile";
+// Idiomas: proveedor de React, carga bajo demanda de los paquetes (`./locales/<id>`) y formato con Intl.
+export { LocaleProvider, useLocale, type LocaleApi, type LocaleProviderProps } from "./locale";
+export { loadLocale, LOCALES, type LocaleId } from "./locales/load";
+export {
+  format as formatMessage,
+  formatDate,
+  formatList,
+  formatNumber,
+  localize,
+  pluralRules,
+  registerLocale,
+  registeredLocales,
+  resolveLocale,
+  type LocaleMessages,
+  type LocalePack,
+  type Messages,
+} from "./core/locale";

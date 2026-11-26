@@ -1,3 +1,4 @@
+import { localize } from "../../core/locale";
 import type { ChatMessage } from "../../core/chat-group";
 import { bubbleRow, CHAT_LABELS, type ChatLabels, type MessageAction } from "../../core/chat-tree";
 import { staticNode } from "./static";
@@ -45,7 +46,7 @@ export function MessageBubble({
 }: MessageBubbleProps) {
   const node = bubbleRow(
     { message, mine, position, showAuthor, showAvatar, group },
-    { labels: { ...CHAT_LABELS, ...labels }, uid: id ?? "bubble", locale, timeZone, hourCycle, now, actions },
+    { labels: { ...localize("chat", CHAT_LABELS), ...labels }, uid: id ?? "bubble", locale, timeZone, hourCycle, now, actions },
     "div",
   );
   return staticNode(node, { className, id });

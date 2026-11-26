@@ -651,6 +651,25 @@ export function Load({ cells, orders }: { cells: { day: string; hour: string; va
 Sin React, `setWidgetProps(el, { value: 1500 })` cambia el número y lo hace contar, y `setWidgetProps(el, { data })`
 repinta un gráfico con datos nuevos.
 
+## Idiomas
+
+Los textos propios de los componentes salen en inglés salvo que los cambies. `labels` por prop sigue mandando; por
+debajo, `LocaleProvider` (React) o `setLocale()` (sin React) ponen los de un paquete de idioma: `en`, `es`, `pt`,
+`fr` y `de`, en `@zuccadev-labs/zuix-zui/locales/<id>`.
+
+```tsx
+import { LocaleProvider, useLocale } from "@zuccadev-labs/zuix-zui";
+import es from "@zuccadev-labs/zuix-zui/locales/es";
+
+<LocaleProvider locale="es" messages={es}>
+  <Cascader options={regions} />
+</LocaleProvider>;
+```
+
+`loadLocale(id)` carga un paquete bajo demanda; `useLocale()` da el idioma vigente y `formatNumber`, `formatDate`,
+`formatList` y `messages()` en ese idioma. Plurales, carga bajo demanda, el `lang` heredado y cómo añadir un idioma:
+[Idiomas](./13-idiomas.md).
+
 ## Dirección de escritura
 
 Dentro de un contenedor con `dir="rtl"` las hojas se reflejan (usan propiedades lógicas), los iconos
@@ -837,6 +856,7 @@ fuera de ellos. Son funciones puras salvo los hooks; las firmas están en las de
 | Listas largas y árboles | `wantsVirtual`, `virtualWindow`, `moveNode` |
 | Nodos | `layeredLayout`, `parseGraph`, `serializeGraph`, `describeGraph`, `describeNode` |
 | Textos por defecto | `REVIEW_SUMMARY_LABELS`, `REVIEW_CARD_LABELS`, `FILTER_BAR_LABELS`, `NOTIFICATION_CENTER_LABELS`, `TREE_DRAG_LABELS` |
+| Idiomas | `LocaleProvider`, `useLocale`, `loadLocale`, `LOCALES`, `registerLocale`, `registeredLocales`, `resolveLocale`, `localize`, `formatMessage`, `formatNumber`, `formatDate`, `formatList`, `pluralRules` ([Idiomas](./13-idiomas.md)) |
 
 ## Manifiestos
 

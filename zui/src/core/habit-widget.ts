@@ -2,6 +2,7 @@
 // (trama + cruz, texto en peligro), de descanso (guion; no rompen la racha), hoy en curso (anillo de progreso) y una
 // banda que une los días de la racha actual; o una tira compacta de la semana. Cada estado tiene forma o icono
 // además del color, y su texto en el nombre accesible; la leyenda lo explica. Sin documento al importar.
+import { localize } from "./locale";
 
 import { addDays, addMonths, daysInMonth, localeWeekInfo, parse, startOfWeek, todayISO, valid } from "./date";
 import { habitStreak, type HabitState } from "./heatmap";
@@ -92,7 +93,7 @@ export const habitWidget: Widget<HabitCalendarProps, HabitConfig, HabitState2> =
       locale: p.locale,
       weekStart: (((p.weekStartsOn ?? localeWeekInfo(p.locale).firstDay) % 7) + 7) % 7,
       today: valid(p.today) ? p.today : todayISO(),
-      labels: { ...HABIT_LABELS, ...p.labels },
+      labels: { ...localize("habit", HABIT_LABELS), ...p.labels },
     };
   },
   initial(config) {

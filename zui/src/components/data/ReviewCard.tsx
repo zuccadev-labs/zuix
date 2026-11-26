@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "../../locale";
 import { useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode, type Ref } from "react";
 import { formatDate } from "../../core/format";
 import { excerpt, foldedValue } from "../../core/reviews";
@@ -74,7 +75,7 @@ export const ReviewCard = withRef(function ReviewCard({
   ref,
   ...rest
 }: ReviewCardProps) {
-  const l = { ...REVIEW_CARD_LABELS, ...labels };
+  const l = { ...useLocale().messages("reviewCard", REVIEW_CARD_LABELS), ...labels };
   const auto = useId().replace(/:/g, "");
   const id = idProp ?? `z-review-${auto}`;
   const [open, setOpen] = useState(defaultExpanded);

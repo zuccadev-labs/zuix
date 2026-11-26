@@ -1,3 +1,4 @@
+import { localize } from "../../core/locale";
 import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { fill } from "../../core/vnode";
@@ -38,7 +39,7 @@ export const ReviewSummary = withRef(function ReviewSummary({
   ref,
   ...rest
 }: ReviewSummaryProps) {
-  const l = { ...REVIEW_SUMMARY_LABELS, ...labels };
+  const l = { ...localize("reviewSummary", REVIEW_SUMMARY_LABELS), ...labels };
   const rows = ratingDistribution(distribution, max);
   const total = count ?? ratingTotal(rows);
   const mean = average ?? ratingAverage(rows);

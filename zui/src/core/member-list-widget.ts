@@ -2,6 +2,7 @@
 // cada fila con persona (avatar, nombre, correo, presencia en texto), rol en un `<select>` nativo y botón de quitar
 // con nombre propio («Remove Ana López from the team»), más «Invite». Los cambios se aplican en la vista al momento y
 // salen como avisos (`role-change`, `remove`, `invite`); unas `members` nuevas de la aplicación mandan.
+import { localize } from "./locale";
 
 import { initialsOf } from "./initials";
 import { filterMembers, groupMembers, type Member, type Role } from "./members";
@@ -180,8 +181,8 @@ export const memberListWidget: Widget<MemberListProps, Config, State> = {
     editable: Boolean(p.editable),
     currentUserId: p.currentUserId,
     locale: p.locale,
-    labels: { ...MEMBER_LIST_LABELS, ...p.labels },
-    presence: { ...PRESENCE_LABELS, ...p.presenceLabels },
+    labels: { ...localize("memberList", MEMBER_LIST_LABELS), ...p.labels },
+    presence: { ...localize("presence", PRESENCE_LABELS), ...p.presenceLabels },
     virtualize: p.virtualize,
   }),
   initial: (c) => ({ query: "", roleOf: {}, removed: [], source: JSON.stringify(c.members), view: null, heights: new Map() }),

@@ -2,6 +2,7 @@
 // una alternativa accesible: escribir el nombre (modo «Type»). Un solo árbol (core/vnode) y una sola interacción para
 // React y el modo DOM (core/widget). Los trazos viven fuera del estado pintado (cambian a cada punto): el lienzo se
 // redibuja a mano y el árbol solo sabe cuántos hay.
+import { localize } from "./locale";
 
 import { addPoint, signatureSvg, strokeWidth, strokePath, type SignatureStroke } from "./signature";
 import { h, icon, on, type VEl } from "./vnode";
@@ -403,7 +404,7 @@ export const signaturePadWidget: Widget<SignaturePadProps, Config, State> = {
   root: "z-signature",
   configure: (p) => ({
     ...p,
-    labels: { ...SIGNATURE_LABELS, ...p.labels },
+    labels: { ...localize("signature", SIGNATURE_LABELS), ...p.labels },
     base: Number.isFinite(p.strokeWidth) && p.strokeWidth! > 0 ? p.strokeWidth! : 2.5,
     height: Number.isFinite(p.height) && p.height! > 40 ? p.height! : 180,
   }),

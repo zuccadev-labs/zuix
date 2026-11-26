@@ -2,6 +2,7 @@
 // viva: se lee al llegar a él); los hitos y el final se anuncian en una región `status` aparte, con el criterio de
 // core/countdown, nunca cada segundo. El paso del tiempo va por el temporizador compartido (core/ticker), y el final
 // tiene su propio aviso exacto para que llegue aunque la pieza esté fuera de pantalla.
+import { localize } from "./locale";
 
 import { countdownMilestone, countdownSpoken, countdownTarget, countdownUnits, unitDigits, until, type CountdownUnit } from "./countdown";
 import { clockDate, zonedISO } from "./clock";
@@ -101,7 +102,7 @@ export const countdownWidget: Widget<CountdownProps, Config, State> = {
     size: p.size === "sm" || p.size === "lg" ? p.size : "md",
     fixedNow: p.now === undefined || p.now === null || p.now === "" ? null : countdownTarget(p.now),
     locale: p.locale,
-    labels: { ...COUNTDOWN_LABELS, ...p.labels },
+    labels: { ...localize("countdown", COUNTDOWN_LABELS), ...p.labels },
   }),
   initial: (c) => ({ now: c.fixedNow ?? Date.now(), doneFor: null }),
   control: (c, s) => (c.fixedNow !== null && c.fixedNow !== s.now ? { ...s, now: c.fixedNow } : s),

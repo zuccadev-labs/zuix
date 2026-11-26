@@ -42,11 +42,11 @@ import { headerState, pageCountOf, pageSlice, rangeKeys, toggleAll, toggleKey, t
 import { setPage } from "./collections";
 import type { Listen } from "./shared";
 import { bodyRowsOf, refreshBody, revealRow, virtualizeTable } from "./table-store";
+import { format } from "../core/locale";
 
 const ROOT = ".z-datatable";
 const inDom = (el: Element) => el.closest("[data-z-dom]") !== null;
-const fill = (template: string, values: Record<string, number>) =>
-  template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? ""));
+const fill = (template: string, values: Record<string, number>) => format(template, values, { missing: () => "" });
 
 function emit(el: Element, name: string, detail?: unknown, cancelable = false): boolean {
   return el.dispatchEvent(new CustomEvent(`z:${name}`, { bubbles: true, cancelable, detail }));

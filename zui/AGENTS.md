@@ -33,7 +33,10 @@ verificación. Un cambio está terminado cuando la verificación pasa.
    de UI; el linter rechaza su importación. Cualquier otra dependencia nueva necesita mi aprobación.
 10. **Sin dominio.** Pagos, reservas, mapas o clima viven en la aplicación, no aquí.
 11. **Texto visible por props.** Los componentes no fijan idioma: las etiquetas llegan por props, con valor
-    por defecto en inglés.
+    por defecto en inglés en una constante `*_LABELS` exportada desde `src/core/`. La constante entra en
+    `src/locales/en.ts` con su espacio de nombres y en los paquetes `es`, `pt`, `fr` y `de` (`pnpm locales` lo
+    exige); el componente la mezcla con `localize(espacio, CONSTANTE)` (core y solo marcado) o
+    `useLocale().messages(espacio, CONSTANTE)` (cliente), siempre por debajo de `labels`.
 12. **`"use client"`** en la primera línea de un módulo con hooks, contexto o manejadores de eventos propios.
     Un componente de solo marcado no lo lleva: así se renderiza en un Server Component.
 

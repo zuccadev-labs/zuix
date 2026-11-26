@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "../../locale";
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import {
@@ -131,7 +132,7 @@ export const DateTimeRangePicker = withRef(function DateTimeRangePicker({
   popupClassName,
   ref,
 }: DateTimeRangePickerProps) {
-  const labels = { ...DATE_TIME_RANGE_LABELS, ...ownLabels };
+  const labels = { ...useLocale().messages("dateTimeRange", DATE_TIME_RANGE_LABELS), ...ownLabels };
   const messages = { ...DATE_TIME_RANGE_MESSAGES, ...ownMessages };
   const {
     invalid: isInvalid,

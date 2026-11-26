@@ -28,6 +28,7 @@ import { pushLayer } from "./layers";
 import { place } from "./place";
 import { arrowDirection, nextInDirection } from "./spatial";
 import { showPopover } from "./popover";
+import { format } from "./locale";
 
 export type AgendaEventName =
   | "event-click"
@@ -71,8 +72,7 @@ export interface AgendaHost {
 
 const MOVE_THRESHOLD = 4;
 const LONG_PRESS = 300;
-const fill = (template: string, values: Record<string, string | number>) =>
-  template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? `{${k}}`));
+const fill = (template: string, values: Record<string, string | number>) => format(template, values);
 const wallISO = (min: number) =>
   `${dateOf(min)}T${String(Math.floor(minuteOfDay(min) / 60)).padStart(2, "0")}:${String(minuteOfDay(min) % 60).padStart(2, "0")}`;
 

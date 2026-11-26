@@ -1,6 +1,7 @@
 // Marcado de la línea temporal: Gantt (fases, tareas, hitos, dependencias, camino crítico, hoy, zoom) y recursos
 // (filas de salas o personas, reservas por hora, conflictos con trama y texto, ventana virtual de filas). Árboles de
 // core/vnode con el cálculo de core/timeline y core/virtual. Sin documento.
+import { formatList } from "./locale";
 
 import { addDays, diffDays, localeWeekInfo, parse, weekNumber } from "./date";
 import {
@@ -247,8 +248,8 @@ export function taskTimeline(input: TaskTimelineInput): VEl {
     }
 
   const depText = (t: TimelineTask) => {
-    const names = (t.dependsOn ?? []).map((id) => byId.get(id)?.title).filter(Boolean);
-    return names.length ? fill(labels.dependsOn, { list: names.join(", ") }) : "";
+    const names = (t.dependsOn ?? []).map((id) => byId.get(id)?.title).filter((n): n is string => Boolean(n));
+    return names.length ? fill(labels.dependsOn, { list: formatList(names) }) : "";
   };
 
   const rowNodes = rows.map((r, i) => {

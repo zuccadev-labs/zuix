@@ -4,6 +4,7 @@
 // la sueltan, Escape la devuelve y perder el foco la suelta. Con el puntero se arrastra la tarjeta (captura de
 // puntero, un solo puntero, umbral de 4 px para no robar el clic) y un hueco marca el destino. Cada paso se dice en la
 // región viva central; el orden del DOM es siempre el de las columnas.
+import { localize, formatList } from "./locale";
 
 import { announce } from "./announcer";
 import { followScrollEdges } from "./edges";
@@ -136,7 +137,7 @@ function cardTree(card: KanbanCard, s: State, c: Config, uid: string): VEl {
                   { class: "z-avatar-group", "data-size": "xs", "aria-hidden": "true" },
                   ...people.slice(0, 3).map((p, i) => avatar(p, String(i))),
                 ),
-                h("span", { class: "z-sr-only" }, fill(l.assigned, { names: people.map((p) => p.name).join(", ") })),
+                h("span", { class: "z-sr-only" }, fill(l.assigned, { names: formatList(people.map((p) => p.name)) })),
               )
             : null,
         )
@@ -150,7 +151,7 @@ export const kanbanWidget: Widget<KanbanBoardProps, Config, State> = {
     columns: p.columns ?? [],
     label: p.label ?? "",
     addable: Boolean(p.addable),
-    labels: { ...KANBAN_LABELS, ...p.labels },
+    labels: { ...localize("kanban", KANBAN_LABELS), ...p.labels },
   }),
   initial: (c) => ({
     columns: c.columns,

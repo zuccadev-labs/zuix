@@ -2,6 +2,7 @@
 // treegrid con tabindex itinerante (↑↓ entre filas, ←→ pliega y despliega una fase), agarrar–mover–soltar con teclado
 // (±1 día, Mayús cambia la duración; en recursos ±`snapDuration`), arrastre con puntero (captura, umbral, por días o
 // minutos), crear arrastrando sobre una fila vacía de recursos y ventana virtual de filas. Sin documento al importar.
+import { localize } from "./locale";
 
 import {
   clockMinutes,
@@ -225,7 +226,7 @@ export const timelineWidget: Widget<TimelineViewProps, TimelineConfig, TimelineS
       weekStart: (((p.weekStartsOn ?? localeWeekInfo(p.locale).firstDay) % 7) + 7) % 7,
       today: valid(p.today) ? p.today : todayISO(),
       now: Number.isFinite(nowMs) ? (nowMs as number) : null,
-      labels: { ...TIMELINE_LABELS, ...p.labels, scales: { ...TIMELINE_LABELS.scales, ...p.labels?.scales } },
+      labels: { ...localize("timeline", TIMELINE_LABELS), ...p.labels, scales: { ...localize("timeline", TIMELINE_LABELS).scales, ...p.labels?.scales } },
     };
   },
   initial(config) {

@@ -1,6 +1,7 @@
 // Piezas de métricas sin estado como árboles (core/vnode): DeltaBadge, ProgressGoal, BarList y FunnelChart. El binding
 // de React pinta el árbol tal cual (sirve en un Server Component) y el modo DOM lo vuelve a pintar desde los
 // atributos `data-*` de la raíz, que el propio árbol escribe: el HTML del servidor o del contrato basta.
+import { localize } from "./locale";
 
 import { funnelStages, type FunnelStageInput } from "./funnel";
 import {
@@ -159,7 +160,7 @@ const STATUS_KEY: Record<PaceStatus, keyof ProgressGoalLabels> = { ahead: "ahead
 const STATUS_TONE: Record<PaceStatus, string> = { ahead: "success", "on-track": "accent", behind: "warning", done: "success" };
 
 export function progressGoalTree(p: ProgressGoalProps): VEl {
-  const l = { ...PROGRESS_GOAL_LABELS, ...p.labels };
+  const l = { ...localize("progressGoal", PROGRESS_GOAL_LABELS), ...p.labels };
   const pace = computePace(p.value, p.target, p.elapsed, p.start ?? 0);
   const status = l[STATUS_KEY[pace.status]];
   const f = (v: number) => formatValue(v, p.locale, p.valueFormat);
@@ -352,7 +353,7 @@ export interface FunnelChartProps {
 }
 
 export function funnelTree(p: FunnelChartProps): VEl {
-  const l = { ...FUNNEL_LABELS, ...p.labels };
+  const l = { ...localize("funnel", FUNNEL_LABELS), ...p.labels };
   const stages = funnelStages(p.stages);
   const f = (v: number) => formatValue(v, p.locale, p.valueFormat);
   const conversion = stages.length ? stages[stages.length - 1]!.ofFirst : 0;

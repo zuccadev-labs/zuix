@@ -436,6 +436,7 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | | Navegación y estado | `selectTab`, `setCollapsibleOpen`, `expandSkeleton` |
 | | Descargas | `download`, `downloadBlob`, `downloadUrl`, `mimeFromName` |
 | | Atajos de teclado | `parseShortcut`, `normalizeShortcut`, `matchesShortcut`, `shortcutLabels` |
+| | Idiomas ([Idiomas](./13-idiomas.md)) | `setLocale`, `localeOf`, `loadLocale`, `LOCALES`, `registerLocale`, `registeredLocales`, `resolveLocale`, `localize`, `formatMessage`, `formatNumber`, `formatDate`, `formatList`, `pluralRules` |
 | `/dom/dates` | Valor desde código | `setCalendarValue`, `setCalendarOptions`, `setDatePickerValue`, `setDateFieldValue`, `setTimeFieldValue`, `setTimePickerValue`, `setTimeRangeValue`, `setDateTimeRangeValue` |
 | | Fechas civiles | `formatDateRange`, `isoWeekText`, `weekNumber`, `weekStartOf`, `rangePresets`, `resolvePreset`, `PRESET_KEYS` |
 | | Rangos y trimestres | `timeRangeInfo`, `dateTimeRangeText`, `parseDateTimeRange`, `addQuarters`, `quarterOf`, `quarterRange` |

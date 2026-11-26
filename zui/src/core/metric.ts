@@ -1,6 +1,8 @@
 // Cálculos de las piezas de métricas (MetricCard, DeltaBadge, ProgressGoal, BarList, Leaderboard): variación frente
 // al periodo anterior con su sentido (que bajen los errores es bueno), texto hablado que no depende del color, ritmo
 // hacia un objetivo y proporciones de barras. Sin documento: recibe números y devuelve datos.
+import { localize } from "./locale";
+import { format } from "./locale";
 
 export type DeltaDirection = "up" | "down" | "flat";
 /** Lo que es bueno para la métrica: que suba (ventas) o que baje (errores, latencia). */
@@ -101,11 +103,11 @@ export const DELTA_LABELS: DeltaLabels = {
   period: "the previous period",
 };
 
-const put = (template: string, values: Record<string, string>) => template.replace(/\{(\w+)\}/g, (_, k: string) => values[k] ?? "");
+const put = (template: string, values: Record<string, string>) => format(template, values, { missing: () => "" });
 
 /** Frase hablada de la variación: «up 12.4%, better than last month». No depende del color ni de la flecha. */
 export function deltaSpoken(delta: Delta, magnitude: string, period?: string, labels: Partial<DeltaLabels> = {}): string {
-  const l = { ...DELTA_LABELS, ...labels };
+  const l = { ...localize("delta", DELTA_LABELS), ...labels };
   if (delta.direction === "flat") return l.flat;
   const base = put(delta.direction === "up" ? l.up : l.down, { value: magnitude });
   if (delta.sentiment === "neutral") return base;
@@ -174,3 +176,21 @@ export function competitionRanks(values: readonly number[]): number[] {
   });
   return ranks;
 }
+
+export interface MetricCardLabels {
+  /** Sin datos para el periodo. */
+  empty: string;
+  /** No se pudo cargar. */
+  error: string;
+  /** Nombre de la meta bajo el valor. */
+  target: string;
+  /** Periodo visible junto a la variación: «vs {period}». */
+  versus: string;
+}
+
+export const METRIC_CARD_LABELS: MetricCardLabels = {
+  empty: "No data for this period",
+  error: "Couldn't load this metric",
+  target: "Goal",
+  versus: "vs {period}",
+};

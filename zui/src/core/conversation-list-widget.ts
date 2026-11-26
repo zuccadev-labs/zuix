@@ -2,6 +2,7 @@
 // borrador), hora corta, no leídos (y si te mencionan), silenciado, fijado y la entrega de tu último mensaje. Búsqueda
 // sin acentos ni mayúsculas, filtros (todas, no leídas, grupos), fijadas arriba y el resto por actividad. Una parada de
 // Tab: ↑/↓, Inicio/Fin; Intro o pulsar abre la conversación (`select`).
+import { localize } from "./locale";
 
 import { announce } from "./announcer";
 import { logicalKey } from "./dir";
@@ -337,7 +338,7 @@ export const conversationListWidget: Widget<ConversationListProps, Config, State
     timeZone: p.timeZone,
     hourCycle: p.hourCycle,
     now: p.now,
-    labels: { ...CONVERSATION_LIST_LABELS, ...p.labels },
+    labels: { ...localize("conversationList", CONVERSATION_LIST_LABELS), ...p.labels },
     virtualize: p.virtualize,
   }),
   initial: (c) => ({

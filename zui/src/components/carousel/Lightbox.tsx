@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
-import { bindLightbox, type LightboxHandle } from "../../core/lightbox-runtime";
+import { bindLightbox, LIGHTBOX_LABELS, type LightboxHandle, type LightboxLabels } from "../../core/lightbox-runtime";
+import { useLocale } from "../../locale";
 import { cx } from "../../cx";
 import { DialogSurface } from "../../primitives/dialog";
 import { useLatest } from "../../primitives/hooks";
+
+export type { LightboxLabels };
 
 export interface LightboxItem {
   src: string;
@@ -12,17 +15,6 @@ export interface LightboxItem {
   caption?: ReactNode;
   width?: number;
   height?: number;
-}
-
-export interface LightboxLabels {
-  dialog: string;
-  close: string;
-  previous: string;
-  next: string;
-  zoomIn: string;
-  zoomOut: string;
-  /** Anuncio al cambiar de imagen: {index}, {count}. */
-  image: string;
 }
 
 export interface LightboxProps {
@@ -39,16 +31,6 @@ export interface LightboxProps {
   className?: string;
 }
 
-const DEFAULT_LABELS: LightboxLabels = {
-  dialog: "Image viewer",
-  close: "Close",
-  previous: "Previous image",
-  next: "Next image",
-  zoomIn: "Zoom in",
-  zoomOut: "Zoom out",
-  image: "Image {index} of {count}",
-};
-
 /** Visor de imágenes a pantalla completa sobre `<dialog>` modal: flechas, Escape cierra y devuelve el foco, zoom. */
 export function Lightbox({
   items,
@@ -61,7 +43,7 @@ export function Lightbox({
   labels,
   className,
 }: LightboxProps) {
-  const text = { ...DEFAULT_LABELS, ...labels };
+  const text = { ...useLocale().messages("lightbox", LIGHTBOX_LABELS), ...labels };
   const dialog = useRef<HTMLDialogElement>(null);
   const handle = useRef<LightboxHandle | null>(null);
   const latest = useLatest({ onIndexChange, index, image: text.image });

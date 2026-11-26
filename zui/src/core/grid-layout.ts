@@ -3,6 +3,8 @@
 // redimensionar una pieza con las demás apartándose, reajuste a menos columnas y serialización. Mover y
 // redimensionar fijan la pieza en su destino y compactan alrededor: así una pieza que baja cambia el sitio con la que
 // tenía debajo en vez de volver a subir. Sin documento; quien pinta mide el puntero y lo convierte a celdas.
+import { localize } from "./locale";
+import { format } from "./locale";
 
 export interface GridItem {
   id: string;
@@ -233,9 +235,9 @@ export const GRID_LABELS: GridLabels = {
   instructions: "Space or Enter picks the card up; arrows move it, Shift and arrows resize it, Enter drops it and Escape cancels.",
 };
 
-const put = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ""));
+const put = (t: string, v: Record<string, string | number>) => format(t, v, { missing: () => "" });
 
 /** Texto de posición de una pieza (columnas y filas desde 1). */
 export function describeItem(item: GridItem, name: string, labels: Partial<GridLabels> = {}): string {
-  return put(labels.position ?? GRID_LABELS.position, { name, x: item.x + 1, y: item.y + 1, w: item.w, h: item.h });
+  return put(labels.position ?? localize("dashboardGrid", GRID_LABELS).position, { name, x: item.x + 1, y: item.y + 1, w: item.w, h: item.h });
 }

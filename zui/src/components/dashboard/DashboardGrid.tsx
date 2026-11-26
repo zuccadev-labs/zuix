@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "../../locale";
 import {
   Children,
   createContext,
@@ -80,7 +81,8 @@ export function DashboardGrid({
   const [own, setOwn] = useState<GridLayout>(() => normalizeLayout(defaultLayout ?? layoutProp ?? [], columns));
   const committed = useMemo(() => (layoutProp ? normalizeLayout(layoutProp, columns) : own), [layoutProp, own, columns]);
   const [preview, setPreview] = useState<GridLayout | null>(null);
-  const labels = useMemo(() => ({ ...GRID_LABELS, ...labelsProp }), [labelsProp]);
+  const base = useLocale().messages("dashboardGrid", GRID_LABELS);
+  const labels = useMemo(() => ({ ...base, ...labelsProp }), [base, labelsProp]);
   const root = useRef<HTMLDivElement | null>(null);
   const hintId = `${useId().replace(/:/g, "")}-hint`;
   const live = useRef({ committed, editable, labels, onLayoutChange, controlled: Boolean(layoutProp) });
@@ -161,7 +163,8 @@ export function DashboardGridItem({
 }: DashboardGridItemProps) {
   const ctx = useContext(Ctx);
   const at = ctx?.positions.get(id);
-  const labels = ctx?.labels ?? GRID_LABELS;
+  const base = useLocale().messages("dashboardGrid", GRID_LABELS);
+  const labels = ctx?.labels ?? base;
   const headingId = `${ctx?.hintId ?? "grid"}-${id}`;
   const style = at ? ({ "--z-x": at.x, "--z-y": at.y, "--z-w": at.w, "--z-h": at.h } as CSSProperties) : undefined;
   const handle = ctx?.editable ? (

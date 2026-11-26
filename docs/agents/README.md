@@ -42,6 +42,7 @@ Desde la raíz de zuix:
 | `pnpm icons` | Iconos válidos; alias y emojis apuntan a iconos existentes | Sin fallos |
 | `pnpm style-audit` | Colores literales, primitivos, tokens inexistentes, emojis, estilos en línea | 0 en todo |
 | `pnpm manifest` | Cada componente exportado tiene manifiesto válido | Sin fallos |
+| `pnpm locales` | Cada paquete de idioma tiene las claves y los huecos del inglés; marca los textos sin traducir | Sin fallos |
 | `pnpm barrels` | Cada componente con manifiesto se puede importar desde la raíz de su paquete | Sin fallos |
 | `pnpm html` | El contrato HTML se genera desde los componentes | Sin fallos |
 | `pnpm docs:coverage` | Cada componente, prop, entrada, familia, función y comando aparece en la documentación; recuentos al día | Sin huecos |

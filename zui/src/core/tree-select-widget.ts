@@ -4,6 +4,7 @@
 // (o marca, con casillas). Lo tecleado filtra y expande lo que coincide. `multiple` pone casillas con estado mixto en
 // cascada (las de ./tree, las mismas que Tree) y el valor sale según `showCheckedStrategy`. Lo elegido va en piezas
 // dentro del campo. Un solo árbol y una sola interacción para React y el modo DOM.
+import { localize } from "./locale";
 import { openAnchored, type Anchored } from "./anchored";
 import { logicalKey } from "./dir";
 import { highlightParts } from "./format";
@@ -534,7 +535,7 @@ export const treeSelectWidget: Widget<TreeSelectProps, Config, State> = {
   configure: (p) => ({
     ...p,
     nodes: p.nodes ?? [],
-    labels: { ...TREE_SELECT_LABELS, ...p.labels },
+    labels: { ...localize("treeSelect", TREE_SELECT_LABELS), ...p.labels },
     showCheckedStrategy: p.showCheckedStrategy ?? "parent",
     searchable: p.searchable ?? true,
     size: p.size ?? "md",

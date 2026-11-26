@@ -1,6 +1,7 @@
 // Minigráfico (sparkline): una serie sin ejes en línea, área o barras, con el último valor marcado. Es una imagen con
 // nombre («Visits: from 120 to 340, low 98, high 340»), sin interacción: el valor exacto va en el texto que la
 // acompaña. Un solo árbol (core/vnode) para React (sin estado: vale en un Server Component) y para el modo DOM.
+import { localize } from "./locale";
 
 import { areaPath, bandScale, extent, linePath, numberFormat, type Curve, type Point, r3 } from "./chart";
 import { fill, h, type VEl } from "./vnode";
@@ -46,7 +47,7 @@ export function sparklineTree(p: SparklineProps): VEl {
   const values = (p.values ?? []).map(clean);
   const type = p.type === "area" || p.type === "bar" ? p.type : "line";
   const color = Math.min(8, Math.max(1, Math.round(p.color ?? 1)));
-  const labels = { ...SPARKLINE_LABELS, ...p.labels };
+  const labels = { ...localize("sparkline", SPARKLINE_LABELS), ...p.labels };
   const zero = p.zero ?? type === "bar";
   const span = extent(values);
   const f = numberFormat(p.locale, p.valueFormat ?? {});

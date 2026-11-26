@@ -13,6 +13,8 @@
 //                     [{ label, value }]), data-min, data-max, data-locale, data-week-start, data-today, data-months,
 //                     data-hour-cycle, data-minute-step, data-default-start-time, data-default-end-time, data-*-label.
 //                     z:change { value: { start, end, timeZone } }. setDateTimeRangeValue().
+import { localize } from "../core/locale";
+import { localeOf } from "./locale";
 import { formatDuration } from "../core/duration";
 import {
   DATE_TIME_RANGE_LABELS,
@@ -97,10 +99,10 @@ function syncRange(group: HTMLElement, announce: boolean): void {
       badge.dataset.tone = "info";
       badge.dataset.variant = "soft";
       badge.dataset.size = "md";
-      const description = group.dataset.overnightDescription ?? TIME_RANGE_LABELS.overnightDescription;
+      const description = group.dataset.overnightDescription ?? localize("timeRange", TIME_RANGE_LABELS, localeOf(group)).overnightDescription;
       badge.title = description;
       setMarkup(badge, '<z-icon name="moon" size="12"></z-icon><span aria-hidden="true"></span><span class="z-sr-only"></span>');
-      badge.children[1]!.textContent = group.dataset.overnightLabel ?? TIME_RANGE_LABELS.overnight;
+      badge.children[1]!.textContent = group.dataset.overnightLabel ?? localize("timeRange", TIME_RANGE_LABELS, localeOf(group)).overnight;
       badge.children[2]!.textContent = description;
       meta.append(badge);
     }
@@ -139,7 +141,7 @@ interface Draft {
 const drafts = new WeakMap<HTMLElement, Draft>();
 /** Etiqueta del marcado (`data-apply-label`…) o la de por defecto, en inglés. */
 const label = (picker: HTMLElement, key: keyof typeof DATE_TIME_RANGE_LABELS) =>
-  picker.dataset[`${key}Label`] ?? DATE_TIME_RANGE_LABELS[key];
+  picker.dataset[`${key}Label`] ?? localize("dateTimeRange", DATE_TIME_RANGE_LABELS, localeOf(picker))[key];
 const pickerValue = (picker: HTMLElement): DateTimeRange =>
   parseDateTimeRange(picker.querySelector<HTMLInputElement>(":scope > input.z-native-input")?.value || picker.dataset.value);
 const triggerOf = (picker: HTMLElement) => picker.querySelector<HTMLButtonElement>(":scope > button.z-select__control");

@@ -2,6 +2,7 @@
 // nota de voz, ubicación, vista previa de enlace), texto con enlaces seguros y menciones, hora, «editado» y estado de
 // entrega; reacciones, resumen de hilo, separador de fecha, marca de no leídos e indicador de escritura. Lo pintan la
 // lista de mensajes, los componentes sueltos de React y el modo DOM: un solo origen para el contrato HTML. Sin documento.
+import { localize } from "./locale";
 
 import type { BubblePosition, ChatAttachment, ChatMessage, ChatPerson, ChatReaction, DeliveryState } from "./chat-group";
 import { messagePreview, timeLabel, typingText, type ArrivalLabels, type TypingLabels } from "./chat-group";
@@ -178,7 +179,7 @@ export function avatarNode(
 }
 
 /** Estado de entrega: iconos (dos marcas en entregado y leído) y su texto oculto. Leído cambia además de color. */
-export function deliveryNode(status: DeliveryState, labels: DeliveryLabels = DELIVERY_LABELS, key?: string): VEl {
+export function deliveryNode(status: DeliveryState, labels: DeliveryLabels = localize("delivery", DELIVERY_LABELS), key?: string): VEl {
   return h(
     "span",
     { class: "z-delivery", "data-status": status, key },

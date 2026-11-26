@@ -2,6 +2,7 @@
 // relleno translúcido, retícula poligonal o circular con escala configurable (`yMin`, `yMax`, `yTicks`) y una cuña
 // enfocable por eje con los valores de todas las series. En SVG (viewBox 100 × 100 cuadrado) con rótulos en HTML
 // colocados por fracciones. Sin documento al importar.
+import { formatList } from "./locale";
 
 import { extent, niceTicks, numberFormat, polarPoint, r3, radarPath, radarWedge } from "./chart";
 import {
@@ -196,7 +197,7 @@ export function radarTree(config: ChartConfig, state: ChartState, uid: string): 
           fill(labels.summary, {
             type: labels.types.radar,
             count: visible.length,
-            names: visible.map((s) => s.label).join(", "),
+            names: formatList(visible.map((s) => s.label)),
             points: n,
             first: axes[0] ?? "",
             last: axes[n - 1] ?? "",

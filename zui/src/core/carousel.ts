@@ -169,3 +169,28 @@ export const barProgress = (index: number, positions: number) => (positions <= 1
 /** «Slide {index} of {count}» con el índice desde 1. */
 export const slideText = (template: string, index: number, count: number) =>
   template.replace("{index}", String(index + 1)).replace("{count}", String(count));
+
+/** Textos del Carousel en inglés, como plantillas: `slide` y `goTo` reciben `{index}` (desde 1) y `{count}`. */
+export interface CarouselTexts {
+  previous: string;
+  next: string;
+  slide: string;
+  carousel: string;
+  slideRole: string;
+  pause: string;
+  play: string;
+  goTo: string;
+  indicators: string;
+}
+
+export const CAROUSEL_LABELS: CarouselTexts = {
+  previous: "Previous slide",
+  next: "Next slide",
+  slide: "Slide {index} of {count}",
+  carousel: "carousel",
+  slideRole: "slide",
+  pause: "Pause automatic slide show",
+  play: "Start automatic slide show",
+  goTo: "Go to slide {index} of {count}",
+  indicators: "Choose slide",
+};

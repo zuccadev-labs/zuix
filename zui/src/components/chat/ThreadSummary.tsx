@@ -1,3 +1,4 @@
+import { localize } from "../../core/locale";
 import type { MouseEventHandler } from "react";
 import type { ChatPerson } from "../../core/chat-group";
 import { CHAT_LABELS, threadNode, type ChatLabels } from "../../core/chat-tree";
@@ -20,7 +21,7 @@ export function ThreadSummary({ count, lastAt, participants, now, locale, labels
   return staticNode(
     threadNode(
       { count, lastAt, participants },
-      { ...CHAT_LABELS, ...labels },
+      { ...localize("chat", CHAT_LABELS), ...labels },
       { now: now ?? (lastAt !== undefined ? Date.now() : undefined), locale },
     ),
     { className, onClick },

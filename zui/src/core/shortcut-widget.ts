@@ -2,6 +2,7 @@
 // combinación completa queda guardada en forma canónica y portable («Mod+Shift+K»). Escape cancela, Retroceso o
 // Supr sin modificadores borran y Tab sale sin grabar (el foco nunca queda atrapado). Se muestra con las teclas de
 // la plataforma (⌘⇧K o Ctrl+Shift+K) y se anuncia en palabras. Un solo árbol y una sola interacción (core/widget).
+import { localize } from "./locale";
 
 import {
   formatShortcutValue,
@@ -218,7 +219,7 @@ function attach(root: HTMLElement, host: Host): () => void {
 
 export const shortcutInputWidget: Widget<ShortcutInputProps, Config, State> = {
   root: "z-shortcut",
-  configure: (p) => ({ ...p, labels: { ...SHORTCUT_LABELS, ...p.labels }, requireModifier: p.requireModifier !== false }),
+  configure: (p) => ({ ...p, labels: { ...localize("shortcut", SHORTCUT_LABELS), ...p.labels }, requireModifier: p.requireModifier !== false }),
   initial: (c) => ({
     value: normalizeShortcut(c.value ?? c.defaultValue ?? ""),
     recording: false,

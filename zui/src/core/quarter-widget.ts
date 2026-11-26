@@ -2,6 +2,7 @@
 // del calendario), con los cuatro trimestres de un año en una rejilla de 2 × 2. Foco itinerante en la rejilla (APG
 // «grid»): flechas, Inicio, Fin, Re Pág y Av Pág; Intro o Espacio eligen y el panel se cierra devolviendo el foco al
 // botón. Valor `YYYY-Qn`. Un solo árbol y una sola interacción para React y el modo DOM.
+import { localize } from "./locale";
 import { openAnchored, type Anchored } from "./anchored";
 import { todayISO } from "./date";
 import { logicalKey } from "./dir";
@@ -382,7 +383,7 @@ function after(root: HTMLElement, host: Host): void {
 
 export const quarterPickerWidget: Widget<QuarterPickerProps, Config, State> = {
   root: "z-quarterpicker",
-  configure: (p) => ({ ...p, labels: { ...QUARTER_LABELS, ...p.labels }, size: p.size ?? "md" }),
+  configure: (p) => ({ ...p, labels: { ...localize("quarter", QUARTER_LABELS), ...p.labels }, size: p.size ?? "md" }),
   initial: (c) => {
     const value = validQuarter(c.value ?? c.defaultValue) ? ((c.value ?? c.defaultValue) as string) : null;
     const focused = value ?? now(c);

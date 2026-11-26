@@ -1,9 +1,11 @@
 // Modelo de datos de un lienzo de nodos `{ nodes, edges }`, serializable (JSON), y lo que se calcula de él sin
 // documento: índice, posición absoluta (los hijos de un grupo van relativos a él), cajas, adyacencia, ciclos, orden
 // topológico, nodos y aristas visibles y la descripción textual del grafo y de cada nodo.
+import { localize } from "./locale";
 
 import type { EdgeType, Side } from "./edge-path";
 import { intersects, type Point, type Rect, type Size } from "./viewport";
+import { format } from "./locale";
 
 export type NodeStatus = "idle" | "running" | "success" | "error";
 export type PortKind = "source" | "target";
@@ -242,7 +244,7 @@ export const GRAPH_LABELS: GraphLabels = {
   groupSummary: "group with {count} nodes",
 };
 
-const fill = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ""));
+const fill = (t: string, v: Record<string, string | number>) => format(t, v, { missing: () => "" });
 
 /** Lista legible («A, B and C»; en el idioma de `locale`, inglés por defecto como los textos). */
 const listFormats = new Map<string, Intl.ListFormat | null>();
@@ -263,7 +265,7 @@ export function listText(items: string[], locale = "en"): string {
 export function describeNode(
   graph: Graph,
   id: string,
-  labels: GraphLabels = GRAPH_LABELS,
+  labels: GraphLabels = localize("graph", GRAPH_LABELS),
   locale?: string,
   adj = adjacency(graph.edges),
   index: Map<string, GraphNode> = indexNodes(graph.nodes),
@@ -294,7 +296,7 @@ export function describeNode(
 }
 
 /** Resumen del grafo («12 nodes, 14 connections»). */
-export const describeGraph = (graph: Graph, labels: GraphLabels = GRAPH_LABELS) =>
+export const describeGraph = (graph: Graph, labels: GraphLabels = localize("graph", GRAPH_LABELS)) =>
   fill(labels.graphSummary, { count: graph.nodes.length, edges: graph.edges.length });
 
 /** Grafo como JSON estable (para copiar, guardar o comparar). */

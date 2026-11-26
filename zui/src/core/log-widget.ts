@@ -3,6 +3,7 @@
 // ventana (core/virtual): con miles de entradas solo existen las que se ven. Es una rejilla (`role="grid"`) con
 // `aria-rowcount` y `aria-rowindex`, una sola parada de Tab y flechas entre celdas; las entradas nuevas no se
 // anuncian (solo el número de coincidencias al buscar). El texto de la aplicación entra siempre como texto.
+import { localize } from "./locale";
 
 import { download } from "./download";
 import { filterLogs, levelOf, LOG_LEVELS, logLine, markParts, type LogEntry, type LogLevel } from "./log-filter";
@@ -317,7 +318,7 @@ export const logConsoleWidget: Widget<LogConsoleProps, Config, State> = {
       clearable: Boolean(p.clearable),
       title: p.title ?? "",
       locale: p.locale,
-      labels: { ...LOG_CONSOLE_LABELS, ...p.labels },
+      labels: { ...localize("logConsole", LOG_CONSOLE_LABELS), ...p.labels },
     };
   },
   initial: (c) => ({

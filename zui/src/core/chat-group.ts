@@ -1,9 +1,11 @@
 // Mensajes de chat como filas: agrupación por autor con una ventana de tiempo, corte por día civil en una zona IANA,
 // posición de cada burbuja en su grupo (de ella depende la cola), separadores de fecha, marca de no leídos y los
 // textos que se anuncian cuando llegan mensajes de otros. Puro: sin documento ni temporizadores.
+import { localize } from "./locale";
 
 import { toInstant } from "./relative";
 import { safeTimeZone, toWall } from "./zone";
+import { format } from "./locale";
 
 export type DeliveryState = "sending" | "sent" | "delivered" | "read" | "failed";
 
@@ -192,11 +194,10 @@ export const TYPING_LABELS: TypingLabels = {
   many: "{name} and {n} others are typing…",
 };
 
-const put = (template: string, values: Record<string, string | number>) =>
-  template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? `{${k}}`));
+const put = (template: string, values: Record<string, string | number>) => format(template, values);
 
 /** Texto de quién escribe, sin repetir nombres. Vacío si nadie. */
-export function typingText(names: readonly string[], labels: TypingLabels = TYPING_LABELS): string {
+export function typingText(names: readonly string[], labels: TypingLabels = localize("typing", TYPING_LABELS)): string {
   const list = [...new Set(names.map((n) => n.trim()).filter(Boolean))];
   if (!list.length) return "";
   if (list.length === 1) return put(labels.one, { name: list[0]! });
@@ -272,7 +273,7 @@ export function newArrivals(known: ReadonlySet<string>, messages: readonly ChatM
 }
 
 /** Un anuncio para una tanda de llegadas: el mensaje si es uno, «3 new messages from Ana» si son de una persona. */
-export function arrivalText(arrivals: readonly ChatMessage[], labels: ArrivalLabels = ARRIVAL_LABELS): string {
+export function arrivalText(arrivals: readonly ChatMessage[], labels: ArrivalLabels = localize("arrival", ARRIVAL_LABELS)): string {
   if (!arrivals.length) return "";
   const name = (m: ChatMessage) => m.author?.name ?? m.authorId;
   if (arrivals.length === 1) {

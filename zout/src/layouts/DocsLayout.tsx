@@ -2,7 +2,10 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { cx } from "../cx";
-import { wireScrollspy } from "../pages";
+import { DOCS_LABELS, wireScrollspy, type DocsLayoutLabels } from "../pages";
+import { useZoutLocale } from "../locale";
+
+export type { DocsLayoutLabels };
 
 export interface DocsTocItem {
   id: string;
@@ -15,25 +18,6 @@ export interface DocsPagerLink {
   href: string;
   label: string;
 }
-
-export interface DocsLayoutLabels {
-  nav: string;
-  toc: string;
-  /** Título del índice en estrecho (desplegable). */
-  onThisPage: string;
-  previous: string;
-  next: string;
-  pager: string;
-}
-
-const DOCS_LABELS: DocsLayoutLabels = {
-  nav: "Documentation",
-  toc: "On this page",
-  onThisPage: "On this page",
-  previous: "Previous",
-  next: "Next",
-  pager: "Pages",
-};
 
 export interface DocsLayoutProps {
   /** Barra superior (Navbar). */
@@ -55,7 +39,7 @@ export interface DocsLayoutProps {
  * paginación anterior/siguiente. En estrecho el índice pasa a un desplegable sobre el artículo y la navegación baja.
  */
 export function DocsLayout({ header, sidebar, toc, previous, next, labels: labelsProp, children, className }: DocsLayoutProps) {
-  const labels = { ...DOCS_LABELS, ...labelsProp };
+  const labels = { ...useZoutLocale().messages("docsLayout", DOCS_LABELS), ...labelsProp };
   const tocRef = useRef<HTMLElement | null>(null);
   useEffect(() => (tocRef.current ? wireScrollspy(tocRef.current) : undefined), []);
   const tocList = toc?.length ? (

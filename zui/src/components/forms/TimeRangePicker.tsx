@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "../../locale";
 import { useEffect, useId, useRef, useState, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { formatDuration } from "../../core/duration";
@@ -94,7 +95,7 @@ export const TimeRangePicker = withRef(function TimeRangePicker({
   className,
   ref,
 }: TimeRangePickerProps) {
-  const labels = { ...TIME_RANGE_LABELS, ...own };
+  const labels = { ...useLocale().messages("timeRange", TIME_RANGE_LABELS), ...own };
   const messages = { ...TIME_RANGE_MESSAGES, ...ownMessages };
   const auto = useId();
   const {

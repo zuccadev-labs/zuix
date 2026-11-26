@@ -95,3 +95,28 @@ export const storyText = (template: string, item: number, count: number, author:
     .replace("{index}", String(item + 1))
     .replace("{count}", String(count))
     .replace("{author}", author);
+
+export interface StoriesLabels {
+  /** aria-roledescription de la región. */
+  stories: string;
+  /** aria-roledescription de cada historia. */
+  story: string;
+  previous: string;
+  next: string;
+  pause: string;
+  previousGroup: string;
+  nextGroup: string;
+  /** Nombre de cada historia y anuncio: {index}, {count}, {author}. */
+  position: string;
+}
+
+export const STORIES_LABELS: StoriesLabels = {
+  stories: "stories",
+  story: "story",
+  previous: "Previous story",
+  next: "Next story",
+  pause: "Pause stories",
+  previousGroup: "Previous person",
+  nextGroup: "Next person",
+  position: "Story {index} of {count}, {author}",
+};

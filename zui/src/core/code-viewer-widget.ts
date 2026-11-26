@@ -2,6 +2,7 @@
 // archivos, copiar y un resaltado mínimo propio (core/code-tokens) o el que dé la aplicación (`highlight`). Los números
 // no se leen ni se copian; una línea resaltada lleva además una barra en el borde, no solo color. El código se pinta
 // como nodos de texto, nunca como marcado.
+import { localize } from "./locale";
 
 import { languageOf, parseLineRanges, tokenizeLines, type CodeToken } from "./code-tokens";
 import { logicalKey } from "./dir";
@@ -153,7 +154,7 @@ export const codeViewerWidget: Widget<CodeViewerProps, Config, State> = {
       maxHeight: p.maxHeight ?? "",
       highlight: p.highlight,
       defaultFile: Math.max(0, Math.min(files.length - 1, Math.floor(Number(p.defaultFile) || 0))),
-      labels: { ...CODE_VIEWER_LABELS, ...p.labels },
+      labels: { ...localize("codeViewer", CODE_VIEWER_LABELS), ...p.labels },
     };
   },
   initial: (c) => ({ file: c.defaultFile, copied: "idle" }),

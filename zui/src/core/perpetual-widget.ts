@@ -1,6 +1,7 @@
 // PerpetualYear como pieza independiente (core/widget): la lámina del año (core/agenda-year) y su buscador. El
 // buscador es un `<input type="date">`: la respuesta sale en texto en una región `status` (la tabla no es la única
 // vía). Sin documento al importar.
+import { localize } from "./locale";
 
 import { PERPETUAL_LABELS, perpetualTree, type PerpetualLabels } from "./agenda-year";
 import { localeWeekInfo, todayISO, valid } from "./date";
@@ -41,7 +42,7 @@ export const perpetualWidget: Widget<PerpetualYearProps, PerpetualConfig, Perpet
       weekStart: (((p.weekStartsOn ?? localeWeekInfo(p.locale).firstDay) % 7) + 7) % 7,
       locale: p.locale,
       today: valid(p.today) ? p.today : todayISO(),
-      labels: { ...PERPETUAL_LABELS, ...p.labels },
+      labels: { ...localize("perpetual", PERPETUAL_LABELS), ...p.labels },
       // El valor inicial no controlado lo lee `initial`.
       ...(p.defaultHighlight !== undefined ? { defaultHighlight: p.defaultHighlight } : {}),
     } as PerpetualConfig;

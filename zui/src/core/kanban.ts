@@ -1,6 +1,7 @@
 // Tablero kanban: mover una tarjeta entre columnas y posiciones, destino de una tecla con la tarjeta cogida, la
 // tarjeta vecina al navegar sin cogerla y el texto de los anuncios. Sin documento: listas de entrada, listas nuevas
 // de salida (no se muta nada).
+import { format } from "./locale";
 
 export interface KanbanLabel {
   text: string;
@@ -155,7 +156,7 @@ export const KANBAN_LABELS: KanbanLabels = {
   assigned: "Assigned to {names}",
 };
 
-const put = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ""));
+const put = (t: string, v: Record<string, string | number>) => format(t, v, { missing: () => "" });
 
 /** Frase de posición de una tarjeta en su columna, con la plantilla dada. */
 export function placeText(columns: readonly KanbanColumn[], cardId: string, template: string): string {

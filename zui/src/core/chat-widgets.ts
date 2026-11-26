@@ -1,6 +1,7 @@
 // Piezas sueltas de chat (core/widget): nota de voz (VoiceNote), fila de reacciones (Reactions), tarjeta de llamada
 // (CallCard: entrante, saliente y en curso) y barra de mensajes fijados (PinnedBar). Las mismas burbujas y reacciones
 // las pinta también la lista de mensajes; aquí van para usarlas fuera de ella.
+import { localize } from "./locale";
 
 import { announce } from "./announcer";
 import { avatarNode, CHAT_LABELS, reactionsNode, voiceNode, type ChatLabels, type VoiceState } from "./chat-tree";
@@ -49,7 +50,7 @@ export const voiceNoteWidget: Widget<VoiceNoteProps, VoiceConfig, VoiceState> = 
     rates: p.rates?.length ? p.rates : [1, 1.5, 2],
     played: p.played,
     bars: Math.max(8, Math.min(96, Math.floor(p.bars ?? 36))),
-    labels: { ...CHAT_LABELS, ...p.labels },
+    labels: { ...localize("chat", CHAT_LABELS), ...p.labels },
   }),
   initial: (c) => ({ playing: false, position: 0, rate: c.rates[0] ?? 1 }),
   tree: (c, s, uid) =>
@@ -154,7 +155,7 @@ export const reactionsWidget: Widget<ReactionsProps, ReactionsConfig, ReactionsS
     items: p.items ?? [],
     add: p.add !== false,
     quick: p.quick?.length ? p.quick : QUICK_REACTIONS,
-    labels: { ...CHAT_LABELS, ...p.labels },
+    labels: { ...localize("chat", CHAT_LABELS), ...p.labels },
   }),
   initial: (c) => ({ items: c.items, source: JSON.stringify(c.items), picking: false }),
   control: (c, s) => {
@@ -314,7 +315,7 @@ export const callCardWidget: Widget<CallCardProps, CallConfig, CallState> = {
     startedAt: toInstant(p.startedAt ?? null),
     muted: p.muted,
     camera: p.camera,
-    labels: { ...CALL_CARD_LABELS, ...p.labels },
+    labels: { ...localize("callCard", CALL_CARD_LABELS), ...p.labels },
   }),
   initial: (c) => ({ now: Date.now(), muted: Boolean(c.muted), camera: c.camera ?? c.video }),
   control: (c, s) => ({ ...s, muted: c.muted ?? s.muted, camera: c.camera ?? s.camera }),
@@ -453,7 +454,7 @@ interface PinnedConfig {
 
 export const pinnedBarWidget: Widget<PinnedBarProps, PinnedConfig, { index: number }> = {
   root: "z-pinned-bar",
-  configure: (p) => ({ items: p.items ?? [], unpinnable: Boolean(p.unpinnable), labels: { ...PINNED_BAR_LABELS, ...p.labels } }),
+  configure: (p) => ({ items: p.items ?? [], unpinnable: Boolean(p.unpinnable), labels: { ...localize("pinnedBar", PINNED_BAR_LABELS), ...p.labels } }),
   // Como en los clientes de mensajería: se muestra el último fijado y cada pulsación salta al anterior.
   initial: (c) => ({ index: Math.max(0, c.items.length - 1) }),
   control: (c, s) => (s.index >= c.items.length ? { index: Math.max(0, c.items.length - 1) } : s),

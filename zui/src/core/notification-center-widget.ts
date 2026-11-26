@@ -4,6 +4,7 @@
 // cambios se ven al momento y salen como avisos (`read-change`, `read-all`, `action`, `open-change`); unas
 // `notifications` nuevas de la aplicación mandan cuando ya coinciden con lo que la persona marcó. Un aviso nuevo sin
 // leer se anuncia una vez por el anunciador central, también con el panel cerrado.
+import { localize } from "./locale";
 
 import { announce } from "./announcer";
 import {
@@ -182,7 +183,7 @@ export const notificationCenterWidget: Widget<NotificationCenterProps, Config, S
     placement: p.placement ?? "bottom-end",
     defaultOpen: Boolean(p.defaultOpen),
     silent: Boolean(p.silent),
-    labels: { ...NOTIFICATION_CENTER_LABELS, ...p.labels },
+    labels: { ...localize("notificationCenter", NOTIFICATION_CENTER_LABELS), ...p.labels },
   }),
   initial: (c) => ({ open: c.defaultOpen, read: {} }),
   control(c, s) {

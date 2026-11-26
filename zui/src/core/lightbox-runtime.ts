@@ -212,3 +212,24 @@ export function bindLightbox(dialog: HTMLElement, o: LightboxBindOptions = {}): 
     },
   };
 }
+
+export interface LightboxLabels {
+  dialog: string;
+  close: string;
+  previous: string;
+  next: string;
+  zoomIn: string;
+  zoomOut: string;
+  /** Anuncio al cambiar de imagen: {index}, {count}. */
+  image: string;
+}
+
+export const LIGHTBOX_LABELS: LightboxLabels = {
+  dialog: "Image viewer",
+  close: "Close",
+  previous: "Previous image",
+  next: "Next image",
+  zoomIn: "Zoom in",
+  zoomOut: "Zoom out",
+  image: "Image {index} of {count}",
+};

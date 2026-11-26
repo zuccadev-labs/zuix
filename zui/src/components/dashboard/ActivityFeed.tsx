@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
-import { groupByDay, isoOf, relativeText } from "../../core/activity";
+import { ACTIVITY_LABELS, groupByDay, isoOf, relativeText, type ActivityFeedLabels } from "../../core/activity";
+import { localize } from "../../core/locale";
 import { toInstant } from "../../core/relative";
 import { cx } from "../../cx";
 import { Avatar } from "../data/Avatar";
+
+export type { ActivityFeedLabels };
 
 export interface ActivityActor {
   name: string;
@@ -27,15 +30,6 @@ export interface ActivityItem {
   /** Contenido bajo la frase (un comentario, un extracto). */
   detail?: ReactNode;
 }
-
-export interface ActivityFeedLabels {
-  today: string;
-  yesterday: string;
-  loadMore: string;
-  empty: string;
-}
-
-const ACTIVITY_LABELS: ActivityFeedLabels = { today: "Today", yesterday: "Yesterday", loadMore: "Load more", empty: "No activity yet" };
 
 export interface ActivityFeedProps {
   items: readonly ActivityItem[];
@@ -75,7 +69,7 @@ export function ActivityFeed({
   className,
   id,
 }: ActivityFeedProps) {
-  const labels = { ...ACTIVITY_LABELS, ...labelsProp };
+  const labels = { ...localize("activityFeed", ACTIVITY_LABELS), ...labelsProp };
   const now = toInstant(nowProp ?? null) ?? Date.now();
   const groups = groupBy === "day" ? groupByDay(items, now, timeZone, locale, labels) : [{ key: "all", label: "", items: [...items] }];
   const entry = (item: ActivityItem) => (

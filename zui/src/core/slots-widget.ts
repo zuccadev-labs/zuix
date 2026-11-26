@@ -2,6 +2,7 @@
 // realzados (los demás deshabilitados pero enfocables y anunciados «no times available»), la zona del visitante y
 // un `listbox` con las horas del día elegido en 12 o 24 h; «Next» es un botón aparte. Las horas son instantes: se
 // calculan en la zona del anfitrión y se muestran en la del visitante. Sin documento al importar.
+import { localize } from "./locale";
 
 import { addDays, localeWeekInfo, parse, todayISO, valid } from "./date";
 import { availabilitySlots, localeHourCycle, slotLabel, slotsByDay, type Availability, type HourCycle } from "./slots";
@@ -137,7 +138,7 @@ export const slotPickerWidget: Widget<SlotPickerProps, SlotPickerConfig, SlotPic
       weekStart: (((p.weekStartsOn ?? localeWeekInfo(p.locale).firstDay) % 7) + 7) % 7,
       today,
       now,
-      labels: { ...SLOT_LABELS, ...p.labels },
+      labels: { ...localize("slots", SLOT_LABELS), ...p.labels },
     };
   },
   initial(config) {

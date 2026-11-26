@@ -4,6 +4,7 @@
 // AgentStatus, UsageMeter, Artifact y BranchPicker. El texto del modelo nunca entra como marcado (core/markdown-lite) y
 // el código se pinta con el CodeViewer de la suite. Mientras llega no se anuncia nada; al terminar, una vez, por el
 // anunciador central. Una herramienta solo se anuncia cuando espera aprobación o falla.
+import { localize } from "./locale";
 
 import {
   AGENT_ANNOUNCE_LABELS,
@@ -943,13 +944,13 @@ export const assistantMessageWidget: Widget<AssistantMessageProps, AssistantConf
   configure: (p) => ({
     parts: p.parts ?? [],
     state: p.state ?? "done",
-    author: p.author ?? { name: p.labels?.assistant ?? AI_LABELS.assistant },
+    author: p.author ?? { name: p.labels?.assistant ?? localize("ai", AI_LABELS).assistant },
     actions: p.actions !== false,
     feedback: p.feedback,
     branch: p.branch,
     announce: p.announce === "summary" || p.announce === "none" ? p.announce : "done",
     locale: p.locale,
-    labels: { ...AI_LABELS, ...p.labels },
+    labels: { ...localize("ai", AI_LABELS), ...p.labels },
   }),
   initial: (c) => ({ copied: {}, open: {}, confirming: {}, always: {}, feedback: c.feedback ?? null }),
   control: (c, s) => (c.feedback !== undefined && c.feedback !== s.feedback ? { ...s, feedback: c.feedback } : s),
@@ -976,7 +977,7 @@ export const assistantMessageWidget: Widget<AssistantMessageProps, AssistantConf
 
 type Simple<P, C> = Widget<P, C, AssistantState>;
 const emptyState = (): AssistantState => ({ copied: {}, open: {}, confirming: {}, always: {}, feedback: null });
-const labelsOf = (p: { labels?: Partial<AiLabels> }) => ({ ...AI_LABELS, ...p.labels });
+const labelsOf = (p: { labels?: Partial<AiLabels> }) => ({ ...localize("ai", AI_LABELS), ...p.labels });
 
 /** Pieza sin estado propio salvo plegados y confirmaciones: árbol, clics de aprobación y anuncios de estado. */
 function simple<P extends { labels?: Partial<AiLabels> }, C extends { labels: AiLabels }>(
@@ -1156,10 +1157,10 @@ export const agentPlanWidget: Widget<
   root: "z-agent-plan",
   configure: (p) => ({
     steps: p.steps ?? [],
-    title: p.title ?? p.labels?.plan ?? AGENT_PLAN_LABELS.plan,
+    title: p.title ?? p.labels?.plan ?? localize("agentPlan", AGENT_PLAN_LABELS).plan,
     collapsible: Boolean(p.collapsible),
     defaultOpen: p.defaultOpen !== false,
-    labels: { ...AGENT_PLAN_LABELS, ...p.labels },
+    labels: { ...localize("agentPlan", AGENT_PLAN_LABELS), ...p.labels },
   }),
   initial: emptyState,
   tree(c, _s, uid) {
@@ -1303,7 +1304,7 @@ export interface AgentStatusProps {
 
 /** Marcado del estado del agente (también lo pinta el componente sin estado de React). */
 export function agentStatusNode(p: AgentStatusProps): VEl {
-  const labels = { ...AGENT_STATUS_LABELS, ...p.labels };
+  const labels = { ...localize("agentStatus", AGENT_STATUS_LABELS), ...p.labels };
   const state = p.state ?? "idle";
   const since = toInstant(p.since ?? null);
   const text = state === "tool" ? fill(labels.tool, { tool: p.detail ?? "" }) : labels[state];
@@ -1358,7 +1359,7 @@ export interface UsageMeterProps {
 
 /** Marcado del medidor de uso (sin estado): `<meter>` nativo con su texto, desglose y coste. */
 export function usageMeterNode(p: UsageMeterProps): VEl {
-  const labels = { ...USAGE_METER_LABELS, ...p.labels };
+  const labels = { ...localize("usageMeter", USAGE_METER_LABELS), ...p.labels };
   const used = Math.max(0, p.used ?? 0);
   const limit = Math.max(1, p.limit ?? 1);
   const ratio = usageRatio(used, limit);
@@ -1506,7 +1507,7 @@ export const artifactWidget: Widget<ArtifactProps, ArtifactConfig, ArtifactState
     downloadName: p.downloadName,
     closable: Boolean(p.closable),
     defaultView: p.defaultView === "code" ? "code" : "preview",
-    labels: { ...ARTIFACT_LABELS, ...p.labels },
+    labels: { ...localize("artifact", ARTIFACT_LABELS), ...p.labels },
   }),
   initial: (c) => ({
     version: c.version ?? c.versions.length - 1,

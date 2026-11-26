@@ -70,6 +70,7 @@ import {
   zoomTo,
 } from "./viewport";
 import { pauseOffscreen } from "./visibility";
+import { format } from "./locale";
 
 export type GraphChangeType =
   | "move"
@@ -174,7 +175,7 @@ const EDITABLE = ':read-write, select, input[type="range"], [role="slider"], [ro
 const THRESHOLD = 4;
 /** Zoom más bajo al que se lee el texto de un nodo: el que se usa como suelo al encuadrar al montar. */
 const READABLE_ZOOM = 0.8;
-const fill = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ""));
+const fill = (t: string, v: Record<string, string | number>) => format(t, v, { missing: () => "" });
 const px = (n: number) => `${Math.round(n * 100) / 100}px`;
 
 type Gesture =

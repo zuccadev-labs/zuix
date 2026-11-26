@@ -2,6 +2,7 @@
 // anillo de core/circular. El árbol (core/vnode) lo pintan igual el binding de React y el modo DOM: un `role="meter"`
 // con `aria-valuetext` («72 %, Warning») y el SVG decorativo. La zona se dice con texto, no solo con color, y cada
 // zona lleva además un trazo distinto (continuo, discontinuo o punteado).
+import { localize } from "./locale";
 
 import { arcPath, pointAt } from "./circular";
 import { formatValue } from "./metric";
@@ -133,7 +134,7 @@ function configure(p: GaugeProps): Config {
     rawZones: p.zones ?? [],
     valueFormat: p.valueFormat,
     locale: p.locale,
-    labels: { ...GAUGE_LABELS, ...p.labels },
+    labels: { ...localize("gauge", GAUGE_LABELS), ...p.labels },
   };
 }
 

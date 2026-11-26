@@ -2,6 +2,8 @@
 // KanbanBoard se pintan con el mismo árbol que el binding de React (core/widget + core/vnode). DashboardGrid conecta la
 // misma interacción (core/dashboard-grid) al marcado ya escrito: la disposición vive en los `data-x/y/w/h` de cada
 // pieza; al soltar se escriben, los nodos se reordenan al orden de lectura y sale `z:layoutchange { layout }`.
+import { localize } from "../core/locale";
+import { localeOf } from "./locale";
 import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowTrendingDownRight } from "@zuccadev-labs/zuix-zicon/icons/arrow-trending-down-right";
 import { arrowTrendingUpRight } from "@zuccadev-labs/zuix-zicon/icons/arrow-trending-up-right";
@@ -82,7 +84,7 @@ function reorder(el: HTMLElement, layout: GridLayout): void {
 }
 
 function labelsOf(el: HTMLElement): GridLabels {
-  const out: GridLabels = { ...GRID_LABELS };
+  const out: GridLabels = { ...localize("dashboardGrid", GRID_LABELS, localeOf(el)) };
   for (const key of Object.keys(GRID_LABELS) as (keyof GridLabels)[]) {
     const v = el.dataset[`${key}Label`];
     if (v !== undefined) out[key] = v;

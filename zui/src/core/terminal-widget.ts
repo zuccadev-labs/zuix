@@ -4,6 +4,7 @@
 // `write()` o por lo que devuelve `onCommand` (texto, promesa o iterable asíncrono). Intro envía con el envío nativo
 // del formulario, que no se dispara mientras un IME compone. La salida es `role="log"` sin anunciar cada línea; al
 // terminar una orden se anuncia el final (o el código de salida si no es 0). El texto nunca entra como marcado.
+import { localize, formatList } from "./locale";
 
 import { createAnsiScreen, type AnsiLine, type AnsiScreen } from "./ansi";
 import { completeInput, createHistory, type CommandHistory } from "./history";
@@ -250,7 +251,7 @@ function attach(root: HTMLElement, host: Host): () => void {
         field.setSelectionRange(value.length, value.length);
         if (shown.length) {
           write(`\x1b[2m${shown.map(visible).join("  ")}\x1b[0m\n`);
-          announceIn(root, fill(host.config().labels.completions, { n: shown.length, list: shown.join(", ") }), ".z-terminal__live");
+          announceIn(root, fill(host.config().labels.completions, { n: shown.length, list: formatList(shown) }), ".z-terminal__live");
         }
       });
       return;
@@ -334,7 +335,7 @@ export const terminalWidget: Widget<TerminalProps, Config, State> = {
     title: p.title ?? "",
     theme: p.theme === "solid" ? "solid" : "glass",
     announce: p.announce === "all" || p.announce === "none" ? p.announce : "end",
-    labels: { ...TERMINAL_LABELS, ...p.labels },
+    labels: { ...localize("terminal", TERMINAL_LABELS), ...p.labels },
   }),
   initial(c) {
     const screen = createAnsiScreen(c.maxLines);

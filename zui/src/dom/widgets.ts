@@ -6,9 +6,11 @@
 // Este archivo es solo el registro y el montaje: cada familia registra sus piezas (./widgets-agenda,
 // ./widgets-charts, ./color, ./media) y comparte `widgetsPart`.
 
+import { defaultLocale, onLocaleChange, resolveLocale, withLocale } from "../core/locale";
 import type { VNode } from "../core/vnode";
 import { domEventName, focusActive, type Widget, type WidgetHost } from "../core/widget";
 import { emit, inDom } from "./forms-popup";
+import { localeOf } from "./locale";
 import type { DomPart } from "./shared";
 import { patchChildren } from "./vtree";
 
@@ -52,7 +54,25 @@ function propsJSON(el: HTMLElement): Record<string, unknown> {
 
 function configOf(el: HTMLElement, entry: Entry): unknown {
   const props = { ...(entry.widget.fromDom(el, propsJSON(el)) as Record<string, unknown>), ...entry.extra };
-  return entry.widget.configure(props);
+  // Idioma: el `lang` heredado con textos registrados o el de setLocale(). Con uno que no sea el inglés de siempre,
+  // también es el formato de Intl de la pieza si no trae `data-locale`.
+  const lang = localeOf(el);
+  const intl = lang && resolveLocale(lang) !== "en" ? lang : defaultLocale();
+  if (intl && props.locale === undefined) props.locale = intl;
+  return withLocale(lang, () => entry.widget.configure(props));
+}
+
+let watching = false;
+/** Al cambiar el idioma por defecto, las piezas montadas se vuelven a pintar con sus textos. */
+function watchLocale(): void {
+  if (watching) return;
+  watching = true;
+  onLocaleChange(() => {
+    for (const ref of mounted) {
+      const el = ref.deref();
+      if (el?.isConnected) render(el);
+    }
+  });
 }
 
 function render(el: HTMLElement, focus = false): void {
@@ -62,7 +82,7 @@ function render(el: HTMLElement, focus = false): void {
   const config = configOf(el, entry);
   if (widget.control) entry.state = widget.control(config, entry.state);
   if (!el.id) el.id = `${widget.root}-${++seq}`;
-  const tree = widget.tree(config, entry.state, el.id);
+  const tree = withLocale(localeOf(el), () => widget.tree(config, entry.state, el.id));
   const scripts = [...el.querySelectorAll(":scope > script, :scope > template")];
   for (const [k, value] of Object.entries(tree.a ?? {})) {
     if (k === "id" || k === "class") continue;
@@ -95,6 +115,7 @@ function mount(el: HTMLElement, widget: AnyWidget): void {
     render(el);
     return;
   }
+  watchLocale();
   const entry = { widget, extra: {}, state: null, detach: () => {} } as unknown as Entry;
   entries.set(el, entry);
   const ref = new WeakRef(el);

@@ -5,6 +5,8 @@ import { focusActive, type Widget, type WidgetHost } from "../../core/widget";
 import { useMergedRef } from "../../refs";
 import { Calendar } from "../forms/Calendar";
 import { useIsoLayoutEffect } from "../../primitives/hooks";
+import { withLocale } from "../../core/locale";
+import { useLocaleId } from "../../locale";
 
 export { toReact, type SlotRenderer };
 
@@ -25,7 +27,11 @@ export function useWidget<P, C, S>(widget: Widget<P, C, S>, props: P, { id, clas
   const uid = id ?? `${widget.root}-${auto}`;
   const root = useRef<HTMLDivElement | null>(null);
   const setRoot = useMergedRef(root, ref);
-  const config = widget.configure(props);
+  // Idioma del LocaleProvider: textos propios y, si la pieza no trae `locale`, el formato de Intl.
+  const lang = useLocaleId();
+  const config = withLocale(lang, () =>
+    widget.configure(lang && (props as { locale?: string }).locale === undefined ? ({ ...props, locale: lang } as P) : props),
+  );
   const configRef = useRef(config);
   configRef.current = config;
   const state = useRef<S | null>(null);
@@ -61,7 +67,7 @@ export function useWidget<P, C, S>(widget: Widget<P, C, S>, props: P, { id, clas
     else if (focus) focusActive(root.current);
   });
 
-  const tree = widget.tree(config, state.current, uid);
+  const tree = withLocale(lang, () => widget.tree(config, state.current!, uid));
   const calendar: SlotRenderer = (p) => {
     const name = String(p.name ?? "");
     const calendarProps = (p.props ?? {}) as Record<string, unknown>;

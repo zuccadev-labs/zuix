@@ -64,6 +64,11 @@
     "./dist/zui.compat.css": "./dist/zui.compat.css",
     "./dist/zui.dom.js": "./dist/zui.dom.js",
     "./dist/zui.dom.carousel-gl.js": "./dist/zui.dom.carousel-gl.js",
+    "./locales/en": "./src/locales/en.ts",
+    "./locales/es": "./src/locales/es.ts",
+    "./locales/pt": "./src/locales/pt.ts",
+    "./locales/fr": "./src/locales/fr.ts",
+    "./locales/de": "./src/locales/de.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -217,6 +222,26 @@
       "./dist/zui.dom.carousel-gl.js": {
         "types": "./dist/esm/dom/carousel-gl.d.ts",
         "default": "./dist/zui.dom.carousel-gl.js"
+      },
+      "./locales/en": {
+        "types": "./dist/esm/locales/en.d.ts",
+        "default": "./dist/esm/locales/en.js"
+      },
+      "./locales/es": {
+        "types": "./dist/esm/locales/es.d.ts",
+        "default": "./dist/esm/locales/es.js"
+      },
+      "./locales/pt": {
+        "types": "./dist/esm/locales/pt.d.ts",
+        "default": "./dist/esm/locales/pt.js"
+      },
+      "./locales/fr": {
+        "types": "./dist/esm/locales/fr.d.ts",
+        "default": "./dist/esm/locales/fr.js"
+      },
+      "./locales/de": {
+        "types": "./dist/esm/locales/de.d.ts",
+        "default": "./dist/esm/locales/de.js"
       },
       "./package.json": "./package.json"
     },

@@ -1,6 +1,7 @@
 // Marcado de la agenda (EventCalendar) como un árbol de nodos sin framework: el binding de React lo convierte en
 // elementos y el modo DOM en nodos (texto siempre como texto, nunca como marcado). Un solo origen para el contrato
 // HTML de las dos vías. Aquí también el estado de la vista y los textos con `Intl`. Sin documento ni efectos.
+import { localize } from "./locale";
 
 import { addDays, diffDays, localeWeekInfo, pad, parse, safeLocale, weekNumber } from "./date";
 import {
@@ -26,6 +27,7 @@ import {
 import { fromWall, toWall, zoneCity, zoneLabel } from "./zone";
 import { PERPETUAL_LABELS, perpetualTree, yearGrid, type PerpetualLabels } from "./agenda-year";
 import { resourceTimeline, type ResourceItem, type ResourceRow } from "./timeline-view";
+import { format } from "./locale";
 
 /* ---------- Árbol ---------- */
 
@@ -150,7 +152,7 @@ export type AgendaLabelsInput = Partial<Omit<AgendaLabels, "views" | "perpetual"
 /** Textos completos: los de la aplicación sobre los de por defecto (en inglés). El mismo objeto para la misma entrada. */
 const merged = new WeakMap<AgendaLabelsInput, AgendaLabels>();
 export function mergeLabels(labels: AgendaLabelsInput | undefined): AgendaLabels {
-  if (!labels) return DEFAULT_LABELS;
+  if (!labels) return localize("agenda", DEFAULT_LABELS);
   let out = merged.get(labels);
   if (!out) {
     out = mergeLabelsNow(labels);
@@ -160,10 +162,10 @@ export function mergeLabels(labels: AgendaLabelsInput | undefined): AgendaLabels
 }
 function mergeLabelsNow(labels: AgendaLabelsInput): AgendaLabels {
   return {
-    ...DEFAULT_LABELS,
+    ...localize("agenda", DEFAULT_LABELS),
     ...labels,
-    views: { ...DEFAULT_LABELS.views, ...labels?.views },
-    perpetual: { ...DEFAULT_LABELS.perpetual, ...labels?.perpetual },
+    views: { ...localize("agenda", DEFAULT_LABELS).views, ...labels?.views },
+    perpetual: { ...localize("agenda", DEFAULT_LABELS).perpetual, ...labels?.perpetual },
   } as AgendaLabels;
 }
 
@@ -349,8 +351,7 @@ const dayLong = (date: string, locale?: string) => {
 };
 /** Minutos de pared → `YYYY-MM-DDTHH:mm`. */
 const wallText = (min: number) => `${dateOf(min)}T${pad(Math.floor(minuteOfDay(min) / 60))}:${pad(minuteOfDay(min) % 60)}`;
-const fill = (template: string, values: Record<string, string | number>) =>
-  template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? `{${k}}`));
+const fill = (template: string, values: Record<string, string | number>) => format(template, values);
 
 /** Título de la barra: «November 16 – 22, 2026», «Thursday, 19 November 2026», «November 2026». */
 export function periodTitle(view: AgendaView, days: string[], date: string, locale?: string): string {
@@ -1622,7 +1623,7 @@ export function agendaTree(
                     locale,
                     highlight: state.date,
                     today: model.today,
-                    labels: { ...PERPETUAL_LABELS, ...labels.perpetual },
+                    labels: { ...localize("perpetual", PERPETUAL_LABELS), ...labels.perpetual },
                   }),
                 )
               : timeGrid(config, state, model, plan!);

@@ -1,6 +1,7 @@
 // FreeBusy («buscar hueco») como pieza (core/widget): la rejilla de recursos con una fila por persona, sus ocupados
 // (trama neutra y «Busy» en texto), lo que queda fuera de su horario (trama cálida y «Outside hours») y la franja
 // común propuesta (verde con su texto). Botones para la anterior, la siguiente y «Use …». Sin documento al importar.
+import { localize } from "./locale";
 
 import { clockMinutes, dateOf, dayStart, minuteOfDay, nowIn } from "./agenda";
 import { addDays, todayISO, valid } from "./date";
@@ -116,7 +117,7 @@ export const freeBusyWidget: Widget<FreeBusyProps, FreeBusyConfig, FreeBusyState
       locale: p.locale,
       now: Number.isFinite(nowMs) ? (nowMs as number) : null,
       title: p.title ?? "",
-      labels: { ...FREEBUSY_LABELS, ...p.labels },
+      labels: { ...localize("freeBusy", FREEBUSY_LABELS), ...p.labels },
     };
   },
   initial() {

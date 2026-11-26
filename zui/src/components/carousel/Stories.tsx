@@ -1,12 +1,15 @@
 "use client";
 import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode, type Ref } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
-import { storyText, type StoriesState } from "../../core/stories";
+import { STORIES_LABELS, storyText, type StoriesLabels, type StoriesState } from "../../core/stories";
+import { useLocale } from "../../locale";
 import { bindStories, type StoriesHandle } from "../../core/stories-runtime";
 import { cx } from "../../cx";
 import { useLatest } from "../../primitives/hooks";
 import { useMergedRef } from "../../refs";
 import { withRef } from "../../react-compat";
+
+export type { StoriesLabels };
 
 export interface StoryItem {
   id: string;
@@ -25,20 +28,6 @@ export interface StoryGroup {
   items: readonly StoryItem[];
 }
 
-export interface StoriesLabels {
-  /** aria-roledescription de la región. */
-  stories: string;
-  /** aria-roledescription de cada historia. */
-  story: string;
-  previous: string;
-  next: string;
-  pause: string;
-  previousGroup: string;
-  nextGroup: string;
-  /** Nombre de cada historia y anuncio: {index}, {count}, {author}. */
-  position: string;
-}
-
 export interface StoriesProps extends Omit<HTMLAttributes<HTMLElement>, "children" | "aria-label"> {
   groups: readonly StoryGroup[];
   ariaLabel: string;
@@ -51,17 +40,6 @@ export interface StoriesProps extends Omit<HTMLAttributes<HTMLElement>, "childre
   onComplete?: () => void;
   ref?: Ref<HTMLElement>;
 }
-
-const DEFAULT_LABELS: StoriesLabels = {
-  stories: "stories",
-  story: "story",
-  previous: "Previous story",
-  next: "Next story",
-  pause: "Pause stories",
-  previousGroup: "Previous person",
-  nextGroup: "Next person",
-  position: "Story {index} of {count}, {author}",
-};
 
 /**
  * Historias al estilo de Instagram: una barra por historia que se llena con el tiempo, tocar a un lado o al otro para
@@ -79,7 +57,7 @@ export const Stories = withRef(function Stories({
   ref,
   ...rest
 }: StoriesProps) {
-  const text = { ...DEFAULT_LABELS, ...labels };
+  const text = { ...useLocale().messages("stories", STORIES_LABELS), ...labels };
   const node = useRef<HTMLElement | null>(null);
   const setRef = useMergedRef(node, ref);
   const handle = useRef<StoriesHandle | null>(null);

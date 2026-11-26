@@ -26,6 +26,7 @@ import {
   type GridLayout,
 } from "./grid-layout";
 import { arrowDirection, nextInDirection } from "./spatial";
+import { format } from "./locale";
 
 export interface DashboardGridHost {
   /** Disposición confirmada. */
@@ -37,7 +38,7 @@ export interface DashboardGridHost {
   labels(): GridLabels;
 }
 
-const put = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ""));
+const put = (t: string, v: Record<string, string | number>) => format(t, v, { missing: () => "" });
 
 interface Metrics {
   width: number;

@@ -13,7 +13,9 @@ import {
 } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
 import { announceTo } from "../../core/announcer";
-import { autoplayInterval, barProgress, perPageOf, snapPositions, type CarouselIndicators } from "../../core/carousel";
+import { autoplayInterval, barProgress, CAROUSEL_LABELS, perPageOf, snapPositions, type CarouselIndicators, type CarouselTexts } from "../../core/carousel";
+import { format } from "../../core/locale";
+import { useLocale } from "../../locale";
 import {
   carouselMode,
   depthOf,
@@ -135,17 +137,14 @@ export interface CarouselProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "
   ref?: Ref<HTMLDivElement>;
 }
 
-const DEFAULT_LABELS: Required<CarouselLabels> = {
-  previous: "Previous slide",
-  next: "Next slide",
-  slide: (index, count) => `Slide ${index + 1} of ${count}`,
-  carousel: "carousel",
-  slideRole: "slide",
-  pause: "Pause automatic slide show",
-  play: "Start automatic slide show",
-  goTo: (index, count) => `Go to slide ${index + 1} of ${count}`,
-  indicators: "Choose slide",
-};
+/** Las plantillas de core (las de un paquete de idioma, si lo hay) como las funciones de `CarouselLabels`. */
+function carouselLabels(t: CarouselTexts): Required<CarouselLabels> {
+  return {
+    ...t,
+    slide: (index, count) => format(t.slide, { index: index + 1, count }),
+    goTo: (index, count) => format(t.goTo, { index: index + 1, count }),
+  };
+}
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const subscribeReducedMotion = (notify: () => void) => {
@@ -206,7 +205,7 @@ const EngineCarousel = withRef(function EngineCarousel<T>({
   ...rest
 }: CarouselProps<T>) {
   const count = items.length;
-  const text = { ...DEFAULT_LABELS, ...labels };
+  const text = { ...carouselLabels(useLocale().messages("carousel", CAROUSEL_LABELS)), ...labels };
   const reducedMotion = useSyncExternalStore(subscribeReducedMotion, readReducedMotion, serverReducedMotion);
   const [activeIndex, setActiveIndex] = useState(() => Math.min(Math.max(defaultIndex, 0), Math.max(count - 1, 0)));
   const [announcement, setAnnouncement] = useState("");
@@ -533,7 +532,7 @@ const ScrollCarousel = withRef(function ScrollCarousel<T>({
   ...rest
 }: CarouselProps<T> & { deck: boolean }) {
   const count = items.length;
-  const text = { ...DEFAULT_LABELS, ...labels };
+  const text = { ...carouselLabels(useLocale().messages("carousel", CAROUSEL_LABELS)), ...labels };
   const auto = slidesPerPage === "auto" || layout === "uncontained";
   const perPage = auto ? 0 : perPageOf(slidesPerPage);
   const vertical = !deck && isVertical(orientation, effect);

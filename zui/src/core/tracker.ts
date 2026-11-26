@@ -2,6 +2,7 @@
 // del foco itinerante entre barras, más la pieza (core/widget) que comparten React y el modo DOM: una lista con una
 // sola parada de tabulación, flechas, Inicio y Fin entre días, y una etiqueta flotante con el día activo (al pasar el
 // puntero o con el foco). Cada día se lee como texto («3 Nov: Degraded, 12 min»), no por su color.
+import { localize } from "./locale";
 
 import { numberFormat } from "./metric";
 import { fill, h, type VEl } from "./vnode";
@@ -115,7 +116,7 @@ export const trackerWidget: Widget<TrackerProps, Config, State> = {
     hideHeader: Boolean(p.hideHeader),
     size: p.size === "sm" ? "sm" : "md",
     locale: p.locale,
-    labels: { ...TRACKER_LABELS, ...p.labels },
+    labels: { ...localize("tracker", TRACKER_LABELS), ...p.labels },
   }),
   initial: (c) => ({ active: Math.max(0, c.days.length - 1), shown: -1 }),
   control: (c, s) => (s.active >= c.days.length ? { ...s, active: Math.max(0, c.days.length - 1), shown: -1 } : s),

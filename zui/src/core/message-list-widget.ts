@@ -4,6 +4,7 @@
 // La lista es una sola parada de Tab: ↑/↓ entre mensajes, Inicio/Fin, RePág/AvPág, Intro a sus acciones, R responder y
 // Escape a la caja de texto. Lo que llega en vivo no se lee desde el contenedor (leería lo propio, las ediciones y el
 // historial): los mensajes nuevos de otros se anuncian por el anunciador central, cortos y agrupados.
+import { localize } from "./locale";
 
 import { announce } from "./announcer";
 import { followAction, nearEnd, nearStart, pendingBelow, pickAnchor, restoreAnchor, type ScrollAnchor } from "./chat-anchor";
@@ -744,10 +745,10 @@ export const messageListWidget: Widget<MessageListProps, Config, State> = {
     quick: p.quickReactions?.length ? p.quickReactions : QUICK_REACTIONS,
     virtualize: p.virtualize === false ? false : Math.max(20, Math.floor(Number(p.virtualize ?? 150))),
     announce: p.announce === "log" || p.announce === "none" ? p.announce : "new",
-    label: p.label ?? p.labels?.list ?? MESSAGE_LIST_LABELS.list,
+    label: p.label ?? p.labels?.list ?? localize("messageList", MESSAGE_LIST_LABELS).list,
     composer: p.composer,
     now: p.now,
-    labels: { ...MESSAGE_LIST_LABELS, ...p.labels },
+    labels: { ...localize("messageList", MESSAGE_LIST_LABELS), ...p.labels },
   }),
   initial: (c) => {
     const ids = messageIds(rowsOf(c));

@@ -7,6 +7,7 @@
 // Teclado: el área es un deslizador en dos ejes (role="slider" con aria-valuetext de los dos canales): izquierda y
 // derecha mueven la saturación, arriba y abajo el brillo, Mayúsculas diez pasos, Re/Av Pág el brillo de diez en diez,
 // Inicio y Fin la saturación. Tono y alfa siguen el patrón APG «slider». El muestrario es un grupo de radios (flechas).
+import { localize } from "./locale";
 
 import {
   areaAt,
@@ -183,9 +184,9 @@ function swatchList(input: ColorPickerProps["swatches"]): ColorSwatch[] {
 }
 
 function configure(kind: Config["kind"], root: string, p: ColorPickerProps): Config {
-  const labels = { ...COLOR_PICKER_LABELS, ...p.labels };
-  labels.formatNames = { ...COLOR_PICKER_LABELS.formatNames, ...p.labels?.formatNames };
-  labels.channels = { ...COLOR_PICKER_LABELS.channels, ...p.labels?.channels };
+  const labels = { ...localize("colorPicker", COLOR_PICKER_LABELS), ...p.labels };
+  labels.formatNames = { ...localize("colorPicker", COLOR_PICKER_LABELS).formatNames, ...p.labels?.formatNames };
+  labels.channels = { ...localize("colorPicker", COLOR_PICKER_LABELS).channels, ...p.labels?.channels };
   const formats = (p.formats ?? COLOR_FORMATS).filter(isColorFormat);
   const alpha = p.alpha !== false;
   const swatches = swatchList(p.swatches);

@@ -1,6 +1,7 @@
 // Marcado de un lienzo de nodos (contrato HTML): textos por defecto, el árbol de un nodo por defecto (cabecera con
 // icono, título y estado; cuerpo; puertos; asa de redimensionado), el de un grupo y la vista en lista. Lo pintan el
 // modo DOM (core/vnode → nodos) y las pruebas; el binding de React escribe el mismo marcado. Sin documento.
+import { localize } from "./locale";
 
 import { GRAPH_LABELS, type Graph, type GraphLabels, type GraphNode, indexNodes, isGroup, nodeLabel, type NodePort } from "./graph";
 import { portFractions, portSide } from "./ports";
@@ -135,17 +136,17 @@ export const NODE_CANVAS_LABELS: NodeCanvasLabels = {
 };
 
 export function mergeNodeLabels(labels?: Partial<NodeCanvasLabels>): NodeCanvasLabels {
-  if (!labels) return NODE_CANVAS_LABELS;
+  if (!labels) return localize("nodeCanvas", NODE_CANVAS_LABELS);
   return {
-    ...NODE_CANVAS_LABELS,
+    ...localize("nodeCanvas", NODE_CANVAS_LABELS),
     ...labels,
-    status: { ...NODE_CANVAS_LABELS.status, ...labels.status },
-    directions: { ...NODE_CANVAS_LABELS.directions, ...labels.directions },
+    status: { ...localize("nodeCanvas", NODE_CANVAS_LABELS).status, ...labels.status },
+    directions: { ...localize("nodeCanvas", NODE_CANVAS_LABELS).directions, ...labels.directions },
   };
 }
 
 /** Nombre accesible de un puerto («Input json»). */
-export const portLabel = (p: NodePort, labels: NodeCanvasLabels = NODE_CANVAS_LABELS) =>
+export const portLabel = (p: NodePort, labels: NodeCanvasLabels = localize("nodeCanvas", NODE_CANVAS_LABELS)) =>
   fill(p.kind === "target" ? labels.input : labels.output, { name: p.label ?? p.id }).trim();
 
 /** Variables de posición de un nodo (las escribe también la interacción). */
@@ -160,7 +161,7 @@ export function nodeVars(x: number, y: number, size?: { width: number; height: n
 const round = (n: number) => Math.round(n * 100) / 100;
 
 /** Árbol de un puerto. */
-export function portTree(p: NodePort, t: number, labels: NodeCanvasLabels = NODE_CANVAS_LABELS): VEl {
+export function portTree(p: NodePort, t: number, labels: NodeCanvasLabels = localize("nodeCanvas", NODE_CANVAS_LABELS)): VEl {
   return h(
     "button",
     {
@@ -182,7 +183,7 @@ export function portTree(p: NodePort, t: number, labels: NodeCanvasLabels = NODE
  * Árbol de un nodo por defecto (o de un grupo). `x`/`y` son la posición absoluta. El cuerpo es la descripción del
  * nodo; quien pinta con otro cuerpo usa el mismo envoltorio.
  */
-export function nodeTree(node: GraphNode, x: number, y: number, labels: NodeCanvasLabels = NODE_CANVAS_LABELS): VEl {
+export function nodeTree(node: GraphNode, x: number, y: number, labels: NodeCanvasLabels = localize("nodeCanvas", NODE_CANVAS_LABELS)): VEl {
   const label = nodeLabel(node);
   if (isGroup(node)) {
     return h(
@@ -236,7 +237,7 @@ export function nodeTree(node: GraphNode, x: number, y: number, labels: NodeCanv
 }
 
 /** Vista en lista: una tabla de nodos con sus conexiones y otra de conexiones, con las mismas acciones. */
-export function listViewTree(graph: Graph, labels: NodeCanvasLabels = NODE_CANVAS_LABELS, readOnly = false): VEl {
+export function listViewTree(graph: Graph, labels: NodeCanvasLabels = localize("nodeCanvas", NODE_CANVAS_LABELS), readOnly = false): VEl {
   const index = indexNodes(graph.nodes);
   const nodes = graph.nodes.filter((n) => !isGroup(n));
   const th = (text: string) => h("th", { scope: "col" }, text);
@@ -360,7 +361,7 @@ const ctrl = (action: string, label: string, glyph: string, extra: Record<string
   );
 
 /** Barra de controles del lienzo (contrato de Toolbar: una parada de tabulación, flechas entre botones). */
-export function controlsTree(labels: NodeCanvasLabels = NODE_CANVAS_LABELS, o: ControlsOptions = {}): VEl {
+export function controlsTree(labels: NodeCanvasLabels = localize("nodeCanvas", NODE_CANVAS_LABELS), o: ControlsOptions = {}): VEl {
   const orientation = o.orientation ?? "vertical";
   const kids: VEl[] = [];
   const sep = () =>
@@ -417,5 +418,5 @@ export function controlsTree(labels: NodeCanvasLabels = NODE_CANVAS_LABELS, o: C
 }
 
 /** Minimapa (el contenido lo pinta la interacción). */
-export const minimapTree = (labels: NodeCanvasLabels = NODE_CANVAS_LABELS, position?: string): VEl =>
+export const minimapTree = (labels: NodeCanvasLabels = localize("nodeCanvas", NODE_CANVAS_LABELS), position?: string): VEl =>
   h("nav", { class: "z-node-minimap z-liquid", "aria-label": labels.minimap, "data-position": position, tabindex: 0 });

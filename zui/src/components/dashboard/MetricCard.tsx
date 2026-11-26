@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { deltaOf, type ProgressGoalLabels } from "../../core/dashboard-trees";
-import { formatValue, type DeltaLabels, type DeltaPositive } from "../../core/metric";
+import { localize } from "../../core/locale";
+import { formatValue, METRIC_CARD_LABELS, type DeltaLabels, type DeltaPositive, type MetricCardLabels } from "../../core/metric";
 import { cx } from "../../cx";
 import { AnimatedNumber } from "../charts/AnimatedNumber";
 import { Sparkline, type SparklineProps } from "../charts/Sparkline";
@@ -9,23 +10,7 @@ import { Skeleton } from "../feedback/Skeleton";
 import { DeltaBadge } from "./DeltaBadge";
 import { ProgressGoal } from "./ProgressGoal";
 
-export interface MetricCardLabels {
-  /** Sin datos para el periodo. */
-  empty: string;
-  /** No se pudo cargar. */
-  error: string;
-  /** Nombre de la meta bajo el valor. */
-  target: string;
-  /** Periodo visible junto a la variación: «vs {period}». */
-  versus: string;
-}
-
-const METRIC_CARD_LABELS: MetricCardLabels = {
-  empty: "No data for this period",
-  error: "Couldn't load this metric",
-  target: "Goal",
-  versus: "vs {period}",
-};
+export type { MetricCardLabels };
 
 export interface MetricCardProps {
   label: string;
@@ -98,7 +83,7 @@ export function MetricCard({
   className,
   id,
 }: MetricCardProps) {
-  const labels = { ...METRIC_CARD_LABELS, ...labelsProp };
+  const labels = { ...localize("metricCard", METRIC_CARD_LABELS), ...labelsProp };
   const d = deltaOf({ value: typeof value === "number" ? value : undefined, previous, delta, positive });
   const shown = formatValue(value, locale, format);
   const ready = state === "ready";

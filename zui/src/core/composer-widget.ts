@@ -4,6 +4,7 @@
 // «Quitar», emojis con el selector propio, menciones con `@` (combobox sobre el campo) y barra de «respondiendo a» o
 // «editando». Composer graba notas de voz con MediaRecorder si el navegador lo ofrece (pulsar para empezar, pulsar para
 // enviar, Cancelar); PromptInput añade modelo, herramientas activables, uso de contexto y enviar ↔ parar.
+import { localize } from "./locale";
 
 import { followScrollEdges } from "./edges";
 import { announce } from "./announcer";
@@ -990,7 +991,7 @@ function makeWidget(root: "z-composer" | "z-prompt-input", kind: "chat" | "promp
   return {
     root,
     configure: (p) => {
-      const labels = { ...(kind === "prompt" ? PROMPT_INPUT_LABELS : COMPOSER_LABELS), ...p.labels };
+      const labels = { ...(kind === "prompt" ? localize("promptInput", PROMPT_INPUT_LABELS) : localize("composer", COMPOSER_LABELS)), ...p.labels };
       const triggers =
         p.mentions?.trigger === undefined ? ["@"] : typeof p.mentions.trigger === "string" ? [p.mentions.trigger] : p.mentions.trigger;
       return {

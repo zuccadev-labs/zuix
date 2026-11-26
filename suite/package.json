@@ -162,6 +162,46 @@
     "./docusaurus.css": "./docusaurus.css",
     "./styles.css": "./styles.css",
     "./styles.compat.css": "./styles.compat.css",
+    "./zui/locales/en": {
+      "types": "./zui-locales-en.d.ts",
+      "default": "./zui-locales-en.js"
+    },
+    "./zui/locales/es": {
+      "types": "./zui-locales-es.d.ts",
+      "default": "./zui-locales-es.js"
+    },
+    "./zui/locales/pt": {
+      "types": "./zui-locales-pt.d.ts",
+      "default": "./zui-locales-pt.js"
+    },
+    "./zui/locales/fr": {
+      "types": "./zui-locales-fr.d.ts",
+      "default": "./zui-locales-fr.js"
+    },
+    "./zui/locales/de": {
+      "types": "./zui-locales-de.d.ts",
+      "default": "./zui-locales-de.js"
+    },
+    "./zout/locales/en": {
+      "types": "./zout-locales-en.d.ts",
+      "default": "./zout-locales-en.js"
+    },
+    "./zout/locales/es": {
+      "types": "./zout-locales-es.d.ts",
+      "default": "./zout-locales-es.js"
+    },
+    "./zout/locales/pt": {
+      "types": "./zout-locales-pt.d.ts",
+      "default": "./zout-locales-pt.js"
+    },
+    "./zout/locales/fr": {
+      "types": "./zout-locales-fr.d.ts",
+      "default": "./zout-locales-fr.js"
+    },
+    "./zout/locales/de": {
+      "types": "./zout-locales-de.d.ts",
+      "default": "./zout-locales-de.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

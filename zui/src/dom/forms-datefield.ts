@@ -1,6 +1,8 @@
 // DateField, TimeField y TimePicker sin framework. El modelo (orden de segmentos, teclado APG de spinbutton, pegado,
 // validez, columnas y franjas) es el de ../core/segments y ../core/time, el mismo que usa el binding de React; aquí se
 // leen los atributos `data-*`, se pintan los segmentos y se conectan los eventos delegados.
+import { localize } from "../core/locale";
+import { localeOf } from "./locale";
 import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { clock } from "@zuccadev-labs/zuix-zicon/icons/clock";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
@@ -122,7 +124,7 @@ function ensureSegments(field: HTMLElement, config: FieldConfig): HTMLElement[] 
     node.className = "z-datefield__segment";
     node.setAttribute("role", "spinbutton");
     node.dataset.segment = part.type;
-    node.setAttribute("aria-label", labels.get(part.type) ?? SEGMENT_LABELS[part.type]);
+    node.setAttribute("aria-label", labels.get(part.type) ?? localize("segment", SEGMENT_LABELS, localeOf(field))[part.type]);
     const placeholder = placeholders.get(part.type);
     if (placeholder !== undefined) node.dataset.placeholderText = placeholder;
     node.setAttribute("inputmode", part.type === "dayPeriod" ? "text" : "numeric");

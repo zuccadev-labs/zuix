@@ -3,6 +3,7 @@
 // un `popover` con casillas o botones de opción nativos (el teclado y los lectores los conocen sin más). «Clear» solo
 // aparece con algún filtro activo, y el número de activos se lee en la descripción del grupo y se anuncia al cambiar.
 // Valor controlado (`value`) o libre (`defaultValue`); cada cambio sale como `change { value, id }`.
+import { localize } from "./locale";
 
 import { trackScrollEdges } from "./edges";
 import {
@@ -170,7 +171,7 @@ export const filterBarWidget: Widget<FilterBarProps, Config, State> = {
     value: p.value,
     defaultValue: p.defaultValue ?? {},
     size: p.size === "sm" ? "sm" : "md",
-    labels: { ...FILTER_BAR_LABELS, ...p.labels },
+    labels: { ...localize("filterBar", FILTER_BAR_LABELS), ...p.labels },
   }),
   initial: (c) => ({ value: c.value ?? c.defaultValue, source: valueKey(c.value), open: "" }),
   control(c, s) {

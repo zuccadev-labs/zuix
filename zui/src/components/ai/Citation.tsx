@@ -1,3 +1,4 @@
+import { localize } from "../../core/locale";
 import { AI_LABELS, citationNode, type AiLabels, type Source } from "../../core/ai-widgets";
 import type { VEl } from "../../core/vnode";
 import { staticNode } from "../chat/static";
@@ -12,5 +13,5 @@ export interface CitationProps {
 
 /** Cita en línea: enlace «Source 1: título» con una tarjeta de la fuente al pasar el puntero o enfocar. */
 export function Citation({ index, source, labels, className }: CitationProps) {
-  return staticNode(citationNode(index, source, { ...AI_LABELS, ...labels }) as VEl, { className });
+  return staticNode(citationNode(index, source, { ...localize("ai", AI_LABELS), ...labels }) as VEl, { className });
 }

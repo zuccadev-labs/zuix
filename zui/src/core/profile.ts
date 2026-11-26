@@ -1,5 +1,6 @@
 // ProfileEditor: reglas de cada campo (nombre, usuario, correo, web, biografía) con mensajes que dicen cómo
 // corregirlo, y el contador de la biografía. Lo comparten el binding de React y el modo DOM. Sin documento.
+import { localize } from "./locale";
 
 export interface ProfileValues {
   name: string;
@@ -82,7 +83,7 @@ export function validateProfile(
     fields?: readonly (keyof ProfileValues)[];
   } = {},
 ): ProfileErrors {
-  const l = { ...PROFILE_LABELS, ...options.labels };
+  const l = { ...localize("profile", PROFILE_LABELS), ...options.labels };
   const max = options.bioMax ?? BIO_MAX;
   const want = (k: keyof ProfileValues) => !options.fields || options.fields.includes(k);
   const errors: ProfileErrors = {};
@@ -101,4 +102,35 @@ export function validateProfile(
 
 /** Texto del contador de la biografía. */
 export const bioCounter = (bio: string, max = BIO_MAX, labels: Partial<ProfileLabels> = {}) =>
-  (labels.counter ?? PROFILE_LABELS.counter).replace("{count}", String(visibleLength(bio))).replace("{max}", String(max));
+  (labels.counter ?? localize("profile", PROFILE_LABELS).counter).replace("{count}", String(visibleLength(bio))).replace("{max}", String(max));
+
+export interface SettingRowLabels {
+  saving: string;
+  saved: string;
+  error: string;
+}
+
+export const SETTING_ROW_LABELS: SettingRowLabels = { saving: "Saving…", saved: "Saved", error: "Couldn't save" };
+
+export interface AccountMenuLabels {
+  /** Nombre del botón: «Account of {name}». */
+  trigger: string;
+  accounts: string;
+  theme: string;
+  light: string;
+  dark: string;
+  system: string;
+  signOut: string;
+  addAccount: string;
+}
+
+export const ACCOUNT_MENU_LABELS: AccountMenuLabels = {
+  trigger: "Account of {name}",
+  accounts: "Switch account",
+  theme: "Theme",
+  light: "Light",
+  dark: "Dark",
+  system: "System",
+  signOut: "Sign out",
+  addAccount: "Add account",
+};
