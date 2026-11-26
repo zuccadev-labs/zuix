@@ -43,13 +43,20 @@ export default function ({ t, assert, poll }) {
       name: "AdaptiveLayout: cambia de clase al redimensionar el contenedor y el DOM sigue el orden visual (React)",
       async run({ open, shot }) {
         const page = await open("adaptive", { width: 1440, height: 1000 });
+        // Sin animación: con la view transition del marco en curso, la medida intermedia también cuadra con su ancho.
+        await page.getByRole("switch", { name: "Animate changes" }).click();
         const seen = new Set();
         const trail = [];
         for (const label of ["390", "820", "1180", "1600", "1960", "Fit"]) {
           await frame(page, label);
+          // Dos lecturas iguales seguidas: el Shell del marco y el layout ya se asentaron.
+          let last = "";
           const s = await poll(async () => {
             const st = await layoutState(page);
-            return st.cls === classFor(st.width) ? st : null;
+            const key = `${st.cls}:${Math.round(st.width)}`;
+            const stable = key === last;
+            last = key;
+            return stable && st.cls === classFor(st.width) ? st : null;
           }, `la clase del layout corresponde a su ancho (marco ${label})`);
           seen.add(s.cls);
           trail.push(`${label}:${s.cls}:${Math.round(s.width)}`);
