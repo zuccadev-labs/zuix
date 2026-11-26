@@ -210,6 +210,35 @@ describe("enrutado ortogonal", () => {
     const inner = pts.slice(1, -1);
     assert.equal(crosses(inner, b), false, JSON.stringify(pts));
   });
+  test("A* sobre la rejilla local: rodea una pared con un hueco, ortogonal y determinista", () => {
+    // Una pared vertical con un único hueco abajo: la ruta tiene que pasar por él.
+    const walls = [
+      { id: "w1", x: 200, y: -400, width: 40, height: 520 },
+      { id: "w2", x: 200, y: 200, width: 40, height: 400 },
+    ];
+    const req = [
+      { id: "e", ends: { source: { x: 0, y: 0 }, sourceSide: "right" as const, target: { x: 500, y: 0 }, targetSide: "left" as const } },
+    ];
+    const a = routeOrthogonal(req, walls, { strategy: "grid" });
+    const b = routeOrthogonal(req, walls, { strategy: "grid" });
+    const pts = a.routes.get("e")!.points;
+    assert.deepEqual(pts, b.routes.get("e")!.points);
+    assert.deepEqual(a.fallbacks, []);
+    assert.ok(orthogonalOnly(pts));
+    for (const w of walls) assert.equal(crosses(pts, w), false, JSON.stringify(pts));
+    assert.ok(
+      pts.some((p) => p.y > 120 && p.y < 200),
+      "pasa por el hueco",
+    );
+    // Sin salida (la rejilla tapada): repliegue a la escalonada, anotado.
+    const box = [
+      { id: "box", x: -2000, y: -2000, width: 4000, height: 1990 },
+      { id: "box2", x: -2000, y: 10, width: 4000, height: 2000 },
+      { id: "mid", x: 100, y: -30, width: 300, height: 60 },
+    ];
+    const c = routeOrthogonal(req, box, { strategy: "grid", maxGrid: 8 });
+    assert.deepEqual(c.fallbacks, ["e"]);
+  });
   test("reparte en carriles los tramos compartidos", () => {
     const routes = [
       [

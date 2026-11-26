@@ -33,6 +33,8 @@ export interface OrthogonalOptions {
   bendCost?: number;
   /** Tope de coordenadas por eje de la rejilla local del A*. Por defecto 96. */
   maxGrid?: number;
+  /** `auto` (formas sencillas y, si no hay salida, A*) o `grid` (siempre A*, más lento). Por defecto `auto`. */
+  strategy?: "auto" | "grid";
 }
 
 const NORMAL: Record<Side, Point> = { left: { x: -1, y: 0 }, right: { x: 1, y: 0 }, top: { x: 0, y: -1 }, bottom: { x: 0, y: 1 } };
@@ -380,7 +382,7 @@ function routeAround(
   const ranked = candidates(req.ends, o.offset, near, pad)
     .map((points, i) => ({ points, i, k: cost(points, o.bendCost) }))
     .sort((a, b) => a.k - b.k || a.i - b.i);
-  for (const c of ranked) if (!blocked(c.points, index, skip, strict)) return c.points;
+  if (o.strategy !== "grid") for (const c of ranked) if (!blocked(c.points, index, skip, strict)) return c.points;
   return gridRoute(req.ends, o.offset, index, skip, pad, o.bendCost, o.maxGrid, strict) ?? orthogonalPoints(req.ends, o.offset);
 }
 
@@ -485,6 +487,7 @@ export function routeOrthogonal(
     offset: options.offset ?? 20,
     bendCost: options.bendCost ?? 40,
     maxGrid: options.maxGrid ?? 96,
+    strategy: options.strategy ?? "auto",
   };
   const grown = obstacles.map((r) => ({
     id: r.id,
