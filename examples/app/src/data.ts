@@ -29,7 +29,9 @@ export type ScreenId =
   | "login"
   | "flows"
   | "pickers"
-  | "listing";
+  | "listing"
+  | "page"
+  | "studio";
 
 export interface ScreenDef {
   id: ScreenId;
@@ -68,6 +70,8 @@ export const SCREENS: ScreenDef[] = [
   { id: "flows", title: "Flows", icon: "share", hint: "Node editor with ports, edges and minimap" },
   { id: "pickers", title: "Pickers", icon: "list-bullet", hint: "Cascader, tree select, masks and ranges" },
   { id: "listing", title: "Listing", icon: "home-modern", hint: "Notifications, filters, prices, reviews and photos" },
+  { id: "page", title: "Page", icon: "bookmark", hint: "Contents, sticky bars, loading bar, views, mentions and search" },
+  { id: "studio", title: "Studio", icon: "wrench-screwdriver", hint: "Chat search, previews, voice, traces, audio and widgets" },
 ];
 
 export const isScreen = (value: string | null): value is ScreenId => SCREENS.some((s) => s.id === value);

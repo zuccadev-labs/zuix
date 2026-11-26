@@ -23,6 +23,7 @@ import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import listingCases from "./cases-listing.mjs";
+import pageCases from "./cases-page.mjs";
 import popoverApiCases from "./cases-popover-api.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
@@ -288,6 +289,8 @@ const SCREENS = [
   "login",
   "flows",
   "listing",
+  "page",
+  "studio",
 ];
 
 export const cases = [
@@ -669,8 +672,8 @@ export const cases = [
       await expectCount(
         page,
         ".z-palette__item",
-        41,
-        "41 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Flows, Chat, Assistant, Dashboard, Profile, Settings, Board, Sign in, Pickers y Listing)",
+        43,
+        "43 comandos sin filtro (pantallas Agenda, Inputs, Commands, Workspace, Content, Data, Charts, Site, Media, Carousels, Time, Terminal, Flows, Chat, Assistant, Dashboard, Profile, Settings, Board, Sign in, Pickers, Listing, Page y Studio)",
       );
       await settled(page);
       await shot(page, "overlay-palette");
@@ -3154,6 +3157,7 @@ export const cases = [
     datagridCases,
     scaleCases,
     listingCases,
+    pageCases,
   ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
