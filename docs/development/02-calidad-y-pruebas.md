@@ -274,6 +274,7 @@ puertos mantienen el objetivo de 24 px a cualquier zoom.
 
 ```
 pnpm audit:visual --target site --brands dazlabs --widths 1440 --themes dark   # una pasada rápida
+pnpm audit:visual --target app --filter chat,inputs --dir rtl                     # de derecha a izquierda
 pnpm audit:visual --target app --filter forms --shots                          # una pantalla, con capturas
 AUDIT_OUT=/ruta/salida pnpm audit:visual                                       # todo, en otra carpeta
 ```

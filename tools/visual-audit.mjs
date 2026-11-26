@@ -31,6 +31,7 @@
 // Uso (desde la raíz; antes `pnpm check` y, para el sitio, el build de zudocs):
 //   pnpm audit:visual [--target site,app,html] [--brands dazlabs,zutool,zenith] [--themes dark,light]
 //                     [--widths 1440,768,390] [--filter <texto>[,<texto>…]] [--out <carpeta>] [--shots] [--no-axe]
+//                     [--dir rtl]
 //                     [--site <carpeta compilada>] [--base /ruta/] [--max <n páginas>] [--report]
 //   AUDIT_OUT=<carpeta>  carpeta de salida (por defecto .tmp/visual-audit, fuera del control de versiones)
 //   --report             reclasifica el último raw.json sin abrir el navegador (para afinar los detectores)
@@ -74,6 +75,8 @@ const baseArg = opt("--base");
 const maxPages = Number(opt("--max", "0")) || Number.POSITIVE_INFINITY;
 const shots = flag("--shots");
 const noAxe = flag("--no-axe");
+// --dir rtl: cada página de derecha a izquierda (`dir` en <html> antes de medir).
+const dir = opt("--dir", "ltr") === "rtl" ? "rtl" : "ltr";
 const reportOnly = flag("--report");
 const concurrency = Number(opt("--jobs", "4")) || 4;
 mkdirSync(out, { recursive: true });
@@ -1666,7 +1669,7 @@ async function audit(browser, job, axeSource) {
   });
   const page = await context.newPage();
   page.setDefaultTimeout(25000);
-  const record = { ...job, errors: [], issues: [], focus: [], fonts: [], axe: [] };
+  const record = { ...job, dir, errors: [], issues: [], focus: [], fonts: [], axe: [] };
   page.on("pageerror", (e) => record.errors.push(`pageerror: ${e.message.slice(0, 200)}`));
   page.on("console", (m) => {
     if (m.type() === "error" && !/Failed to load resource/.test(m.text())) record.errors.push(`consola: ${m.text().slice(0, 200)}`);
@@ -1686,6 +1689,7 @@ async function audit(browser, job, axeSource) {
     if (job.injected) await page.addStyleTag({ path: join(root, `tokens/dist/brands/${job.brand}.css`) });
     if (job.setBrand) await page.evaluate((b) => (document.documentElement.dataset.brand = b), job.brand);
     if (job.setTheme) await page.evaluate((t) => (document.documentElement.dataset.theme = t), job.theme);
+    if (dir === "rtl") await page.evaluate(() => (document.documentElement.dir = "rtl"));
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(job.target === "app" ? 600 : 250);
     const families = [...FAMILIES[job.brand], ...(job.injected ? FAMILIES.dazlabs : [])];

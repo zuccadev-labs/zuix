@@ -25,7 +25,9 @@ const walk = (d) =>
 const load = async (file) => (await tsImport(pathToFileURL(file).href, import.meta.url)).default;
 
 const leaves = (o, prefix = "") =>
-  Object.entries(o).flatMap(([k, v]) => (typeof v === "string" ? [[`${prefix}${k}`, v]] : typeof v === "object" && v ? leaves(v, `${prefix}${k}.`) : [[`${prefix}${k}`, v]]));
+  Object.entries(o).flatMap(([k, v]) =>
+    typeof v === "string" ? [[`${prefix}${k}`, v]] : typeof v === "object" && v ? leaves(v, `${prefix}${k}.`) : [[`${prefix}${k}`, v]],
+  );
 const groups = (o, prefix = "") =>
   Object.entries(o).flatMap(([k, v]) => (typeof v === "object" && v ? [`${prefix}${k}`, ...groups(v, `${prefix}${k}.`)] : []));
 
@@ -54,7 +56,9 @@ for (const pkg of PACKAGES) {
         fail(`${where}: ${m[2]} no se exporta; muévela a core para que entre en los paquetes de idioma`);
         continue;
       }
-      const mod = `../${relative(src, file).replace(/\\/g, "/").replace(/\.tsx?$/, "")}`;
+      const mod = `../${relative(src, file)
+        .replace(/\\/g, "/")
+        .replace(/\.tsx?$/, "")}`;
       const imported = [...enText.matchAll(/import \{([^}]*)\} from "([^"]+)"/g)].some(
         (i) => i[2] === mod && i[1].split(",").some((n) => n.trim().split(/\s+as\s+/)[0] === m[2]),
       );
@@ -103,7 +107,8 @@ for (const pkg of PACKAGES) {
         marked += 1;
       }
     }
-    for (const key of own.keys()) if (!enLeaves.has(key)) fail(`${name}: sobra ${key}${enGroups.has(key) ? " (en inglés es un grupo)" : ""}`);
+    for (const key of own.keys())
+      if (!enLeaves.has(key)) fail(`${name}: sobra ${key}${enGroups.has(key) ? " (en inglés es un grupo)" : ""}`);
     for (const key of same) {
       if (!enLeaves.has(key)) fail(`${name}: same nombra ${key}, que no existe`);
       else if (own.get(key) !== enLeaves.get(key)) warnings.push(`${name}: same nombra ${key}, que ya no coincide con el inglés`);
@@ -112,7 +117,9 @@ for (const pkg of PACKAGES) {
 }
 
 if (warnings.length) {
-  console.log(`· ${warnings.length} aviso${warnings.length === 1 ? "" : "s"} (textos iguales al inglés sin declarar en same, o same desfasado):`);
+  console.log(
+    `· ${warnings.length} aviso${warnings.length === 1 ? "" : "s"} (textos iguales al inglés sin declarar en same, o same desfasado):`,
+  );
   for (const w of warnings) console.log(`  · ${w}`);
 }
 if (errors.length) {
