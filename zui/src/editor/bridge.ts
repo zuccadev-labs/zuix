@@ -14,6 +14,7 @@ import { createUndoStack } from "../core/undo";
 import { type DomView, type Hydrator, renderToDOM } from "./dom";
 import { migrateDocument } from "./migrate";
 import { createOverlay, rectOf, type Overlay } from "./overlay";
+import { areaRects as coreAreaRects, parseAreasValue } from "../core/adaptive";
 import {
   type CanvasEnvelope,
   type CanvasMessages,
@@ -51,7 +52,7 @@ import {
   isSizeClass,
   resolveAdaptive,
   resolveTemplate,
-  sizeClassOf,
+  sizeClassFor,
   templateAreas,
 } from "./adaptive";
 import {
@@ -200,7 +201,7 @@ export function createCanvas(o: CanvasOptions): Canvas {
     const cs = win.getComputedStyle(o.container);
     return o.container.clientWidth - (Number.parseFloat(cs.paddingInlineStart) || 0) - (Number.parseFloat(cs.paddingInlineEnd) || 0);
   };
-  const sizeClass = (): SizeClass => forced.sizeClass ?? sizeClassOf(forced.width ?? contentWidth());
+  const sizeClass = (): SizeClass => forced.sizeClass ?? sizeClassFor(forced.width ?? contentWidth());
   const applyViewport = () => {
     const width = forced.width ?? (forced.sizeClass ? SIZE_CLASS_PREVIEW[forced.sizeClass] : null);
     if (width) {
@@ -231,25 +232,21 @@ export function createCanvas(o: CanvasOptions): Canvas {
     (layout.props?.templates ?? o.catalog.blocks.find((b) => b.type === layout.type)?.adaptive?.layout?.templates) as
       | AdaptiveTemplates
       | undefined;
-  /** Caja de cada área: la unión de sus piezas visibles; un área vacía toma la del layout. */
+  /**
+   * Caja de cada área de la plantilla en vigor, medida sobre las pistas reales de la rejilla (`.z-adaptive__grid`):
+   * tamaños resueltos de filas y columnas, huecos y dirección de escritura. Un área vacía tiene caja igual.
+   */
   const areaRects = (only?: string) => {
     const cls = sizeClass();
     const out: { parent: string; area: string; rect: { x: number; y: number; width: number; height: number } }[] = [];
     for (const layout of adaptiveLayouts(only)) {
       const box = view.elementOf(layout.id);
-      if (!box) continue;
+      const grid = box?.querySelector<HTMLElement>(":scope > .z-adaptive__grid");
+      if (!box || !grid) continue;
+      const cells = gridAreaRects(grid);
       for (const area of templateAreas(resolveTemplate(templatesOf(layout), cls))) {
-        const rects = (layout.children ?? [])
-          .filter((c) => !isText(c) && resolveAdaptive(c.adaptive, cls).area === area && !resolveAdaptive(c.adaptive, cls).hidden)
-          .map((c) => view.elementOf(c.id))
-          .filter((e): e is HTMLElement => e !== null)
-          .map(rectOf);
-        const base = rects.length ? rects : [rectOf(box)];
-        const x0 = Math.min(...base.map((r) => r.x));
-        const y0 = Math.min(...base.map((r) => r.y));
-        const x1 = Math.max(...base.map((r) => r.x + r.width));
-        const y1 = Math.max(...base.map((r) => r.y + r.height));
-        out.push({ parent: layout.id, area, rect: { x: x0, y: y0, width: x1 - x0, height: y1 - y0 } });
+        const rect = cells.get(area);
+        if (rect) out.push({ parent: layout.id, area, rect });
       }
     }
     return out;
@@ -692,4 +689,42 @@ function connection(port: MessagePort, ready: CanvasMessages["ready"]): CanvasCo
       port.close();
     },
   };
+}
+
+/** Tamaños en px de una lista de pistas resuelta (`grid-template-columns` calculado), sin los nombres de línea. */
+export const trackSizes = (value: string): number[] =>
+  [...value.replace(/\[[^\]]*\]/g, " ").matchAll(/(-?[\d.]+)px/g)].map((m) => Number(m[1]));
+
+/**
+ * Caja (coordenadas de la ventana) de cada área con nombre de una rejilla, a partir de sus pistas reales: lo que
+ * ocupa el área aunque esté vacía o su pieza no la llene. En RTL las columnas se cuentan desde la derecha.
+ */
+export function gridAreaRects(grid: HTMLElement): Map<string, { x: number; y: number; width: number; height: number }> {
+  const view = grid.ownerDocument.defaultView!;
+  const cs = view.getComputedStyle(grid);
+  const out = new Map<string, { x: number; y: number; width: number; height: number }>();
+  const rows = parseAreasValue(cs.gridTemplateAreas);
+  if (!rows) return out;
+  const cols = trackSizes(cs.gridTemplateColumns);
+  const lines = trackSizes(cs.gridTemplateRows);
+  const colGap = Number.parseFloat(cs.columnGap) || 0;
+  const rowGap = Number.parseFloat(cs.rowGap) || 0;
+  const r = grid.getBoundingClientRect();
+  const left = r.left + (Number.parseFloat(cs.borderLeftWidth) || 0) + (Number.parseFloat(cs.paddingLeft) || 0);
+  const right = r.right - (Number.parseFloat(cs.borderRightWidth) || 0) - (Number.parseFloat(cs.paddingRight) || 0);
+  const top = r.top + (Number.parseFloat(cs.borderTopWidth) || 0) + (Number.parseFloat(cs.paddingTop) || 0);
+  const start = (sizes: number[], gap: number, i: number) => sizes.slice(0, i).reduce((a, b) => a + b, 0) + i * gap;
+  const span = (sizes: number[], gap: number, i: number, end: number) => start(sizes, gap, end) - start(sizes, gap, i) - gap;
+  const rtl = cs.direction === "rtl";
+  for (const [name, a] of coreAreaRects(rows)) {
+    const width = span(cols, colGap, a.col, a.colEnd);
+    const x0 = start(cols, colGap, a.col);
+    out.set(name, {
+      x: rtl ? right - x0 - width : left + x0,
+      y: top + start(lines, rowGap, a.row),
+      width,
+      height: span(lines, rowGap, a.row, a.rowEnd),
+    });
+  }
+  return out;
 }

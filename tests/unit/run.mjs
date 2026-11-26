@@ -36,7 +36,7 @@ const COVERED = [
   "tools/use-client.mjs",
   "tools/compat.mjs",
   "zout/src/logic.ts",
-  "zout/src/adaptive.ts",
+  "zui/src/core/adaptive.ts",
   "zout/src/adaptive-runtime.ts",
   "zout/src/edges.ts",
   "zout/src/pages.ts",

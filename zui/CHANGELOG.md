@@ -7,6 +7,10 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- `@zuccadev-labs/zuix-zui/adaptive` (y `@zuccadev-labs/zuix/zui/adaptive`): el núcleo de los layouts adaptativos, sin
+  React ni DOM: clases de tamaño, fusión de los ajustes por clase, plantillas, orden de lectura y variables por clase.
+  Lo usan `AdaptiveLayout` de zout y el conector del editor, que escribe el mismo marcado
+  ([Layouts adaptativos](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/13-layouts-adaptativos.md)).
 - Conector para editores visuales de páginas por bloques: `@zuccadev-labs/zuix-zui/editor` (sin React) y
   `@zuccadev-labs/zuix-zui/editor/react`. Lo describe
   [Conectar un editor visual](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/12-conectar-un-editor.md).
@@ -22,9 +26,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
     mensajes por un `MessagePort`, versión de protocolo, selección y paso del puntero con capas fuera del
     documento, historial de deshacer, tema y tokens en vivo, puntos de anclaje y áreas para soltar.
   - Adaptativo: `adaptive` por clase de tamaño (`compact` a `xlarge`) en cada nodo, plantillas de áreas de
-    `AdaptiveLayout`, variantes adaptativas de `Tabs`, `Sidebar`, `DataTable` y `Toolbar`, vista previa por clase y
-    mover piezas de área arrastrando en el lienzo. El marcado de `AdaptiveLayout` es provisional hasta integrarlo
-    desde zout.
+    `AdaptiveLayout`, variantes adaptativas de `AdaptiveTabs`, `AdaptiveTable` y `AdaptiveToolbar` (con alias), vista
+    previa por clase y mover piezas de área arrastrando en el lienzo, medidas sobre las celdas reales de la rejilla.
+    El marcado es el de `AdaptiveLayout` de zout.
   - Edición de marca (`createBrandEditor`): tokens con tipo y rango, variables CSS en vivo, el contraste con las
     mismas reglas que `pnpm tokens` y el archivo de marca validado con `brand.schema.json`.
 - `styles/editor.css` (en `styles.css`): las capas de selección del lienzo (`.z-editor-overlay`).

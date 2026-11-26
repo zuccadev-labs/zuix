@@ -113,6 +113,10 @@
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"
     },
+    "./zui/adaptive": {
+      "types": "./zui-adaptive.d.ts",
+      "default": "./zui-adaptive.js"
+    },
     "./editor": {
       "types": "./editor.d.ts",
       "default": "./editor.js"

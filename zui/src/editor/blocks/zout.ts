@@ -2,7 +2,7 @@
 // marcado de su contrato (`zout/html.json`), igual que una aplicación sin React. `pnpm check` lo compara con él.
 
 import { h } from "../../core/vnode";
-import { type AdaptiveTemplates, adaptiveLayoutAttributes } from "../adaptive";
+import { type AdaptiveTemplates, adaptiveLayoutTree } from "../adaptive";
 import type { BlockSpec } from "../render";
 import { oneOf } from "../render";
 import { FLOW, LAYOUT, PHRASING, SPACE, bool, enumOf, text } from "./shared";
@@ -271,7 +271,6 @@ export const ZOUT_BLOCKS: BlockSpec[] = [
   {
     type: "AdaptiveLayout",
     package: "zout",
-    provisional: "AdaptiveLayout llega a zout en la rama feat/v05-adaptive; su manifiesto y su marcado sustituyen a estos al integrar.",
     title: "AdaptiveLayout",
     group: "layout",
     description: "Rejilla de áreas con una plantilla por clase de tamaño. Cada hijo elige área, orden y visibilidad por clase.",
@@ -371,12 +370,8 @@ export const ZOUT_BLOCKS: BlockSpec[] = [
         },
       },
     ],
-    render: ({ props, children }) => {
-      const { a, s } = adaptiveLayoutAttributes(
-        props.templates as AdaptiveTemplates | undefined,
-        props.measure === "viewport" ? "viewport" : "container",
-      );
-      return { t: "div", a: { class: "z-adaptive", ...a }, s, c: children };
-    },
+    // El marcado de zout (`zout/html.json`): la rejilla y cada hijo como pieza, con las variables de las cinco clases.
+    render: ({ props, children }) =>
+      adaptiveLayoutTree(props.templates as AdaptiveTemplates | undefined, props.measure === "viewport" ? "viewport" : "container", children),
   },
 ];

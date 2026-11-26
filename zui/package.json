@@ -54,6 +54,7 @@
     "./dom/people": "./src/dom/families/people.ts",
     "./dom/nodes": "./src/dom/families/nodes.ts",
     "./dom/carousel-gl": "./src/dom/carousel-gl.ts",
+    "./adaptive": "./src/core/adaptive.ts",
     "./editor": "./src/editor/index.ts",
     "./editor/react": "./src/editor/react.ts",
     "./editor/catalog.json": "./editor/catalog.json",
@@ -191,6 +192,10 @@
       "./dom/carousel-gl": {
         "types": "./dist/esm/dom/carousel-gl.d.ts",
         "default": "./dist/esm/dom/carousel-gl.js"
+      },
+      "./adaptive": {
+        "types": "./dist/esm/core/adaptive.d.ts",
+        "default": "./dist/esm/core/adaptive.js"
       },
       "./editor": {
         "types": "./dist/esm/editor/index.d.ts",

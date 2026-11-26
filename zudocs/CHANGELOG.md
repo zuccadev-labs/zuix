@@ -10,6 +10,8 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 ### Añadido
 
 - La guía «Conectar un editor visual» y la investigación del conector de editores, en el sitio y en `llms.txt`.
+- La guía «Layouts adaptativos» y las páginas de `AdaptiveLayout`, `AdaptiveSwitch`, `AdaptiveTabs`,
+  `AdaptiveTable` y `AdaptiveToolbar`.
 - Páginas del catálogo para `ScatterChart`, `RadarChart`, `ComboChart`, `HeatmapChart`, `BulletChart`,
   `CategoryBar` y `AnimatedNumber`, con su vista previa sin framework, y `llms.txt` al día.
 - Páginas de Cascader, TreeSelect, MaskedInput, DateTimeRangePicker, TimeRangePicker y QuarterPicker, con la vista

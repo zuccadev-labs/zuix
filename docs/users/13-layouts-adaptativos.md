@@ -68,6 +68,10 @@ Las clases se heredan hacia arriba (mobile-first): lo de `compact` vale hasta qu
 
 `resolveAdaptive(adaptive, clase)` hace esa fusión; `resolveAll(adaptive)` la da para las cinco clases.
 
+Este núcleo (sin React ni DOM) está en `@zuccadev-labs/zuix-zui/adaptive` y zout lo reexporta desde su raíz: lo usan
+también el conector del editor visual, que escribe el mismo marcado que `AdaptiveLayout`, y cualquier servidor
+que quiera escribirlo.
+
 ### Plantillas
 
 Un layout adaptativo lleva una plantilla por clase, también heredada hacia arriba:

@@ -61,6 +61,7 @@ pnpm add react react-dom
 | `@zuccadev-labs/zuix/tokens/dazlabs.css`, `/tokens/zutool.css`, `/tokens/zenith.css` | Una sola marca en `:root` |
 | `@zuccadev-labs/zuix/tailwind.css`, `/docusaurus.css` | Puentes de los tokens a Tailwind 4 y a Docusaurus |
 | `@zuccadev-labs/zuix/zui`, `/zui/dom`, `/zui/dom/carousel-gl` | Las mismas entradas de `@zuccadev-labs/zuix-zui` |
+| `@zuccadev-labs/zuix/zui/adaptive` | El núcleo de los layouts adaptativos, sin React ni DOM ([Layouts adaptativos](./13-layouts-adaptativos.md)) |
 | `@zuccadev-labs/zuix/zui/dom/core`, `/zui/dom/<familia>` | El núcleo y cada familia del modo sin framework: `dates`, `data`, `content`, `agenda`, `charts`, `color`, `media`, `effects`, `time`, `terminal`, `chat`, `ai`, `dashboard`, `people` y `nodes` ([Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias)) |
 | `@zuccadev-labs/zuix/editor`, `/editor/react`, `/editor/catalog` | El conector de editores visuales de `@zuccadev-labs/zuix-zui/editor` y su catálogo como módulo ([Conectar un editor](./12-conectar-un-editor.md)) |
 | `@zuccadev-labs/zuix/zout`, `/zout/dom` | `@zuccadev-labs/zuix-zout`, `@zuccadev-labs/zuix-zout/dom` |

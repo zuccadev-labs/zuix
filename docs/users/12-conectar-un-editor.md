@@ -149,16 +149,20 @@ Se miden sobre el contenedor. Lo que se declara en una clase vale hasta que una 
 
 - `area` tiene que existir en la plantilla del `AdaptiveLayout` padre para esa clase. Una plantilla es la de
   `grid-template-areas`, por clase: `{ "compact": { "areas": ["main", "aside"] }, "expanded": { "areas": ["main aside"], "columns": "1fr 18rem" } }`, y sus áreas deben ser rectángulos.
-- `variant` es una de las que declara el bloque en `adaptive.variants`: `Tabs` (`tabs`, `select`,
-  `bottom-navigation`), `Sidebar` (`sidebar`, `drawer`, `rail`), `DataTable` (`table`, `cards`) y `Toolbar`
-  (`toolbar`, `overflow`).
+- `variant` es una de las que declara el bloque en `adaptive.variants`: `AdaptiveTabs` (`tabs`, `select`,
+  `bottom-nav`), `AdaptiveTable` (`table`, `cards`) y `AdaptiveToolbar` (`bar`, `menu`: todas las acciones al menú
+  «más»). Se aceptan los alias `bottom-navigation`, `sidebar` (= `docked`, la variante de los paneles del `Shell`),
+  `toolbar` y `overflow`; se guardan con el nombre canónico. Con `toReact`, la variante llega a la prop `adaptive`
+  del componente.
 - `props` cambia props en esa clase y se valida con el esquema del bloque.
 
-El CSS y la resolución en ejecución son de `AdaptiveLayout`. Hasta que llegue a zout, el conector trae un
-resolvedor mínimo con la misma semántica (`resolveAdaptive`, `resolveTemplate`, `sizeClassOf`) y escribe un
-marcado provisional: variables `--z-area-<clase>`, `--z-order-<clase>`, `--z-span-<clase>`, atributos
-`data-hidden-<clase>` y `data-variant-<clase>`, y la especificación en `data-z-adaptive`. El documento y el
-catálogo no cambiarán al integrarlo; el marcado sí, al del componente.
+La resolución es la de los layouts adaptativos de zout, que viven en `@zuccadev-labs/zuix-zui/adaptive`
+(`resolveAdaptive`, `resolveTemplate`, `sizeClassFor`, `templateVars`, `nodeStyle`), y el marcado, el de
+`AdaptiveLayout` ([Layouts adaptativos](./13-layouts-adaptativos.md)): `.z-adaptive > .z-adaptive__grid` con las
+plantillas de las cinco clases en variables, y cada hijo como `.z-adaptive__item` con `data-item`,
+`--z-place-<clase>`, `--z-order-<clase>` y `data-hidden-in`. La especificación del nodo va además en
+`data-z-adaptive`. El lienzo coloca con la hoja de zout; para que el orden del DOM siga al visual, hidrata también
+con `@zuccadev-labs/zuix-zout/dom`.
 
 ## Las salidas
 
@@ -295,6 +299,6 @@ todo esto en unas 370 líneas, sin estilo de producto: `node examples/editor-can
 
 - Un editor real encima: el adaptador está por escribir y puede pedir mensajes que aquí no están.
 - El puente fuera de Chromium.
-- El marcado de `AdaptiveLayout`: es provisional hasta integrar el de zout.
-- Las áreas como zonas de soltar se calculan con la unión de las piezas de cada área; un área vacía toma la caja
-  del layout. Con el CSS de `AdaptiveLayout` se podrán medir las celdas de la rejilla.
+- Las áreas como zonas de soltar se miden sobre las pistas resueltas de la rejilla (`gridTemplateColumns` y
+  `gridTemplateRows` calculados); con `measure: "viewport"` la vista previa por clase no cambia el ancho de la
+  ventana del lienzo, solo el del contenedor, y ese layout sigue a la ventana.

@@ -17,10 +17,11 @@ import {
   type PageNode,
   type SizeClass,
   DOCUMENT_JSON_SCHEMA,
-  SIZE_CLASSES,
+  SIZE_CLASS_NAMES,
+  normalizeVariant,
   resolveAdaptive,
   resolveTemplate,
-  sizeClassOf,
+  sizeClassFor,
   templateAreas,
   templateProblems,
   updateAdaptive,
@@ -648,7 +649,7 @@ describe("adaptativo", () => {
     ({ id, type: "Section", adaptive, children: [{ id: `${id}-p`, type: "Paragraph", children: [t(`${id}-t`, id)] }] }) as PageNode;
 
   test("clases de tamaño y fusión de móvil hacia arriba", () => {
-    assert.deepEqual([0, 599, 600, 839, 840, 1199, 1200, 1599, 1600, 4000].map(sizeClassOf), [
+    assert.deepEqual([0, 599, 600, 839, 840, 1199, 1200, 1599, 1600, 4000].map(sizeClassFor), [
       "compact",
       "compact",
       "medium",
@@ -675,10 +676,10 @@ describe("adaptativo", () => {
       { requiredKeys: [] },
     );
     fc.assert(
-      fc.property(fc.dictionary(fc.constantFrom(...SIZE_CLASSES), override), (spec) => {
-        for (const [i, cls] of SIZE_CLASSES.entries()) {
+      fc.property(fc.dictionary(fc.constantFrom(...SIZE_CLASS_NAMES), override), (spec) => {
+        for (const [i, cls] of SIZE_CLASS_NAMES.entries()) {
           const here = resolveAdaptive(spec, cls);
-          const below = i ? resolveAdaptive(spec, SIZE_CLASSES[i - 1] as SizeClass) : {};
+          const below = i ? resolveAdaptive(spec, SIZE_CLASS_NAMES[i - 1] as SizeClass) : {};
           for (const key of ["order", "hidden", "area"] as const) assert.equal(here[key], spec[cls]?.[key] ?? below[key]);
         }
       }),
@@ -715,32 +716,22 @@ describe("adaptativo", () => {
     assert.match(bad.errors[0]?.message ?? "", /área «nav», que la plantilla de AdaptiveLayout «al» no tiene \(main\)/);
     assert.deepEqual(codes(doc([section("x", { compact: { area: "main" } })])), ["adaptive.area"]);
     assert.deepEqual(codes(layout([], { compact: { areas: ["a b", "b a"] } })), ["adaptive.template", "adaptive.template"]);
-    assert.deepEqual(
-      codes(
-        doc([
-          {
-            id: "t",
-            type: "Tabs",
-            preset: catalog.blocks.find((b) => b.type === "Tabs")?.presets[0]?.id,
-            adaptive: { compact: { variant: "select" } },
-          },
-        ]),
-      ),
-      [],
-    );
-    assert.deepEqual(
-      codes(
-        doc([
-          {
-            id: "t",
-            type: "Tabs",
-            preset: catalog.blocks.find((b) => b.type === "Tabs")?.presets[0]?.id,
-            adaptive: { compact: { variant: "accordion" } },
-          },
-        ]),
-      ),
-      ["adaptive.variant"],
-    );
+    // Variantes de las piezas adaptativas de zout, con sus alias (bottom-navigation = bottom-nav).
+    const tabs = (variant: string): PageDocument =>
+      doc([
+        {
+          id: "t",
+          type: "AdaptiveTabs",
+          props: { label: "Work", items: [{ value: "a", label: "A", content: "A" }] as never },
+          adaptive: { compact: { variant } },
+        },
+      ]);
+    const variantCodes = (variant: string) => codes(tabs(variant)).filter((c) => c === "adaptive.variant");
+    assert.deepEqual(variantCodes("select"), []);
+    assert.deepEqual(variantCodes("bottom-navigation"), []);
+    assert.deepEqual(variantCodes("accordion"), ["adaptive.variant"]);
+    assert.equal(normalizeVariant("sidebar"), "docked");
+    assert.equal(normalizeVariant("bottom-navigation"), "bottom-nav");
     assert.deepEqual(
       codes(doc([{ id: "b", type: "Button", adaptive: { compact: { props: { size: "lg" } } }, children: [t("bt", "x")] }])),
       [],
@@ -754,16 +745,19 @@ describe("adaptativo", () => {
     ]);
   });
 
-  test("HTML: variables y datos por clase en la pieza y plantillas en el layout", () => {
+  test("HTML: el marcado de zout (rejilla, piezas y variables de las cinco clases)", () => {
     const html = toHTML(layout([section("m", { compact: { area: "main" }, expanded: { order: 2, hidden: false, variant: "x" } })]), {
       catalog,
     });
-    assert.match(
-      html,
-      /^<div class="z-adaptive" data-z-adaptive-layout data-measure="container" style="--z-adaptive-areas-compact: &quot;main&quot; &quot;aside&quot;; --z-adaptive-areas-expanded: &quot;main aside&quot;; --z-adaptive-columns-expanded: 1fr 18rem">/,
-    );
-    assert.match(html, /data-hidden-expanded="false" data-variant-expanded="x" data-z-adaptive="\{&quot;compact&quot;/);
-    assert.match(html, /style="--z-area-compact: main; --z-order-expanded: 2"/);
+    assert.match(html, /^<div class="z-adaptive" data-reorder="dom"><div class="z-adaptive__grid" style="--z-areas-compact: &quot;main&quot; &quot;aside&quot;; --z-columns-compact: minmax\(0, 1fr\);/);
+    assert.match(html, /--z-areas-expanded: &quot;main aside&quot;; --z-columns-expanded: 1fr 18rem;/);
+    assert.match(html, /<section data-item="m" data-z-adaptive="\{&quot;compact&quot;:\{&quot;area&quot;:&quot;main&quot;\}[^>]*class="z-adaptive__item"/);
+    assert.match(html, /--z-place-compact: main; --z-order-compact: 0; [^"]*--z-place-expanded: main; --z-order-expanded: 2/);
+    // Oculta en compact y medium: data-hidden-in, como AdaptiveItem.
+    const hidden = toHTML(layout([section("n", { compact: { hidden: true }, expanded: { hidden: false, area: "aside" } })]), { catalog });
+    assert.match(hidden, /data-hidden-in="compact medium"/);
+    const viewport = toHTML(doc([{ id: "al", type: "AdaptiveLayout", props: { measure: "viewport" }, children: [] } as PageNode]), { catalog });
+    assert.match(viewport, /data-measure="window"/);
   });
 
   test("árbol: updateAdaptive por clase", () => {

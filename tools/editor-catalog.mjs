@@ -481,6 +481,13 @@ for (const block of blocks) {
     }
     if (mine && nodes[0].type === block.type) block.presets.push({ id: uniq(used, slug(ex.title)), title: ex.title, node: nodes[0] });
   }
+  // Los presets propios de la serialización (los que piensan en el documento, como los de AdaptiveLayout, cuyos
+  // ejemplos de React usan AdaptiveItem) van delante de los sacados de los ejemplos.
+  for (const p of [...(block._spec?.presets ?? [])].reverse()) {
+    if (used.has(p.id)) continue;
+    used.add(p.id);
+    block.presets.unshift(p);
+  }
   if (!block.presets.length) block.presets.push(defaultPreset(block, used));
 }
 for (const b of blocks) if (b.html === "template" && b.package === "core") b.presets.push(defaultPreset(b, new Set()));

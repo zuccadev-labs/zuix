@@ -1,170 +1,203 @@
 // Adaptativo en el documento: orden, área, visibilidad, ancho de columna, variante y props por clase de tamaño, y
-// plantillas de áreas de AdaptiveLayout. El contrato (nombres de clase, cortes y campos) es el de AdaptiveLayout de
-// zout; el CSS y la resolución en ejecución son suyos.
+// plantillas de AdaptiveLayout. La resolución y el marcado son los de los layouts adaptativos de zout, que viven en
+// `core/adaptive` (`@zuccadev-labs/zuix-zui/adaptive`): el editor escribe exactamente lo que escribe AdaptiveLayout.
 //
-// PROVISIONAL hasta integrar con zout: `resolveAdaptive`, `resolveTemplate` y `sizeClassOf` son resolvedores mínimos
-// con la semántica acordada (de móvil hacia arriba: lo de `compact` vale hasta que una clase mayor lo sobrescribe),
-// y `adaptiveAttributes`/`adaptiveLayoutAttributes` escriben un marcado provisional (variables `--z-*` y `data-*`).
-// Al integrar se sustituyen por los de zout sin cambiar el documento ni el catálogo.
+//   layout   .z-adaptive > .z-adaptive__grid, con las plantillas de las cinco clases en variables (`templateVars`)
+//   pieza    cada hijo del layout es un .z-adaptive__item con `data-item`, `--z-place-<clase>`, `--z-order-<clase>`
+//            y `data-hidden-in` (`nodeStyle`); sus ajustes, también en `data-z-adaptive` (JSON)
 
+import {
+  SIZE_CLASSES,
+  SIZE_CLASS_NAMES,
+  areaRects,
+  nodeStyle,
+  resolveAdaptive as resolveCore,
+  resolveTemplate as resolveTemplateCore,
+  templateVars,
+  validateTemplate,
+  type AdaptiveTemplate,
+  type AdaptiveTemplates,
+  type PointerKind,
+  type SizeClass,
+} from "../core/adaptive";
+import type { VEl, VNode } from "../core/vnode";
 import type { JsonValue } from "./types";
 
-/** Clases de tamaño, de menor a mayor. Se miden sobre el contenedor salvo que el layout diga otra cosa. */
-export const SIZE_CLASSES = ["compact", "medium", "expanded", "large", "xlarge"] as const;
-export type SizeClass = (typeof SIZE_CLASSES)[number];
+export { SIZE_CLASSES, SIZE_CLASS_NAMES, isSizeClass, sizeClassFor } from "../core/adaptive";
+export type { AdaptiveTemplate, AdaptiveTemplates, PointerKind, SizeClass };
+
 /** Ancho mínimo (CSS px) de cada clase: compact < 600 ≤ medium < 840 ≤ expanded < 1200 ≤ large < 1600 ≤ xlarge. */
-export const SIZE_CLASS_MIN: Record<SizeClass, number> = { compact: 0, medium: 600, expanded: 840, large: 1200, xlarge: 1600 };
+export const SIZE_CLASS_MIN = Object.fromEntries(SIZE_CLASSES.map((c) => [c.name, c.min])) as Record<SizeClass, number>;
 /** Ancho de vista previa de cada clase en el lienzo (un valor típico dentro del intervalo). */
 export const SIZE_CLASS_PREVIEW: Record<SizeClass, number> = { compact: 390, medium: 720, expanded: 1024, large: 1366, xlarge: 1680 };
-export type PointerKind = "coarse" | "fine";
 
-/** Lo que cambia un nodo en una clase. */
+/** Lo que cambia un nodo en una clase (el `AdaptiveSettings` de zout, con props en JSON). */
 export interface AdaptiveOverride {
   order?: number;
   hidden?: boolean;
   /** Área de la plantilla del AdaptiveLayout padre. */
   area?: string;
-  /** Columnas que ocupa. */
+  /** Columnas que ocupa una pieza sin área. */
   span?: number;
-  /** Variante adaptativa del componente (Tabs → `select`, Sidebar → `rail`…), de las que declara el catálogo. */
+  /** Variante adaptativa del componente (AdaptiveTabs → `select`…), de las que declara el catálogo. */
   variant?: string;
   /** Props que cambian en esa clase. */
   props?: Record<string, JsonValue>;
 }
 export type AdaptiveSpec = Partial<Record<SizeClass, AdaptiveOverride>>;
 
-/** Plantilla de áreas de una clase: filas de nombres separados por espacios (`"nav main"`), como grid-template-areas. */
-export interface AdaptiveTemplate {
-  areas: string[];
-  columns?: string;
-  rows?: string;
-}
-export type AdaptiveTemplates = Partial<Record<SizeClass, AdaptiveTemplate>>;
+/** Valores en vigor en una clase: se fusionan desde `compact` hasta ella. */
+export const resolveAdaptive = (spec: AdaptiveSpec | undefined, cls: SizeClass): AdaptiveOverride =>
+  resolveCore(spec, cls) as AdaptiveOverride;
 
-export const isSizeClass = (v: unknown): v is SizeClass => SIZE_CLASSES.includes(v as SizeClass);
+/** Plantilla en vigor en una clase: la de esa clase o la de la mayor por debajo. */
+export const resolveTemplate = (templates: AdaptiveTemplates | undefined, cls: SizeClass): AdaptiveTemplate | undefined =>
+  resolveTemplateCore(templates, cls) ?? undefined;
 
-/** Clase de un ancho. PROVISIONAL: la de zout la sustituye al integrar. */
-export function sizeClassOf(width: number): SizeClass {
-  let out: SizeClass = "compact";
-  for (const c of SIZE_CLASSES) if (width >= SIZE_CLASS_MIN[c]) out = c;
-  return out;
-}
+/** Nombres de área de una plantilla (sin `.`, que es una celda vacía), en el orden en que aparecen. */
+export const templateAreas = (t: AdaptiveTemplate | undefined): string[] => (t ? [...areaRects(t.areas).keys()] : []);
 
-/** Valores en vigor en una clase: se fusionan desde `compact` hasta ella. PROVISIONAL (ver arriba). */
-export function resolveAdaptive(spec: AdaptiveSpec | undefined, cls: SizeClass): AdaptiveOverride {
-  const out: AdaptiveOverride = {};
-  for (const c of SIZE_CLASSES.slice(0, SIZE_CLASSES.indexOf(cls) + 1)) {
-    const o = spec?.[c];
-    if (!o) continue;
-    const { props, ...rest } = o;
-    Object.assign(out, rest);
-    if (props) out.props = { ...out.props, ...props };
-  }
-  return out;
-}
-
-/** Plantilla en vigor en una clase: la de esa clase o la de la mayor por debajo. PROVISIONAL (ver arriba). */
-export function resolveTemplate(templates: AdaptiveTemplates | undefined, cls: SizeClass): AdaptiveTemplate | undefined {
-  let out: AdaptiveTemplate | undefined;
-  for (const c of SIZE_CLASSES.slice(0, SIZE_CLASSES.indexOf(cls) + 1)) if (templates?.[c]) out = templates[c];
-  return out;
-}
-
-const AREA = /^[A-Za-z_][A-Za-z0-9_-]*$/;
-
-/** Nombres de área de una plantilla (sin `.`, que es una celda vacía). */
-export function templateAreas(t: AdaptiveTemplate | undefined): string[] {
-  const out = new Set<string>();
-  for (const row of t?.areas ?? []) for (const cell of row.trim().split(/\s+/)) if (cell && !/^\.+$/.test(cell)) out.add(cell);
-  return [...out];
+/** Problemas de una plantilla, como frases para el editor (los de `validateTemplate` de zout). */
+export function templateProblems(t: AdaptiveTemplate): string[] {
+  const out = validateTemplate(t).map((issue) =>
+    issue.code === "empty"
+      ? "la plantilla no tiene filas"
+      : issue.code === "ragged"
+        ? "todas las filas deben tener el mismo número de celdas"
+        : issue.code === "invalid-name"
+          ? `«${issue.area}» no es un nombre de área válido`
+          : `el área «${issue.area}» no es rectangular`,
+  );
+  return [...new Set(out)];
 }
 
 /**
- * Problemas de una plantilla: filas con distinto número de celdas, nombres no válidos y áreas que no forman un
- * rectángulo (las reglas de grid-template-areas).
+ * Variantes adaptativas por componente. El bloque las pasa a la prop `adaptive` del componente en cada clase
+ * (AdaptiveTabs, AdaptiveTable) o a sus acciones (AdaptiveToolbar).
  */
-export function templateProblems(t: AdaptiveTemplate): string[] {
-  const problems: string[] = [];
-  const rows = t.areas.map((r) => r.trim().split(/\s+/).filter(Boolean));
-  if (!rows.length) return ["la plantilla no tiene filas"];
-  const width = rows[0]?.length ?? 0;
-  if (rows.some((r) => r.length !== width)) problems.push("todas las filas deben tener el mismo número de celdas");
-  for (const cell of rows.flat()) if (!/^\.+$/.test(cell) && !AREA.test(cell)) problems.push(`«${cell}» no es un nombre de área válido`);
-  for (const name of templateAreas(t)) {
-    const cells: [number, number][] = [];
-    for (const [y, r] of rows.entries()) for (const [x, c] of r.entries()) if (c === name) cells.push([y, x]);
-    const ys = cells.map(([y]) => y);
-    const xs = cells.map(([, x]) => x);
-    const [y0, y1, x0, x1] = [Math.min(...ys), Math.max(...ys), Math.min(...xs), Math.max(...xs)];
-    if (cells.length !== (y1 - y0 + 1) * (x1 - x0 + 1)) problems.push(`el área «${name}» no es rectangular`);
-  }
-  return [...new Set(problems)];
-}
-
-/** Componentes con variante adaptativa y sus valores. Los interpreta el componente (o AdaptiveLayout) en cada clase. */
 export const ADAPTIVE_VARIANTS: Record<string, { value: string; label: string; description: string }[]> = {
-  Tabs: [
-    { value: "tabs", label: "Pestañas", description: "Lista de pestañas (por defecto)." },
-    { value: "select", label: "Selector", description: "Un selector con las pestañas como opciones: en compact no caben." },
-    { value: "bottom-navigation", label: "Navegación inferior", description: "Barra inferior con las pestañas como destinos." },
+  AdaptiveTabs: [
+    { value: "tabs", label: "Pestañas", description: "Lista de pestañas (por defecto desde medium)." },
+    { value: "select", label: "Selector", description: "Un <select> con las pestañas como opciones (por defecto en compact)." },
+    { value: "bottom-nav", label: "Navegación inferior", description: "Barra inferior con las pestañas como destinos." },
   ],
-  Sidebar: [
-    { value: "sidebar", label: "Barra lateral", description: "Columna fija (por defecto)." },
-    { value: "drawer", label: "Cajón", description: "Panel que se abre sobre el contenido." },
-    { value: "rail", label: "Riel", description: "Columna estrecha solo con iconos." },
+  AdaptiveTable: [
+    { value: "table", label: "Tabla", description: "Filas y columnas (por defecto desde medium)." },
+    { value: "cards", label: "Tarjetas", description: "Una tarjeta por fila (por defecto en compact)." },
   ],
-  DataTable: [
-    { value: "table", label: "Tabla", description: "Filas y columnas (por defecto)." },
-    { value: "cards", label: "Tarjetas", description: "Una tarjeta por fila: en compact no caben las columnas." },
-  ],
-  Toolbar: [
-    { value: "toolbar", label: "Barra", description: "Todas las acciones visibles (por defecto)." },
-    { value: "overflow", label: "Desbordamiento", description: "Las que no caben pasan a un menú «Más»." },
+  AdaptiveToolbar: [
+    { value: "bar", label: "Barra", description: "Las acciones en la barra, salvo las que pidan otra cosa." },
+    { value: "menu", label: "Menú «más»", description: "Todas las acciones pasan al menú de desbordamiento." },
   ],
 };
 
-const cssString = (s: string) => `"${s.replace(/["\\]/g, "")}"`;
+/** Nombres antiguos o de otros sistemas que se aceptan como variante. */
+export const ADAPTIVE_VARIANT_ALIASES: Record<string, string> = {
+  "bottom-navigation": "bottom-nav",
+  sidebar: "docked",
+  toolbar: "bar",
+  overflow: "menu",
+};
+
+/** Nombre canónico de una variante (los alias se traducen). */
+export const normalizeVariant = (variant: string): string => ADAPTIVE_VARIANT_ALIASES[variant] ?? variant;
+
+/** Si `variant` (o su alias) es una variante de `type`. */
+export const isAdaptiveVariant = (type: string, variant: string): boolean =>
+  ADAPTIVE_VARIANTS[type]?.some((v) => v.value === normalizeVariant(variant)) ?? false;
+
+/** Mapa `{ clase: { variant } }` de un nodo, con los alias traducidos: lo que recibe la prop `adaptive` del componente. */
+export function variantProp(spec: AdaptiveSpec | undefined): Partial<Record<SizeClass, { variant: string }>> | undefined {
+  const out: Partial<Record<SizeClass, { variant: string }>> = {};
+  for (const cls of SIZE_CLASS_NAMES) {
+    const v = spec?.[cls]?.variant;
+    if (typeof v === "string") out[cls] = { variant: normalizeVariant(v) };
+  }
+  return Object.keys(out).length ? out : undefined;
+}
+
+const AREA = /^[A-Za-z_][\w-]*$/;
 const SAFE_TRACK = /^[A-Za-z0-9 ().,%+*/-]*$/;
 
-/**
- * Atributos del contenedor AdaptiveLayout: plantillas por clase como variables (`--z-adaptive-areas-<clase>`,
- * `-columns-`, `-rows-`) y la medida. PROVISIONAL: el marcado definitivo es el de zout.
- */
-export function adaptiveLayoutAttributes(
-  templates: AdaptiveTemplates | undefined,
-  measure: "container" | "viewport",
-): { a: Record<string, string>; s: Record<string, string> } {
-  const s: Record<string, string> = {};
-  for (const c of SIZE_CLASSES) {
-    const t = templates?.[c];
-    if (!t || templateProblems(t).length) continue;
-    s[`--z-adaptive-areas-${c}`] = t.areas.map(cssString).join(" ");
-    if (t.columns && SAFE_TRACK.test(t.columns)) s[`--z-adaptive-columns-${c}`] = t.columns;
-    if (t.rows && SAFE_TRACK.test(t.rows)) s[`--z-adaptive-rows-${c}`] = t.rows;
+/** Plantillas utilizables: sin las que tienen problemas ni pistas con caracteres fuera de la lista. */
+function cleanTemplates(templates: AdaptiveTemplates | undefined): AdaptiveTemplates {
+  const out: AdaptiveTemplates = {};
+  for (const cls of SIZE_CLASS_NAMES) {
+    const t = templates?.[cls];
+    if (!t || !Array.isArray(t.areas) || templateProblems(t).length) continue;
+    out[cls] = {
+      areas: t.areas,
+      ...(t.columns && SAFE_TRACK.test(t.columns) ? { columns: t.columns } : {}),
+      ...(t.rows && SAFE_TRACK.test(t.rows) ? { rows: t.rows } : {}),
+    };
   }
-  return { a: { "data-z-adaptive-layout": "", "data-measure": measure }, s };
+  return out;
+}
+
+/** Ajustes de un nodo saneados (lo que se escribe en `data-z-adaptive`). */
+function cleanSpec(spec: AdaptiveSpec | undefined): AdaptiveSpec {
+  const out: AdaptiveSpec = {};
+  for (const cls of SIZE_CLASS_NAMES) {
+    const o = spec?.[cls];
+    if (!o) continue;
+    const c: AdaptiveOverride = {};
+    if (typeof o.area === "string" && AREA.test(o.area)) c.area = o.area;
+    if (typeof o.order === "number" && Number.isInteger(o.order)) c.order = o.order;
+    if (typeof o.span === "number" && Number.isInteger(o.span) && o.span > 0) c.span = o.span;
+    if (typeof o.hidden === "boolean") c.hidden = o.hidden;
+    if (typeof o.variant === "string" && /^[a-z][a-z0-9-]*$/.test(o.variant)) c.variant = normalizeVariant(o.variant);
+    if (o.props) c.props = o.props;
+    out[cls] = c;
+  }
+  return out;
 }
 
 /**
- * Atributos de un nodo con `adaptive`: por cada clase declarada, `--z-area-<clase>`, `--z-order-<clase>`,
- * `--z-span-<clase>`, `data-hidden-<clase>` y `data-variant-<clase>`, y la especificación entera en
- * `data-z-adaptive` (JSON) para quien aplique las props en ejecución. PROVISIONAL: ver arriba.
+ * Atributos de un nodo con `adaptive`: `data-item` (su id) y la especificación en `data-z-adaptive`. La colocación
+ * (`--z-place-*`, `--z-order-*`, `data-hidden-in`) la escribe el AdaptiveLayout que lo contiene, que conoce las
+ * plantillas.
  */
-export function adaptiveAttributes(spec: AdaptiveSpec | undefined): { a: Record<string, string | undefined>; s: Record<string, string> } {
-  const a: Record<string, string | undefined> = {};
-  const s: Record<string, string> = {};
-  if (!spec) return { a, s };
-  const clean: AdaptiveSpec = {};
-  for (const c of SIZE_CLASSES) {
-    const o = spec[c];
-    if (!o) continue;
-    clean[c] = o;
-    if (typeof o.area === "string" && AREA.test(o.area)) s[`--z-area-${c}`] = o.area;
-    if (typeof o.order === "number" && Number.isInteger(o.order)) s[`--z-order-${c}`] = String(o.order);
-    if (typeof o.span === "number" && Number.isInteger(o.span) && o.span > 0) s[`--z-span-${c}`] = String(o.span);
-    if (typeof o.hidden === "boolean") a[`data-hidden-${c}`] = String(o.hidden);
-    if (typeof o.variant === "string" && /^[a-z][a-z0-9-]*$/.test(o.variant)) a[`data-variant-${c}`] = o.variant;
-  }
-  a["data-z-adaptive"] = JSON.stringify(clean);
-  return { a, s };
+export function adaptiveAttributes(id: string, spec: AdaptiveSpec | undefined): Record<string, string> {
+  if (!spec) return {};
+  return { "data-item": id, "data-z-adaptive": JSON.stringify(cleanSpec(spec)) };
+}
+
+const isEl = (n: VNode): n is VEl => typeof n === "object" && n !== null && "t" in n;
+
+/**
+ * Marcado de un AdaptiveLayout con sus hijos: `.z-adaptive > .z-adaptive__grid`, y cada hijo como pieza con sus
+ * variables para las cinco clases. Es el mismo que sale del binding de React (`zout/html.json`).
+ */
+export function adaptiveLayoutTree(templates: AdaptiveTemplates | undefined, measure: "container" | "viewport", children: VNode[]): VEl {
+  const t = cleanTemplates(templates);
+  const items = children.map((child, index): VNode => {
+    // Hueco de `toReact` (el hijo se pinta después, con su componente si lo hay): lleva la colocación consigo.
+    const hole = child as unknown as { slot?: string; p?: { node?: { id: string; adaptive?: AdaptiveSpec } } };
+    if (hole && typeof hole === "object" && hole.slot === "react" && hole.p?.node) {
+      const n = hole.p.node;
+      const { vars, hiddenIn } = nodeStyle(t, { id: n.id, adaptive: cleanSpec(n.adaptive) });
+      return { ...hole, p: { ...hole.p, item: { id: n.id, hiddenIn, vars } } } as unknown as VNode;
+    }
+    if (!isEl(child)) return child;
+    const a = child.a ?? {};
+    let spec: AdaptiveSpec = {};
+    try {
+      spec = typeof a["data-z-adaptive"] === "string" ? (JSON.parse(a["data-z-adaptive"]) as AdaptiveSpec) : {};
+    } catch {
+      spec = {};
+    }
+    const id = typeof a["data-item"] === "string" ? a["data-item"] : `#${index}`;
+    const { vars, hiddenIn } = nodeStyle(t, { id, adaptive: spec });
+    const cls = [a.class, "z-adaptive__item"].filter(Boolean).join(" ");
+    return {
+      ...child,
+      a: { ...a, class: cls, "data-item": id, ...(hiddenIn ? { "data-hidden-in": hiddenIn } : {}) },
+      s: { ...vars, ...child.s },
+    };
+  });
+  return {
+    t: "div",
+    a: { class: "z-adaptive", "data-reorder": "dom", ...(measure === "viewport" ? { "data-measure": "window" } : {}) },
+    c: [{ t: "div", a: { class: "z-adaptive__grid" }, s: templateVars(t), c: items }],
+  };
 }

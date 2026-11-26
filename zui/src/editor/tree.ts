@@ -2,7 +2,7 @@
 // los nodos que no cambian, así que el historial puede guardar instantáneas sin copiar el árbol entero. Puras y sin
 // documento del navegador.
 
-import { type AdaptiveOverride, type AdaptiveSpec, SIZE_CLASSES, type SizeClass, isSizeClass } from "./adaptive";
+import { type AdaptiveOverride, type AdaptiveSpec, SIZE_CLASS_NAMES, type SizeClass, isSizeClass } from "./adaptive";
 import {
   DOCUMENT_FORMAT,
   DOCUMENT_SCHEMA_VERSION,
@@ -228,7 +228,7 @@ export function updateAdaptive(
   cls: SizeClass,
   patch: { [K in keyof AdaptiveOverride]?: AdaptiveOverride[K] | null },
 ): PageDocument {
-  if (!isSizeClass(cls)) throw new Error(`«${String(cls)}» no es una clase de tamaño (${SIZE_CLASSES.join(", ")})`);
+  if (!isSizeClass(cls)) throw new Error(`«${String(cls)}» no es una clase de tamaño (${SIZE_CLASS_NAMES.join(", ")})`);
   return editNode(doc, id, (node) => {
     const current: Record<string, unknown> = { ...node.adaptive?.[cls] };
     for (const [k, v] of Object.entries(patch)) {

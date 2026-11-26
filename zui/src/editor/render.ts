@@ -217,10 +217,10 @@ function toTree(node: PageNode, blocks: Map<string, BlockSpec>, o: HtmlOptions):
 /** Estilo de tokens, atributos adaptativos e id del lienzo sobre la raíz de un bloque. */
 export function decorate(el: VEl, node: ElementNode, o: HtmlOptions): VEl {
   const style = styleOf(node.style, o.catalog?.style);
-  const adaptive = adaptiveAttributes(node.adaptive);
+  const adaptive = adaptiveAttributes(node.id, node.adaptive);
   const extra: Record<string, string> = o.ids ? { "data-z-node": node.id } : {};
-  const s = { ...el.s, ...style, ...adaptive.s };
-  return { ...el, a: { ...el.a, ...adaptive.a, ...extra }, ...(Object.keys(s).length ? { s } : {}) };
+  const s = { ...el.s, ...style };
+  return { ...el, a: { ...el.a, ...adaptive, ...extra }, ...(Object.keys(s).length ? { s } : {}) };
 }
 
 const isRaw = (n: unknown): n is RawHtml => typeof n === "object" && n !== null && (n as RawHtml).slot === "html";

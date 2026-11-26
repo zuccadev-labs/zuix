@@ -22,8 +22,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `Shell`: `adaptive` en `sidebar` e `inspector`, con las variantes `docked`, `drawer` y `rail` (la `Sidebar` de
   dentro se pliega sola) y `hidden` por clase. Sin `adaptive` el panel se comporta como siempre. El shell escribe su
   clase en `data-size-class`.
-- `useSizeClass()` y el núcleo sin React ni DOM en la raíz (`SIZE_CLASSES`, `sizeClassFor`, `resolveAdaptive`,
-  `validateTemplate`, `validateAdaptive`, `visualOrder`…), para el editor visual y el servidor.
+- `useSizeClass()` y, en la raíz, el núcleo sin React ni DOM (`SIZE_CLASSES`, `sizeClassFor`, `resolveAdaptive`,
+  `validateTemplate`, `validateAdaptive`, `visualOrder`…), para el editor visual y el servidor. Vive en
+  `@zuccadev-labs/zuix-zui/adaptive`, que comparte con el conector del editor, y zout lo reexporta.
 - `@zuccadev-labs/zuix-zout/dom`: `.z-adaptive` y `.z-adaptive-switch` (evento `z:sizeclass`, y `z:ordermismatch` en
   modo visual), `setAdaptiveTemplates`, `setAdaptiveItem`, `getAdaptiveTemplates`, `sizeClassOf`,
   `observeSizeClass` y `adaptiveTransition` (view transitions, sin animar con `prefers-reduced-motion`).

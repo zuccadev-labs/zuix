@@ -3,7 +3,7 @@
 
 import { DOCUMENT_JSON_SCHEMA } from "./document-schema";
 import { type SchemaError, pointerOf, validateSchema } from "./json-schema";
-import { type AdaptiveTemplates, SIZE_CLASSES, resolveAdaptive, resolveTemplate, templateAreas, templateProblems } from "./adaptive";
+import { type AdaptiveTemplates, SIZE_CLASS_NAMES, normalizeVariant, resolveAdaptive, resolveTemplate, templateAreas, templateProblems } from "./adaptive";
 import { accepts } from "./render";
 import { CHILDREN, slotsOf, textOf, walk } from "./tree";
 import { type Catalog, type CatalogBlock, DOCUMENT_SCHEMA_VERSION, type JsonSchema, type PageNode, isText } from "./types";
@@ -207,7 +207,7 @@ export function validateDocument(doc: unknown, catalog: Catalog, o: ValidateOpti
     // Adaptativo: plantillas del layout, y área, variante y props por clase de cada hijo.
     if (block.adaptive?.layout) {
       const templates = (node.props?.templates ?? block.props.properties.templates?.default) as AdaptiveTemplates | undefined;
-      for (const cls of SIZE_CLASSES) {
+      for (const cls of SIZE_CLASS_NAMES) {
         const t = templates?.[cls];
         if (t && Array.isArray(t.areas))
           for (const problem of templateProblems(t))
@@ -223,10 +223,10 @@ export function validateDocument(doc: unknown, catalog: Catalog, o: ValidateOpti
         | AdaptiveTemplates
         | undefined;
       let noLayout = false;
-      for (const cls of SIZE_CLASSES) {
+      for (const cls of SIZE_CLASS_NAMES) {
         const o = node.adaptive[cls];
         const at = { ...where, pointer: `${where.pointer}/adaptive/${cls}` };
-        if (o?.variant !== undefined && !block.adaptive?.variants?.some((v) => v.value === o.variant))
+        if (o?.variant !== undefined && !block.adaptive?.variants?.some((v) => v.value === normalizeVariant(o.variant as string)))
           add(
             "adaptive.variant",
             `${name(node, path)}: «${o.variant}» no es una variante adaptativa de ${node.type}${block.adaptive?.variants ? ` (${block.adaptive.variants.map((v) => v.value).join(", ")})` : " (no tiene)"}`,

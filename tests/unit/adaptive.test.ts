@@ -37,7 +37,7 @@ import {
   type AdaptiveNode,
   type AdaptiveTemplates,
   type SizeClass,
-} from "../../zout/src/adaptive.ts";
+} from "../../zui/src/core/adaptive.ts";
 import { adaptivePanel, adaptivePanelClasses } from "../../zout/src/logic.ts";
 import { adaptiveTransition, readLayoutOrder, reorderChildren, syncLayoutOrder } from "../../zout/src/adaptive-runtime.ts";
 

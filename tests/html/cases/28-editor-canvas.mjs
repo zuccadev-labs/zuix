@@ -141,6 +141,15 @@ export default async function ({ page, test, ok, note }) {
       // Las áreas como zonas de soltar.
       const areas = await editor.evaluate(() => window.zuixEditor.connection.request("measureAreas", {}).then((m) => m.payload));
       ok(areas.sizeClass === "compact" && areas.areas.map((a) => a.area).join() === "main,aside", `áreas: ${JSON.stringify(areas)}`);
+      // Las áreas se miden sobre las celdas reales de la rejilla (marcado de zout): en compact, una columna a todo el
+      // ancho de la rejilla y «aside» debajo de «main».
+      const grid = await frame.locator('[data-z-node="cl"] > .z-adaptive__grid').evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return { width: r.width, areas: getComputedStyle(el).gridTemplateAreas };
+      });
+      const [main, aside] = areas.areas.map((a) => a.rect);
+      ok(grid.areas.replace(/\s+/g, " ") === '"main" "aside"', `plantilla de compact en la rejilla: ${grid.areas}`);
+      ok(Math.abs(main.width - grid.width) < 1 && aside.y >= main.y + main.height - 1, `celdas de compact: ${JSON.stringify(areas.areas)}`);
       // Arrastrar «main» sobre el área «aside».
       const from = await frame.locator('[data-z-node="cl-m"]').boundingBox();
       const to = await frame.locator('[data-z-node="cl-a"]').boundingBox();
@@ -159,6 +168,12 @@ export default async function ({ page, test, ok, note }) {
         ),
       );
       ok(/área «nav», que la plantilla/.test(message), message);
+      // En expanded la plantilla es «main aside» con 18rem de lateral: las áreas siguen a las pistas de la rejilla.
+      await editor.locator("#size").selectOption("expanded");
+      await frame.waitForFunction(() => document.getElementById("page").dataset.zSizeClass === "expanded");
+      const wide = await editor.evaluate(() => window.zuixEditor.connection.request("measureAreas", {}).then((m) => m.payload));
+      const [wm, wa] = wide.areas.map((a) => a.rect);
+      ok(wide.sizeClass === "expanded" && Math.abs(wa.width - 288) < 1 && Math.abs(wm.y - wa.y) < 1 && wa.x > wm.x, `celdas de expanded: ${JSON.stringify(wide.areas)}`);
       await editor.locator("#size").selectOption("");
     });
 

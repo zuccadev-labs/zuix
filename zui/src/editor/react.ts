@@ -6,12 +6,13 @@
 // comportamiento propio. Los bloques `preset` salen con su marcado estático (su comportamiento, con zui/dom).
 // Sin hooks ni manejadores: se puede llamar desde un Server Component.
 
-import { type ComponentType, Fragment, type ReactElement, type ReactNode, createElement } from "react";
+import { type ComponentType, Fragment, type ReactElement, type ReactNode, cloneElement, createElement, isValidElement } from "react";
 import type { VNode } from "../core/vnode";
 import { BUILTIN_BLOCKS } from "./blocks";
 import { type BlockSpec, type HtmlOptions, type RawHtml, RenderError, registry, styleOf, toTrees, withDefaults, decorate } from "./render";
 import { CHILDREN, slotOf } from "./tree";
 import { type PageDocument, type PageNode, isText } from "./types";
+import { type AdaptiveSpec, variantProp } from "./adaptive";
 
 export interface ReactOptions extends HtmlOptions {
   /**
@@ -36,7 +37,11 @@ function toElement(node: VNode | RawHtml, key: string | number, ctx: Ctx): React
   if (node === null || node === undefined || node === false) return null;
   if (typeof node === "string") return node;
   if ("slot" in node) {
-    if ((node.slot as string) === "react") return one((node as unknown as { p: { node: PageNode } }).p.node, ctx.blocks, ctx.o);
+    if ((node.slot as string) === "react") {
+      const { node: child, item } = (node as unknown as { p: { node: PageNode; item?: AdaptiveItemPlacement } }).p;
+      const out = one(child, ctx.blocks, ctx.o);
+      return item ? placeItem(out, item) : out;
+    }
     if (node.slot === "html") {
       // Marcado fijo del contrato (bloques `preset`), no texto de la aplicación.
       return createElement("div", {
@@ -66,6 +71,36 @@ function toElement(node: VNode | RawHtml, key: string | number, ctx: Ctx): React
   return createElement(node.t, props, ...(kids.length ? kids : []));
 }
 
+interface AdaptiveItemPlacement {
+  id: string;
+  hiddenIn?: string;
+  vars: Record<string, string>;
+}
+
+/** Hijo de un AdaptiveLayout: su raíz pasa a ser `.z-adaptive__item`, con las variables de las cinco clases (como toHTML). */
+function placeItem(out: ReactNode, item: AdaptiveItemPlacement): ReactNode {
+  if (!isValidElement<Record<string, unknown>>(out) || typeof out.type !== "string") return out;
+  const own = out.props;
+  return cloneElement(out, {
+    className: [own.className, "z-adaptive__item"].filter(Boolean).join(" "),
+    "data-item": item.id,
+    ...(item.hiddenIn ? { "data-hidden-in": item.hiddenIn } : {}),
+    style: { ...item.vars, ...(own.style as object) },
+  });
+}
+
+/**
+ * Variante por clase del nodo (`adaptive.<clase>.variant`) llevada a la prop del componente: `adaptive` en
+ * AdaptiveTabs y AdaptiveTable; en AdaptiveToolbar, `variant: "menu"` pasa todas las acciones al menú en esa clase.
+ */
+function adaptiveProps(node: { type: string; adaptive?: AdaptiveSpec }, props: Record<string, unknown>): void {
+  const map = variantProp(node.adaptive);
+  if (!map) return;
+  if (node.type === "AdaptiveTabs" || node.type === "AdaptiveTable") props.adaptive = { ...map, ...(props.adaptive as object) };
+  else if (node.type === "AdaptiveToolbar" && Array.isArray(props.actions))
+    props.actions = props.actions.map((action: Record<string, unknown>) => ({ ...action, adaptive: { ...map, ...(action.adaptive as object) } }));
+}
+
 /** El documento como un elemento de React (un fragmento con los bloques del cuerpo). */
 export function toReact(doc: PageDocument, o: ReactOptions = {}): ReactElement {
   const blocks = registry([...BUILTIN_BLOCKS, ...(o.blocks ?? [])]);
@@ -90,8 +125,19 @@ function one(node: PageNode, blocks: Map<string, BlockSpec>, o: ReactOptions): R
     for (const [name, list] of Object.entries(node.slots ?? {})) props[name] = createElement(Fragment, null, ...nodes(list, blocks, o));
     const style = styleOf(node.style, o.catalog?.style);
     if (Object.keys(style).length) props.style = style;
+    adaptiveProps(node, props);
     const kids = slotOf(node, CHILDREN);
-    return createElement(component, props, ...(kids.length ? nodes(kids, blocks, o) : []));
+    // AdaptiveLayout con su componente: cada hijo va en un AdaptiveItem con su id y sus ajustes por clase.
+    const item = o.components?.AdaptiveItem as ComponentType<Record<string, unknown>> | undefined;
+    const children =
+      node.type === "AdaptiveLayout" && item
+        ? kids.map((kid) =>
+            isText(kid)
+              ? kid.text
+              : createElement(item, { key: kid.id, id: kid.id, adaptive: kid.adaptive }, one(kid, blocks, o)),
+          )
+        : nodes(kids, blocks, o);
+    return createElement(component, props, ...(children.length ? children : []));
   }
   const spec = blocks.get(node.type);
   if (!spec) {

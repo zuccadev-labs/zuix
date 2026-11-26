@@ -149,7 +149,8 @@ describe("tools/version.mjs: zudocs comparte número con la suite", () => {
     } else {
       const lines = r.stdout.split("\n").filter((line) => line.startsWith("· @zuccadev-labs/"));
       assert.equal(lines.length, 6, r.stdout);
-      assert.match(r.stdout, /· @zuccadev-labs\/zuix-zudocs \d+\.\d+\.\d+ → \d+\.\d+\.\d+ · \d+ cambios anotados/);
+      // zudocs sube con los demás aunque no tenga notas propias (en main, tras una versión, solo las tienen otros).
+      assert.match(r.stdout, /· @zuccadev-labs\/zuix-zudocs \d+\.\d+\.\d+ → \d+\.\d+\.\d+ · (\d+ cambios anotados|sin cambios propios)/);
       assert.match(r.stdout, /--dry-run: no se escribió nada/);
     }
     assert.equal(run("tools/version.mjs", "check").status, 0, "tras --dry-run todo sigue en la versión anterior");
