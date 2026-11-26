@@ -256,7 +256,8 @@
     border-end-start-radius: var(--z-radius-xs);
     border-end-end-radius: var(--z-radius-xs);
   }
-  .z-btn-group[data-connected] > :is([aria-pressed="true"], [data-state="on"], [data-active]) {
+  /* `:nth-child(n)` iguala la especificidad de las reglas de esquinas de arriba; al ir después, gana. */
+  .z-btn-group[data-connected] > :is([aria-pressed="true"], [data-state="on"], [data-active]):nth-child(n) {
     border-radius: var(--z-btn-radius, var(--z-button-radius));
   }
   /* La pulsada se rellena como el primario: en un grupo conectado el estado se lee por color y por forma. */

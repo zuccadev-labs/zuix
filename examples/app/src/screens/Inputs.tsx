@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import { Icon } from "@zuccadev-labs/zuix-zicon";
+import { ExpressiveSection } from "./Expressive";
 import { LargeListsSection } from "./scale";
 import {
   Button,
@@ -522,6 +523,7 @@ export function Inputs() {
           </Card>
         </Grid>
       </PageSection>
+      <ExpressiveSection />
       <PageSection title="Transfer list">
         <Stack gap={2}>
           <div data-testid="i-transfer">
