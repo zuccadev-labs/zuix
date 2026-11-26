@@ -203,7 +203,7 @@ export default function Home() {
                   eyebrow={`${area.items.length} documentos`}
                   title={area.label}
                   description={area.description}
-                  href={`${base.replace(/\/$/, "")}${area.items[0]?.path ?? `/docs/${area.id}`}`}
+                  href={area.items[0]?.path ?? `${base}docs/${area.id}`}
                 />
               </li>
             ))}
