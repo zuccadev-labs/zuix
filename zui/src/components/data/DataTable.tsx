@@ -650,7 +650,8 @@ export function DataTable<T>({
     requestAnimationFrame(() => {
       if (!pendingFocus.current) return;
       pendingFocus.current = false;
-      gridRef.current?.setActive(cell, true);
+      // Solo si el foco se perdió (el campo quitado lo dejó en el documento): si la persona ya se movió, no se le roba.
+      if (!tableRef.current?.contains(document.activeElement)) gridRef.current?.setActive(cell, true);
     });
   };
   const finish = (state: EditState, rejected: string | undefined, colKey: string) => {
