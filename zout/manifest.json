@@ -186,7 +186,7 @@
    "examples": [
     {
      "title": "Tres plantillas: una columna, dos y tres con navegación",
-     "code": "<AdaptiveLayout\n  templates={{\n    compact: { areas: [\"header\", \"main\", \"aside\"] },\n    medium: { areas: [\"header header\", \"main aside\"], columns: \"minmax(0, 2fr) minmax(0, 1fr)\" },\n    expanded: { areas: [\"nav header header\", \"nav main aside\"], columns: \"200px minmax(0, 2fr) minmax(0, 1fr)\" },\n  }}\n>\n  <AdaptiveItem id=\"header\" area=\"header\"><h2>Overview</h2></AdaptiveItem>\n  <AdaptiveItem id=\"nav\" area=\"nav\" adaptive={{ compact: { hidden: true }, expanded: { hidden: false } }}><a href=\"#reports\">Reports</a></AdaptiveItem>\n  <AdaptiveItem id=\"main\" area=\"main\"><p>Weekly activity.</p></AdaptiveItem>\n  <AdaptiveItem id=\"aside\" area=\"aside\"><button type=\"button\">Export</button></AdaptiveItem>\n</AdaptiveLayout>"
+     "code": "<AdaptiveLayout\n  templates={{\n    compact: { areas: [\"header\", \"main\", \"aside\"] },\n    medium: { areas: [\"header header\", \"main aside\"], columns: \"minmax(0, 2fr) minmax(0, 1fr)\" },\n    expanded: { areas: [\"nav header header\", \"nav main aside\"], columns: \"200px minmax(0, 2fr) minmax(0, 1fr)\" },\n  }}\n>\n  <AdaptiveItem id=\"header\" area=\"header\"><h2>Overview</h2></AdaptiveItem>\n  <AdaptiveItem id=\"nav\" area=\"nav\" adaptive={{ compact: { hidden: true }, expanded: { hidden: false } }}><button type=\"button\">Reports</button></AdaptiveItem>\n  <AdaptiveItem id=\"main\" area=\"main\"><p>Weekly activity.</p></AdaptiveItem>\n  <AdaptiveItem id=\"aside\" area=\"aside\"><button type=\"button\">Export</button></AdaptiveItem>\n</AdaptiveLayout>"
     },
     {
      "title": "Orden por clase sin plantilla en compacto",

@@ -101,7 +101,7 @@ import { AdaptiveItem, AdaptiveLayout } from "@zuccadev-labs/zuix-zout";
 >
   <AdaptiveItem id="header" area="header"><h2>Overview</h2></AdaptiveItem>
   <AdaptiveItem id="nav" area="nav" adaptive={{ compact: { hidden: true }, expanded: { hidden: false } }}>
-    <a href="#reports">Reports</a>
+    <button type="button">Reports</button>
   </AdaptiveItem>
   <AdaptiveItem id="main" area="main">…</AdaptiveItem>
   <AdaptiveItem id="aside" area="aside">…</AdaptiveItem>

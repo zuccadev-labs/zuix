@@ -69,7 +69,7 @@ export default async function ({ page, test, ok }) {
     const events = await page.evaluate(() => window.__sizeEvents);
     ok(events.join() === "compact,medium,expanded", `z:sizeclass: ${events}`);
     // El foco recorre en el orden visual: el enlace de la navegación va antes que el botón de la columna lateral.
-    await page.locator(`#${id} a[href="#reports"]`).focus();
+    await page.locator(`#${id} [data-item="nav"] button`).focus();
     await page.keyboard.press("Tab");
     ok(
       await page.evaluate((i) => document.activeElement === document.querySelector(`#${i} [data-item="aside"] button`), id),
