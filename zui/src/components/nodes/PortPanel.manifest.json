@@ -80,13 +80,13 @@
     "glass-highlight",
     "radius-xs",
     "font-mono",
-    "text-fine",
     "focus-width",
     "chart-1",
     "chart-2",
     "chart-4",
     "chart-5",
-    "chart-6"
+    "chart-6",
+    "text-caption"
   ],
   "classes": [
     "z-port-panel",

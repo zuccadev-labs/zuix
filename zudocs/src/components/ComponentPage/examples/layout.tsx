@@ -17,6 +17,77 @@ import {
 import { useState } from "react";
 import { type ExampleDemos, Frame } from "./shared";
 
+const NETWORK: GraphNode[] = [
+  {
+    id: "net",
+    type: "cloud",
+    position: { x: 180, y: 0 },
+    data: { label: "Internet", description: "1 Gbit/s" },
+    ports: [{ id: "down", kind: "source", side: "bottom" }],
+  },
+  {
+    id: "sw",
+    type: "folder",
+    position: { x: 120, y: 200 },
+    data: { label: "Core switch", kind: "switch", color: "chart-6", description: "8× 2.5G + 2× SFP+" },
+    ports: [
+      { id: "up", kind: "target", side: "top" },
+      { id: "a", kind: "source", side: "bottom" },
+      { id: "b", kind: "source", side: "bottom" },
+    ],
+  },
+  {
+    id: "pc",
+    type: "folder",
+    position: { x: 0, y: 420 },
+    data: { label: "Desk", kind: "workstation", color: "chart-1" },
+    ports: [{ id: "up", kind: "target", side: "top" }],
+  },
+  {
+    id: "hv",
+    type: "folder",
+    position: { x: 320, y: 420 },
+    data: { label: "Server", kind: "server" },
+    ports: [{ id: "up", kind: "target", side: "top" }],
+  },
+];
+
+const NETWORK_EDGES: GraphEdge[] = [
+  {
+    id: "wan",
+    source: "net",
+    sourcePort: "down",
+    target: "sw",
+    targetPort: "up",
+    color: "danger",
+    weight: "1G",
+    targetLabel: "1G",
+    markerEnd: "none",
+  },
+  {
+    id: "lan",
+    source: "sw",
+    sourcePort: "a",
+    target: "pc",
+    targetPort: "up",
+    color: "chart-1",
+    weight: "2.5G",
+    targetLabel: "2.5G",
+    markerEnd: "none",
+  },
+  {
+    id: "trunk",
+    source: "sw",
+    sourcePort: "b",
+    target: "hv",
+    targetPort: "up",
+    double: true,
+    weight: "10G",
+    targetLabel: "10G",
+    markerEnd: "none",
+  },
+];
+
 const FLOW: GraphNode[] = [
   {
     id: "hook",
@@ -98,6 +169,9 @@ export const layout: Record<string, ExampleDemos> = {
         />
       );
     },
+    "Red con aristas con estilo": () => (
+      <NodeCanvas aria-label="Small network" readOnly edgeType="orthogonal" defaultNodes={NETWORK} defaultEdges={NETWORK_EDGES} />
+    ),
   },
   NodeControls: {
     "Horizontal arriba": () => (

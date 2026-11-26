@@ -240,16 +240,8 @@ export function Infra() {
                   </td>
                   <td>
                     <Inline gap={1}>
-                      {s.protocol?.includes("tcp") ? (
-                        <Badge size="sm" tone="info">
-                          TCP
-                        </Badge>
-                      ) : null}
-                      {s.protocol?.includes("udp") ? (
-                        <Badge size="sm" tone="success">
-                          UDP
-                        </Badge>
-                      ) : null}
+                      {s.protocol?.includes("tcp") ? <Badge tone="info">TCP</Badge> : null}
+                      {s.protocol?.includes("udp") ? <Badge tone="success">UDP</Badge> : null}
                     </Inline>
                   </td>
                 </tr>

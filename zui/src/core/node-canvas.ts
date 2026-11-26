@@ -533,10 +533,9 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
         insetChanged = true;
       }
     }
-    if (!anchors.length || !node?.ports?.some((p) => p.anchor)) return portT.delete(id) || insetChanged;
-    if (!anchors.length || !node?.ports?.some((p) => p.anchor)) return portT.delete(id);
+    if (!node?.ports?.some((p) => p.anchor)) return portT.delete(id) || insetChanged;
     const box = el.getBoundingClientRect();
-    if (!box.width || !box.height) return false;
+    if (!box.width || !box.height) return insetChanged;
     const next = new Map<string, number>();
     for (const a of anchors) {
       const port = node.ports.find((p) => p.id === a.dataset.port);
@@ -547,6 +546,19 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
         side === "top" || side === "bottom" ? (r.left + r.width / 2 - box.left) / box.width : (r.top + r.height / 2 - box.top) / box.height;
       next.set(port.id, Math.round(t * 10000) / 10000);
     }
+    // Puertos `anchor` de arriba sin elemento en una tarjeta con pestaña: se reparten a la derecha de la pestaña, no
+    // detrás de ella.
+    const tab = el.querySelector<HTMLElement>(":scope > .z-folder-card__tab");
+    if (tab) {
+      const tr = tab.getBoundingClientRect();
+      const start = (tr.right - box.left) / box.width + 0.04;
+      const top = node.ports.filter((p) => p.anchor && portSide(p) === "top" && !next.has(p.id));
+      if (start < 0.85)
+        top.forEach((p, i) => {
+          next.set(p.id, Math.round((start + ((1 - start) * (i + 1)) / (top.length + 1)) * 10000) / 10000);
+        });
+    }
+    if (!next.size) return portT.delete(id) || insetChanged;
     const old = portT.get(id);
     const same = old && old.size === next.size && [...next].every(([k, v]) => Math.abs((old.get(k) ?? -1) - v) < 0.0005);
     if (same) return insetChanged;

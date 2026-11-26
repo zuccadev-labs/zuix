@@ -289,6 +289,39 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
     if (tierOf(a) < tierOf(b)) upward.add(l.to);
   }
   const sizeOf = (id: string, fallback: Size) => o.sizes?.get(id) ?? fallback;
+  // Enlaces que llegan a un equipo sin puerto propio: cada uno tiene su punto en el borde (`up-1`, `up-2`…), así dos
+  // cables al mismo equipo no se pisan.
+  const generic = new Map<string, { up: number; down: number }>();
+  const bump = (id: string, end: "up" | "down") => {
+    const g = generic.get(id) ?? { up: 0, down: 0 };
+    g[end]++;
+    generic.set(id, g);
+    return g[end];
+  };
+  const linkEnds = (inv.links ?? []).map((l) => {
+    let [a, ap] = split(l.from);
+    let [b, bp] = split(l.to);
+    if (tierOf(a) > tierOf(b)) {
+      [a, b] = [b, a];
+      [ap, bp] = [bp, ap];
+    }
+    const own = (id: string, port: string | undefined) => !!port && !!devices.get(id)?.ports?.some((x) => x.id === port);
+    return { a, ap, b, bp, down: own(a, ap) ? 0 : bump(a, "down"), up: own(b, bp) ? 0 : bump(b, "up") };
+  });
+  const genericPorts = (id: string): NodePort[] => {
+    const g = generic.get(id) ?? { up: 0, down: 0 };
+    const list = (end: "up" | "down", n: number): NodePort[] =>
+      n <= 1
+        ? [{ id: end, kind: end === "up" ? "target" : "source", side: end === "up" ? "top" : "bottom", anchor: true }]
+        : Array.from({ length: n }, (_, i) => ({
+            id: `${end}-${i + 1}`,
+            kind: end === "up" ? ("target" as const) : ("source" as const),
+            side: end === "up" ? ("top" as const) : ("bottom" as const),
+            anchor: true,
+          }));
+    return [...list("up", g.up), ...list("down", g.down)];
+  };
+  const portFor = (id: string, end: "up" | "down", k: number) => ((generic.get(id)?.[end] ?? 0) > 1 ? `${end}-${k}` : end);
 
   if (hasInternet) {
     const note = [inv.internet?.note, inv.internet?.down && `↓ ${inv.internet.down}`, inv.internet?.up && `↑ ${inv.internet.up}`]
@@ -299,10 +332,7 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
       type: "cloud",
       position: { x: 0, y: 0 },
       data: { label: inv.internet?.label ?? "Internet", description: note || undefined },
-      ports: [
-        { id: "down", kind: "source", side: "bottom", anchor: true },
-        { id: "side", kind: "source", side: "right", anchor: true },
-      ],
+      ports: [...genericPorts("internet").filter((p) => p.side === "bottom"), { id: "side", kind: "source", side: "right", anchor: true }],
       selectable: true,
     });
     sizes.set("internet", sizeOf("internet", { width: 260, height: 130 }));
@@ -334,8 +364,7 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
   for (const d of inv.devices) {
     const net = d.network ? nets.get(d.network) : undefined;
     const ports: NodePort[] = [
-      { id: "up", kind: "target", side: "top", anchor: true },
-      { id: "down", kind: "source", side: "bottom", anchor: true },
+      ...genericPorts(d.id),
       ...(d.ports ?? []).map(
         (p): NodePort => ({
           id: p.id,
@@ -385,19 +414,14 @@ export function diagramFromInventory(inv: Inventory, o: InventoryDiagramOptions 
   }
 
   (inv.links ?? []).forEach((l, i) => {
-    let [a, ap] = split(l.from);
-    let [b, bp] = split(l.to);
+    // De arriba abajo: el extremo de nivel más alto es el origen.
+    const { a, ap, b, bp, up, down } = linkEnds[i]!;
     const known = (id: string) => id === "internet" || devices.has(id) || (inv.externals ?? []).some((x) => x.id === id);
     if (!known(a) || !known(b)) return;
-    // De arriba abajo: el extremo de nivel más alto es el origen.
-    if ((tier.get(a) ?? 0) > (tier.get(b) ?? 0)) {
-      [a, b] = [b, a];
-      [ap, bp] = [bp, ap];
-    }
     const kind: LinkKind = l.kind ?? "access";
     const net = l.network ? nets.get(l.network) : undefined;
-    const sourcePort = ap && devices.get(a)?.ports?.some((p) => p.id === ap) ? ap : "down";
-    const targetPort = bp && devices.get(b)?.ports?.some((p) => p.id === bp) ? bp : "up";
+    const sourcePort = down ? portFor(a, "down", down) : ap!;
+    const targetPort = up ? portFor(b, "up", up) : bp!;
     edges.push({
       id: l.id ?? `link-${i}`,
       source: a,
