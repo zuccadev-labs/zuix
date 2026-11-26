@@ -134,7 +134,10 @@ export default async function ({ page, test, ok }) {
       );
       await box.locator(".z-slider__thumb").focus();
       for (let i = 0; i < 8; i++) await page.keyboard.press(dir === "ltr" ? "ArrowRight" : "ArrowLeft");
-      await until(async () => (g = await geometry()).value === "20", `${dir}: el teclado lleva a 20`);
+      await until(async () => {
+        g = await geometry();
+        return g.value === "20";
+      }, `${dir}: el teclado lleva a 20`);
       ok(
         Math.abs((dir === "ltr" ? g.right : g.left) - -side * 0.2 * g.width) < 3,
         `${dir}: tras cruzar el centro, al otro lado ${JSON.stringify(g)}`,
