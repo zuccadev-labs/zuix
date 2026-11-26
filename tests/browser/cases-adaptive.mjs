@@ -91,10 +91,10 @@ export default function ({ t, assert, poll }) {
       name: "AdaptiveLayout visual: el DOM vuelve al orden de origen y se avisa del desorden (React)",
       async run({ open }) {
         const page = await open("adaptive", { width: 1440, height: 1000 });
-        await frame(page, "1180");
+        await frame(page, "1600");
         await poll(async () => {
           const before = await layoutState(page);
-          return before.cls === "expanded" && before.dom.indexOf("activity") < before.dom.indexOf("main");
+          return before.cls === "large" && before.dom.indexOf("activity") < before.dom.indexOf("main");
         }, "en modo DOM la actividad se mueve delante del trabajo");
         await page.getByRole("radio", { name: "Visual only" }).click();
         await poll(

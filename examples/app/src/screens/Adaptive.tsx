@@ -512,7 +512,17 @@ export function AdaptiveSsr() {
     void (async () => {
       const { renderToString } = await import("react-dom/server");
       const { hydrateRoot } = await import("react-dom/client");
-      container.innerHTML = renderToString(<AdaptivePage pieces={INITIAL} measure="window" />);
+      // En el navegador los componentes no saben que pintan «en servidor»: React 18 avisa de cada useLayoutEffect.
+      // En un servidor de verdad usan useEffect (no hay `document`) y el aviso no sale; aquí se calla solo ese.
+      const realError = console.error;
+      console.error = (...args: unknown[]) => {
+        if (!String(args[0]).includes("useLayoutEffect does nothing on the server")) realError(...args);
+      };
+      try {
+        container.innerHTML = renderToString(<AdaptivePage pieces={INITIAL} measure="window" />);
+      } finally {
+        console.error = realError;
+      }
       // Con las fuentes cargadas y un fotograma pintado: lo que se compara es la colocación, no la carga de la letra.
       await document.fonts.ready;
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
