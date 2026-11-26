@@ -19,6 +19,22 @@
     display: inline-flex;
     vertical-align: middle;
   }
+  /* La casilla de fila dibuja 18 px pero se pulsa en 24 (40 con puntero grueso): la celda tiene sitio. */
+  .z-table__select .z-check__box {
+    position: relative;
+  }
+  .z-table__select .z-check__box::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: max(var(--z-space-6), var(--z-touch-target, 0px));
+    block-size: max(var(--z-space-6), var(--z-touch-target, 0px));
+    translate: -50% -50%;
+  }
+  [dir="rtl"] .z-table__select .z-check__box::before {
+    translate: 50% -50%;
+  }
   .z-table tfoot td {
     padding: var(--z-table-pad-y) var(--z-table-pad-x);
     border-top: 1px solid var(--z-line-strong);
@@ -903,12 +919,212 @@
   [dir="rtl"] .z-table :is(th, td)[data-pinned-last] {
     box-shadow: inset 1px 0 0 var(--z-line);
   }
+  /* Una cabecera fijada tapa lo que pasa por debajo: fondo opaco también en una tabla con marco. */
+  .z-table-wrap .z-table thead tr :is(th, td)[data-pinned] {
+    background: var(--z-surface-solid);
+  }
+  /* Fijadas al final: la misma regla hacia el otro lado. */
+  .z-table :is(th, td)[data-pinned="end"] {
+    inset-inline-start: auto;
+    inset-inline-end: var(--z-pin-offset, 0);
+  }
+  .z-table :is(th, td)[data-pinned-first] {
+    box-shadow: inset 1px 0 0 var(--z-line);
+  }
+  [dir="rtl"] .z-table :is(th, td)[data-pinned-first] {
+    box-shadow: inset -1px 0 0 var(--z-line);
+  }
   .z-datatable__export {
     margin-inline-end: auto;
   }
   @media (forced-colors: active) {
     .z-table__resize::after {
       background: CanvasText;
+    }
+  }
+}
+
+/* DataTable como rejilla: ventana virtual, navegación por celdas, edición en línea, grupos, árbol, detalle y reordenar. */
+@layer zui.data {
+  /* Ventana virtual: la tabla desplaza dentro de su alto con la cabecera fija; los rellenos ocupan las filas no pintadas. */
+  .z-table-wrap--virtual {
+    max-block-size: var(--z-datatable-height, 560px);
+    overscroll-behavior: contain;
+  }
+  .z-table .z-table__spacer > td {
+    block-size: var(--z-virtual-space, 0);
+    padding: 0;
+    border: 0;
+  }
+  /* Rejilla: la celda activa lleva el anillo por dentro (el envoltorio con desplazamiento no lo recorta). */
+  .z-table[data-grid] tbody :is(td, th) {
+    outline: none;
+  }
+  .z-table[data-grid] tbody :is(td, th):focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: calc(var(--z-focus-width) * -1);
+  }
+  .z-table[data-grid] tbody td[data-editable] {
+    cursor: text;
+  }
+  .z-table td[data-editing] {
+    padding-block: var(--z-space-1);
+  }
+  .z-table__editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-0-5);
+    min-inline-size: 8ch;
+  }
+  .z-table__input {
+    inline-size: 100%;
+    block-size: var(--z-control-height-sm);
+    padding-inline: var(--z-space-2);
+    border: 1px solid var(--z-control-border);
+    border-radius: var(--z-control-radius-sm);
+    background: var(--z-control-bg);
+    color: var(--z-fg);
+    font: inherit;
+  }
+  .z-table__input:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 1px;
+  }
+  .z-table__editor[data-invalid] .z-table__input {
+    border-color: var(--z-danger);
+  }
+  .z-table__error {
+    color: var(--z-danger-text);
+    font-family: var(--z-font-sans);
+    font-size: var(--z-text-caption);
+    white-space: normal;
+  }
+  /* Abrir y cerrar: grupos, ramas del árbol y detalle. El chevron gira; en RTL apunta al otro lado. */
+  .z-table__toggle {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--z-space-5);
+    block-size: var(--z-space-5);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: none;
+    color: var(--z-fg-muted);
+    cursor: pointer;
+  }
+  .z-table__toggle > svg,
+  .z-table__expand > svg {
+    transition: rotate var(--z-duration-normal) var(--z-ease-emphasized);
+  }
+  [dir="rtl"] .z-table__toggle > svg {
+    scale: -1 1;
+  }
+  .z-table__toggle[data-state="open"] > svg {
+    rotate: 90deg;
+  }
+  /* El detalle usa otro icono (abajo) para no confundirse con el de abrir una rama: abierto, apunta arriba. */
+  .z-table__expand[data-state="open"] > svg {
+    rotate: 180deg;
+  }
+  .z-table__toggle-space {
+    display: inline-block;
+    flex: none;
+    inline-size: var(--z-space-5);
+    block-size: var(--z-space-5);
+  }
+  /* En medio de la línea: con o sin botón, el texto queda a la altura del de las otras celdas. */
+  .z-table__tree-cell,
+  .z-table__group-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--z-space-1);
+    padding-inline-start: calc(var(--z-depth, 0) * var(--z-space-5));
+    vertical-align: middle;
+  }
+  .z-table__group > td {
+    background: var(--z-surface);
+    color: var(--z-fg);
+    font-weight: var(--z-weight-medium);
+    cursor: pointer;
+  }
+  .z-table__group-cell {
+    padding-inline-start: calc(var(--z-depth, 0) * var(--z-space-4));
+  }
+  .z-table :is(th, td).z-table__expand-cell {
+    width: calc(var(--z-space-4) + var(--z-control-height-sm));
+    padding-inline-end: 0;
+  }
+  .z-table__detail > td {
+    background: var(--z-surface);
+  }
+  .z-table__detail-body {
+    padding-block: var(--z-space-1);
+    color: var(--z-fg);
+  }
+  /* Reordenar columnas: asa con su propio foco; la cabecera de destino marca el lado con una línea de acento. */
+  .z-table__grip {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--z-space-5);
+    block-size: var(--z-space-5);
+    margin-inline-end: var(--z-space-1);
+    padding: 0;
+    border: 0;
+    border-radius: var(--z-radius-xs);
+    background: none;
+    color: var(--z-fg-subtle);
+    vertical-align: middle;
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  @media (hover: hover) {
+    .z-table__grip:hover {
+      background: var(--z-surface-3);
+      color: var(--z-fg);
+    }
+  }
+  .z-table__grip:focus-visible {
+    outline: var(--z-focus-width) solid var(--z-accent-ring);
+    outline-offset: 0;
+    color: var(--z-fg);
+  }
+  .z-table__grip[aria-pressed="true"] {
+    background: var(--z-accent-soft);
+    color: var(--z-accent-text);
+  }
+  .z-table[data-reordering] {
+    cursor: grabbing;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .z-table thead th[data-drop="before"] {
+    box-shadow: inset 2px 0 0 var(--z-accent);
+  }
+  .z-table thead th[data-drop="after"] {
+    box-shadow: inset -2px 0 0 var(--z-accent);
+  }
+  [dir="rtl"] .z-table thead th[data-drop="before"] {
+    box-shadow: inset -2px 0 0 var(--z-accent);
+  }
+  [dir="rtl"] .z-table thead th[data-drop="after"] {
+    box-shadow: inset 2px 0 0 var(--z-accent);
+  }
+  @media (forced-colors: active) {
+    .z-table__grip[aria-pressed="true"] {
+      outline: 2px solid Highlight;
+    }
+    .z-table thead th[data-drop] {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .z-table__toggle > svg,
+    .z-table__expand > svg {
+      transition: none;
     }
   }
 }

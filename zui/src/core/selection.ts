@@ -9,7 +9,9 @@ export type HeaderState = "checked" | "unchecked" | "indeterminate";
 function ordered(selected: Iterable<RowKey>, order: ReadonlyArray<RowKey>): RowKey[] {
   const set = new Set(selected);
   const out = order.filter((k) => set.has(k));
-  for (const k of set) if (!order.includes(k)) out.push(k);
+  // Con un conjunto: con 10 000 filas y todas marcadas, `includes` por clave eran 10⁸ comparaciones.
+  const known = new Set(order);
+  for (const k of set) if (!known.has(k)) out.push(k);
   return out;
 }
 
@@ -35,7 +37,7 @@ export function rangeKeys(
   const from = anchor === null || anchor === undefined ? -1 : order.indexOf(anchor);
   const to = order.indexOf(target);
   if (from < 0 || to < 0) return toggleKey(selected, target, order);
-  const turnOn = !selected.includes(target);
+  const turnOn = !new Set(selected).has(target);
   const set = new Set(selected);
   for (let i = Math.min(from, to); i <= Math.max(from, to); i++) {
     const k = order[i]!;

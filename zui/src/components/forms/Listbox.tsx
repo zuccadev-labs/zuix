@@ -1,12 +1,17 @@
 "use client";
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref, type UIEvent } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import type { AsyncLoader } from "../../core/async-options";
 import { logicalKey } from "../../core/dir";
 import { trackScrollEdges } from "../../core/edges";
 import { move } from "../../core/roving";
 import { createTypeahead, isPrintable } from "../../core/typeahead";
+import { wantsVirtual } from "../../core/virtual";
 import { cx } from "../../cx";
-import { useControllable } from "../../primitives/hooks";
+import { useAsyncOptions } from "../../primitives/async-options";
+import { useControllable, useIsoLayoutEffect } from "../../primitives/hooks";
+import { useVirtual } from "../../primitives/virtual";
+import { estimateRow, optionRows, renderRows, rowOfOption } from "./option-rows.internal";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
 import { useFieldControl, useFieldLabel } from "./Field";
 import { withRef } from "../../react-compat";
@@ -25,8 +30,23 @@ export interface ListboxOptionGroup {
 }
 
 interface ListboxBase {
-  /** Opciones sueltas, grupos `{ label, options }` o una mezcla. */
-  options: ReadonlyArray<ListboxOption | ListboxOptionGroup>;
+  /** Opciones sueltas, grupos `{ label, options }` o una mezcla. Con `loadOptions`, las primeras mientras carga. */
+  options?: ReadonlyArray<ListboxOption | ListboxOptionGroup>;
+  /**
+   * Opciones del servidor: se piden al montar (consulta vacía) y página a página al llegar al final de la lista. La
+   * función recibe `{ signal, page }`: pasa `signal` a `fetch` para que se cancele al desmontar.
+   */
+  loadOptions?: AsyncLoader<ListboxOption>;
+  /** Texto mientras cargan las primeras opciones o la página siguiente. */
+  loadingText?: string;
+  /** Texto si la carga falla (con un botón para reintentar). */
+  errorText?: string;
+  retryLabel?: string;
+  /**
+   * Ventana virtual: solo se pintan las opciones que se ven (la activa no sale del documento). `true` siempre,
+   * `false` nunca, un número es el umbral; por defecto, a partir de 100 opciones.
+   */
+  virtualize?: boolean | number;
   /** Nombre accesible si no lo da un Field. */
   label?: string;
   "aria-labelledby"?: string;
@@ -63,6 +83,7 @@ export type ListboxProps = ListboxSingleProps | ListboxMultipleProps;
 
 const isGroup = (entry: ListboxOption | ListboxOptionGroup): entry is ListboxOptionGroup => "options" in entry;
 const EMPTY: ReadonlyArray<string> = [];
+const EMPTY_OPTIONS: ReadonlyArray<ListboxOption> = [];
 
 /**
  * Lista de opciones siempre visible (patrón APG «listbox»): una sola parada de Tab, flechas, Inicio, Fin y búsqueda
@@ -71,7 +92,12 @@ const EMPTY: ReadonlyArray<string> = [];
  */
 export const Listbox = withRef(function Listbox(props: ListboxProps) {
   const {
-    options,
+    options: given = EMPTY_OPTIONS,
+    loadOptions,
+    loadingText = "Loading",
+    errorText = "Couldn't load the options",
+    retryLabel = "Retry",
+    virtualize,
     label,
     orientation = "vertical",
     size = "md",
@@ -83,6 +109,13 @@ export const Listbox = withRef(function Listbox(props: ListboxProps) {
     className,
     ref,
   } = props;
+  const remote = useAsyncOptions(loadOptions);
+  // Con `loadOptions`, la primera página se pide al montar; las siguientes, al llegar al final.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: solo al montar (o al pasar a cargar del servidor).
+  useEffect(() => {
+    if (loadOptions) remote.search("", true);
+  }, [Boolean(loadOptions)]);
+  const options = loadOptions && remote.state.status !== "idle" ? remote.state.options : given;
   const multiple = props.selectionMode === "multiple";
   const { invalid: isInvalid, ...control } = useFieldControl({ id, invalid });
   const fieldLabel = useFieldLabel();
@@ -98,7 +131,7 @@ export const Listbox = withRef(function Listbox(props: ListboxProps) {
     multiple ? (props.defaultValue ?? EMPTY) : EMPTY,
     multiple ? (props.onValueChange as (value: ReadonlyArray<string>) => void) : undefined,
   );
-  const flat = options.flatMap((entry) => (isGroup(entry) ? entry.options : [entry]));
+  const { rows, options: flat } = optionRows<ListboxOption, ListboxOptionGroup>(options, isGroup);
   const usable = flat.filter((option) => !disabled && !option.disabled);
   const selected = (value: string) => (multiple ? many.includes(value) : single === value);
   const [active, setActive] = useState<string | null>(null);
@@ -107,11 +140,41 @@ export const Listbox = withRef(function Listbox(props: ListboxProps) {
   // En fila, la lista desplaza en horizontal: el borde con opciones ocultas se difumina.
   useEffect(() => (list.current && orientation === "horizontal" ? trackScrollEdges(list.current) : undefined), [orientation]);
   const [search] = useState(() => createTypeahead());
-  const optionId = (value: string) => `${listId}-${flat.findIndex((o) => o.value === value)}`;
+  const indexOf = new Map(flat.map((o, i) => [o.value, i]));
+  const optionId = (value: string) => `${listId}-${indexOf.get(value) ?? -1}`;
+  // Ventana virtual (vertical): la parada de Tab no sale del documento aunque se desplace lejos.
+  const virtual = orientation === "vertical" && wantsVirtual(virtualize, flat.length, 100);
+  const stopRow = stop === undefined ? -1 : rowOfOption(rows, indexOf.get(stop) ?? -1);
+  const win = useVirtual({
+    enabled: virtual,
+    count: rows.length,
+    size: estimateRow(rows, size),
+    key: (i) => rows[i]?.key ?? String(i),
+    keep: stopRow >= 0 ? [stopRow] : [],
+    scroller: list,
+    rowSelector: "[data-key]",
+  });
+  const pendingFocus = useRef<string | null>(null);
+  useIsoLayoutEffect(() => {
+    const value = pendingFocus.current;
+    if (value === null) return;
+    pendingFocus.current = null;
+    list.current?.querySelector<HTMLElement>(`[id="${optionId(value)}"]`)?.focus();
+  });
 
   const focusOption = (value: string) => {
     setActive(value);
-    list.current?.querySelector<HTMLElement>(`[id="${optionId(value)}"]`)?.focus();
+    const el = list.current?.querySelector<HTMLElement>(`[id="${optionId(value)}"]`);
+    if (el) el.focus();
+    else {
+      // Fuera de la ventana: se desplaza a ella y el foco llega tras pintarla.
+      pendingFocus.current = value;
+      win.scrollToIndex(rowOfOption(rows, indexOf.get(value) ?? 0));
+    }
+  };
+  const onScroll = (event: UIEvent<HTMLDivElement>) => {
+    const el = event.currentTarget;
+    if (loadOptions && remote.state.hasMore && el.scrollTop + el.clientHeight >= el.scrollHeight - 48) remote.more();
   };
   const toggle = (value: string, on = !many.includes(value)) =>
     setMany(on ? (many.includes(value) ? many : [...many, value]) : many.filter((v) => v !== value));
@@ -123,6 +186,8 @@ export const Listbox = withRef(function Listbox(props: ListboxProps) {
     const vertical = orientation === "vertical";
     const key = vertical ? event.key : logicalKey(event.key, event.currentTarget);
     const next = move(values, current, key, vertical, false);
+    // Al llegar al final con más páginas en el servidor, se pide la siguiente.
+    if (loadOptions && next === values[values.length - 1] && remote.state.hasMore) remote.more();
     if (next !== undefined) {
       event.preventDefault();
       focusOption(next);
@@ -167,6 +232,9 @@ export const Listbox = withRef(function Listbox(props: ListboxProps) {
         id={optionId(option.value)}
         role="option"
         className="z-listbox__option"
+        data-key={virtual ? `o:${option.value}` : undefined}
+        aria-posinset={virtual ? (indexOf.get(option.value) ?? 0) + 1 : undefined}
+        aria-setsize={virtual ? flat.length : undefined}
         tabIndex={option.value === stop ? 0 : -1}
         data-value={option.value}
         data-label={option.label}
@@ -202,6 +270,9 @@ export const Listbox = withRef(function Listbox(props: ListboxProps) {
   };
 
   const chosen = multiple ? many : single ? [single] : [];
+  const status = remote.state.status;
+  const loadingFirst = Boolean(loadOptions) && status === "loading" && flat.length === 0;
+  const failed = Boolean(loadOptions) && status === "error";
   return (
     <div
       ref={ref}
@@ -226,23 +297,35 @@ export const Listbox = withRef(function Listbox(props: ListboxProps) {
         aria-multiselectable={multiple || undefined}
         aria-orientation={orientation}
         aria-disabled={disabled || undefined}
+        aria-busy={(loadOptions && (status === "loading" || remote.state.loadingMore)) || undefined}
+        data-virtual={virtual || undefined}
         onKeyDown={onKeyDown}
+        onScroll={loadOptions ? onScroll : undefined}
       >
-        {options.map((entry, index) =>
-          isGroup(entry) ? (
-            // biome-ignore lint/suspicious/noArrayIndexKey: los grupos no tienen identidad propia.
-            <div key={`group-${index}`} role="group" className="z-listbox__group" aria-labelledby={`${listId}-group-${index}`}>
-              <div id={`${listId}-group-${index}`} className="z-listbox__label">
-                {entry.label}
-              </div>
-              {entry.options.map(renderOption)}
-            </div>
-          ) : (
-            renderOption(entry)
-          ),
-        )}
+        {renderRows({
+          rows,
+          indices: win.indices,
+          listId,
+          renderOption: (option) => renderOption(option),
+          virtual: win.virtual,
+          before: win.before,
+          after: win.after,
+        })}
       </div>
-      {flat.length === 0 ? <div className="z-listbox__empty">{emptyText}</div> : null}
+      {failed ? (
+        <div className="z-listbox__empty" role="status" data-error="">
+          {errorText}{" "}
+          <button type="button" className="z-btn z-btn--ghost z-listbox__retry" data-size="sm" onClick={() => remote.retry()}>
+            {retryLabel}
+          </button>
+        </div>
+      ) : loadingFirst || remote.state.loadingMore ? (
+        <div className="z-listbox__empty" role="status" data-loading="">
+          {loadingText}
+        </div>
+      ) : flat.length === 0 ? (
+        <div className="z-listbox__empty">{emptyText}</div>
+      ) : null}
       {name ? chosen.map((value) => <input key={value} type="hidden" name={name} value={value} />) : null}
     </div>
   );

@@ -17,7 +17,9 @@ import { logicalKey } from "../core/dir";
 import { move } from "../core/roving";
 import { addTags, splitTags } from "../core/tags";
 import { createTypeahead, isPrintable } from "../core/typeahead";
+import { createAsyncOptions, type AsyncLoader, type AsyncOptions } from "../core/async-options";
 import { all, emit, flag, inDom } from "./forms-popup";
+import { buildOption, deferLongList, paintAsyncStatus, type AsyncLoaderOptions, type ComboboxOption } from "./forms-listbox";
 import { setMarkup, type Listen } from "./shared";
 
 registerIcons([xMark]);
@@ -89,6 +91,7 @@ function onListKey(box: HTMLElement, option: HTMLElement, event: KeyboardEvent):
   const live = optionsOf(box).filter(usable);
   const vertical = box.dataset.orientation !== "horizontal";
   const next = move(live, option, vertical ? event.key : logicalKey(event.key, box), vertical, false);
+  if (next && next === live[live.length - 1]) listLoaders.get(box)?.more();
   if (next) {
     event.preventDefault();
     next.focus();
@@ -117,6 +120,59 @@ function onListKey(box: HTMLElement, option: HTMLElement, event: KeyboardEvent):
     if (!isMultiple(box)) chooseOption(box, hit);
     else paintList(box, listValue(box) as string[], hit);
   }
+}
+
+/* ---------- Listbox con opciones del servidor ---------- */
+
+const listLoaders = new WeakMap<HTMLElement, AsyncOptions<ComboboxOption>>();
+
+/**
+ * Opciones del servidor para un Listbox en línea: la primera página se pide al llamar y las siguientes al llegar al
+ * final de la lista (si la respuesta trae `hasMore`). Mientras carga, aria-busy y el texto `data-loading-text`; si
+ * falla, `data-error-text` con un botón para reintentar. Conserva la selección.
+ */
+export function setListboxLoader(box: HTMLElement, load: AsyncLoader<ComboboxOption>, options: AsyncLoaderOptions = {}): void {
+  const viewport = box.querySelector<HTMLElement>(":scope > .z-listbox__viewport");
+  if (!viewport) return;
+  listLoaders.get(box)?.abort();
+  const sizes: Record<string, number> = { sm: 14, md: 16, lg: 18 };
+  const engine = createAsyncOptions<ComboboxOption>({
+    load,
+    debounce: options.debounce,
+    onChange(state) {
+      flag(viewport, "aria-busy", state.status === "loading" || state.loadingMore, "true");
+      if (state.status === "ready") {
+        const values = listValue(box);
+        viewport.replaceChildren(...state.options.map((option) => buildOption(option, sizes[box.dataset.size ?? "md"] ?? 16)));
+        paintList(box, typeof values === "string" ? (values ? [values] : []) : values);
+        deferLongList(viewport, box);
+      }
+      let first = box.querySelector<HTMLElement>(":scope > .z-listbox__empty:not([data-async])");
+      const loadingFirst = state.status === "loading" && state.options.length === 0;
+      if (loadingFirst && !first) {
+        first = document.createElement("div");
+        first.className = "z-listbox__empty";
+        first.setAttribute("role", "status");
+        first.setAttribute("data-loading", "");
+        box.append(first);
+      }
+      if (loadingFirst && first) first.textContent = box.dataset.loadingText ?? "Loading";
+      else if (state.status !== "loading") first?.remove();
+      paintAsyncStatus(box, state, box);
+    },
+  });
+  listLoaders.set(box, engine);
+  viewport.addEventListener(
+    "scroll",
+    () => {
+      if (viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 48) engine.more();
+    },
+    { passive: true },
+  );
+  box.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("[data-retry]")) engine.retry();
+  });
+  engine.search("", true);
 }
 
 /* ---------- TagsInput ---------- */
@@ -402,6 +458,10 @@ export function setup(on: Listen): void {
 }
 
 export function hydrate(root: ParentNode): void {
-  for (const box of all(root, LISTBOX)) paintList(box, optionsOf(box).filter(on).map(optionValue));
+  for (const box of all(root, LISTBOX)) {
+    paintList(box, optionsOf(box).filter(on).map(optionValue));
+    // Lista larga del servidor: las opciones fuera de la vista no se pintan (siguen en el documento).
+    if (box.dataset.orientation !== "horizontal") deferLongList(box.querySelector<HTMLElement>(":scope > .z-listbox__viewport"), box);
+  }
   for (const box of all(root, ".z-tags")) writeTags(box, tagsOf(box).map(tagValue));
 }

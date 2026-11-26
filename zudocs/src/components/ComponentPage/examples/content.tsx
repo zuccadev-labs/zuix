@@ -102,6 +102,33 @@ function BreakableDemo({ custom }: { custom?: boolean }) {
   );
 }
 
+/** Equipo editable y archivos en árbol de los ejemplos de DataTable como rejilla. */
+const TEAM = [
+  { id: "a1", name: "Ana Torres", role: "admin", seats: 4, joined: new Date("2025-03-02T12:00:00Z") },
+  { id: "b2", name: "Ben Okafor", role: "editor", seats: 12, joined: new Date("2026-01-15T12:00:00Z") },
+  { id: "c3", name: "Chen Wei", role: "viewer", seats: 7, joined: new Date("2024-11-20T12:00:00Z") },
+];
+interface FileRow {
+  id: string;
+  name: string;
+  size: number;
+  children?: FileRow[];
+}
+const FILE_ROWS: FileRow[] = [
+  {
+    id: "src",
+    name: "src",
+    size: 0,
+    children: [
+      { id: "src/index.ts", name: "index.ts", size: 2 },
+      { id: "src/app.ts", name: "app.ts", size: 14 },
+    ],
+  },
+  { id: "readme", name: "README.md", size: 4 },
+];
+/** Diez mil filas deterministas. */
+const INVENTORY = Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `Item ${i + 1}`, value: (i * 37) % 1000 }));
+
 const ORDERS = [
   { id: "ORD-4821", customer: "Ana Ruiz", total: "$129.00", paid: true },
   { id: "ORD-4822", customer: "Leo Park", total: "$48.50", paid: false },
@@ -294,6 +321,89 @@ export const content: Record<string, ExampleDemos> = {
             mono: true,
             footer: (all) => all.reduce((sum, member) => sum + member.seats, 0),
           },
+        ]}
+      />
+    ),
+    "Rejilla editable, columnas fijadas y reordenables": () => {
+      const [people, setPeople] = useState(TEAM);
+      return (
+        <DataTable
+          caption="Team"
+          captionHidden
+          locale="es-ES"
+          reorderable
+          rows={people}
+          rowKey={(p) => p.id}
+          onCellEdit={({ rowKey, key, value }) => {
+            if (key === "name" && value.trim().toLowerCase() === "taken") return "That name is taken";
+            setPeople((list) => list.map((p) => (p.id === rowKey ? { ...p, [key]: key === "seats" ? Number(value) : value } : p)));
+            return undefined;
+          }}
+          columns={[
+            { key: "name", header: "Name", accessor: (p) => p.name, pinned: "start", editable: true, required: true },
+            {
+              key: "role",
+              header: "Role",
+              accessor: (p) => p.role,
+              editable: true,
+              editor: "select",
+              options: [
+                { value: "admin", label: "Admin" },
+                { value: "editor", label: "Editor" },
+                { value: "viewer", label: "Viewer" },
+              ],
+            },
+            { key: "seats", header: "Seats", accessor: (p) => p.seats, align: "end", editable: true, editor: "number", min: 1, max: 50 },
+            { key: "joined", header: "Joined", accessor: (p) => p.joined, pinned: "end" },
+          ]}
+        />
+      );
+    },
+    "Agrupada con agregados": () => (
+      <DataTable
+        caption="Sales"
+        captionHidden
+        locale="en-US"
+        groupBy="region"
+        rows={[
+          { id: 1, region: "North", rep: "Ana", amount: 1200 },
+          { id: 2, region: "North", rep: "Leo", amount: 800 },
+          { id: 3, region: "South", rep: "Mia", amount: 1500 },
+        ]}
+        rowKey={(s) => s.id}
+        columns={[
+          { key: "region", header: "Region", accessor: (s) => s.region },
+          { key: "rep", header: "Rep", accessor: (s) => s.rep, aggregate: "count" },
+          { key: "amount", header: "Amount", accessor: (s) => s.amount, align: "end", mono: true, aggregate: "sum" },
+        ]}
+      />
+    ),
+    "Datos en árbol y fila de detalle": () => (
+      <DataTable
+        caption="Files"
+        captionHidden
+        rows={FILE_ROWS}
+        rowKey={(f) => f.id}
+        getRowChildren={(f) => f.children}
+        defaultExpandedRows={["src"]}
+        renderDetail={(f) => `Path: ${f.id}`}
+        defaultExpandedDetails={["readme"]}
+        columns={[
+          { key: "name", header: "Name", accessor: (f) => f.name },
+          { key: "size", header: "Size (kB)", accessor: (f) => f.size, align: "end", mono: true },
+        ]}
+      />
+    ),
+    "Diez mil filas con ventana virtual": () => (
+      <DataTable
+        caption="Inventory"
+        captionHidden
+        rows={INVENTORY}
+        rowKey={(r) => r.id}
+        selectable
+        columns={[
+          { key: "name", header: "Name", accessor: (r) => r.name, sortable: true, filterable: true },
+          { key: "value", header: "Value", accessor: (r) => r.value, sortable: true, align: "end", mono: true },
         ]}
       />
     ),

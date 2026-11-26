@@ -702,14 +702,115 @@ Con `prefers-reduced-transparency` o `prefers-contrast: more` el cristal pasa a 
 Arrastre con inercia, bucle infinito, flechas, teclado y anuncios para lectores de pantalla. Si el navegador
 no ofrece WebGL2 se pregunta una sola vez por página y el carrusel sigue en `css`.
 
+## Escala y rejilla (0.5)
+
+Las listas y tablas que ya había aguantan miles de entradas y la tabla de datos se comporta como una rejilla. Todo es
+opcional: sin las props nuevas, el marcado y el comportamiento son los de la 0.4.
+
+### Listas largas: ventana virtual
+
+Con muchas entradas solo se pintan las que se ven, más unas de margen. Se activa sola a partir de un umbral y se
+controla con `virtualize`: `false` nunca, `true` siempre, un número es el umbral propio.
+
+| Componente | Umbral por defecto | Desplaza en |
+|---|---|---|
+| `DataTable` | 200 filas | su propio alto (`--z-datatable-height`, 560 px), con la cabecera fija |
+| `Select`, `Combobox`, `Listbox` | 100 opciones | la lista |
+| `CommandPalette`, `Command` | 150 comandos | la lista |
+| `Tree` | 200 filas visibles | su propio alto (`--z-tree-height`, 480 px); las filas pasan a plano |
+| `ConversationList` | 150 conversaciones | la lista |
+| `MemberList` | 200 personas | su propio alto (`--z-member-list-height`, 480 px) |
+| `TransferList` | 200 opciones por lista | cada lista |
+
+Las ventanas que ya existían (`MessageList`, `LogConsole`, `TimelineView` y la lista de `EventCalendar`) usan el mismo
+núcleo, `core/virtual`, que comparten el binding de React y el modo DOM. Lo que garantiza:
+
+- La entrada con el foco (o la activa de un `aria-activedescendant`, o la que se edita) no sale nunca del documento:
+  el foco sobrevive al reciclado y las flechas llevan a una entrada que aún no estaba pintada.
+- Los lectores reciben la posición y el total: `aria-setsize` y `aria-posinset` en listas y árboles,
+  `aria-rowcount` y `aria-rowindex` en la tabla.
+- Altura fija o medida: las filas de alto variable (mensajes, detalle de una tabla, grupos) se miden al pintarse.
+
+El límite: la búsqueda del navegador (Ctrl+F) solo encuentra lo pintado. Para eso están los filtros de la tabla y las
+búsquedas de las listas. En el modo DOM, una lista o un árbol que llegan enteros en el marcado del servidor no salen
+del documento: llevan `content-visibility: auto` y Ctrl+F los encuentra igual. La tabla del modo DOM sí recicla filas
+(con más de 200, o con `data-virtual`).
+
+### DataTable como rejilla
+
+Con columnas editables, agrupación o datos en árbol (o con `grid`), la tabla sigue el patrón APG «data grid»: una sola
+parada de Tab en el cuerpo y el foco por celdas.
+
+```tsx
+<DataTable
+  caption="Team"
+  locale="es-ES"
+  rows={people}
+  rowKey={(p) => p.id}
+  selectable
+  reorderable
+  onCellEdit={({ rowKey, key, value }) => (value === "taken" ? "Ese nombre ya existe" : save(rowKey, key, value))}
+  columns={[
+    { key: "name", header: "Name", accessor: (p) => p.name, pinned: "start", editable: true, required: true },
+    { key: "seats", header: "Seats", accessor: (p) => p.seats, editable: true, editor: "number", min: 1, max: 50 },
+    { key: "joined", header: "Joined", accessor: (p) => p.joined, pinned: "end" },
+  ]}
+/>
+```
+
+| Tecla | Qué hace |
+|---|---|
+| Flechas, Inicio, Fin, RePág, AvPág | Mueven la celda activa; Ctrl+Inicio y Ctrl+Fin van a la primera y la última |
+| F2, Intro o una letra | Editan la celda (la letra empieza el valor) |
+| Intro / Tab / Escape (editando) | Confirma / confirma y pasa a la siguiente editable / cancela |
+| → y ← en la primera celda | Abren y cierran un grupo o una rama; ← en un hijo va a su padre |
+| Mayús+Espacio, Mayús+↑/↓, Mayús+clic | Seleccionan un rango de filas (con `selectable`) |
+| Espacio, ←/→, Espacio, Escape (en el asa) | Cogen, mueven, sueltan y devuelven una columna (`reorderable`) |
+
+- Edición por celda o por fila (`editMode="row"`). Reglas por columna (`required`, `min`, `max`, `pattern`, `editor`
+  con `options`) y `validate`. `onCellEdit` y `onRowEdit` devuelven un mensaje (o una promesa con él) para rechazar:
+  el campo se queda abierto con `aria-invalid` y el mensaje se anuncia. La tabla no cambia `rows`.
+- Columnas fijadas a los dos lados: `pinned: "start" | "end"`.
+- Agrupación: `groupBy` (una columna o varias) y `aggregate` por columna (`sum`, `avg`, `min`, `max`, `count` o una
+  función). El agregado sale en la fila de cada grupo y en el pie si la columna no tiene `footer`.
+- Datos en árbol: `getRowChildren` y `expandedRows`. Fila de detalle: `renderDetail` y `expandedDetails`.
+- Las celdas `Date` se escriben con `locale` y `dateFormat` de la tabla, no con el idioma del entorno: en render de
+  servidor, fija `locale` (y `timeZone` en `dateFormat`) y no hay desajuste de hidratación.
+
+Rendimiento: con 10 000 filas, en el documento hay unas 20; ordenar y filtrar trabajan sobre todas. La prueba de
+tiempo está en `tests/browser/cases-scale.mjs` (React) y `tests/html/cases/28-scale.mjs` (modo DOM).
+
+### Opciones del servidor
+
+`Combobox`, `Select` y `Listbox` aceptan `loadOptions(query, { signal, page })`, que devuelve `{ options, hasMore }` o
+un array. La petición sale tras `debounce` ms sin teclear (250), la anterior se cancela con su `AbortController` (pasa
+`signal` a `fetch`) y la página siguiente se pide al llegar al final de la lista. Hay estado de carga (`aria-busy`),
+de vacío y de error con un botón de reintentar (Intro también reintenta). `Select` con `loadOptions` lleva búsqueda;
+sin ella, `searchable` la añade y filtra las opciones locales conservando el título de los grupos con coincidencias.
+
+### Tree: mover nodos y cargar ramas
+
+- `draggable`: se arrastra con el puntero (marcador delante, dentro o detrás) o con el teclado: Ctrl/⌘+X coge el
+  nodo, ↑/↓ eligen el sitio, Intro o Ctrl/⌘+V lo sueltan y Escape cancela. Cada paso se anuncia. `onMove(drop, nodes)`
+  recibe el movimiento y el árbol ya movido; `canDrop` limita los destinos.
+- `loadChildren`: una rama con `hasChildren` pide sus hijos al abrirse por primera vez (aria-busy mientras llegan).
+- La selección múltiple con casillas ya estaba (`checkable`, `selectionMode="multiple"`).
+
+### Tabs que no caben
+
+`overflow="scroll"` (por defecto) desplaza la tira, difumina el borde con pestañas ocultas y lleva la elegida a la
+vista. `overflow="menu"` deja las que caben y pone las demás en un menú «Más» tras la tira: el botón queda fuera del
+tablist, y la pestaña elegida nunca va al menú.
+
 ## Reglas de uso
 
 1. No se pasan colores, radios ni sombras por `style` o clases sueltas.
 2. Si una variante no existe, se añade al sistema.
 3. El cristal no se aplica sobre áreas de lectura o edición de texto.
 4. Los componentes de dominio (pagos, reservas, mapas) viven en la aplicación.
-5. `DataTable` muestra una fecha sin `render` con `toLocaleDateString()`. En render de servidor, con otra
-   zona horaria o idioma que el navegador, eso produce un desajuste de hidratación: para fechas, pasa `render`.
+5. `DataTable` escribe una fecha sin `render` con su `locale` y su `dateFormat`. Sin `locale`, usa el idioma del
+   entorno: en render de servidor, con otro idioma o zona horaria que el navegador, eso produce un desajuste de
+   hidratación. Para fechas, pasa `locale` (y `timeZone` en `dateFormat`) o `render`.
 
 ## Funciones de la raíz
 
@@ -733,8 +834,9 @@ fuera de ellos. Son funciones puras salvo los hooks; las firmas están en las de
 | IA | `createTextStream`, `provisional`, `activePath`, `addBranch`, `branchInfo`, `selectBranch`, `stepBranch`, `siblings` |
 | Dashboard | `computeDelta`, `computePace`, `elapsedFraction`, `funnelStages`, `normalizeLayout`, `parseLayout`, `serializeLayout`, `sortLayout`, `compactLayout`, `fitColumns`, `moveGridItem`, `resizeGridItem`, `moveCard`, `locateCard` |
 | Usuarios | `presenceText`, `presenceRank`, `PRESENCE_LABELS`, `initialsOf`, `filterMembers`, `groupMembers`, `sortByName`, `sortByPresence`, `validateProfile`, `validHandle`, `bioCounter` |
+| Listas largas y árboles | `wantsVirtual`, `virtualWindow`, `moveNode` |
 | Nodos | `layeredLayout`, `parseGraph`, `serializeGraph`, `describeGraph`, `describeNode` |
-| Textos por defecto | `REVIEW_SUMMARY_LABELS`, `REVIEW_CARD_LABELS`, `FILTER_BAR_LABELS`, `NOTIFICATION_CENTER_LABELS` |
+| Textos por defecto | `REVIEW_SUMMARY_LABELS`, `REVIEW_CARD_LABELS`, `FILTER_BAR_LABELS`, `NOTIFICATION_CENTER_LABELS`, `TREE_DRAG_LABELS` |
 
 ## Manifiestos
 

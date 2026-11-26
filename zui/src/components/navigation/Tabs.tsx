@@ -1,11 +1,13 @@
 "use client";
-import { createContext, useContext, useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
 import { logicalKey } from "../../core/dir";
 import { trackScrollEdges } from "../../core/edges";
 import { move } from "../../core/roving";
+import { revealSelected, scrollTabIntoView, trackTabOverflow } from "../../core/tab-overflow";
 import { cx } from "../../cx";
-import { useControllable } from "../../primitives/hooks";
+import { useControllable, useIsoLayoutEffect } from "../../primitives/hooks";
+import { Menu } from "../overlay/Menu";
 
 export interface TabItem {
   value: string;
@@ -28,6 +30,14 @@ export interface TabsProps {
   orientation?: "horizontal" | "vertical";
   /** Nombre accesible de la lista de pestañas. */
   label?: string;
+  /**
+   * Pestañas que no caben (horizontal): `scroll` (por defecto) desplaza la tira y difumina el borde con pestañas
+   * ocultas; `menu` deja en la tira las que caben y lleva las demás a un menú «Más» tras ella. La elegida siempre
+   * queda en la tira.
+   */
+  overflow?: "scroll" | "menu";
+  /** Nombre accesible del botón «Más». */
+  moreLabel?: string;
   className?: string;
   /** Paneles `TabPanel` adicionales. */
   children?: ReactNode;
@@ -47,6 +57,8 @@ export function Tabs({
   size = "md",
   orientation = "horizontal",
   label,
+  overflow = "scroll",
+  moreLabel = "More tabs",
   className,
   children,
 }: TabsProps) {
@@ -74,47 +86,104 @@ export function Tabs({
 
   // Tira horizontal que desplaza: el borde con pestañas ocultas se difumina (data-scroll-edges, ver la hoja).
   const listRef = useRef<HTMLDivElement>(null);
-  useEffect(() => (listRef.current && orientation !== "vertical" ? trackScrollEdges(listRef.current) : undefined), [orientation]);
+  const menu = overflow === "menu" && orientation !== "vertical";
+  useEffect(
+    () => (listRef.current && orientation !== "vertical" && !menu ? trackScrollEdges(listRef.current) : undefined),
+    [orientation, menu],
+  );
+  // Menú «Más»: las pestañas que no caben (core/tab-overflow).
+  const [hidden, setHidden] = useState<string[]>([]);
+  useEffect(() => (listRef.current && menu ? trackTabOverflow(listRef.current, setHidden) : undefined), [menu]);
+  // Al cambiar de pestaña: con menú, la elegida vuelve a la tira; al desplazar, se lleva a la vista sin mover la página.
+  useIsoLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list || orientation === "vertical") return;
+    if (menu) revealSelected(list);
+    else scrollTabIntoView(list.querySelector<HTMLElement>('.z-tabs__tab[aria-selected="true"]'));
+  }, [value, menu, orientation]);
+  const focusTab = (target: string) =>
+    requestAnimationFrame(() =>
+      listRef.current?.querySelector<HTMLElement>(`.z-tabs__tab[data-value="${CSS.escape(target)}"]`)?.focus({ preventScroll: true }),
+    );
+
+  const strip = (
+    <div
+      ref={listRef}
+      role="tablist"
+      className="z-tabs__list"
+      data-variant={variant}
+      data-size={size}
+      data-orientation={orientation}
+      aria-orientation={orientation}
+      aria-label={label}
+      data-overflow={menu ? "menu" : undefined}
+      onKeyDown={onKeyDown}
+    >
+      {items.map((item) => {
+        const active = item.value === value;
+        return (
+          <button
+            key={item.value}
+            type="button"
+            role="tab"
+            id={part(baseId, "tab", item.value)}
+            className="z-tabs__tab"
+            data-value={item.value}
+            data-state={active ? "active" : "inactive"}
+            data-orientation={orientation}
+            data-disabled={item.disabled ? "" : undefined}
+            aria-selected={active}
+            aria-controls={part(baseId, "panel", item.value)}
+            tabIndex={item.value === tabStop ? 0 : -1}
+            disabled={item.disabled}
+            onClick={() => setValue(item.value)}
+          >
+            {item.icon ? <Icon name={item.icon} size={size === "sm" ? 14 : 16} /> : null}
+            <span className="z-tabs__label">{item.label}</span>
+            {item.badge}
+          </button>
+        );
+      })}
+    </div>
+  );
 
   return (
-    <div className={cx("z-tabs", className)} data-orientation={orientation}>
-      <div
-        ref={listRef}
-        role="tablist"
-        className="z-tabs__list"
-        data-variant={variant}
-        data-size={size}
-        data-orientation={orientation}
-        aria-orientation={orientation}
-        aria-label={label}
-        onKeyDown={onKeyDown}
-      >
-        {items.map((item) => {
-          const active = item.value === value;
-          return (
-            <button
-              key={item.value}
-              type="button"
-              role="tab"
-              id={part(baseId, "tab", item.value)}
-              className="z-tabs__tab"
-              data-value={item.value}
-              data-state={active ? "active" : "inactive"}
-              data-orientation={orientation}
-              data-disabled={item.disabled ? "" : undefined}
-              aria-selected={active}
-              aria-controls={part(baseId, "panel", item.value)}
-              tabIndex={item.value === tabStop ? 0 : -1}
-              disabled={item.disabled}
-              onClick={() => setValue(item.value)}
-            >
-              {item.icon ? <Icon name={item.icon} size={size === "sm" ? 14 : 16} /> : null}
-              <span className="z-tabs__label">{item.label}</span>
-              {item.badge}
-            </button>
-          );
-        })}
-      </div>
+    <div className={cx("z-tabs", className)} data-orientation={orientation} data-overflow={menu ? "menu" : undefined}>
+      {menu ? (
+        <div className="z-tabs__strip">
+          {strip}
+          {hidden.length ? (
+            <Menu
+              trigger={
+                <button
+                  type="button"
+                  className="z-btn z-btn--ghost z-btn--icon z-tabs__more"
+                  data-size={size}
+                  aria-label={moreLabel}
+                  title={moreLabel}
+                >
+                  <Icon name="ellipsis-horizontal" size={16} />
+                </button>
+              }
+              label={moreLabel}
+              items={items
+                .filter((item) => hidden.includes(item.value))
+                .map((item) => ({
+                  id: item.value,
+                  label: item.label,
+                  icon: item.icon,
+                  disabled: item.disabled,
+                  onSelect: () => {
+                    setValue(item.value);
+                    focusTab(item.value);
+                  },
+                }))}
+            />
+          ) : null}
+        </div>
+      ) : (
+        strip
+      )}
       <TabsContext.Provider value={{ value, baseId }}>
         {items.map((item) =>
           item.content === undefined ? null : (

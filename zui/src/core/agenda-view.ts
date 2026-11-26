@@ -30,6 +30,7 @@ import { resourceTimeline, type ResourceItem, type ResourceRow } from "./timelin
 /* ---------- Árbol ---------- */
 
 import { h, icon, on, type VAttr, type VEl, type VNode } from "./vnode";
+import { renderIndices, virtualWindow } from "./virtual";
 /** Minutos alrededor de «ahora» en los que el rótulo de la hora en punto cede el sitio al rótulo de ahora. */
 const NOW_LABEL_ROOM = 30;
 
@@ -1208,11 +1209,17 @@ function agendaList(config: AgendaConfig, state: AgendaState, model: AgendaModel
         return;
       }
       flushGap(`gap-${g.d}`);
-      const first = Math.max(0, Math.floor((lo - y - m.pad / 2) / m.row));
-      const last = Math.min(g.items.length, Math.ceil((hi - y) / m.row));
-      const show = new Set<number>();
-      for (let i = first; i < last; i++) show.add(i);
-      if (focusAt >= 0) show.add(focusAt);
+      // Ventana del día con el núcleo de core/virtual: desplazamiento relativo al día (un día que empieza por debajo
+      // del borde superior acorta la vista en lo que falta), el margen y la fila con el foco fijada.
+      const rel = top - y - m.pad / 2;
+      const win = virtualWindow({
+        count: g.items.length,
+        size: m.row,
+        scroll: Math.max(0, rel),
+        viewport: Math.max(1, height + m.pad / 2 + LIST_BLOCK * m.row + Math.min(0, rel)),
+        overscan: LIST_OVERSCAN,
+      });
+      const show = new Set(renderIndices(win, focusAt >= 0 ? [focusAt] : []));
       children.push(listGroup(config, state, model, uid, g.d, g.items, { show, row: m.row }, gi, groups.length));
       y += size;
     });

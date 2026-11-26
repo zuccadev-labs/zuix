@@ -35,7 +35,8 @@ import {
 import { copyText } from "./clipboard";
 import { isRtl } from "./dir";
 import { QUICK_REACTIONS } from "./emoji-data";
-import { virtualWindow } from "./virtual";
+import { renderIndices, virtualWindow } from "./virtual";
+import { measureInto } from "./virtual-widget";
 import { fractionAt, seekAudio, seekKey, toggleAudio, watchAudio } from "./voice-control";
 import { nextRate } from "./waveform";
 import { fill, h, icon, on, type VEl, type VNode } from "./vnode";
@@ -632,14 +633,8 @@ function after(root: HTMLElement, host: Host, focus: boolean): void {
   const last = list[list.length - 1] ?? null;
 
   // Altos reales de lo pintado: la ventana virtual los usa en el siguiente cálculo.
-  let changed = false;
-  for (const li of vp.querySelectorAll<HTMLElement>(":scope > ol > li[data-key]")) {
-    const height = li.offsetHeight;
-    if (height && s.heights.get(li.dataset.key!) !== height) {
-      s.heights.set(li.dataset.key!, height);
-      changed = true;
-    }
-  }
+  const ol = vp.querySelector(":scope > ol");
+  const changed = ol ? measureInto(ol, ":scope > li[data-key]", s.heights) : false;
 
   if (!live.mounted) {
     live.mounted = true;
@@ -803,9 +798,9 @@ export const messageListWidget: Widget<MessageListProps, Config, State> = {
     const shown: VNode[] = [];
     if (virtual && win.before > 0)
       shown.push(h("li", { class: "z-message-list__spacer", key: "before", "aria-hidden": "true", s: { "--z-space": `${win.before}px` } }));
-    if (virtual && activeIndex >= 0 && activeIndex < win.start) shown.push(rowNode(rows[activeIndex]!, c, s, uid, today, now));
-    for (let i = win.start; i < win.end; i++) shown.push(rowNode(rows[i]!, c, s, uid, today, now));
-    if (virtual && activeIndex >= win.end) shown.push(rowNode(rows[activeIndex]!, c, s, uid, today, now));
+    // La ventana más la fila activa (core/virtual): el foco itinerante sobrevive al reciclado de filas.
+    for (const i of renderIndices(win, virtual && activeIndex >= 0 ? [activeIndex] : []))
+      shown.push(rowNode(rows[i]!, c, s, uid, today, now));
     if (virtual && win.after > 0)
       shown.push(h("li", { class: "z-message-list__spacer", key: "after", "aria-hidden": "true", s: { "--z-space": `${win.after}px` } }));
     const typing = typingNode(

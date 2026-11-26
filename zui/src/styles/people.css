@@ -598,6 +598,16 @@
     font-size: var(--z-text-small);
     text-align: center;
   }
+  /* Ventana virtual: la lista desplaza dentro de su propio alto y solo pinta lo que se ve. */
+  .z-member-list__scroll {
+    display: flex;
+    flex-direction: column;
+    gap: var(--z-space-3);
+    max-block-size: var(--z-member-list-height, 480px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    min-block-size: 0;
+  }
   .z-member-list__group {
     display: flex;
     flex-direction: column;

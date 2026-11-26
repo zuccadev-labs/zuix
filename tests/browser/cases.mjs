@@ -18,6 +18,7 @@ import nodesCases from "./cases-nodes.mjs";
 import transferCases from "./cases-transfer.mjs";
 import pickersCases from "./cases-pickers.mjs";
 import datagridCases from "./cases-datagrid.mjs";
+import scaleCases from "./cases-scale.mjs";
 import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
@@ -2745,6 +2746,8 @@ export const cases = [
             for (const el of document.querySelectorAll(selector)) {
               if (el.closest("[hidden], [inert], [aria-hidden=true]") || el.matches(":disabled, [data-disabled], [aria-disabled=true]"))
                 continue;
+              // Lo que no se ve (una pestaña que no cabe, en el menú «Más») no es un objetivo.
+              if (el.checkVisibility && !el.checkVisibility({ visibilityProperty: true })) continue;
               let r = el.getBoundingClientRect();
               if (!r.width || !r.height) continue;
               const key = `${Math.round(r.width)}x${Math.round(r.height)}`;
@@ -3149,6 +3152,7 @@ export const cases = [
     transferCases,
     pickersCases,
     datagridCases,
+    scaleCases,
     listingCases,
   ].flatMap((build) => build(helpers())),
 

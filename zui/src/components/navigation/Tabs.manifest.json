@@ -57,6 +57,19 @@
       "type": "boolean",
       "default": false,
       "description": "TabPanel: mantiene el contenido montado aunque el panel esté oculto."
+    },
+    {
+      "name": "overflow",
+      "type": "enum",
+      "values": ["scroll", "menu"],
+      "default": "scroll",
+      "description": "Pestañas que no caben (horizontal): `scroll` desplaza la tira y difumina el borde con pestañas ocultas (data-scroll-edges); `menu` deja las que caben y lleva las demás a un menú «Más» tras la tira. La elegida siempre queda en la tira."
+    },
+    {
+      "name": "moreLabel",
+      "type": "string",
+      "default": "More tabs",
+      "description": "Nombre accesible del botón «Más» (icono, no texto: no parece otra pestaña)."
     }
   ],
   "states": ["active", "inactive", "hover", "focus", "disabled"],
@@ -93,8 +106,8 @@
     "control-height-md",
     "space-1-5"
   ],
-  "classes": ["z-tabs", "z-tabs__list", "z-tabs__tab", "z-tabs__label", "z-tabs__panel"],
-  "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
+  "classes": ["z-tabs", "z-tabs__list", "z-tabs__tab", "z-tabs__label", "z-tabs__panel", "z-tabs__strip", "z-tabs__more"],
+  "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática. Con overflow=\"menu\", el botón «Más» queda fuera del tablist (un tablist solo contiene pestañas): es otra parada de Tab con aria-haspopup=\"menu\", y cada entrada activa su pestaña y le da el foco. Las pestañas que no caben se ocultan con visibility (salen del orden de foco y del árbol de accesibilidad).",
   "examples": [
     {
       "title": "Segmentado con contenido",
@@ -103,6 +116,10 @@
     {
       "title": "Subrayado controlado con TabPanel",
       "code": "<Tabs variant=\"underline\" value={tab} onValueChange={setTab} items={[{ value: \"code\", label: \"Code\" }, { value: \"preview\", label: \"Preview\" }]}>\n  <TabPanel value=\"code\">Code view</TabPanel>\n  <TabPanel value=\"preview\">Preview view</TabPanel>\n</Tabs>"
+    },
+    {
+      "title": "Menú «Más»",
+      "code": "<Tabs overflow=\"menu\" items={sections} label=\"Settings\" />"
     }
   ],
   "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad según el patrón APG, con primitivas propias.",

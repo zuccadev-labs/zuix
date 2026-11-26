@@ -25,6 +25,7 @@ import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { exclamationTriangle } from "@zuccadev-labs/zuix-zicon/icons/exclamation-triangle";
 import { informationCircle } from "@zuccadev-labs/zuix-zicon/icons/information-circle";
 import { xMark } from "@zuccadev-labs/zuix-zicon/icons/x-mark";
+import { ellipsisHorizontal } from "@zuccadev-labs/zuix-zicon/icons/ellipsis-horizontal";
 import * as actions from "./actions";
 import * as choice from "./forms-choice";
 import * as controls from "./forms-controls";
@@ -36,6 +37,7 @@ import * as navigation from "./navigation";
 import * as skeleton from "./skeleton";
 import { trapTab } from "../core/focus";
 import { trackScrollEdges } from "../core/edges";
+import { revealSelected, scrollTabIntoView, trackTabOverflow } from "../core/tab-overflow";
 import { escapeTop } from "../core/layers";
 import { lockScroll } from "../core/scroll-lock";
 import { createLongPress } from "../core/long-press";
@@ -57,8 +59,19 @@ export { download, downloadBlob, downloadUrl, mimeFromName, type DownloadSource 
 export { matchesShortcut, normalizeShortcut, parseShortcut, shortcutLabels } from "../core/shortcut";
 export { reorderUpload, setOtpValue, setSliderValue } from "./forms-controls";
 export { setNumberInputValue } from "./forms-fields";
-export { setListboxValue, setTagsValue } from "./forms-choice";
-export { setComboboxLoading, setComboboxOptions, setComboboxValue, setSelectValue, type ComboboxOption } from "./forms-listbox";
+export { setListboxLoader, setListboxValue, setTagsValue } from "./forms-choice";
+export {
+  clearComboboxLoader,
+  setComboboxLoader,
+  setComboboxLoading,
+  setComboboxOptions,
+  setComboboxValue,
+  setSelectLoader,
+  setSelectValue,
+  type AsyncLoaderOptions,
+  type ComboboxOption,
+} from "./forms-listbox";
+export type { AsyncContext, AsyncLoader, AsyncPage } from "../core/async-options";
 export { place, type Placement };
 export { openMenubarMenu, setCollapsibleOpen } from "./navigation";
 export { expandSkeleton } from "./skeleton";
@@ -204,7 +217,9 @@ const isDisabled = (item: Element) =>
 
 // Un submenú puede ir anidado en el marcado de su menú padre: cada menú solo cuenta sus propias entradas.
 function menuItems(menu: Element): HTMLElement[] {
-  return [...menu.querySelectorAll<HTMLElement>(".z-menu__item")].filter((item) => item.closest(".z-menu") === menu && !isDisabled(item));
+  return [...menu.querySelectorAll<HTMLElement>(".z-menu__item")].filter(
+    (item) => item.closest(".z-menu") === menu && !isDisabled(item) && !item.hidden,
+  );
 }
 
 function highlight(menu: Element, item: HTMLElement | undefined): void {
@@ -823,12 +838,92 @@ function selectTabQuiet(tabs: Element, value: string): void {
     tab.setAttribute("aria-selected", String(active));
     tab.tabIndex = active ? 0 : -1;
   }
+  // La elegida, a la vista: con menú «Más», de vuelta en la tira; al desplazar, dentro de la tira sin mover la página.
+  const list = tabs.querySelector<HTMLElement>(':scope .z-tabs__list:not([data-orientation="vertical"])');
+  if (list?.closest(".z-tabs") === tabs) {
+    if (list.dataset.overflow === "menu") revealSelected(list);
+    else scrollTabIntoView(list.querySelector<HTMLElement>('.z-tabs__tab[aria-selected="true"]'));
+  }
   for (const panel of tabs.querySelectorAll<HTMLElement>(".z-tabs__panel")) {
     if (panel.closest(".z-tabs") !== tabs) continue;
     const active = (panel.dataset.value ?? panel.id) === value;
     panel.dataset.state = active ? "active" : "inactive";
     panel.hidden = !active;
   }
+}
+
+/* ---------- Pestañas con menú «Más»: .z-tabs__list[data-overflow="menu"] ---------- */
+
+const tabMenus = new WeakSet<HTMLElement>();
+let tabMenuSeq = 0;
+
+/**
+ * Menú «Más» de unas pestañas que no caben (`data-overflow="menu"` en la tira): crea tras ella el botón (icono con
+ * nombre accesible, `data-more-label` en .z-tabs) y su `.z-menu[popover]`, con una entrada por pestaña que solo se ve
+ * cuando su pestaña no cabe. Elegir una entrada activa su pestaña y le da el foco.
+ */
+function setupTabsMenu(tabs: HTMLElement): void {
+  const list = tabs.querySelector<HTMLElement>('.z-tabs__list[data-overflow="menu"]');
+  if (!list || list.closest(".z-tabs") !== tabs || tabMenus.has(list)) return;
+  tabMenus.add(list);
+  // El icono del botón, aquí y no con los propios del núcleo: quien solo usa toast() no lo arrastra.
+  registerIcons([ellipsisHorizontal]);
+  let strip = list.parentElement;
+  if (!strip?.classList.contains("z-tabs__strip")) {
+    strip = document.createElement("div");
+    strip.className = "z-tabs__strip";
+    list.before(strip);
+    strip.append(list);
+  }
+  const label = tabs.dataset.moreLabel ?? "More tabs";
+  const id = `z-tabs-more-${++tabMenuSeq}`;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "z-btn z-btn--ghost z-btn--icon z-tabs__more";
+  button.dataset.size = list.dataset.size ?? "md";
+  button.setAttribute("aria-label", label);
+  button.title = label;
+  button.setAttribute("aria-haspopup", "menu");
+  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-controls", id);
+  button.dataset.zOpen = `#${id}`;
+  button.hidden = true;
+  setMarkup(button, iconSvg("ellipsis-horizontal", { size: 16 }));
+  const menu = document.createElement("div");
+  menu.id = id;
+  menu.className = "z-liquid z-menu";
+  menu.setAttribute("popover", "manual");
+  menu.setAttribute("role", "menu");
+  menu.setAttribute("aria-label", label);
+  for (const tab of list.querySelectorAll<HTMLElement>(":scope > .z-tabs__tab")) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "z-menu__item";
+    item.setAttribute("role", "menuitem");
+    item.tabIndex = -1;
+    item.dataset.tabValue = tabKey(tab);
+    if (isDisabled(tab)) item.setAttribute("aria-disabled", "true");
+    const text = document.createElement("span");
+    text.className = "z-menu__text";
+    text.textContent = (tab.querySelector(".z-tabs__label") ?? tab).textContent?.trim() ?? "";
+    item.append(text);
+    item.hidden = true;
+    menu.append(item);
+  }
+  strip.append(button, menu);
+  // Elegir en el menú: la pestaña se activa y recibe el foco (antes de que el menú devuelva el suyo al botón).
+  menu.addEventListener("z:select", (event) => {
+    const value = (event.target as HTMLElement).closest<HTMLElement>("[data-tab-value]")?.dataset.tabValue;
+    if (value === undefined) return;
+    selectTab(tabs, value);
+    requestAnimationFrame(() =>
+      [...list.querySelectorAll<HTMLElement>(":scope > .z-tabs__tab")].find((t) => tabKey(t) === value)?.focus({ preventScroll: true }),
+    );
+  });
+  trackTabOverflow(list, (values) => {
+    for (const item of menu.querySelectorAll<HTMLElement>("[data-tab-value]")) item.hidden = !values.includes(item.dataset.tabValue ?? "");
+    button.hidden = values.length === 0;
+  });
 }
 
 /* ---------- Acordeón ---------- */
@@ -982,11 +1077,15 @@ export function hydrate(root: ParentNode = document): void {
   )) {
     if (edgeTracked.has(strip)) continue;
     edgeTracked.add(strip);
-    trackScrollEdges(strip);
+    // Una tabla, al fotograma siguiente: si es larga, la ventana virtual (familia data, en este mismo hydrate) la deja
+    // antes en lo que se ve y medir sus bordes no obliga a maquetar miles de filas.
+    if (strip.matches(".z-table-wrap")) requestAnimationFrame(() => trackScrollEdges(strip));
+    else trackScrollEdges(strip);
   }
   for (const tabs of root.querySelectorAll<HTMLElement>("[data-z-dom] .z-tabs, .z-tabs[data-z-dom]")) {
     const active = tabs.querySelector<HTMLElement>('.z-tabs__tab[data-state="active"]') ?? tabs.querySelector<HTMLElement>(".z-tabs__tab");
     if (active) selectTabQuiet(tabs, tabKey(active));
+    setupTabsMenu(tabs);
   }
   // Un interruptor, casilla o radio sin `aria-checked` no tiene estado para las tecnologías de apoyo: sale de `data-state`.
   for (const el of root.querySelectorAll<HTMLElement>(

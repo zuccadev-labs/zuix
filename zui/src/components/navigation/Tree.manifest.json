@@ -95,9 +95,61 @@
       "type": "string",
       "default": "Rename",
       "description": "Nombre accesible del campo de renombrar."
+    },
+    {
+      "name": "loadChildren",
+      "type": "(node: TreeNode) => Promise<TreeNode[]>",
+      "description": "Carga diferida: hijos de una rama con `hasChildren: true` al expandirla por primera vez. El árbol guarda lo cargado; mientras llega, el nodo lleva aria-busy y un anillo en lugar del chevron."
+    },
+    {
+      "name": "loadErrorLabel",
+      "type": "string",
+      "default": "Couldn't load this folder",
+      "description": "Anuncio si la carga de una rama falla (la rama se vuelve a cerrar)."
+    },
+    {
+      "name": "draggable",
+      "type": "boolean",
+      "default": false,
+      "description": "Mover nodos: arrastrar con el puntero (marcador delante, dentro o detrás) o con el teclado: Ctrl/⌘+X coge, ↑/↓ eligen el sitio, Intro o Ctrl/⌘+V sueltan, Escape cancela. Cada paso se anuncia."
+    },
+    {
+      "name": "onMove",
+      "type": "(drop: TreeDrop, nodes: TreeNode[]) => void",
+      "description": "{ id, target, position: \"before\" | \"inside\" | \"after\" } y el árbol ya movido (con las ramas de carga diferida que guarda el árbol): `setNodes(nodes)`. El árbol no cambia `nodes` por su cuenta."
+    },
+    {
+      "name": "canDrop",
+      "type": "(drop: TreeDrop) => boolean",
+      "description": "Destinos que la aplicación no admite (además de soltar un nodo dentro de sí mismo, que nunca vale)."
+    },
+    {
+      "name": "dragLabels",
+      "type": "Partial<TreeDragLabels>",
+      "description": "Anuncios del arrastre: grabbed, before, inside, after, dropped, cancelled (`{name}` es la etiqueta)."
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 200,
+      "description": "Ventana virtual: con más filas visibles que el umbral, el árbol desplaza dentro de `--z-tree-height` (480 px), pinta solo lo que se ve y deja las filas en plano con aria-level, aria-setsize y aria-posinset. `true` siempre, `false` nunca."
     }
   ],
-  "states": ["rest", "hover", "focus", "selected", "expanded", "collapsed", "disabled", "checked", "indeterminate", "renaming"],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "selected",
+    "expanded",
+    "collapsed",
+    "disabled",
+    "checked",
+    "indeterminate",
+    "renaming",
+    "loading",
+    "dragging",
+    "drop-target"
+  ],
   "tokens": [
     "duration-fast",
     "ease-standard",
@@ -133,9 +185,10 @@
     "z-tree__label",
     "z-tree__group",
     "z-tree__check",
-    "z-tree__rename"
+    "z-tree__rename",
+    "z-tree__spinner"
   ],
-  "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten. Con selectionMode=\"multiple\" el árbol lleva aria-multiselectable: Espacio alterna la selección del nodo enfocado, Mayús+flechas extiende el rango desde el ancla, Ctrl+A selecciona todo lo visible; con el puntero, Ctrl/Cmd alterna y Mayús extiende. Con checkable cada treeitem lleva aria-checked (true, false o mixed) y Espacio marca o desmarca el nodo y todo lo que cuelga de él. Con renamable, F2 o doble clic abren un campo con nombre accesible; Intro confirma, Escape cancela y el foco vuelve al nodo.",
+  "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten. Con selectionMode=\"multiple\" el árbol lleva aria-multiselectable: Espacio alterna la selección del nodo enfocado, Mayús+flechas extiende el rango desde el ancla, Ctrl+A selecciona todo lo visible; con el puntero, Ctrl/Cmd alterna y Mayús extiende. Con checkable cada treeitem lleva aria-checked (true, false o mixed) y Espacio marca o desmarca el nodo y todo lo que cuelga de él. Con renamable, F2 o doble clic abren un campo con nombre accesible; Intro confirma, Escape cancela y el foco vuelve al nodo. Con `draggable`, el nodo cogido con el teclado lleva data-grabbed y el destino un marcador (línea delante o detrás, anillo dentro) que no depende solo del color; cada destino se anuncia en una región viva. Con ventana virtual, la parada de Tab, el nodo que se renombra y el cogido no salen nunca del documento; Ctrl+F del navegador solo encuentra las filas pintadas (y nunca las ramas plegadas).",
   "examples": [
     {
       "title": "Explorador de archivos",
@@ -148,6 +201,10 @@
     {
       "title": "Renombrar",
       "code": "<Tree\n  label=\"Files\"\n  renamable\n  onRename={(id, label) => rename(id, label)}\n  nodes={files}\n/>"
+    },
+    {
+      "title": "Mover nodos y carga diferida",
+      "code": "const [nodes, setNodes] = useState(files);\n<Tree\n  label=\"Files\"\n  nodes={nodes}\n  draggable\n  onMove={(_drop, next) => setNodes(next)}\n  loadChildren={(node) => fetch(`/api/folders/${node.id}`).then((r) => r.json())}\n/>"
     }
   ],
   "origin": "Nuevo, con el aspecto de las filas de lista de zutool.",

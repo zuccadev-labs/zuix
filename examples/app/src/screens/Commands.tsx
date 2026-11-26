@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Grid, Page, PageHeader, PageSection, Stack } from "@zuccadev-labs/zuix-zout";
 import {
   ActionBar,
@@ -27,6 +27,7 @@ import {
   useToast,
   type MenuEntry,
 } from "@zuccadev-labs/zuix-zui";
+import { BigCommandSection } from "./scale";
 
 /** Barras, menús con estado, capas ligeras y avisos de aplicación. Cada pieza deja su valor a la vista. */
 export function Commands() {
@@ -44,6 +45,7 @@ export function Commands() {
       },
     ).catch(() => undefined);
   const [last, setLast] = useState("none");
+  const runBig = useCallback((id: string) => setLast(`command:${id}`), []);
   const [format, setFormat] = useState<string[]>(["bold"]);
   const [minimap, setMinimap] = useState(true);
   const [wrap, setWrap] = useState(false);
@@ -245,6 +247,8 @@ export function Commands() {
           </div>
         </Card>
       </PageSection>
+
+      <BigCommandSection onRun={runBig} />
 
       <PageSection title="Light layers">
         <Grid min={260}>

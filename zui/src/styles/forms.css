@@ -509,6 +509,31 @@
     color: var(--z-fg-subtle);
     text-align: center;
   }
+  /* Carga asíncrona: el texto de carga o de error, con el botón de reintentar. */
+  .z-listbox__empty[data-error] {
+    color: var(--z-danger-text);
+  }
+  .z-listbox__retry {
+    margin-inline-start: var(--z-space-1);
+  }
+  /* Búsqueda dentro de un Select: el campo arriba, la lista debajo. */
+  .z-listbox__search {
+    flex: none;
+    padding: var(--z-space-1-5) var(--z-space-1-5) 0;
+  }
+  .z-listbox__search .z-input {
+    inline-size: 100%;
+  }
+  /* Lista larga del modo DOM (marcado del servidor): las opciones fuera de la vista no se pintan, pero siguen en el
+     documento (teclado, lectores y Ctrl+F las encuentran). */
+  .z-listbox__viewport[data-deferred] > .z-listbox__option,
+  .z-listbox__viewport[data-deferred] > .z-listbox__group {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto 32px;
+  }
+  .z-listbox__viewport[data-deferred] > .z-listbox__group {
+    contain-intrinsic-size: auto none auto 160px;
+  }
 
   /* ---- Combobox (sobre .z-input) ---- */
   .z-combobox[data-state="open"] {

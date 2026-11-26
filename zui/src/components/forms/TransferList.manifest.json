@@ -42,6 +42,12 @@
       "name": "labels",
       "type": "Partial<TransferListLabels>",
       "description": "Títulos, búsqueda, recuento («{count} of {total} selected»), botones y anuncio, en inglés por defecto."
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 200,
+      "description": "Ventana virtual en cada lista: solo se pintan las opciones que se ven; la activa no sale del documento. `true` siempre, `false` nunca, un número es el umbral. Modo DOM: `data-virtualize`."
     }
   ],
   "states": ["rest", "focus", "checked", "disabled", "empty"],
@@ -86,7 +92,7 @@
     "z-transfer__empty",
     "z-transfer__actions"
   ],
-  "a11y": "Cada lista es un listbox con aria-multiselectable, nombre (su título) y descripción (el recuento). Una parada de Tab por lista con aria-activedescendant: flechas, Inicio y Fin recorren; Espacio marca; Mayús+flechas o Mayús+clic marcan un rango; Ctrl+A marca o desmarca lo visible; Intro mueve lo marcado (o la opción activa) a la otra lista; doble clic mueve una opción. Los botones tienen nombre («Move selected to Chosen») y se deshabilitan cuando no hay qué mover. Lo movido se anuncia («2 moved to Chosen»). Sin React: .z-transfer con data-searchable, data-disabled y data-name, y los elementos en <script type=\"application/json\" data-props>{ \"items\": […], \"value\": […] }</script>; emite z:change { value } y admite setWidgetProps(el, { items, value }).",
+  "a11y": "Cada lista es un listbox con aria-multiselectable, nombre (su título) y descripción (el recuento). Una parada de Tab por lista con aria-activedescendant: flechas, Inicio y Fin recorren; Espacio marca; Mayús+flechas o Mayús+clic marcan un rango; Ctrl+A marca o desmarca lo visible; Intro mueve lo marcado (o la opción activa) a la otra lista; doble clic mueve una opción. Los botones tienen nombre («Move selected to Chosen») y se deshabilitan cuando no hay qué mover. Lo movido se anuncia («2 moved to Chosen»). Sin React: .z-transfer con data-searchable, data-disabled y data-name, y los elementos en <script type=\"application/json\" data-props>{ \"items\": […], \"value\": […] }</script>; emite z:change { value } y admite setWidgetProps(el, { items, value }). Con ventana virtual, cada opción lleva aria-setsize y aria-posinset.",
   "behavior": "dom",
   "examples": [
     {

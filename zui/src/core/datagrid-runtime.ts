@@ -1,9 +1,11 @@
 // Redimensionar y fijar columnas de una tabla (DataTable) conectado al documento: lo comparten el binding de React y
 // el modo DOM. Un asa `.z-table__resize` (separador con valor) en cada cabecera redimensionable: arrastrar con el
-// puntero (captura, Escape cancela) o flechas con el foco (Mayús, 10 veces más). Las columnas `[data-pinned]` quedan
-// fijas al inicio con `position: sticky` y su desplazamiento se recalcula al cambiar un ancho.
+// puntero (captura, Escape cancela) o flechas con el foco (Mayús, 10 veces más). Las columnas `[data-pinned]` (o
+// `data-pinned="end"`) quedan fijas al inicio o al final con `position: sticky` y su desplazamiento se recalcula al
+// cambiar un ancho.
 
-import { clampWidth, pinOffsets } from "./datagrid";
+import { clampWidth } from "./datagrid";
+import { pinLayout, type Pin } from "./datagrid-model";
 
 export interface ResizeOptions {
   /** Ancho nuevo de una columna (al soltar o con cada flecha). */
@@ -14,22 +16,62 @@ export interface ResizeOptions {
 
 const headers = (table: HTMLTableElement) => [...(table.tHead?.rows[0]?.cells ?? [])] as HTMLTableCellElement[];
 
-/** Recalcula el desplazamiento de las columnas fijadas (cabecera, filtros, cuerpo y pie). */
+/** Lado al que está fijada una cabecera: `data-pinned` vacío o "start" es el inicio, "end" el final. */
+const pinOf = (cell: Element): Pin => {
+  const v = cell.getAttribute("data-pinned");
+  return v === null ? undefined : v === "end" ? "end" : "start";
+};
+
+const pinned = new WeakMap<HTMLTableElement, { pins: Pin[]; offset: number[]; edge: boolean[] }>();
+
+/**
+ * Aplica a las filas el desplazamiento de las columnas fijadas ya medido, sin leer la geometría: tras pintar filas
+ * nuevas (ventana virtual), basta con esto. Sin medida previa, mide (`layoutPinned`).
+ */
+export function applyPinned(table: HTMLTableElement): void {
+  const known = pinned.get(table);
+  const cells = headers(table);
+  const pins = cells.map(pinOf);
+  if (!known || known.pins.join() !== pins.join()) {
+    layoutPinned(table);
+    return;
+  }
+  paintPinned(table, cells.length, known);
+}
+
+/** Recalcula el desplazamiento de las columnas fijadas a los dos lados (cabecera, filtros, cuerpo y pie). */
 export function layoutPinned(table: HTMLTableElement): void {
   const cells = headers(table);
-  if (!cells.some((c) => c.hasAttribute("data-pinned"))) return;
+  const pins = cells.map(pinOf);
+  if (!pins.some(Boolean)) return;
   const widths = cells.map((c) => c.getBoundingClientRect().width);
-  const offsets = pinOffsets(
-    widths,
-    cells.map((c) => c.hasAttribute("data-pinned")),
-  );
-  const last = cells.map((c) => c.hasAttribute("data-pinned")).lastIndexOf(true);
+  const { offset, edge } = pinLayout(widths, pins);
+  const layout = { pins, offset, edge };
+  pinned.set(table, layout);
+  paintPinned(table, cells.length, layout);
+}
+
+function paintPinned(
+  table: HTMLTableElement,
+  count: number,
+  { pins, offset, edge }: { pins: Pin[]; offset: number[]; edge: boolean[] },
+): void {
+  const cells = { length: count };
   for (const row of [...table.rows]) {
+    // Una fila de una sola celda (vacío, detalle, relleno de la ventana virtual) no tiene columnas que fijar.
+    if (row.cells.length !== cells.length) continue;
     [...row.cells].forEach((cell, i) => {
-      if (!cells[i]?.hasAttribute("data-pinned")) return;
-      cell.setAttribute("data-pinned", "");
-      cell.toggleAttribute("data-pinned-last", i === last);
-      cell.style.setProperty("--z-pin-offset", `${offsets[i]}px`);
+      const pin = pins[i];
+      if (!pin) {
+        if (cell.hasAttribute("data-pinned")) cell.removeAttribute("data-pinned");
+        return;
+      }
+      const value = pin === "end" ? "end" : "";
+      if (cell.getAttribute("data-pinned") !== value) cell.setAttribute("data-pinned", value);
+      cell.toggleAttribute("data-pinned-last", pin === "start" && edge[i]!);
+      cell.toggleAttribute("data-pinned-first", pin === "end" && edge[i]!);
+      const px = `${offset[i]}px`;
+      if (cell.style.getPropertyValue("--z-pin-offset") !== px) cell.style.setProperty("--z-pin-offset", px);
     });
   }
 }
@@ -105,7 +147,12 @@ export function bindColumnResize(table: HTMLTableElement, o: ResizeOptions = {})
   table.addEventListener("pointercancel", cancel);
   table.addEventListener("keydown", key);
   layoutPinned(table);
+  // Un ancho que cambia por su cuenta (la fuente que carga, el contenedor que crece) vuelve a medir lo fijado.
+  const head = table.tHead?.rows[0];
+  const ro = typeof ResizeObserver === "undefined" || !head ? null : new ResizeObserver(() => layoutPinned(table));
+  for (const cell of head?.cells ?? []) ro?.observe(cell);
   return () => {
+    ro?.disconnect();
     table.removeEventListener("pointerdown", down);
     table.removeEventListener("pointermove", move);
     table.removeEventListener("pointerup", up);

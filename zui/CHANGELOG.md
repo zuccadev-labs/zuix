@@ -72,6 +72,34 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `@zuccadev-labs/zuix-zui/dom/forms`: familia nueva con Cascader, TreeSelect y MaskedInput (`setMask`,
   `setMaskedValue`). `/dom/dates` suma TimeRangePicker, DateTimeRangePicker y QuarterPicker (`setTimeRangeValue`,
   `setDateTimeRangeValue`).
+- Ventana virtual en un solo núcleo (`core/virtual`, `core/virtual-runtime`, `core/virtual-widget`) que comparten el
+  binding de React y el modo DOM: alto fijo o medido, margen de filas, desplazamiento a un índice, la entrada con el
+  foco siempre en el documento y la posición para los lectores (`aria-setsize`/`aria-posinset`,
+  `aria-rowcount`/`aria-rowindex`). `MessageList` y la lista de `EventCalendar` pasan a él sin cambiar su API. Se
+  activa sola a partir de un umbral, o con `virtualize`, en `DataTable`, `Select`, `Combobox`, `Listbox`,
+  `CommandPalette`, `Command`, `Tree`, `ConversationList`, `MemberList` y `TransferList`. Ctrl+F solo encuentra lo
+  pintado; las listas del servidor en el modo DOM usan `content-visibility` y no pierden la búsqueda.
+- `DataTable` como rejilla (patrón APG «data grid», `grid`): teclado por celdas con una parada de Tab; edición en
+  línea por celda o por fila (`editable`, `editor`, `options`, `required`, `min`, `max`, `pattern`, `validate`,
+  `editMode`, `onCellEdit`, `onRowEdit`) con Intro y Tab para confirmar y Escape para cancelar; columnas fijadas al
+  final (`pinned: "end"`); agrupación con agregados (`groupBy`, `aggregate`, `formatAggregate`, `groupLabel`); datos
+  en árbol (`getRowChildren`, `expandedRows`); fila de detalle (`renderDetail`, `expandedDetails`); reordenar
+  columnas con puntero y teclado (`reorderable`, `columnOrder`); rango con Mayús también desde el teclado; y
+  `locale`/`dateFormat` para las celdas `Date`. 10 000 filas con unas 20 en el documento. El modo DOM tiene lo mismo
+  (`z:celledit`, `z:rowedit`, `z:expandchange`, `z:detailchange`, `z:columnorder`, `setDataTableExpanded`,
+  `setDataTableDetail`).
+- Opciones del servidor en `Select`, `Combobox` y `Listbox` (`loadOptions(query, { signal, page })`, `debounce`,
+  `minQueryLength`, `errorText`, `retryLabel`, `loadingMoreText`): antirrebote, cancelación con `AbortController`,
+  estados de carga, vacío y error con reintento, y páginas al llegar al final. `Select` con `searchable` filtra dentro
+  de la lista y conserva el título de los grupos. Modo DOM: `setComboboxLoader`, `clearComboboxLoader`,
+  `setSelectLoader`, `setListboxLoader` y `data-searchable`.
+- `Tree`: mover nodos con el puntero y con el teclado (Ctrl/⌘+X, ↑/↓, Intro, Escape), anunciado (`draggable`,
+  `onMove(drop, nodes)`, `canDrop`, `dragLabels`), carga diferida de ramas (`hasChildren`, `loadChildren`,
+  `loadErrorLabel`) y ventana virtual en plano. `moveNode` y `TREE_DRAG_LABELS` en la raíz. Modo DOM:
+  `data-draggable`, `z:move` cancelable, `moveTreeItem`, `setTreeLoader`.
+- `Tabs`: `overflow="menu"` lleva las pestañas que no caben a un menú «Más» (`moreLabel`); con `scroll`, la pestaña
+  elegida se lleva a la vista dentro de la tira. Modo DOM: `data-overflow="menu"` en la tira.
+- `wantsVirtual` y `virtualWindow` en la raíz.
 
 ### Cambiado
 
@@ -83,6 +111,16 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - En el modo sin framework, Select, Combobox, TagsInput, Tree y Calendar dejan en paz el marcado de otra pieza que
   comparte sus clases: un `.z-select` o `.z-combobox` con `data-picker`, las piezas de un campo que no es `.z-tags` y
   un árbol o un calendario con `data-widget`.
+- `options` pasa a opcional en `Select`, `Combobox` y `Listbox` (con `loadOptions` no hace falta).
+- Las celdas `Date` de `DataTable` se escriben con `Intl.DateTimeFormat` y `dateStyle: "medium"` (antes,
+  `toLocaleDateString()`), con el idioma de `locale` si se da.
+- `Select`: las opciones llevan id y la activa se marca con `data-highlighted` desde el estado.
+
+### Corregido
+
+- `DataTable` ya no busca cada fila con `rows.indexOf` (con 10 000 filas eran 10⁸ comparaciones) y la selección
+  ordena con un conjunto.
+- En el modo DOM, recolocar un nodo con clave al volver a pintar una pieza ya no le quita el foco.
 
 ## [0.4.0] - 2026-11-23
 

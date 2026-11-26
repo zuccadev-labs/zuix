@@ -77,10 +77,14 @@
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
-  .z-table[data-sticky] thead th {
+  /* La cabecera entera queda fija (también la fila de filtros, que si no se montaba sobre la primera). */
+  /* Por encima de las celdas fijadas del cuerpo (que también se elevan) y opaca, también con marco. */
+  .z-table[data-sticky] thead {
     position: sticky;
-    top: 0;
-    z-index: var(--z-layer-raised);
+    inset-block-start: 0;
+    z-index: calc(var(--z-layer-raised) + 1);
+  }
+  .z-table-wrap .z-table[data-sticky] thead tr :is(th, td) {
     background: var(--z-surface-solid);
   }
   .z-table[data-striped] tbody tr:nth-child(even) td {

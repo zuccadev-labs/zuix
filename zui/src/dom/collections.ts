@@ -19,14 +19,29 @@
 import { iconSvg, registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { arrowDown } from "@zuccadev-labs/zuix-zicon/icons/arrow-down";
 import { arrowUp } from "@zuccadev-labs/zuix-zicon/icons/arrow-up";
+import { chevronRight } from "@zuccadev-labs/zuix-zicon/icons/chevron-right";
+import { announce } from "../core/announcer";
 import { compare, parseNumber } from "../core/compare";
-import { checkStates, rangeIds, toggleCheck, type TreeShape } from "../core/tree";
+import {
+  TREE_DRAG_LABELS,
+  checkStates,
+  dropSlots,
+  rangeIds,
+  toggleCheck,
+  validDrop,
+  type TreeDragLabels,
+  type TreeDrop,
+  type TreeShape,
+} from "../core/tree";
+import { bindTreeDrag } from "../core/tree-drag";
+import { fill } from "../core/vnode";
+import { bodyRowsOf, setBodyRows } from "./table-store";
 import { clampPage, pageRange, pageTotal } from "../core/pagination";
 import { score } from "../core/search";
 import { closeDialog, openDialog } from "./core";
 import { logicalKey, pressedOnBackdrop, setMarkup, type Listen } from "./shared";
 
-registerIcons([arrowUp, arrowDown]);
+registerIcons([arrowUp, arrowDown, chevronRight]);
 
 function emit(el: Element, name: string, detail?: unknown): boolean {
   return el.dispatchEvent(new CustomEvent(`z:${name}`, { bubbles: true, cancelable: true, detail }));
@@ -229,6 +244,8 @@ const treeOf = (item: Element) => {
 const treeItems = (tree: Element) => [...tree.querySelectorAll<HTMLElement>('[role="treeitem"]')].filter((item) => treeOf(item) === tree);
 const treeVisible = (tree: Element) => treeItems(tree).filter((item) => !item.parentElement?.closest(".z-tree__group[hidden]"));
 const treeGroup = (item: Element) => item.querySelector<HTMLElement>(":scope > .z-tree__group");
+/** Rama: con grupo de hijos o con `data-has-children` (carga diferida, aún sin hijos en el marcado). */
+const treeBranch = (item: Element) => treeGroup(item) !== null || item.hasAttribute("data-has-children");
 const treeLabel = (item: Element) => text(item.querySelector(":scope > .z-tree__row .z-tree__label"));
 const treeValue = (item: HTMLElement) => item.dataset.value ?? (item.id || treeLabel(item));
 const treeMulti = (tree: Element) => tree.getAttribute("aria-multiselectable") === "true";
@@ -288,10 +305,126 @@ function emitTree(tree: HTMLElement): void {
   });
 }
 
+/** Nodos de una rama que llegan por carga diferida (`setTreeLoader`). El texto va como texto, nunca como marcado. */
+export interface TreeNodeData {
+  id: string;
+  label: string;
+  disabled?: boolean;
+  hasChildren?: boolean;
+  children?: TreeNodeData[];
+}
+
+const loaders = new WeakMap<HTMLElement, (value: string) => Promise<TreeNodeData[]>>();
+
+/**
+ * Carga diferida: al expandir un nodo con `data-has-children` y sin grupo, el árbol llama a `loader(value)` y pinta
+ * los hijos que devuelve (aria-busy mientras tanto). Si falla, la rama se cierra y se anuncia
+ * `data-load-error-label` del árbol.
+ */
+export function setTreeLoader(tree: HTMLElement, loader: (value: string) => Promise<TreeNodeData[]>): void {
+  loaders.set(tree, loader);
+}
+
+function buildTreeItems(nodes: ReadonlyArray<TreeNodeData>, level: number, checkable: boolean): HTMLElement[] {
+  return nodes.map((node, i) => {
+    const li = document.createElement("li");
+    li.setAttribute("role", "treeitem");
+    li.className = "z-tree__item";
+    li.dataset.value = node.id;
+    li.tabIndex = -1;
+    li.setAttribute("aria-selected", "false");
+    li.setAttribute("aria-level", String(level));
+    li.setAttribute("aria-setsize", String(nodes.length));
+    li.setAttribute("aria-posinset", String(i + 1));
+    if (node.disabled) li.setAttribute("aria-disabled", "true");
+    if (checkable) li.setAttribute("aria-checked", "false");
+    const row = document.createElement("div");
+    row.className = "z-tree__row";
+    row.style.setProperty("--z-tree-level", String(level - 1));
+    const toggle = document.createElement("span");
+    toggle.className = "z-tree__toggle";
+    toggle.dataset.state = "closed";
+    toggle.setAttribute("aria-hidden", "true");
+    const kids = node.children?.length ? node.children : null;
+    if (kids || node.hasChildren) setMarkup(toggle, iconSvg("chevron-right", { size: 12 }));
+    row.append(toggle);
+    if (checkable) {
+      const box = document.createElement("span");
+      box.className = "z-check__box z-tree__check";
+      box.dataset.state = "unchecked";
+      box.setAttribute("aria-hidden", "true");
+      const mark = document.createElement("span");
+      mark.className = "z-check__mark";
+      box.append(mark);
+      row.append(box);
+    }
+    const label = document.createElement("span");
+    label.className = "z-tree__label";
+    label.textContent = node.label;
+    row.append(label);
+    li.append(row);
+    if (kids) {
+      li.setAttribute("aria-expanded", "false");
+      const group = document.createElement("ul");
+      group.setAttribute("role", "group");
+      group.className = "z-tree__group";
+      group.hidden = true;
+      group.append(...buildTreeItems(kids, level + 1, checkable));
+      li.append(group);
+    } else if (node.hasChildren) {
+      li.setAttribute("aria-expanded", "false");
+      li.setAttribute("data-has-children", "");
+    }
+    return li;
+  });
+}
+
+function loadTreeChildren(tree: HTMLElement, item: HTMLElement): void {
+  const loader = loaders.get(tree);
+  if (!loader || item.getAttribute("aria-busy") === "true") return;
+  item.setAttribute("aria-busy", "true");
+  const toggle = item.querySelector<HTMLElement>(":scope > .z-tree__row > .z-tree__toggle");
+  toggle?.setAttribute("data-loading", "");
+  const restore = () => {
+    item.removeAttribute("aria-busy");
+    toggle?.removeAttribute("data-loading");
+  };
+  loader(treeValue(item)).then(
+    (nodes) => {
+      restore();
+      item.removeAttribute("data-has-children");
+      const level = Number(item.getAttribute("aria-level")) || 1;
+      const group = document.createElement("ul");
+      group.setAttribute("role", "group");
+      group.className = "z-tree__group";
+      group.append(...buildTreeItems(nodes, level + 1, treeCheckable(tree)));
+      item.append(group);
+      setExpanded(item, true);
+      emitTree(tree);
+    },
+    () => {
+      restore();
+      item.setAttribute("aria-expanded", "false");
+      if (toggle) toggle.dataset.state = "closed";
+      announce(tree.dataset.loadErrorLabel ?? "Couldn't load this folder", { source: tree });
+    },
+  );
+}
+
 /** Expande o pliega un nodo del árbol. */
 export function toggleTreeItem(item: HTMLElement, open = item.getAttribute("aria-expanded") !== "true"): void {
   const tree = treeOf(item);
-  if (!tree || !treeGroup(item)) return;
+  if (!tree || !treeBranch(item)) return;
+  if (!treeGroup(item)) {
+    // Carga diferida: los hijos aún no están en el marcado.
+    if (open) {
+      item.setAttribute("aria-expanded", "true");
+      const toggle = item.querySelector<HTMLElement>(":scope > .z-tree__row > .z-tree__toggle");
+      if (toggle) toggle.dataset.state = "open";
+      loadTreeChildren(tree, item);
+    }
+    return;
+  }
   setExpanded(item, open);
   // El foco itinerante no puede quedar en un nodo oculto.
   if (!open && !treeVisible(tree).some((other) => other.tabIndex === 0))
@@ -345,6 +478,7 @@ function extendTree(tree: HTMLElement, item: HTMLElement): void {
 function activateTreeItem(tree: HTMLElement, item: HTMLElement): void {
   if (isDisabled(item)) return;
   if (treeGroup(item)) setExpanded(item, item.getAttribute("aria-expanded") !== "true");
+  else if (treeBranch(item)) toggleTreeItem(item);
   setSelection(tree, [item]);
   treeAnchor.set(tree, item);
   emitTree(tree);
@@ -388,7 +522,157 @@ export function renameTreeItem(item: HTMLElement): void {
   input.select();
 }
 
+/* ---------- Árbol: mover nodos (data-draggable) ---------- */
+
+const dragLabels = (tree: HTMLElement): TreeDragLabels => ({
+  grabbed: tree.dataset.dragGrabbedLabel ?? TREE_DRAG_LABELS.grabbed,
+  before: tree.dataset.dragBeforeLabel ?? TREE_DRAG_LABELS.before,
+  inside: tree.dataset.dragInsideLabel ?? TREE_DRAG_LABELS.inside,
+  after: tree.dataset.dragAfterLabel ?? TREE_DRAG_LABELS.after,
+  dropped: tree.dataset.dragDroppedLabel ?? TREE_DRAG_LABELS.dropped,
+  cancelled: tree.dataset.dragCancelledLabel ?? TREE_DRAG_LABELS.cancelled,
+});
+const itemByValue = (tree: HTMLElement, value: string) => treeItems(tree).find((item) => treeValue(item) === value);
+
+/** Niveles, posiciones y conmutadores tras mover: cada rama vacía deja de serlo. */
+function renumberTree(tree: HTMLElement): void {
+  const walk = (list: Element, level: number) => {
+    const items = [...list.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el.getAttribute("role") === "treeitem");
+    items.forEach((item, i) => {
+      item.setAttribute("aria-level", String(level));
+      item.setAttribute("aria-setsize", String(items.length));
+      item.setAttribute("aria-posinset", String(i + 1));
+      item.querySelector<HTMLElement>(":scope > .z-tree__row")?.style.setProperty("--z-tree-level", String(level - 1));
+      const group = treeGroup(item);
+      const toggle = item.querySelector<HTMLElement>(":scope > .z-tree__row > .z-tree__toggle");
+      if (group && !group.children.length) {
+        group.remove();
+        item.removeAttribute("aria-expanded");
+        if (toggle) {
+          toggle.textContent = "";
+          toggle.dataset.state = "closed";
+        }
+      } else if (group) {
+        if (toggle && !toggle.firstElementChild) setMarkup(toggle, iconSvg("chevron-right", { size: 12 }));
+        walk(group, level + 1);
+      }
+    });
+  };
+  walk(tree, 1);
+}
+
+/**
+ * Mueve un nodo del árbol (delante, dentro como último hijo o detrás de otro). Emite `z:move` { value, target,
+ * position } cancelable: si la aplicación lo cancela, el marcado no cambia. Devuelve si se movió.
+ */
+export function moveTreeItem(tree: HTMLElement, drop: TreeDrop): boolean {
+  const item = itemByValue(tree, drop.id);
+  const target = itemByValue(tree, drop.target);
+  if (!item || !target || !validDrop(treeShape(tree), drop)) return false;
+  if (!emit(tree, "move", { value: drop.id, target: drop.target, position: drop.position })) return false;
+  if (drop.position === "before") target.before(item);
+  else if (drop.position === "after") target.after(item);
+  else {
+    let group = treeGroup(target);
+    if (!group) {
+      group = document.createElement("ul");
+      group.setAttribute("role", "group");
+      group.className = "z-tree__group";
+      target.append(group);
+      target.removeAttribute("data-has-children");
+    }
+    group.append(item);
+    setExpanded(target, true);
+  }
+  renumberTree(tree);
+  announce(fill(dragLabels(tree).dropped, { name: treeLabel(item) }), { source: tree });
+  focusTreeItem(tree, item);
+  return true;
+}
+
+const grabs = new WeakMap<HTMLElement, { id: string; slots: TreeDrop[]; at: number }>();
+
+function paintGrab(tree: HTMLElement): void {
+  for (const el of tree.querySelectorAll("[data-drop]")) el.removeAttribute("data-drop");
+  for (const el of tree.querySelectorAll("[data-grabbed]")) el.removeAttribute("data-grabbed");
+  const g = grabs.get(tree);
+  tree.toggleAttribute("data-grabbing", Boolean(g));
+  if (!g) return;
+  itemByValue(tree, g.id)?.setAttribute("data-grabbed", "");
+  const slot = g.slots[g.at];
+  if (slot) itemByValue(tree, slot.target)?.querySelector(":scope > .z-tree__row")?.setAttribute("data-drop", slot.position);
+}
+
+/** Arrastre con teclado: Ctrl/⌘+X coge, ↑/↓ eligen el sitio, Intro o Ctrl/⌘+V sueltan, Escape cancela. */
+function onTreeGrabKey(tree: HTMLElement, item: HTMLElement, event: KeyboardEvent): boolean {
+  if (!tree.hasAttribute("data-draggable")) return false;
+  const mod = event.ctrlKey || event.metaKey;
+  const labels = dragLabels(tree);
+  const g = grabs.get(tree);
+  if (!g) {
+    if (!(mod && !event.altKey && event.key.toLowerCase() === "x") || isDisabled(item)) return false;
+    const rows = treeVisible(tree);
+    const shape = treeShape(tree);
+    const list = rows.map((row) => ({
+      id: treeValue(row),
+      level: Number(row.getAttribute("aria-level")) || 1,
+      last: row.nextElementSibling?.getAttribute("role") !== "treeitem",
+      disabled: isDisabled(row),
+    }));
+    const slots = dropSlots(list, shape, treeValue(item)).filter((d) => validDrop(shape, d));
+    const next = rows.slice(rows.indexOf(item) + 1).find((row) => slots.some((s) => s.target === treeValue(row)));
+    grabs.set(tree, {
+      id: treeValue(item),
+      slots,
+      at: Math.max(
+        0,
+        slots.findIndex((s) => next && s.target === treeValue(next)),
+      ),
+    });
+    paintGrab(tree);
+    announce(fill(labels.grabbed, { name: treeLabel(item) }), { source: tree });
+    event.preventDefault();
+    return true;
+  }
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    g.at = Math.max(0, Math.min(g.slots.length - 1, g.at + (event.key === "ArrowDown" ? 1 : -1)));
+    paintGrab(tree);
+    const slot = g.slots[g.at];
+    const target = slot ? itemByValue(tree, slot.target) : undefined;
+    if (slot && target) announce(fill(labels[slot.position], { name: treeLabel(target) }), { source: tree });
+  } else if (event.key === "Enter" || (mod && event.key.toLowerCase() === "v")) {
+    const slot = g.slots[g.at];
+    grabs.delete(tree);
+    paintGrab(tree);
+    if (slot) moveTreeItem(tree, slot);
+  } else if (event.key === "Escape" || event.key === "Tab") {
+    grabs.delete(tree);
+    paintGrab(tree);
+    announce(labels.cancelled, { source: tree });
+    if (event.key === "Tab") return true;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  return true;
+}
+
+const draggableTrees = new WeakSet<HTMLElement>();
+function bindDomTreeDrag(tree: HTMLElement): void {
+  if (draggableTrees.has(tree) || !tree.hasAttribute("data-draggable")) return;
+  draggableTrees.add(tree);
+  bindTreeDrag(tree, {
+    canDrop: (drop) => validDrop(treeShape(tree), drop),
+    onDrop: (drop) => void moveTreeItem(tree, drop),
+    onStart: (id) => {
+      const item = itemByValue(tree, id);
+      if (item) announce(fill(dragLabels(tree).grabbed, { name: treeLabel(item) }), { source: tree });
+    },
+    onCancel: () => announce(dragLabels(tree).cancelled, { source: tree }),
+  });
+}
+
 function onTreeKey(tree: HTMLElement, item: HTMLElement, event: KeyboardEvent): void {
+  if (onTreeGrabKey(tree, item, event)) return;
   const multi = treeMulti(tree);
   const mod = event.ctrlKey || event.metaKey;
   if (multi && mod && !event.altKey && event.key.toLowerCase() === "a") {
@@ -400,7 +684,7 @@ function onTreeKey(tree: HTMLElement, item: HTMLElement, event: KeyboardEvent): 
   if (event.altKey || mod) return;
   const rows = treeVisible(tree);
   const at = rows.indexOf(item);
-  const hasChildren = treeGroup(item) !== null;
+  const hasChildren = treeBranch(item);
   const open = item.getAttribute("aria-expanded") === "true";
   const move = (target: HTMLElement | undefined) => {
     if (!target) return;
@@ -466,6 +750,9 @@ function onTreeClick(tree: HTMLElement, item: HTMLElement, event: MouseEvent): v
 
 function hydrateTree(tree: HTMLElement): void {
   const items = treeItems(tree);
+  bindDomTreeDrag(tree);
+  // Árbol largo del servidor: las filas fuera de la vista no se pintan (content-visibility), pero siguen en el documento.
+  tree.toggleAttribute("data-deferred", tree.dataset.virtualize !== "false" && items.length > 200);
   for (const item of items) if (treeGroup(item)) setExpanded(item, item.getAttribute("aria-expanded") === "true");
   // Casillas: las hojas mandan; las ramas se recalculan (estado mixto).
   if (treeCheckable(tree))
@@ -523,7 +810,14 @@ export function sortTable(th: HTMLTableCellElement, direction: SortDirection | n
   }
   const body = table.tBodies[0];
   if (body && !table.hasAttribute("data-manual-sort")) {
-    const rows = [...body.rows].filter((row) => !row.querySelector(":scope > .z-table__empty"));
+    // Las filas de detalle van con su fila (no se ordenan por su cuenta); con ventana virtual, también las de fuera.
+    const all = bodyRowsOf(table);
+    const details = new Map<string, HTMLTableRowElement[]>();
+    for (const row of all) {
+      const of = row.dataset.detailOf;
+      if (of !== undefined) details.set(of, [...(details.get(of) ?? []), row]);
+    }
+    const rows = all.filter((row) => row.dataset.detailOf === undefined);
     // Orden original: el del marcado la primera vez que se ve cada fila.
     for (const row of rows) if (!rowOrder.has(row)) rowOrder.set(row, rowSeq++);
     const factor = direction === "desc" ? -1 : 1;
@@ -538,7 +832,11 @@ export function sortTable(th: HTMLTableCellElement, direction: SortDirection | n
       if (x.value === null || y.value === null) return compare(x.value, y.value) || x.index - y.index;
       return compare(x.value, y.value) * factor || x.index - y.index;
     });
-    if (entries.some((entry, i) => entry.row !== rows[i])) body.append(...entries.map((entry) => entry.row));
+    if (entries.some((entry, i) => entry.row !== rows[i]))
+      setBodyRows(
+        table,
+        entries.flatMap((entry) => [entry.row, ...(details.get(entry.row.dataset.rowKey ?? "\u0000") ?? [])]),
+      );
   }
   emit(table, "sort", { key: sortKey(th), direction, column: th.cellIndex });
 }

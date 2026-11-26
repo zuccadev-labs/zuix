@@ -1,11 +1,17 @@
 "use client";
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type Ref } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type Ref, type UIEvent } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import type { AsyncLoader } from "../../core/async-options";
 import { focusQuiet } from "../../core/focus";
 import { step } from "../../core/roving";
+import { fold } from "../../core/search";
 import { createTypeahead, isPrintable } from "../../core/typeahead";
+import { wantsVirtual } from "../../core/virtual";
 import { cx } from "../../cx";
-import { useControllable, useLayer, usePresence } from "../../primitives/hooks";
+import { useAsyncOptions } from "../../primitives/async-options";
+import { useControllable, useIsoLayoutEffect, useLayer, usePresence } from "../../primitives/hooks";
+import { useVirtual } from "../../primitives/virtual";
+import { estimateRow, optionRows, renderRows, type OptionRow } from "./option-rows.internal";
 import { Popup, Portal, rectOf } from "../../primitives/popup";
 import { useMergedRef } from "../../refs";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
@@ -26,8 +32,29 @@ export interface SelectOptionGroup {
 }
 
 interface SelectBase {
-  /** Opciones sueltas, grupos `{ label, options }` o una mezcla de ambos. */
-  options: ReadonlyArray<SelectOption | SelectOptionGroup>;
+  /** Opciones sueltas, grupos `{ label, options }` o una mezcla de ambos. Con `loadOptions`, no hace falta. */
+  options?: ReadonlyArray<SelectOption | SelectOptionGroup>;
+  /**
+   * Campo de búsqueda dentro de la lista: filtra por etiqueta (sin acentos ni mayúsculas) y deja los grupos con su
+   * título. El foco va al campo y la opción activa se señala con aria-activedescendant.
+   */
+  searchable?: boolean;
+  /** Texto de ejemplo y nombre accesible del campo de búsqueda. */
+  searchPlaceholder?: string;
+  /**
+   * Opciones del servidor por consulta (activa la búsqueda): antirrebote de `debounce` ms, la petición anterior se
+   * cancela (`signal`) y `page` sube al llegar al final si la respuesta trae `hasMore`.
+   */
+  loadOptions?: AsyncLoader<SelectOption>;
+  debounce?: number;
+  loadingText?: string;
+  errorText?: string;
+  retryLabel?: string;
+  /**
+   * Ventana virtual: solo se pintan las opciones que se ven (la activa no sale del documento). `true` siempre,
+   * `false` nunca, un número es el umbral; por defecto, a partir de 100 opciones.
+   */
+  virtualize?: boolean | number;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -76,29 +103,48 @@ export interface SelectMultipleProps extends SelectBase {
 }
 
 const EMPTY: ReadonlyArray<string> = [];
+const NO_OPTIONS: ReadonlyArray<SelectOption> = [];
 
 const isGroup = (entry: SelectOption | SelectOptionGroup): entry is SelectOptionGroup => "options" in entry;
 
-const optionsIn = (list: Element) =>
-  [...list.querySelectorAll<HTMLElement>(".z-listbox__option")].filter((option) => option.getAttribute("aria-disabled") !== "true");
-
-/** Resalta una opción y le da el foco (foco itinerante dentro de la lista). */
-function activate(list: Element, option: HTMLElement | undefined, scroll = true): void {
-  for (const other of list.querySelectorAll("[data-highlighted]")) if (other !== option) other.removeAttribute("data-highlighted");
-  if (!option) return;
-  option.setAttribute("data-highlighted", "");
-  if (scroll) option.scrollIntoView({ block: "nearest" });
-  focusQuiet(option);
+/** Filas visibles con la búsqueda: un grupo sin coincidencias desaparece con su título. */
+function filterRows(rows: OptionRow<SelectOption>[], query: string): OptionRow<SelectOption>[] {
+  const q = fold(query.trim());
+  if (!q) return rows;
+  const out: OptionRow<SelectOption>[] = [];
+  let pending: OptionRow<SelectOption> | null = null;
+  for (const row of rows) {
+    if (row.kind === "label") {
+      pending = row;
+      continue;
+    }
+    if (!fold(row.option.label).includes(q)) continue;
+    if (pending && row.group === pending.group) {
+      out.push(pending);
+      pending = null;
+    }
+    out.push(row);
+  }
+  return out;
 }
 
 /**
  * Lista desplegable con popup propio (material liquid), iconos y grupos; patrón APG «select-only combobox» con el foco
- * dentro de la lista. Para la lista del sistema, `NativeSelect`.
+ * dentro de la lista. Con `searchable` (o `loadOptions`), un campo de búsqueda arriba que conserva el foco y señala
+ * la opción activa con aria-activedescendant. Para la lista del sistema, `NativeSelect`.
  */
 export const Select = withRef(function Select(props: SelectProps | SelectMultipleProps) {
   const multiple = props.multiple === true;
   const {
-    options,
+    options: given = NO_OPTIONS,
+    searchable: searchableProp,
+    searchPlaceholder = "Search",
+    loadOptions,
+    debounce,
+    loadingText = "Loading",
+    errorText = "Couldn't load the options",
+    retryLabel = "Retry",
+    virtualize,
     open: openProp,
     defaultOpen,
     onOpenChange,
@@ -119,12 +165,14 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
     emptyText = "No options",
     ref,
   } = props;
+  const searchable = Boolean(searchableProp || loadOptions);
   const {
     invalid: isInvalid,
     required: isRequired,
     ...control
   } = useFieldControl({ id, invalid, required, "aria-describedby": describedBy });
-  const listId = `${useId()}-list`;
+  const auto = useId();
+  const listId = `${auto}-list`;
   const [current, setCurrent] = useControllable<string>(
     multiple ? undefined : props.value,
     multiple ? "" : (props.defaultValue ?? ""),
@@ -138,28 +186,84 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
   const maxSelected = multiple ? props.maxSelected : undefined;
   const isChecked = (value: string) => (multiple ? many.includes(value) : value === current);
   const [open, setOpen] = useControllable(openProp, defaultOpen ?? false, onOpenChange);
-  const flat = options.flatMap((entry) => (isGroup(entry) ? entry.options : [entry]));
-  const selected = multiple ? undefined : flat.find((option) => option.value === current);
-  const chosenLabels = multiple ? flat.filter((option) => many.includes(option.value)).map((option) => option.label) : [];
+  const remote = useAsyncOptions(loadOptions, debounce);
+  // Lo elegido de una carga del servidor conserva su etiqueta aunque la consulta cambie las opciones.
+  const known = useRef(new Map<string, SelectOption>());
+  const options = loadOptions ? remote.state.options : given;
+  const { rows, options: flat } = optionRows<SelectOption, SelectOptionGroup>(options, isGroup);
+  for (const option of flat) if (isChecked(option.value)) known.current.set(option.value, option);
+  const lookup = (value: string) => flat.find((option) => option.value === value) ?? known.current.get(value);
+  const selected = multiple ? undefined : lookup(current);
+  const chosenLabels = multiple ? many.map((v) => lookup(v)?.label).filter((l): l is string => Boolean(l)) : [];
   const full = maxSelected !== undefined && many.length >= maxSelected;
   const wrapper = useRef<HTMLSpanElement | null>(null);
   const button = useRef<HTMLButtonElement | null>(null);
   const setButton = useMergedRef(button, ref);
   const popup = useRef<HTMLDivElement | null>(null);
+  const viewport = useRef<HTMLDivElement | null>(null);
+  const searchField = useRef<HTMLInputElement | null>(null);
   const native = useRef<HTMLSelectElement | null>(null);
-  // Opción que recibe el foco al abrir: la elegida, la primera o la última.
-  const start = useRef<"selected" | "first" | "last">("selected");
   const [search] = useState(() => createTypeahead());
   const present = usePresence(open, popup);
+  const [query, setQuery] = useState("");
+  // Opción activa (resaltada): con foco real sin búsqueda; con aria-activedescendant con búsqueda.
+  const [active, setActiveState] = useState<string | null>(null);
+  const pendingFocus = useRef(false);
+
+  const shownRows = loadOptions ? rows : filterRows(rows, query);
+  const shownOptions = shownRows.flatMap((row) => (row.kind === "option" ? [row.option] : []));
+  const isOff = (option: SelectOption) => Boolean(option.disabled || (multiple && full && !isChecked(option.value)));
+  const usable = shownOptions.filter((option) => !isOff(option));
+  const optionId = (value: string) => `${auto}-option-${flat.findIndex((o) => o.value === value)}`;
+  const rowOfValue = (value: string | null) =>
+    value === null ? -1 : shownRows.findIndex((r) => r.kind === "option" && r.option.value === value);
+  const activeRow = open ? rowOfValue(active) : -1;
+  const virtual = wantsVirtual(virtualize, shownOptions.length, 100);
+  const win = useVirtual({
+    enabled: virtual && present,
+    count: shownRows.length,
+    size: estimateRow(shownRows, size),
+    key: (i) => shownRows[i]?.key ?? String(i),
+    keep: activeRow >= 0 ? [activeRow] : [],
+    scroller: viewport,
+    rowSelector: "[data-key]",
+  });
+
+  /** Resalta una opción; sin búsqueda, además le da el foco (si aún no está pintada, tras pintarla). */
+  const activate = (value: string | null, scroll = true) => {
+    setActiveState(value);
+    if (value === null) return;
+    const el = viewport.current?.querySelector<HTMLElement>(`[id="${optionId(value)}"]`);
+    if (el) {
+      if (scroll) el.scrollIntoView({ block: "nearest" });
+      if (!searchable) focusQuiet(el);
+    } else {
+      win.scrollToIndex(rowOfValue(value));
+      pendingFocus.current = true;
+    }
+  };
+  useIsoLayoutEffect(() => {
+    if (!pendingFocus.current || active === null) return;
+    const el = viewport.current?.querySelector<HTMLElement>(`[id="${optionId(active)}"]`);
+    if (!el) return;
+    pendingFocus.current = false;
+    el.scrollIntoView({ block: "nearest" });
+    if (!searchable) focusQuiet(el);
+  });
 
   const show = (from: "selected" | "first" | "last") => {
     if (disabled) return;
     start.current = from;
     setOpen(true);
   };
+  // Opción que recibe el foco al abrir: la elegida, la primera o la última.
+  const start = useRef<"selected" | "first" | "last">("selected");
   const close = (refocus: boolean) => {
     const inside = popup.current?.contains(document.activeElement) ?? false;
     setOpen(false);
+    setQuery("");
+    setActiveState(null);
+    remote.abort();
     if (refocus && inside) focusQuiet(button.current);
   };
   const choose = (option: SelectOption) => {
@@ -197,11 +301,15 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
     };
   });
 
-  // Al abrir, el foco entra en la lista: en la opción elegida, la primera o la última.
-  const focusStart = (list: HTMLElement) => {
-    const items = optionsIn(list);
-    const chosen = items.find((option) => option.dataset.state === "checked");
-    activate(list, start.current === "last" ? items[items.length - 1] : start.current === "selected" ? (chosen ?? items[0]) : items[0]);
+  // Al abrir, el foco entra en la lista (o en el campo de búsqueda): en la opción elegida, la primera o la última.
+  const focusStart = () => {
+    if (searchable) {
+      focusQuiet(searchField.current);
+      if (loadOptions && remote.state.status === "idle") remote.search("", true);
+    }
+    const chosen = usable.find((option) => isChecked(option.value));
+    const target = start.current === "last" ? usable[usable.length - 1] : start.current === "selected" ? (chosen ?? usable[0]) : usable[0];
+    activate(target?.value ?? null);
   };
 
   const onControlKey = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -210,60 +318,88 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
       event.preventDefault();
       show("selected");
     } else if (isPrintable(event)) {
-      // Cerrado: la letra cambia el valor sin abrir la lista (en múltiple, la abre).
+      // Cerrado: la letra cambia el valor sin abrir la lista (en múltiple o con búsqueda, la abre).
       event.preventDefault();
-      if (multiple) {
+      if (multiple || searchable) {
         show("selected");
         return;
       }
-      const usable = flat.filter((option) => !option.disabled);
+      const all = flat.filter((option) => !option.disabled);
       const next =
-        usable[
+        all[
           search(
-            usable.map((option) => option.label),
+            all.map((option) => option.label),
             event.key,
-            usable.findIndex((option) => option.value === current),
+            all.findIndex((option) => option.value === current),
           )
         ];
       if (next) setCurrent(next.value);
     }
   };
   const onListKey = (event: KeyboardEvent<HTMLDivElement>) => {
-    const list = popup.current;
-    if (!list) return;
-    const items = optionsIn(list);
-    const active = items.find((option) => option === document.activeElement) ?? null;
-    const next = step(items, active, event.key, false);
+    const inSearch = event.target === searchField.current;
+    const at = usable.find((option) => option.value === active) ?? null;
+    // En el campo de búsqueda, Inicio y Fin mueven el cursor del texto.
+    const key = inSearch && (event.key === "Home" || event.key === "End") ? "" : event.key;
+    const next = step(usable, at, key, false);
     if (next) {
       event.preventDefault();
-      activate(list, next);
-    } else if (event.key === "Enter" || (event.key === " " && !search.pending())) {
+      activate(next.value);
+      if (loadOptions && next === usable[usable.length - 1] && remote.state.hasMore) remote.more();
+    } else if (event.key === "Enter" || (event.key === " " && !inSearch && !search.pending())) {
       event.preventDefault();
-      active?.click();
+      if (loadOptions && remote.state.status === "error" && !at) remote.retry();
+      else if (at) choose(at);
     } else if (event.key === "Tab") {
       // El tabulador no sale de la lista abierta.
       event.preventDefault();
-    } else if (isPrintable(event)) {
+    } else if (!inSearch && isPrintable(event)) {
       event.preventDefault();
+      if (searchable) {
+        // Una letra con el foco en una opción va al campo de búsqueda.
+        searchField.current?.focus();
+        return;
+      }
       const hit =
-        items[
+        usable[
           search(
-            items.map((option) => option.dataset.label ?? option.textContent ?? ""),
+            usable.map((option) => option.label),
             event.key,
-            active ? items.indexOf(active) : -1,
+            at ? usable.indexOf(at) : -1,
           )
         ];
-      if (hit) activate(list, hit);
+      if (hit) activate(hit.value);
     }
   };
+  const onQuery = (text: string) => {
+    setQuery(text);
+    if (loadOptions) {
+      remote.search(text);
+      return;
+    }
+    const first = filterRows(rows, text).find((row) => row.kind === "option" && !isOff(row.option));
+    setActiveState(first?.kind === "option" ? first.option.value : null);
+  };
+  const onViewportScroll = (event: UIEvent<HTMLDivElement>) => {
+    const el = event.currentTarget;
+    if (loadOptions && remote.state.hasMore && el.scrollTop + el.clientHeight >= el.scrollHeight - 48) remote.more();
+  };
+  // Del servidor: la primera opción de unos resultados nuevos pasa a ser la activa.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: solo al llegar resultados nuevos.
+  useEffect(() => {
+    if (!loadOptions || !open || remote.state.status !== "ready") return;
+    if (active === null || !usable.some((o) => o.value === active)) setActiveState(usable[0]?.value ?? null);
+  }, [remote.state.options]);
 
   const renderOption = (option: SelectOption) => {
     const checked = isChecked(option.value);
-    const off = option.disabled || (multiple && full && !checked);
+    const off = isOff(option);
+    const index = shownOptions.indexOf(option);
     return (
       // biome-ignore lint/a11y/useKeyWithClickEvents: el teclado lo atiende la lista (Intro y Espacio eligen la opción activa).
       <div
         key={option.value}
+        id={optionId(option.value)}
         role="option"
         className="z-listbox__option"
         tabIndex={-1}
@@ -271,10 +407,14 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
         data-label={option.label}
         data-state={checked ? "checked" : "unchecked"}
         data-disabled={off ? "" : undefined}
+        data-highlighted={option.value === active ? "" : undefined}
+        data-key={win.virtual ? `o:${option.value}` : undefined}
+        aria-posinset={win.virtual ? index + 1 : undefined}
+        aria-setsize={win.virtual ? shownOptions.length : undefined}
         aria-selected={checked}
         aria-disabled={off || undefined}
-        onPointerMove={(event) => {
-          if (!off && document.activeElement !== event.currentTarget && popup.current) activate(popup.current, event.currentTarget, false);
+        onPointerMove={() => {
+          if (!off && active !== option.value) activate(option.value, false);
         }}
         onClick={() => choose(option)}
       >
@@ -291,6 +431,20 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
     );
   };
 
+  const failed = Boolean(loadOptions) && remote.state.status === "error";
+  const loadingNow = Boolean(loadOptions) && (remote.state.status === "loading" || remote.state.loadingMore);
+  const status = failed
+    ? errorText
+    : shownOptions.length === 0
+      ? loadingNow
+        ? loadingText
+        : loadOptions && remote.state.status === "idle"
+          ? null
+          : emptyText
+      : remote.state.loadingMore
+        ? loadingText
+        : null;
+
   return (
     <>
       <span
@@ -304,6 +458,7 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
         data-placeholder={placeholder}
         data-multiple={multiple || undefined}
         data-max-selected={maxSelected}
+        data-searchable={searchable || undefined}
       >
         <button
           {...control}
@@ -361,7 +516,7 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
             }
           >
             {multiple ? null : <option value="" />}
-            {flat.map((option) => (
+            {(loadOptions ? [...known.current.values()] : flat).map((option) => (
               <option key={option.value} value={option.value} disabled={option.disabled}>
                 {option.label}
               </option>
@@ -381,32 +536,81 @@ export const Select = withRef(function Select(props: SelectProps | SelectMultipl
             gap={4}
             className={cx("z-liquid z-listbox", popupClassName)}
             data-size={size}
+            data-searchable={searchable || undefined}
             onKeyDown={onListKey}
             onShown={focusStart}
           >
+            {searchable ? (
+              <div className="z-listbox__search">
+                <span className="z-input z-input--search" data-size="sm">
+                  <span className="z-input__icon">
+                    <Icon name="magnifying-glass" size={14} />
+                  </span>
+                  <input
+                    ref={searchField}
+                    className="z-input__control"
+                    type="search"
+                    role="combobox"
+                    aria-label={searchPlaceholder}
+                    aria-autocomplete="list"
+                    aria-expanded="true"
+                    aria-controls={listId}
+                    aria-activedescendant={active !== null && rowOfValue(active) >= 0 ? optionId(active) : undefined}
+                    aria-busy={loadingNow || undefined}
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder={searchPlaceholder}
+                    value={query}
+                    onChange={(event) => onQuery(event.target.value)}
+                  />
+                  {loadingNow ? (
+                    <span className="z-input__trailing">
+                      <span className="z-input__spinner" aria-hidden="true" />
+                    </span>
+                  ) : null}
+                </span>
+              </div>
+            ) : null}
             <div
+              ref={viewport}
               id={listId}
               role="listbox"
               className="z-listbox__viewport"
               aria-label={ariaLabel}
               aria-labelledby={ariaLabel ? undefined : (ariaLabelledBy ?? control.id)}
               aria-multiselectable={multiple || undefined}
+              aria-busy={loadingNow || undefined}
+              data-virtual={win.virtual || undefined}
+              onScroll={loadOptions ? onViewportScroll : undefined}
             >
-              {options.map((entry, index) =>
-                isGroup(entry) ? (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: los grupos no tienen identidad propia.
-                  <div key={`group-${index}`} role="group" className="z-listbox__group" aria-labelledby={`${listId}-group-${index}`}>
-                    <div id={`${listId}-group-${index}`} className="z-listbox__label">
-                      {entry.label}
-                    </div>
-                    {entry.options.map(renderOption)}
-                  </div>
-                ) : (
-                  renderOption(entry)
-                ),
-              )}
+              {renderRows({
+                rows: shownRows,
+                indices: win.indices,
+                listId,
+                renderOption: (option) => renderOption(option),
+                virtual: win.virtual,
+                before: win.before,
+                after: win.after,
+              })}
             </div>
-            {flat.length === 0 ? <div className="z-listbox__empty">{emptyText}</div> : null}
+            {status ? (
+              <div
+                className="z-listbox__empty"
+                role={searchable || loadOptions ? "status" : undefined}
+                data-loading={loadingNow && !failed ? "" : undefined}
+                data-error={failed ? "" : undefined}
+              >
+                {status}
+                {failed ? (
+                  <>
+                    {" "}
+                    <button type="button" className="z-btn z-btn--ghost z-listbox__retry" data-size="sm" onClick={() => remote.retry()}>
+                      {retryLabel}
+                    </button>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
           </Popup>
         </Portal>
       ) : null}

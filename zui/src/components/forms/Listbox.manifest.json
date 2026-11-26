@@ -11,17 +11,88 @@
       "type": "(ListboxOption | ListboxOptionGroup)[]",
       "description": "{ value, label, description?, icon?, disabled? } o { label, options }."
     },
-    { "name": "selectionMode", "type": "enum", "values": ["single", "multiple"], "default": "single" },
-    { "name": "value", "type": "string | string[]" },
-    { "name": "defaultValue", "type": "string | string[]" },
-    { "name": "onValueChange", "type": "(value) => void" },
-    { "name": "label", "type": "string", "description": "Nombre accesible si no lo da un Field." },
-    { "name": "orientation", "type": "enum", "values": ["vertical", "horizontal"], "default": "vertical" },
-    { "name": "name", "type": "string", "description": "Cada opción elegida se envía con este nombre." },
-    { "name": "size", "type": "enum", "values": ["sm", "md", "lg"], "default": "md" },
-    { "name": "disabled", "type": "boolean", "default": false },
-    { "name": "invalid", "type": "boolean", "default": false },
-    { "name": "emptyText", "type": "string", "default": "No options" }
+    {
+      "name": "selectionMode",
+      "type": "enum",
+      "values": ["single", "multiple"],
+      "default": "single"
+    },
+    {
+      "name": "value",
+      "type": "string | string[]"
+    },
+    {
+      "name": "defaultValue",
+      "type": "string | string[]"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value) => void"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible si no lo da un Field."
+    },
+    {
+      "name": "orientation",
+      "type": "enum",
+      "values": ["vertical", "horizontal"],
+      "default": "vertical"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "Cada opción elegida se envía con este nombre."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "emptyText",
+      "type": "string",
+      "default": "No options"
+    },
+    {
+      "name": "loadOptions",
+      "type": "(query, { signal, page }) => Promise<{ options, hasMore? } | ListboxOption[]>",
+      "description": "Opciones del servidor: la primera página al montar y las siguientes al llegar al final de la lista."
+    },
+    {
+      "name": "loadingText",
+      "type": "string",
+      "default": "Loading"
+    },
+    {
+      "name": "errorText",
+      "type": "string",
+      "default": "Couldn't load the options",
+      "description": "Texto si la carga falla, con un botón para reintentar (Intro también reintenta)."
+    },
+    {
+      "name": "retryLabel",
+      "type": "string",
+      "default": "Retry"
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 100,
+      "description": "Ventana virtual (vertical): solo se pintan las opciones que se ven; la parada de Tab no sale del documento. `true` siempre, `false` nunca, un número es el umbral."
+    }
   ],
   "states": ["rest", "focus", "selected", "disabled", "invalid"],
   "tokens": [
@@ -42,7 +113,13 @@
     "weight-regular",
     "leading-snug"
   ],
-  "cssVars": [{ "name": "--z-listbox-max-height", "default": "18rem", "description": "Alto máximo antes de desplazarse." }],
+  "cssVars": [
+    {
+      "name": "--z-listbox-max-height",
+      "default": "18rem",
+      "description": "Alto máximo antes de desplazarse."
+    }
+  ],
   "classes": [
     "z-listbox",
     "z-listbox__viewport",
@@ -51,9 +128,10 @@
     "z-listbox__label",
     "z-listbox__content",
     "z-listbox__description",
-    "z-listbox__check"
+    "z-listbox__check",
+    "z-listbox__retry"
   ],
-  "a11y": "Patrón APG «listbox» con foco itinerante: una sola parada de Tab (la opción elegida o la primera). Flechas arriba y abajo (izquierda y derecha en horizontal, reflejadas en RTL) mueven el foco, Inicio y Fin van a los extremos y una letra busca por el principio de la etiqueta. En single la selección sigue al foco; en multiple (aria-multiselectable) Espacio o Intro marcan, Mayús+flecha extiende la selección y Ctrl/⌘+A marca o desmarca todas. Los grupos son role=\"group\" con su título. Dentro de un Field se nombra con su etiqueta.",
+  "a11y": "Patrón APG «listbox» con foco itinerante: una sola parada de Tab (la opción elegida o la primera). Flechas arriba y abajo (izquierda y derecha en horizontal, reflejadas en RTL) mueven el foco, Inicio y Fin van a los extremos y una letra busca por el principio de la etiqueta. En single la selección sigue al foco; en multiple (aria-multiselectable) Espacio o Intro marcan, Mayús+flecha extiende la selección y Ctrl/⌘+A marca o desmarca todas. Los grupos son role=\"group\" con su título. Dentro de un Field se nombra con su etiqueta. Con ventana virtual, cada opción lleva aria-setsize y aria-posinset; al moverse a una opción no pintada, la lista desplaza y el foco llega tras pintarla.",
   "examples": [
     {
       "title": "Única con iconos",

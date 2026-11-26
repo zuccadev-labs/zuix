@@ -587,7 +587,12 @@ function collect({ TOKENS, families, coarse }) {
       }
       if (!covered && across.some(Boolean) && across.some((c) => !c)) covered = across.find(Boolean);
       el.style.pointerEvents = pe;
-      if (covered) add("texto-tapado", el, `tapado por ${sig(covered)}`, { text: ownText(el).slice(0, 40) });
+      if (covered)
+        add("texto-tapado", el, `tapado por ${sig(covered)}`, {
+          text: ownText(el).slice(0, 40),
+          // Una columna fijada de una tabla que desplaza tapa lo que pasa por debajo, como debe.
+          pinned: Boolean(covered.closest?.("[data-pinned]") || el.closest("[data-pinned]")),
+        });
     }
   }
   scrollTo(0, 0);
@@ -1544,7 +1549,7 @@ function sitePages() {
 function appScreens() {
   const data = readFileSync(join(root, "examples/app/src/data.ts"), "utf8");
   const shell = [...data.slice(data.indexOf("SCREENS")).matchAll(/\{ id: "([a-z-]+)"/g)].map((m) => m[1]);
-  return [...new Set(shell), "audit", "layers", "agenda-stage", "planning-stage"];
+  return [...new Set(shell), "audit", "layers", "agenda-stage", "planning-stage", "scale-stage"];
 }
 
 // ── Recorrido ──────────────────────────────────────────────────────────────────────────────────────────
@@ -2001,6 +2006,11 @@ function classify(recs) {
           }
           break;
         case "texto-tapado":
+          if (i.pinned) {
+            verdict = "aceptado";
+            why = "columna fijada de una tabla que desplaza en horizontal: lo de debajo se alcanza desplazando";
+            break;
+          }
           // El mundo del lienzo es más grande que la vista: el minimapa y los controles flotan sobre él como sobre un
           // mapa, y lo que queda debajo se alcanza desplazando (y desde la vista en lista).
           if (i.world && /z-node-(minimap|controls)/.test(i.detail)) {

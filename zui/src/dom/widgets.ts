@@ -77,8 +77,14 @@ function render(el: HTMLElement, focus = false): void {
   for (const [k, value] of Object.entries(vars)) if (el.style.getPropertyValue(k) !== String(value)) el.style.setProperty(k, String(value));
   if (Object.keys(vars).length) el.dataset.zVars = Object.keys(vars).join(" ");
   for (const s of scripts) s.remove();
+  // Recolocar un nodo con clave al cambiar la ventana virtual lo saca un instante del documento y pierde el foco: si lo
+  // tenía, sigue en la pieza y está en una lista virtual, lo recupera (en el resto, el foco sigue su curso).
+  const active = el.ownerDocument.activeElement as HTMLElement | null;
+  const focused = active && el.contains(active) && active.closest("[data-virtual]") ? active : null;
   patchChildren(el, tree.c ?? []);
   el.append(...scripts);
+  // Después de devolver los datos (<script data-props>) a la pieza: el foco puede disparar otro pintado que los lee.
+  if (focused && focused !== el.ownerDocument.activeElement && el.contains(focused)) focused.focus({ preventScroll: true });
   for (const fill of slotFills) fill(el, tree.c ?? []);
   if (widget.after) widget.after(el, entry.host, focus);
   else if (focus) focusActive(el);

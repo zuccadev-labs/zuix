@@ -99,3 +99,115 @@ export function idsToDepth(nodes: ReadonlyArray<TreeShape>, depth: number, level
   }
   return out;
 }
+
+/* ---------- Arrastrar y soltar (puntero y teclado) ---------- */
+
+export type DropPosition = "before" | "inside" | "after";
+
+/** Textos del arrastre (anuncios). `{name}` es la etiqueta del nodo. */
+export interface TreeDragLabels {
+  /** «Moving {name}. Arrow keys choose the place, Enter drops, Escape cancels.» */
+  grabbed: string;
+  before: string;
+  inside: string;
+  after: string;
+  /** «{name} moved.» */
+  dropped: string;
+  /** «Move cancelled.» */
+  cancelled: string;
+}
+
+export const TREE_DRAG_LABELS: TreeDragLabels = {
+  grabbed: "Moving {name}. Arrow keys choose the place, Enter drops, Escape cancels.",
+  before: "Before {name}",
+  inside: "Inside {name}",
+  after: "After {name}",
+  dropped: "{name} moved.",
+  cancelled: "Move cancelled.",
+};
+
+export interface TreeDrop {
+  /** Nodo que se mueve. */
+  id: string;
+  /** Nodo de referencia. */
+  target: string;
+  /** Delante, dentro (como último hijo) o detrás de `target`. */
+  position: DropPosition;
+}
+
+/** ¿`id` cuelga de `ancestor` (o es él)? */
+export function isWithin(nodes: ReadonlyArray<TreeShape>, ancestor: string, id: string): boolean {
+  const root = find(nodes, ancestor);
+  if (!root) return false;
+  if (root.id === id) return true;
+  return find(root.children ?? [], id) !== undefined;
+}
+
+/** ¿Se puede soltar ahí? No sobre sí mismo ni dentro de lo que cuelga de él. */
+export function validDrop(nodes: ReadonlyArray<TreeShape>, drop: TreeDrop): boolean {
+  if (drop.id === drop.target) return false;
+  if (!find(nodes, drop.id) || !find(nodes, drop.target)) return false;
+  return !isWithin(nodes, drop.id, drop.target);
+}
+
+/**
+ * Árbol nuevo con el nodo movido (inmutable: los nodos no tocados se reutilizan). Para la aplicación, que es la dueña
+ * de `nodes`: `onMove={(d) => setNodes(moveNode(nodes, d))}`. Si el movimiento no es válido, devuelve `nodes`.
+ */
+export function moveNode<T extends TreeShape>(nodes: ReadonlyArray<T>, drop: TreeDrop): T[] {
+  if (!validDrop(nodes, drop)) return [...nodes];
+  let moving: T | undefined;
+  const remove = (list: ReadonlyArray<T>): T[] =>
+    list.flatMap((node) => {
+      if (node.id === drop.id) {
+        moving = node;
+        return [];
+      }
+      return node.children ? [{ ...node, children: remove(node.children as ReadonlyArray<T>) }] : [node];
+    });
+  const without = remove(nodes);
+  if (!moving) return [...nodes];
+  const item = moving;
+  const insert = (list: T[]): T[] =>
+    list.flatMap((node) => {
+      if (node.id === drop.target) {
+        if (drop.position === "before") return [item, node];
+        if (drop.position === "after") return [node, item];
+        return [{ ...node, children: [...((node.children as T[] | undefined) ?? []), item] }];
+      }
+      return node.children ? [{ ...node, children: insert(node.children as T[]) }] : [node];
+    });
+  return insert(without);
+}
+
+/** Fila visible del árbol tal como la ve el arrastre con teclado. */
+export interface DropRow {
+  id: string;
+  level: number;
+  /** Último de sus hermanos (se ofrece «detrás de» además de «delante de»). */
+  last: boolean;
+  disabled?: boolean;
+}
+
+/**
+ * Destinos del arrastre con teclado, en orden de lectura: delante y dentro de cada fila visible y, en la última de
+ * cada grupo, también detrás. Sin el nodo que se mueve ni lo que cuelga de él. ↑/↓ los recorren.
+ */
+export function dropSlots(rows: ReadonlyArray<DropRow>, nodes: ReadonlyArray<TreeShape>, id: string): TreeDrop[] {
+  const out: TreeDrop[] = [];
+  for (const row of rows) {
+    if (row.disabled || isWithin(nodes, id, row.id)) continue;
+    out.push({ id, target: row.id, position: "before" });
+    out.push({ id, target: row.id, position: "inside" });
+    if (row.last) out.push({ id, target: row.id, position: "after" });
+  }
+  return out;
+}
+
+/** Posición de soltar según la altura del puntero en la fila: tercio superior delante, inferior detrás, centro dentro. */
+export function dropPositionAt(offset: number, height: number, inside = true): DropPosition {
+  const h = Math.max(1, height);
+  const r = offset / h;
+  if (!inside) return r < 0.5 ? "before" : "after";
+  return r < 0.25 ? "before" : r > 0.75 ? "after" : "inside";
+}

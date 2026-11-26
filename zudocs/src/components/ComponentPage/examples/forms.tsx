@@ -9,9 +9,28 @@ import {
   OTPInput,
   Select,
   TimeZoneSelect,
+  type AsyncLoader,
 } from "@zuccadev-labs/zuix-zui";
 import { useEffect, useRef, useState } from "react";
 import type { ExampleDemos } from "./shared";
+
+/** Opciones con búsqueda y grupos, y un servidor de mentira (20 por página, 300 ms, cancelable) para los ejemplos. */
+const COUNTRIES = Array.from({ length: 80 }, (_, i) => ({ value: `c${i}`, label: `Country ${String(i + 1).padStart(2, "0")}` }));
+const CITIES = Array.from({ length: 120 }, (_, i) => `City ${String(i + 1).padStart(3, "0")}`);
+const searchCities: AsyncLoader<{ value: string; label: string }> = (query, { signal, page }) =>
+  new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      const hits = CITIES.filter((c) => c.toLowerCase().includes(query.toLowerCase()));
+      resolve({
+        options: hits.slice((page - 1) * 20, page * 20).map((c) => ({ value: c.toLowerCase().replace(/\s+/g, "-"), label: c })),
+        hasMore: page * 20 < hits.length,
+      });
+    }, 300);
+    signal.addEventListener("abort", () => {
+      clearTimeout(timer);
+      reject(new DOMException("aborted", "AbortError"));
+    });
+  });
 
 /** Precio por noche de diciembre de 2026; los días sin precio están agotados. */
 const PRICES: Record<string, number> = {};
@@ -122,6 +141,7 @@ export const forms: Record<string, ExampleDemos> = {
     ),
   },
   Combobox: {
+    "Búsqueda en el servidor con páginas": () => <Combobox aria-label="City" placeholder="Search a city" loadOptions={searchCities} />,
     "Lista local": () => (
       <Combobox
         aria-label="Country"
@@ -221,6 +241,18 @@ export const forms: Record<string, ExampleDemos> = {
     },
   },
   Select: {
+    "Búsqueda y grupos": () => (
+      <Select
+        searchable
+        aria-label="Country"
+        placeholder="Choose a country"
+        options={[
+          { label: "Europe", options: COUNTRIES.slice(0, 40) },
+          { label: "Americas", options: COUNTRIES.slice(40, 80) },
+        ]}
+      />
+    ),
+    "Opciones del servidor": () => <Select aria-label="Office" placeholder="Choose an office" loadOptions={searchCities} />,
     "Con iconos": () => (
       <Select
         aria-label="View"

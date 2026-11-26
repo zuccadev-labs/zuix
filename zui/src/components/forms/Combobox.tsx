@@ -1,10 +1,15 @@
 "use client";
-import { useEffect, useId, useRef, useState, type ChangeEvent, type FocusEvent, type KeyboardEvent, type Ref } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent, type FocusEvent, type KeyboardEvent, type Ref, type UIEvent } from "react";
 import { Icon, type IconName } from "@zuccadev-labs/zuix-zicon/core";
+import type { AsyncLoader } from "../../core/async-options";
 import { fold } from "../../core/search";
+import { wantsVirtual } from "../../core/virtual";
 import { cx } from "../../cx";
 import { ICON_SIZE, type ControlSize } from "../actions/types";
+import { useAsyncOptions } from "../../primitives/async-options";
 import { useLayer, usePresence } from "../../primitives/hooks";
+import { useVirtual } from "../../primitives/virtual";
+import { estimateRow, renderRows, type OptionRow } from "./option-rows.internal";
 import { Popup, Portal, rectOf } from "../../primitives/popup";
 import { useMergedRef } from "../../refs";
 import { useFieldControl } from "./Field";
@@ -24,8 +29,28 @@ export interface ComboboxOptionGroup {
 }
 
 interface ComboboxBase {
-  /** Opciones sueltas, grupos `{ label, options }` o una mezcla. */
-  options: ReadonlyArray<ComboboxOption | ComboboxOptionGroup>;
+  /** Opciones sueltas, grupos `{ label, options }` o una mezcla. Con `loadOptions`, no hace falta. */
+  options?: ReadonlyArray<ComboboxOption | ComboboxOptionGroup>;
+  /**
+   * Opciones del servidor por consulta: se piden tras `debounce` ms sin teclear, la petición anterior se cancela
+   * (pasa `signal` a `fetch`) y `page` sube al llegar al final de la lista si la respuesta trae `hasMore`. Devuelve
+   * `{ options, hasMore }` o un array. Con ella no se filtra en local.
+   */
+  loadOptions?: AsyncLoader<ComboboxOption>;
+  /** Espera tras la última tecla antes de pedir (ms). Por defecto 250. */
+  debounce?: number;
+  /** Letras mínimas para pedir. Por defecto 0 (al abrir se pide con la consulta vacía). */
+  minQueryLength?: number;
+  /** Texto si la carga falla; Intro o el botón reintentan. */
+  errorText?: string;
+  retryLabel?: string;
+  /** Texto mientras llega la página siguiente. */
+  loadingMoreText?: string;
+  /**
+   * Ventana virtual: solo se pintan las opciones que se ven (la activa no sale del documento). `true` siempre,
+   * `false` nunca, un número es el umbral; por defecto, a partir de 100 opciones.
+   */
+  virtualize?: boolean | number;
   /** Texto escrito por la persona. Para cargar opciones de forma asíncrona. */
   onInputChange?: (text: string) => void;
   /**
@@ -91,6 +116,7 @@ export interface ComboboxMultipleProps extends ComboboxBase {
 
 const isGroup = (entry: ComboboxOption | ComboboxOptionGroup): entry is ComboboxOptionGroup => "options" in entry;
 const NONE: ReadonlyArray<string> = [];
+const NO_OPTIONS: ReadonlyArray<ComboboxOption> = [];
 
 const matches = (option: ComboboxOption, text: string) => fold(option.label).includes(fold(text.trim()));
 
@@ -102,10 +128,17 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
   const multiple = props.multiple === true;
   const allowCustomValue = !multiple && props.allowCustomValue === true;
   const {
-    options: entries,
+    options: given = NO_OPTIONS,
+    loadOptions,
+    debounce,
+    minQueryLength,
+    errorText = "Couldn't load the options",
+    retryLabel = "Retry",
+    loadingMoreText = "Loading more",
+    virtualize,
     onInputChange,
-    filter = true,
-    loading,
+    filter: filterProp = true,
+    loading: loadingProp,
     loadingText = "Loading",
     emptyText = "No results",
     placeholder,
@@ -126,6 +159,8 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
     icon,
     ref,
   } = props;
+  const remote = useAsyncOptions(loadOptions, debounce, minQueryLength);
+  const entries = loadOptions ? remote.state.options : given;
   const options = entries.flatMap((entry) => (isGroup(entry) ? entry.options : [entry]));
   const groupOf = new Map<string, number>();
   entries.forEach((entry, index) => {
@@ -161,17 +196,52 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
     current === null ? null : (options.find((option) => option.value === current) ?? (chosen?.value === current ? chosen : null));
   // Con texto libre, un valor que no es opción se muestra tal cual.
   const shownText = multiple ? (text ?? "") : (text ?? selected?.label ?? (allowCustomValue && current !== null ? current : ""));
+  // Del servidor: ya llega filtrado; la carga es la de la petición en curso.
+  const filter = loadOptions ? false : filterProp;
+  const loading = loadingProp || (Boolean(loadOptions) && remote.state.status === "loading");
   const test = typeof filter === "function" ? filter : matches;
   const visible = text !== null && text.trim() !== "" && filter !== false ? options.filter((option) => test(option, text)) : options;
   const activeOption = open && active >= 0 && active < visible.length ? visible[active] : undefined;
 
   const setRef = useMergedRef(input, ref);
 
-  // Mantiene visible la opción activa al moverse con el teclado.
+  // Filas de lo visible (títulos de grupo y opciones) para la ventana virtual.
+  const visibleRows: OptionRow<ComboboxOption>[] = [];
+  {
+    let last: number | undefined | null = null;
+    visible.forEach((option, index) => {
+      const group = groupOf.get(option.value);
+      if (group !== undefined && group !== last)
+        visibleRows.push({ kind: "label", key: `g:${group}`, group, label: (entries[group] as ComboboxOptionGroup).label });
+      last = group;
+      visibleRows.push({ kind: "option", key: `o:${option.value}`, group: group ?? null, option, index });
+    });
+  }
+  const rowOf = (index: number) => visibleRows.findIndex((r) => r.kind === "option" && r.index === index);
+  const virtual = wantsVirtual(virtualize, visible.length, 100);
+  const activeRow = open && active >= 0 ? rowOf(active) : -1;
+  const win = useVirtual({
+    enabled: virtual && present,
+    count: visibleRows.length,
+    size: estimateRow(visibleRows, size),
+    key: (i) => visibleRows[i]?.key ?? String(i),
+    keep: activeRow >= 0 ? [activeRow] : [],
+    scroller: list,
+    rowSelector: "[data-key]",
+  });
+
+  // Mantiene visible la opción activa al moverse con el teclado (con ventana virtual, primero se desplaza a ella).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: solo al cambiar la opción activa o al abrir.
   useEffect(() => {
     if (!open || active < 0) return;
-    list.current?.querySelector<HTMLElement>(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
+    const el = list.current?.querySelector<HTMLElement>(`[data-index="${active}"]`);
+    if (el) el.scrollIntoView({ block: "nearest" });
+    else if (activeRow >= 0) win.scrollToIndex(activeRow);
   }, [open, active]);
+  // Al llegar al final con más páginas, se pide la siguiente.
+  useEffect(() => {
+    if (open && loadOptions && active >= 0 && active >= visible.length - 1 && remote.state.hasMore) remote.more();
+  });
 
   const firstEnabled = (items: ReadonlyArray<ComboboxOption>) => items.findIndex((option) => !isOff(option));
   const lastEnabled = (items: ReadonlyArray<ComboboxOption>) => {
@@ -209,10 +279,13 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
     setOpen(false);
     setActive(-1);
     setText(null);
+    remote.abort();
   };
   const show = (start: "selected" | "first" | "last") => {
     if (disabled) return;
     setOpen(true);
+    // Del servidor: al abrir sin resultados, se piden ya (con lo escrito o la consulta vacía).
+    if (loadOptions && remote.state.status === "idle") remote.search(text ?? "", true);
     const at =
       start === "last"
         ? lastEnabled(visible)
@@ -254,6 +327,7 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
     const next = event.target.value;
     setText(next);
     onInputChange?.(next);
+    remote.search(next);
     // Vaciar el campo quita la selección.
     if (!multiple && next === "" && current !== null) commit(null);
     setOpen(true);
@@ -295,7 +369,8 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
         }
         // Con la lista abierta, Enter elige y no envía el formulario.
         event.preventDefault();
-        if (activeOption) choose(activeOption);
+        if (loadOptions && remote.state.status === "error" && !activeOption) remote.retry();
+        else if (activeOption) choose(activeOption);
         else if (allowCustomValue) {
           commitCustom();
           close();
@@ -325,7 +400,22 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
     close();
   };
 
-  const status = visible.length === 0 ? (loading ? loadingText : emptyText) : null;
+  const failed = Boolean(loadOptions) && remote.state.status === "error";
+  const status = failed
+    ? errorText
+    : visible.length === 0
+      ? loading
+        ? loadingText
+        : loadOptions && remote.state.status === "idle"
+          ? null
+          : emptyText
+      : remote.state.loadingMore
+        ? loadingMoreText
+        : null;
+  const onListScroll = (event: UIEvent<HTMLDivElement>) => {
+    const el = event.currentTarget;
+    if (loadOptions && remote.state.hasMore && el.scrollTop + el.clientHeight >= el.scrollHeight - 48) remote.more();
+  };
 
   // El foco no sale del campo: Escape lo atiende el propio campo; una pulsación fuera de él y de la lista la cierra.
   useLayer(open, {
@@ -336,8 +426,7 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
     },
   });
 
-  const renderOption = (option: ComboboxOption) => {
-    const index = visible.indexOf(option);
+  const renderOption = (option: ComboboxOption, index: number) => {
     const on = isOn(option);
     const off = isOff(option);
     return (
@@ -349,6 +438,9 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
         role="option"
         className="z-listbox__option"
         data-index={index}
+        data-key={win.virtual ? `o:${option.value}` : undefined}
+        aria-posinset={win.virtual ? index + 1 : undefined}
+        aria-setsize={win.virtual ? visible.length : undefined}
         data-value={option.value}
         data-state={on ? "checked" : "unchecked"}
         data-highlighted={index === active ? "" : undefined}
@@ -370,19 +462,6 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
       </div>
     );
   };
-  // Grupos visibles en el orden de las opciones; los que el filtro deja vacíos no se pintan.
-  const blocks: Array<{ label?: string; key: string; options: ComboboxOption[] }> = [];
-  for (const option of visible) {
-    const group = groupOf.get(option.value);
-    const last = blocks[blocks.length - 1];
-    if (last && last.key === `g${group ?? "-"}`) last.options.push(option);
-    else
-      blocks.push({
-        key: `g${group ?? "-"}`,
-        label: group === undefined ? undefined : (entries[group] as ComboboxOptionGroup).label,
-        options: [option],
-      });
-  }
   const chips = multiple ? many.map((v) => options.find((o) => o.value === v) ?? { value: v, label: v }) : [];
 
   return (
@@ -512,25 +591,37 @@ export const Combobox = withRef(function Combobox(props: ComboboxProps | Combobo
               className="z-listbox__viewport"
               aria-label={ariaLabel}
               aria-labelledby={ariaLabelledBy}
-              aria-busy={loading || undefined}
+              aria-busy={loading || remote.state.loadingMore || undefined}
               aria-multiselectable={multiple || undefined}
+              data-virtual={win.virtual || undefined}
+              onScroll={loadOptions ? onListScroll : undefined}
             >
-              {blocks.map((block) =>
-                block.label === undefined ? (
-                  block.options.map(renderOption)
-                ) : (
-                  <div key={block.key} role="group" className="z-listbox__group" aria-labelledby={`${listId}-${block.key}`}>
-                    <div id={`${listId}-${block.key}`} className="z-listbox__label">
-                      {block.label}
-                    </div>
-                    {block.options.map(renderOption)}
-                  </div>
-                ),
-              )}
+              {renderRows({
+                rows: visibleRows,
+                indices: win.indices,
+                listId,
+                renderOption: (option, index) => renderOption(option, index),
+                virtual: win.virtual,
+                before: win.before,
+                after: win.after,
+              })}
             </div>
             {status ? (
-              <div className="z-listbox__empty" role="status" data-loading={loading || undefined}>
+              <div
+                className="z-listbox__empty"
+                role="status"
+                data-loading={(loading || remote.state.loadingMore) && !failed ? "" : undefined}
+                data-error={failed ? "" : undefined}
+              >
                 {status}
+                {failed ? (
+                  <>
+                    {" "}
+                    <button type="button" className="z-btn z-btn--ghost z-listbox__retry" data-size="sm" onClick={() => remote.retry()}>
+                      {retryLabel}
+                    </button>
+                  </>
+                ) : null}
               </div>
             ) : null}
           </Popup>

@@ -7837,6 +7837,12 @@
     {
      "name": "labels",
      "type": "Partial<ConversationListLabels>"
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 150,
+     "description": "Ventana virtual: solo se pintan las conversaciones que se ven (la parada de Tab no sale del documento). `true` siempre, `false` nunca, un número es el umbral. Modo DOM: `data-virtualize`."
     }
    ],
    "states": [
@@ -7884,7 +7890,7 @@
     "z-conversation__mention",
     "z-conversation-list__empty"
    ],
-   "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son un grupo de radios (una parada, ←/→). Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id (la abierta al empezar), data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange.",
+   "a11y": "Lista (ul) de botones con aria-current=\"true\" en la abierta; una sola parada de Tab con ↑/↓, Inicio y Fin; ↓ desde la búsqueda entra en la lista y ↑ desde la primera vuelve a ella. Cada fila se lee como una frase: nombre, hora, último mensaje, «3 unread messages», «Muted», «Pinned». Los no leídos van en texto oculto además del contador. Los filtros son un grupo de radios (una parada, ←/→). Al buscar, el número de resultados se anuncia por el anunciador central. Sin React: .z-conversation-list con data-selected-id (la abierta al empezar), data-filters, data-search=\"false\", data-time-zone, data-locale e items en <script type=\"application/json\" data-props>; emite z:select { id }, z:search y z:filterchange. Con ventana virtual, cada fila lleva aria-setsize y aria-posinset; RePág y AvPág saltan una página. Ctrl+F del navegador solo encuentra lo pintado: la búsqueda de la lista lo encuentra todo.",
    "behavior": "dom",
    "examples": [
     {
@@ -12258,7 +12264,7 @@
   {
    "name": "DataTable",
    "group": "data",
-   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación. Además: filtro por columna, ancho ajustable, columnas fijadas al inicio y exportar a CSV.",
+   "description": "Tabla de datos genérica sobre el tipo de fila, con columnas ordenables, filas activables, selección con casillas, pie y paginación. Además: filtro por columna, ancho ajustable, columnas fijadas al inicio y exportar a CSV. Como rejilla (patrón APG): columnas fijadas a los dos lados, edición en línea por celda o por fila con validación, agrupación con agregados, datos en árbol, fila de detalle, reordenar columnas con puntero y teclado, rango con Mayús y ventana virtual para miles de filas",
    "import": "import { DataTable, type DataTableColumn } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -12270,7 +12276,7 @@
      "name": "columns",
      "type": "DataTableColumn<T>[]",
      "required": true,
-     "description": "{ key, header, render?, accessor?, sortable?, align?, width?, mono?, footer? } — `footer`: contenido o función sobre todas las filas, en `tfoot`."
+     "description": "{ key, header, render?, accessor?, sortable?, align?, width?, mono?, footer?, filterable?, resizable?, pinned?: \"start\" | \"end\", editable?, editor?: \"text\" | \"number\" | \"date\" | \"select\", options?, required?, min?, max?, pattern?, validate?, editValue?, aggregate?: \"sum\" | \"avg\" | \"min\" | \"max\" | \"count\" | función, formatAggregate?, reorderable? }. `footer`: contenido o función sobre todas las filas, en `tfoot`; sin él, el agregado de la columna."
     },
     {
      "name": "rowKey",
@@ -12476,6 +12482,168 @@
      "name": "exportFileName",
      "type": "string",
      "default": "table.csv"
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Idioma de la tabla: las celdas `Date` y los agregados se formatean con él, no con el del entorno."
+    },
+    {
+     "name": "dateFormat",
+     "type": "Intl.DateTimeFormatOptions",
+     "default": {
+      "dateStyle": "medium"
+     },
+     "description": "Formato de las celdas `Date`."
+    },
+    {
+     "name": "grid",
+     "type": "boolean",
+     "description": "Navegación de rejilla (APG «data grid»): una parada de Tab en el cuerpo y flechas entre celdas. Se activa sola con columnas editables, agrupación o árbol."
+    },
+    {
+     "name": "editMode",
+     "type": "enum",
+     "default": "cell",
+     "description": "Edición por celda o por fila entera.",
+     "values": [
+      "cell",
+      "row"
+     ]
+    },
+    {
+     "name": "onCellEdit",
+     "type": "(detail: { row, rowKey, key, value }) => string | void | Promise<string | void>",
+     "description": "Celda editada y válida. Devuelve un mensaje (o una promesa con él) para rechazarla: el editor sigue abierto con el error. La tabla no cambia `rows`."
+    },
+    {
+     "name": "onRowEdit",
+     "type": "(detail: { row, rowKey, values }) => string | void | Promise<string | void>",
+     "description": "Fila editada (editMode=\"row\") con todos sus campos válidos; igual que `onCellEdit` para rechazarla."
+    },
+    {
+     "name": "validationMessages",
+     "type": "Partial<CellMessages>",
+     "description": "Mensajes de la validación: required, number, min, max, pattern, option."
+    },
+    {
+     "name": "editLabel",
+     "type": "(column) => string",
+     "default": "Edit {column}",
+     "description": "Nombre accesible del campo de edición."
+    },
+    {
+     "name": "groupBy",
+     "type": "string | string[]",
+     "description": "Agrupa por estas columnas (de fuera a dentro): una fila de cabecera por grupo que se pliega, con los agregados de cada columna."
+    },
+    {
+     "name": "collapsedGroups",
+     "type": "string[]",
+     "description": "Grupos plegados (controlado). Por defecto, todos abiertos."
+    },
+    {
+     "name": "defaultCollapsedGroups",
+     "type": "string[]"
+    },
+    {
+     "name": "onCollapsedGroupsChange",
+     "type": "(keys: string[]) => void"
+    },
+    {
+     "name": "groupLabel",
+     "type": "(column, value, count) => ReactNode",
+     "default": "{columna}: {valor} ({n})",
+     "description": "Texto de la cabecera de grupo."
+    },
+    {
+     "name": "getRowChildren",
+     "type": "(row: T) => T[] | undefined",
+     "description": "Datos en árbol: la primera columna lleva la sangría y el botón de abrir (→/← con el teclado). La tabla pasa a treegrid."
+    },
+    {
+     "name": "expandedRows",
+     "type": "RowKey[]",
+     "description": "Filas del árbol abiertas (controlado)."
+    },
+    {
+     "name": "defaultExpandedRows",
+     "type": "RowKey[]"
+    },
+    {
+     "name": "onExpandedRowsChange",
+     "type": "(keys: RowKey[]) => void"
+    },
+    {
+     "name": "renderDetail",
+     "type": "(row: T) => ReactNode",
+     "description": "Fila de detalle desplegable bajo cada fila: un botón al inicio la abre (aria-expanded, aria-controls)."
+    },
+    {
+     "name": "expandedDetails",
+     "type": "RowKey[]",
+     "description": "Filas con el detalle abierto (controlado)."
+    },
+    {
+     "name": "defaultExpandedDetails",
+     "type": "RowKey[]"
+    },
+    {
+     "name": "onExpandedDetailsChange",
+     "type": "(keys: RowKey[]) => void"
+    },
+    {
+     "name": "detailLabel",
+     "type": "(row, index) => string",
+     "default": "Details of row {n}",
+     "description": "Nombre del botón de detalle."
+    },
+    {
+     "name": "expandLabel",
+     "type": "string",
+     "default": "Expand",
+     "description": "Nombre del botón de abrir una rama o un grupo."
+    },
+    {
+     "name": "reorderable",
+     "type": "boolean",
+     "default": false,
+     "description": "Reordenar columnas: un asa en cada cabecera que se arrastra, o con el teclado Espacio, ←/→ y Espacio (Escape la devuelve). Cada paso se anuncia."
+    },
+    {
+     "name": "columnOrder",
+     "type": "string[]",
+     "description": "Orden de las columnas por clave (controlado)."
+    },
+    {
+     "name": "defaultColumnOrder",
+     "type": "string[]"
+    },
+    {
+     "name": "onColumnOrderChange",
+     "type": "(keys: string[]) => void"
+    },
+    {
+     "name": "moveColumnLabel",
+     "type": "(column) => string",
+     "default": "Move {column}",
+     "description": "Nombre del asa."
+    },
+    {
+     "name": "reorderLabels",
+     "type": "Partial<ReorderLabels>",
+     "description": "Anuncios del reordenado: grabbed, moved, dropped, cancelled."
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 200,
+     "description": "Ventana virtual: solo se pintan las filas que se ven, dentro de `--z-datatable-height` (560 px) con la cabecera fija. `true` siempre, `false` nunca, un número es el umbral; por defecto, a partir de 200 filas."
+    },
+    {
+     "name": "rowHeight",
+     "type": "number",
+     "description": "Alto estimado de una fila en px (la medida real lo corrige)."
     }
    ],
    "states": [
@@ -12487,7 +12655,13 @@
     "selected",
     "indeterminate",
     "empty",
-    "paged"
+    "paged",
+    "editing",
+    "invalid",
+    "grouped",
+    "expanded",
+    "collapsed",
+    "reordering"
    ],
    "tokens": [
     "accent",
@@ -12538,9 +12712,26 @@
     "z-table__filters",
     "z-table__filter",
     "z-table__resize",
-    "z-datatable__export"
+    "z-datatable__export",
+    "z-table-wrap--virtual",
+    "z-table__spacer",
+    "z-table__editor",
+    "z-table__input",
+    "z-table__error",
+    "z-table__group",
+    "z-table__group-cell",
+    "z-table__group-label",
+    "z-table__toggle",
+    "z-table__toggle-space",
+    "z-table__tree-cell",
+    "z-table__expand",
+    "z-table__expand-cell",
+    "z-table__detail",
+    "z-table__detail-body",
+    "z-table__grip",
+    "z-table__row--editing"
    ],
-   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre. Cada filtro es un campo de búsqueda con nombre («Filter Name»). El asa de ancho es un separador enfocable con aria-valuenow (patrón de separador de ventanas): flechas izquierda y derecha cambian el ancho. Sin React: tr.z-table__filters con input.z-table__filter, span.z-table__resize en la cabecera, th[data-pinned] y button.z-datatable__export (data-export-name); emite z:filterchange y z:columnresize.",
+   "a11y": "Cabeceras ordenables: button dentro de th con aria-sort. Ciclo ascendente, descendente, sin orden. Las filas activables son enfocables y responden a Enter y Espacio. Selección: cada casilla es role=\"checkbox\" con nombre propio («Select row 2»); la de cabecera pasa a aria-checked=\"mixed\" con una selección parcial de la página y actúa sobre las filas visibles. El número seleccionado se anuncia en una región role=\"status\" visible. Mayús + clic (o Mayús + Espacio) marca un rango. El pie va en tfoot y la paginación es un nav con nombre. Cada filtro es un campo de búsqueda con nombre («Filter Name»). El asa de ancho es un separador enfocable con aria-valuenow (patrón de separador de ventanas): flechas izquierda y derecha cambian el ancho. Sin React: tr.z-table__filters con input.z-table__filter, span.z-table__resize en la cabecera, th[data-pinned] y button.z-datatable__export (data-export-name); emite z:filterchange y z:columnresize. Como rejilla, la tabla lleva role=\"grid\" (o \"treegrid\" con grupos o árbol): una sola parada de Tab en el cuerpo; flechas, Inicio/Fin, Ctrl+Inicio/Fin y RePág/AvPág mueven la celda activa (si la celda tiene un solo control, el foco va a él). F2, Intro o una letra editan; Intro confirma, Tab confirma y pasa a la siguiente celda editable, Escape cancela; un error queda en aria-invalid y aria-describedby y se anuncia. Grupos y ramas llevan aria-level, aria-expanded, aria-setsize y aria-posinset; → y ← en la primera celda los abren y cierran. Mayús+Espacio y Mayús+↑/↓ seleccionan un rango de filas. El asa de cada columna (aria-pressed) se coge con Espacio y se mueve con ←/→, con cada posición anunciada. Con ventana virtual, aria-rowcount y aria-rowindex dan el total y la posición; la celda activa y la que se edita no salen del documento; Ctrl+F del navegador solo encuentra lo pintado.",
    "examples": [
     {
      "title": "Ordenable",
@@ -12557,6 +12748,22 @@
     {
      "title": "Filtros, ancho, columna fijada y exportar",
      "code": "<DataTable caption=\"Members\" captionHidden exportable rowKey={(r) => r.id} rows={[{ id: \"a1\", name: \"Ana Torres\", team: \"Design\", seats: 4 }, { id: \"b2\", name: \"Ben Okafor\", team: \"Engineering\", seats: 12 }, { id: \"c3\", name: \"Chen Wei\", team: \"Engineering\", seats: 7 }]} columns={[{ key: \"name\", header: \"Name\", accessor: (r) => r.name, pinned: \"start\", width: \"180px\", filterable: true, resizable: true }, { key: \"team\", header: \"Team\", accessor: (r) => r.team, filterable: true, resizable: true }, { key: \"seats\", header: \"Seats\", accessor: (r) => r.seats, align: \"end\", sortable: true }]} />"
+    },
+    {
+     "title": "Rejilla editable, columnas fijadas y reordenables",
+     "code": "const people = [\n  { id: \"a1\", name: \"Ana Torres\", role: \"admin\", seats: 4, joined: new Date(\"2025-03-02T12:00:00Z\") },\n  { id: \"b2\", name: \"Ben Okafor\", role: \"editor\", seats: 12, joined: new Date(\"2026-01-15T12:00:00Z\") },\n  { id: \"c3\", name: \"Chen Wei\", role: \"viewer\", seats: 7, joined: new Date(\"2024-11-20T12:00:00Z\") },\n];\n\n<DataTable\n  caption=\"Team\"\n  captionHidden\n  locale=\"es-ES\"\n  reorderable\n  rows={people}\n  rowKey={(p) => p.id}\n  onCellEdit={({ rowKey, key, value }) => save(rowKey, key, value)}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (p) => p.name, pinned: \"start\", editable: true, required: true },\n    { key: \"role\", header: \"Role\", accessor: (p) => p.role, editable: true, editor: \"select\", options: [{ value: \"admin\", label: \"Admin\" }, { value: \"editor\", label: \"Editor\" }, { value: \"viewer\", label: \"Viewer\" }] },\n    { key: \"seats\", header: \"Seats\", accessor: (p) => p.seats, align: \"end\", editable: true, editor: \"number\", min: 1, max: 50 },\n    { key: \"joined\", header: \"Joined\", accessor: (p) => p.joined, pinned: \"end\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Agrupada con agregados",
+     "code": "const sales = [\n  { id: 1, region: \"North\", rep: \"Ana\", amount: 1200 },\n  { id: 2, region: \"North\", rep: \"Leo\", amount: 800 },\n  { id: 3, region: \"South\", rep: \"Mia\", amount: 1500 },\n];\n\n<DataTable\n  caption=\"Sales\"\n  captionHidden\n  locale=\"en-US\"\n  groupBy=\"region\"\n  rows={sales}\n  rowKey={(s) => s.id}\n  columns={[\n    { key: \"region\", header: \"Region\", accessor: (s) => s.region },\n    { key: \"rep\", header: \"Rep\", accessor: (s) => s.rep, aggregate: \"count\" },\n    { key: \"amount\", header: \"Amount\", accessor: (s) => s.amount, align: \"end\", mono: true, aggregate: \"sum\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Datos en árbol y fila de detalle",
+     "code": "const files = [\n  { id: \"src\", name: \"src\", size: 0, children: [\n    { id: \"src/index.ts\", name: \"index.ts\", size: 2 },\n    { id: \"src/app.ts\", name: \"app.ts\", size: 14 },\n  ] },\n  { id: \"readme\", name: \"README.md\", size: 4 },\n];\n\n<DataTable\n  caption=\"Files\"\n  captionHidden\n  rows={files}\n  rowKey={(f) => f.id}\n  getRowChildren={(f) => f.children}\n  defaultExpandedRows={[\"src\"]}\n  renderDetail={(f) => `Path: ${f.id}`}\n  defaultExpandedDetails={[\"readme\"]}\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (f) => f.name },\n    { key: \"size\", header: \"Size (kB)\", accessor: (f) => f.size, align: \"end\", mono: true },\n  ]}\n/>"
+    },
+    {
+     "title": "Diez mil filas con ventana virtual",
+     "code": "const rows = Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `Item ${i + 1}`, value: (i * 37) % 1000 }));\n\n<DataTable\n  caption=\"Inventory\"\n  captionHidden\n  rows={rows}\n  rowKey={(r) => r.id}\n  selectable\n  columns={[\n    { key: \"name\", header: \"Name\", accessor: (r) => r.name, sortable: true, filterable: true },\n    { key: \"value\", header: \"Value\", accessor: (r) => r.value, sortable: true, align: \"end\", mono: true },\n  ]}\n/>"
     }
    ],
    "origin": "DataTable de ui-glass (columnas genéricas) con el estilo de tabla de zutool; ordenación nueva.",
@@ -12573,6 +12780,18 @@
     {
      "title": "Filtros, ancho, columna fijada y exportar",
      "code": "<div class=\"z-datatable\" data-export-name=\"members.csv\">\n  <div class=\"z-table-wrap\" data-framed=\"true\">\n    <table class=\"z-table\" data-density=\"comfortable\" data-resizable=\"true\">\n      <caption class=\"z-table__caption z-sr-only\">Members</caption>\n      <thead>\n        <tr>\n          <th scope=\"col\" data-key=\"name\" data-pinned=\"\" style=\"width: 180px\">Name<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Name\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"180\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"team\">Team<span class=\"z-table__resize\" role=\"separator\" aria-orientation=\"vertical\" aria-label=\"Resize Team\" aria-valuemin=\"64\" aria-valuemax=\"1200\" aria-valuenow=\"160\" tabindex=\"0\"></span></th>\n          <th scope=\"col\" data-key=\"seats\" data-align=\"end\" aria-sort=\"none\" data-sort=\"number\"><button type=\"button\" class=\"z-table__sort\"><span>Seats</span><span class=\"z-sr-only\">, Sort</span><z-icon name=\"arrow-up\" size=\"12\"></z-icon></button></th>\n        </tr>\n        <tr class=\"z-table__filters\">\n          <th scope=\"col\" data-pinned=\"\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Name\" placeholder=\"Name\"></th>\n          <th scope=\"col\"><input type=\"search\" class=\"z-input__control z-table__filter\" aria-label=\"Filter Team\" placeholder=\"Team\"></th>\n          <th scope=\"col\" data-align=\"end\"></th>\n        </tr>\n      </thead>\n      <tbody>\n        <tr data-key=\"a1\">\n          <td data-pinned=\"\">Ana Torres</td>\n          <td>Design</td>\n          <td data-align=\"end\">4</td>\n        </tr>\n        <tr data-key=\"b2\">\n          <td data-pinned=\"\">Ben Okafor</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">12</td>\n        </tr>\n        <tr data-key=\"c3\">\n          <td data-pinned=\"\">Chen Wei</td>\n          <td>Engineering</td>\n          <td data-align=\"end\">7</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n  <div class=\"z-datatable__bar\">\n    <button type=\"button\" class=\"z-btn z-btn--ghost z-datatable__export\" data-size=\"sm\"><z-icon name=\"arrow-down-tray\" size=\"16\"></z-icon>Export CSV</button>\n  </div>\n</div>"
+    },
+    {
+     "title": "Rejilla editable, fijadas a los dos lados y columnas reordenables (z:celledit cancelable, z:columnorder)",
+     "code": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table role=\"grid\" data-grid=\"true\" data-reorderable=\"true\" class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Team</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" data-key=\"name\" data-pinned=\"\" data-editor=\"text\" data-required=\"\">Name</th>\n        <th scope=\"col\" data-key=\"role\" data-editor=\"select\" data-options=\"[{&quot;value&quot;:&quot;admin&quot;,&quot;label&quot;:&quot;Admin&quot;},{&quot;value&quot;:&quot;editor&quot;,&quot;label&quot;:&quot;Editor&quot;},{&quot;value&quot;:&quot;viewer&quot;,&quot;label&quot;:&quot;Viewer&quot;}]\">\n          <button type=\"button\" class=\"z-table__grip\" data-col-key=\"role\" aria-label=\"Move Role\" title=\"Move Role\" aria-pressed=\"false\">\n            <z-icon name=\"arrows-right-left\" size=\"12\"></z-icon>\n          </button>\n          Role\n        </th>\n        <th scope=\"col\" data-key=\"seats\" data-align=\"end\" data-editor=\"number\" data-min=\"1\" data-max=\"50\">\n          <button type=\"button\" class=\"z-table__grip\" data-col-key=\"seats\" aria-label=\"Move Seats\" title=\"Move Seats\" aria-pressed=\"false\">\n            <z-icon name=\"arrows-right-left\" size=\"12\"></z-icon>\n          </button>\n          Seats\n        </th>\n        <th scope=\"col\" data-key=\"joined\" data-pinned=\"end\">Joined</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr data-row-key=\"a1\">\n        <td data-col=\"name\" data-pinned=\"\" data-editable=\"\">Ana Torres</td>\n        <td data-col=\"role\" data-editable=\"\">admin</td>\n        <td data-col=\"seats\" data-align=\"end\" data-editable=\"\">4</td>\n        <td data-col=\"joined\" data-pinned=\"end\">2 mar 2025</td>\n      </tr>\n      <tr data-row-key=\"b2\">\n        <td data-col=\"name\" data-pinned=\"\" data-editable=\"\">Ben Okafor</td>\n        <td data-col=\"role\" data-editable=\"\">editor</td>\n        <td data-col=\"seats\" data-align=\"end\" data-editable=\"\">12</td>\n        <td data-col=\"joined\" data-pinned=\"end\">15 ene 2026</td>\n      </tr>\n      <tr data-row-key=\"c3\">\n        <td data-col=\"name\" data-pinned=\"\" data-editable=\"\">Chen Wei</td>\n        <td data-col=\"role\" data-editable=\"\">viewer</td>\n        <td data-col=\"seats\" data-align=\"end\" data-editable=\"\">7</td>\n        <td data-col=\"joined\" data-pinned=\"end\">20 nov 2024</td>\n      </tr>\n    </tbody>\n  </table>\n</div>"
+    },
+    {
+     "title": "Agrupada con agregados (z:expandchange; →/← en la primera celda)",
+     "code": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table role=\"treegrid\" data-grid=\"true\" class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Sales</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" data-key=\"region\">Region</th>\n        <th scope=\"col\" data-key=\"rep\">Rep</th>\n        <th scope=\"col\" data-key=\"amount\" data-align=\"end\">Amount</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr class=\"z-table__group\" data-row-key=\"group:North\" aria-level=\"1\" aria-expanded=\"true\" style=\"--z-depth:0\">\n        <td data-col=\"region\">\n          <span class=\"z-table__group-cell\">\n            <button type=\"button\" class=\"z-table__toggle\" data-state=\"open\" aria-hidden=\"true\" tabindex=\"-1\" title=\"Expand\">\n              <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n            </button>\n            <span class=\"z-table__group-label\">Region: North (2)</span>\n          </span>\n        </td>\n        <td data-col=\"rep\">2</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">2,000</td>\n      </tr>\n      <tr data-row-key=\"1\" aria-level=\"2\" aria-posinset=\"1\" aria-setsize=\"2\">\n        <td data-col=\"region\">North</td>\n        <td data-col=\"rep\">Ana</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">1200</td>\n      </tr>\n      <tr data-row-key=\"2\" aria-level=\"2\" aria-posinset=\"2\" aria-setsize=\"2\">\n        <td data-col=\"region\">North</td>\n        <td data-col=\"rep\">Leo</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">800</td>\n      </tr>\n      <tr class=\"z-table__group\" data-row-key=\"group:South\" aria-level=\"1\" aria-expanded=\"true\" style=\"--z-depth:0\">\n        <td data-col=\"region\">\n          <span class=\"z-table__group-cell\">\n            <button type=\"button\" class=\"z-table__toggle\" data-state=\"open\" aria-hidden=\"true\" tabindex=\"-1\" title=\"Expand\">\n              <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n            </button>\n            <span class=\"z-table__group-label\">Region: South (1)</span>\n          </span>\n        </td>\n        <td data-col=\"rep\">1</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">1,500</td>\n      </tr>\n      <tr data-row-key=\"3\" aria-level=\"2\" aria-posinset=\"1\" aria-setsize=\"1\">\n        <td data-col=\"region\">South</td>\n        <td data-col=\"rep\">Mia</td>\n        <td data-col=\"amount\" data-align=\"end\" data-mono=\"true\">1500</td>\n      </tr>\n    </tbody>\n    <tfoot>\n      <tr>\n        <td></td>\n        <td>3</td>\n        <td data-align=\"end\" data-mono=\"true\">3,500</td>\n      </tr>\n    </tfoot>\n  </table>\n</div>"
+    },
+    {
+     "title": "Datos en árbol y fila de detalle (z:expandchange, z:detailchange)",
+     "code": "<div class=\"z-table-wrap\" data-framed=\"true\">\n  <table role=\"treegrid\" data-grid=\"true\" class=\"z-table\" data-density=\"comfortable\">\n    <caption class=\"z-table__caption z-sr-only\">Files</caption>\n    <thead>\n      <tr>\n        <th scope=\"col\" class=\"z-table__expand-cell\">\n          <span class=\"z-sr-only\">Expand</span>\n        </th>\n        <th scope=\"col\" data-key=\"name\">Name</th>\n        <th scope=\"col\" data-key=\"size\" data-align=\"end\">Size (kB)</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr data-row-key=\"src\" aria-level=\"1\" aria-expanded=\"true\" aria-posinset=\"1\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"closed\" aria-expanded=\"false\" aria-label=\"Details of row 1\" title=\"Details of row 1\">\n            <z-icon name=\"chevron-down\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:0\">\n            <button type=\"button\" class=\"z-table__toggle\" data-state=\"open\" aria-hidden=\"true\" tabindex=\"-1\" title=\"Expand\">\n              <z-icon name=\"chevron-right\" size=\"12\"></z-icon>\n            </button>\n            src\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">0</td>\n      </tr>\n      <tr data-row-key=\"src/index.ts\" aria-level=\"2\" aria-posinset=\"1\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"closed\" aria-expanded=\"false\" aria-label=\"Details of row 2\" title=\"Details of row 2\">\n            <z-icon name=\"chevron-down\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:1\">\n            <span class=\"z-table__toggle-space\" aria-hidden=\"true\"></span>\n            index.ts\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">2</td>\n      </tr>\n      <tr data-row-key=\"src/app.ts\" aria-level=\"2\" aria-posinset=\"2\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"closed\" aria-expanded=\"false\" aria-label=\"Details of row 3\" title=\"Details of row 3\">\n            <z-icon name=\"chevron-down\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:1\">\n            <span class=\"z-table__toggle-space\" aria-hidden=\"true\"></span>\n            app.ts\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">14</td>\n      </tr>\n      <tr data-row-key=\"readme\" aria-level=\"1\" aria-posinset=\"2\" aria-setsize=\"2\">\n        <td class=\"z-table__expand-cell\" data-col=\"__detail\">\n          <button type=\"button\" class=\"z-btn z-btn--ghost z-btn--icon z-table__expand\" data-size=\"sm\" data-state=\"open\" aria-expanded=\"true\" aria-controls=\"readme-detail\" aria-label=\"Details of row 2\" title=\"Details of row 2\">\n            <z-icon name=\"chevron-down\" size=\"14\"></z-icon>\n          </button>\n        </td>\n        <td data-col=\"name\">\n          <span class=\"z-table__tree-cell\" style=\"--z-depth:0\">\n            <span class=\"z-table__toggle-space\" aria-hidden=\"true\"></span>\n            README.md\n          </span>\n        </td>\n        <td data-col=\"size\" data-align=\"end\" data-mono=\"true\">4</td>\n      </tr>\n      <tr class=\"z-table__detail\" data-detail-of=\"readme\" data-row-key=\"readme:detail\">\n        <td id=\"readme-detail\" colSpan=\"3\" data-col=\"__detail\">\n          <div class=\"z-table__detail-body\">Path: readme</div>\n        </td>\n      </tr>\n    </tbody>\n  </table>\n</div>"
     }
    ],
    "file": "zui/src/components/data/DataTable.manifest.json"
@@ -18538,6 +18757,46 @@
      "name": "icon",
      "type": "IconName",
      "description": "Icono decorativo al inicio del campo."
+    },
+    {
+     "name": "loadOptions",
+     "type": "(query, { signal, page }) => Promise<{ options, hasMore? } | ComboboxOption[]>",
+     "description": "Opciones del servidor por consulta: tras `debounce` ms sin teclear, la anterior se cancela con `signal`, `page` sube al llegar al final si hay `hasMore`. Sin filtro local; con la consulta vacía al abrir."
+    },
+    {
+     "name": "debounce",
+     "type": "number",
+     "default": 250,
+     "description": "Espera tras la última tecla antes de pedir (ms)."
+    },
+    {
+     "name": "minQueryLength",
+     "type": "number",
+     "default": 0,
+     "description": "Letras mínimas para pedir."
+    },
+    {
+     "name": "errorText",
+     "type": "string",
+     "default": "Couldn't load the options",
+     "description": "Texto si la carga falla, con un botón para reintentar (Intro también reintenta)."
+    },
+    {
+     "name": "retryLabel",
+     "type": "string",
+     "default": "Retry"
+    },
+    {
+     "name": "loadingMoreText",
+     "type": "string",
+     "default": "Loading more",
+     "description": "Texto mientras llega la página siguiente."
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 100,
+     "description": "Ventana virtual: solo se pintan las opciones que se ven y la activa no sale del documento. `true` siempre, `false` nunca, un número es el umbral."
     }
    ],
    "states": [
@@ -18606,9 +18865,10 @@
    "classes": [
     "z-input",
     "z-combobox",
-    "z-listbox"
+    "z-listbox",
+    "z-listbox__retry"
    ],
-   "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado. Con `multiple` la lista es aria-multiselectable y cada pieza tiene un botón con nombre; con `allowCustomValue` (patrón «autocompletar») el texto escrito se conserva como valor.",
+   "a11y": "Patrón ARIA combobox con lista: el foco no sale del input (role=combobox, aria-expanded, aria-controls, aria-autocomplete=list) y la opción activa se anuncia con aria-activedescendant. Flechas abren y recorren, Home/End van a los extremos, Enter elige, Escape cierra. Vaciar el texto quita la selección. Dentro de un `Field` toma id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): mismo patrón con el marcado del contrato. El input lleva role=combobox, aria-autocomplete=list y aria-controls hacia el `.z-listbox[popover]`; el módulo mantiene aria-expanded, aria-activedescendant y aria-selected en las opciones, anuncia la lista vacía o en carga con role=status y marca aria-busy mientras carga. Mismas teclas; el valor viaja en el input oculto. El nombre accesible (label o aria-label), aria-describedby y aria-invalid los pone el marcado. Con `multiple` la lista es aria-multiselectable y cada pieza tiene un botón con nombre; con `allowCustomValue` (patrón «autocompletar») el texto escrito se conserva como valor. Con `loadOptions`, el campo y la lista llevan aria-busy mientras carga y el estado (cargando, vacío, error) está en una región role=\"status\". Con ventana virtual, cada opción lleva aria-setsize y aria-posinset.",
    "behavior": "dom",
    "examples": [
     {
@@ -18630,6 +18890,10 @@
     {
      "title": "Autocompletar (texto libre) con icono",
      "code": "<Field label=\"City\" hint=\"Pick a suggestion or type any city.\">\n  <Combobox\n    allowCustomValue\n    icon=\"map-pin\"\n    placeholder=\"Search a city\"\n    options={[\n      { value: \"lisbon\", label: \"Lisbon\" },\n      { value: \"madrid\", label: \"Madrid\" },\n      { value: \"montreal\", label: \"Montreal\" },\n    ]}\n  />\n</Field>"
+    },
+    {
+     "title": "Búsqueda en el servidor con páginas",
+     "code": "<Combobox\n  aria-label=\"City\"\n  loadOptions={async (query, { signal, page }) => {\n    const res = await fetch(`/api/cities?q=${query}&page=${page}`, { signal });\n    return res.json(); // { options, hasMore }\n  }}\n/>"
     }
    ],
    "html": [
@@ -21033,6 +21297,33 @@
      "name": "emptyText",
      "type": "string",
      "default": "No options"
+    },
+    {
+     "name": "loadOptions",
+     "type": "(query, { signal, page }) => Promise<{ options, hasMore? } | ListboxOption[]>",
+     "description": "Opciones del servidor: la primera página al montar y las siguientes al llegar al final de la lista."
+    },
+    {
+     "name": "loadingText",
+     "type": "string",
+     "default": "Loading"
+    },
+    {
+     "name": "errorText",
+     "type": "string",
+     "default": "Couldn't load the options",
+     "description": "Texto si la carga falla, con un botón para reintentar (Intro también reintenta)."
+    },
+    {
+     "name": "retryLabel",
+     "type": "string",
+     "default": "Retry"
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 100,
+     "description": "Ventana virtual (vertical): solo se pintan las opciones que se ven; la parada de Tab no sale del documento. `true` siempre, `false` nunca, un número es el umbral."
     }
    ],
    "states": [
@@ -21075,9 +21366,10 @@
     "z-listbox__label",
     "z-listbox__content",
     "z-listbox__description",
-    "z-listbox__check"
+    "z-listbox__check",
+    "z-listbox__retry"
    ],
-   "a11y": "Patrón APG «listbox» con foco itinerante: una sola parada de Tab (la opción elegida o la primera). Flechas arriba y abajo (izquierda y derecha en horizontal, reflejadas en RTL) mueven el foco, Inicio y Fin van a los extremos y una letra busca por el principio de la etiqueta. En single la selección sigue al foco; en multiple (aria-multiselectable) Espacio o Intro marcan, Mayús+flecha extiende la selección y Ctrl/⌘+A marca o desmarca todas. Los grupos son role=\"group\" con su título. Dentro de un Field se nombra con su etiqueta.",
+   "a11y": "Patrón APG «listbox» con foco itinerante: una sola parada de Tab (la opción elegida o la primera). Flechas arriba y abajo (izquierda y derecha en horizontal, reflejadas en RTL) mueven el foco, Inicio y Fin van a los extremos y una letra busca por el principio de la etiqueta. En single la selección sigue al foco; en multiple (aria-multiselectable) Espacio o Intro marcan, Mayús+flecha extiende la selección y Ctrl/⌘+A marca o desmarca todas. Los grupos son role=\"group\" con su título. Dentro de un Field se nombra con su etiqueta. Con ventana virtual, cada opción lleva aria-setsize y aria-posinset; al moverse a una opción no pintada, la lista desplaza y el foco llega tras pintarla.",
    "examples": [
     {
      "title": "Única con iconos",
@@ -22494,6 +22786,51 @@
      "type": "string",
      "default": "No options",
      "description": "Texto de la lista cuando no hay opciones."
+    },
+    {
+     "name": "searchable",
+     "type": "boolean",
+     "default": false,
+     "description": "Campo de búsqueda arriba de la lista: filtra por etiqueta (sin acentos ni mayúsculas) y oculta los grupos sin coincidencias. El foco va al campo; la opción activa va por aria-activedescendant."
+    },
+    {
+     "name": "searchPlaceholder",
+     "type": "string",
+     "default": "Search",
+     "description": "Texto de ejemplo y nombre accesible del campo de búsqueda."
+    },
+    {
+     "name": "loadOptions",
+     "type": "(query, { signal, page }) => Promise<{ options, hasMore? } | SelectOption[]>",
+     "description": "Opciones del servidor por consulta (activa la búsqueda): antirrebote, la petición anterior se cancela con `signal` y `page` sube al llegar al final si hay `hasMore`. La elegida conserva su etiqueta."
+    },
+    {
+     "name": "debounce",
+     "type": "number",
+     "default": 250,
+     "description": "Espera tras la última tecla antes de pedir (ms)."
+    },
+    {
+     "name": "loadingText",
+     "type": "string",
+     "default": "Loading"
+    },
+    {
+     "name": "errorText",
+     "type": "string",
+     "default": "Couldn't load the options",
+     "description": "Texto si la carga falla, con un botón para reintentar (Intro también reintenta)."
+    },
+    {
+     "name": "retryLabel",
+     "type": "string",
+     "default": "Retry"
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 100,
+     "description": "Ventana virtual: solo se pintan las opciones que se ven y la activa no sale del documento. `true` siempre, `false` nunca, un número es el umbral."
     }
    ],
    "states": [
@@ -22557,9 +22894,11 @@
    ],
    "classes": [
     "z-select",
-    "z-listbox"
+    "z-listbox",
+    "z-listbox__search",
+    "z-listbox__retry"
    ],
-   "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar. Con `multiple` la lista es aria-multiselectable: Intro o Espacio marcan la opción activa sin cerrar, y Escape o Tab devuelven el foco al control.",
+   "a11y": "Patrón APG «select-only combobox»: botón con role=combobox y lista role=listbox; flechas, Home/End, Enter/Espacio, Escape y búsqueda por letra. Dentro de un `Field` toma de él id, aria-describedby, aria-invalid y required. Sin React (`@zuccadev-labs/zuix-zui/dom`): el foco entra en la lista (foco itinerante) y vuelve al botón al cerrar. Con `multiple` la lista es aria-multiselectable: Intro o Espacio marcan la opción activa sin cerrar, y Escape o Tab devuelven el foco al control. Con `searchable` o `loadOptions`, el campo de búsqueda es un combobox dentro del popup con aria-activedescendant; Inicio y Fin mueven el cursor del texto. Con ventana virtual, cada opción lleva aria-setsize y aria-posinset.",
    "behavior": "dom",
    "examples": [
     {
@@ -22577,6 +22916,14 @@
     {
      "title": "Varias con tope",
      "code": "<Field label=\"Reviewers\" hint=\"Up to two.\">\n  <Select\n    multiple\n    maxSelected={2}\n    name=\"reviewers\"\n    placeholder=\"Choose reviewers\"\n    defaultValue={[\"ana\"]}\n    options={[\n      { value: \"ana\", label: \"Ana Ruiz\" },\n      { value: \"leo\", label: \"Leo Park\" },\n      { value: \"mia\", label: \"Mia Chen\" },\n      { value: \"noor\", label: \"Noor Rahman\" },\n    ]}\n  />\n</Field>"
+    },
+    {
+     "title": "Búsqueda y grupos",
+     "code": "<Select searchable options={[{ label: \"Europe\", options: europe }, { label: \"Americas\", options: americas }]} aria-label=\"Country\" />"
+    },
+    {
+     "title": "Opciones del servidor",
+     "code": "<Select\n  aria-label=\"Assignee\"\n  loadOptions={async (query, { signal, page }) => {\n    const res = await fetch(`/api/people?q=${query}&page=${page}`, { signal });\n    return res.json(); // { options, hasMore }\n  }}\n/>"
     }
    ],
    "html": [
@@ -24111,6 +24458,12 @@
      "name": "labels",
      "type": "Partial<TransferListLabels>",
      "description": "Títulos, búsqueda, recuento («{count} of {total} selected»), botones y anuncio, en inglés por defecto."
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 200,
+     "description": "Ventana virtual en cada lista: solo se pintan las opciones que se ven; la activa no sale del documento. `true` siempre, `false` nunca, un número es el umbral. Modo DOM: `data-virtualize`."
     }
    ],
    "states": [
@@ -24161,7 +24514,7 @@
     "z-transfer__empty",
     "z-transfer__actions"
    ],
-   "a11y": "Cada lista es un listbox con aria-multiselectable, nombre (su título) y descripción (el recuento). Una parada de Tab por lista con aria-activedescendant: flechas, Inicio y Fin recorren; Espacio marca; Mayús+flechas o Mayús+clic marcan un rango; Ctrl+A marca o desmarca lo visible; Intro mueve lo marcado (o la opción activa) a la otra lista; doble clic mueve una opción. Los botones tienen nombre («Move selected to Chosen») y se deshabilitan cuando no hay qué mover. Lo movido se anuncia («2 moved to Chosen»). Sin React: .z-transfer con data-searchable, data-disabled y data-name, y los elementos en <script type=\"application/json\" data-props>{ \"items\": […], \"value\": […] }</script>; emite z:change { value } y admite setWidgetProps(el, { items, value }).",
+   "a11y": "Cada lista es un listbox con aria-multiselectable, nombre (su título) y descripción (el recuento). Una parada de Tab por lista con aria-activedescendant: flechas, Inicio y Fin recorren; Espacio marca; Mayús+flechas o Mayús+clic marcan un rango; Ctrl+A marca o desmarca lo visible; Intro mueve lo marcado (o la opción activa) a la otra lista; doble clic mueve una opción. Los botones tienen nombre («Move selected to Chosen») y se deshabilitan cuando no hay qué mover. Lo movido se anuncia («2 moved to Chosen»). Sin React: .z-transfer con data-searchable, data-disabled y data-name, y los elementos en <script type=\"application/json\" data-props>{ \"items\": […], \"value\": […] }</script>; emite z:change { value } y admite setWidgetProps(el, { items, value }). Con ventana virtual, cada opción lleva aria-setsize y aria-posinset.",
    "behavior": "dom",
    "examples": [
     {
@@ -26127,6 +26480,22 @@
      "type": "boolean",
      "default": false,
      "description": "TabPanel: mantiene el contenido montado aunque el panel esté oculto."
+    },
+    {
+     "name": "overflow",
+     "type": "enum",
+     "values": [
+      "scroll",
+      "menu"
+     ],
+     "default": "scroll",
+     "description": "Pestañas que no caben (horizontal): `scroll` desplaza la tira y difumina el borde con pestañas ocultas (data-scroll-edges); `menu` deja las que caben y lleva las demás a un menú «Más» tras la tira. La elegida siempre queda en la tira."
+    },
+    {
+     "name": "moreLabel",
+     "type": "string",
+     "default": "More tabs",
+     "description": "Nombre accesible del botón «Más» (icono, no texto: no parece otra pestaña)."
     }
    ],
    "states": [
@@ -26174,9 +26543,11 @@
     "z-tabs__list",
     "z-tabs__tab",
     "z-tabs__label",
-    "z-tabs__panel"
+    "z-tabs__panel",
+    "z-tabs__strip",
+    "z-tabs__more"
    ],
-   "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática.",
+   "a11y": "Patrón APG «tabs»: roles tablist, tab y tabpanel, flechas entre pestañas, Inicio/Fin y activación automática. Con overflow=\"menu\", el botón «Más» queda fuera del tablist (un tablist solo contiene pestañas): es otra parada de Tab con aria-haspopup=\"menu\", y cada entrada activa su pestaña y le da el foco. Las pestañas que no caben se ocultan con visibility (salen del orden de foco y del árbol de accesibilidad).",
    "examples": [
     {
      "title": "Segmentado con contenido",
@@ -26185,6 +26556,10 @@
     {
      "title": "Subrayado controlado con TabPanel",
      "code": "<Tabs variant=\"underline\" value={tab} onValueChange={setTab} items={[{ value: \"code\", label: \"Code\" }, { value: \"preview\", label: \"Preview\" }]}>\n  <TabPanel value=\"code\">Code view</TabPanel>\n  <TabPanel value=\"preview\">Preview view</TabPanel>\n</Tabs>"
+    },
+    {
+     "title": "Menú «Más»",
+     "code": "<Tabs overflow=\"menu\" items={sections} label=\"Settings\" />"
     }
    ],
    "origin": "Tabs (control segmentado) y `.tabstrip` de zutool; variante underline nueva; accesibilidad según el patrón APG, con primitivas propias.",
@@ -26297,6 +26672,44 @@
      "type": "string",
      "default": "Rename",
      "description": "Nombre accesible del campo de renombrar."
+    },
+    {
+     "name": "loadChildren",
+     "type": "(node: TreeNode) => Promise<TreeNode[]>",
+     "description": "Carga diferida: hijos de una rama con `hasChildren: true` al expandirla por primera vez. El árbol guarda lo cargado; mientras llega, el nodo lleva aria-busy y un anillo en lugar del chevron."
+    },
+    {
+     "name": "loadErrorLabel",
+     "type": "string",
+     "default": "Couldn't load this folder",
+     "description": "Anuncio si la carga de una rama falla (la rama se vuelve a cerrar)."
+    },
+    {
+     "name": "draggable",
+     "type": "boolean",
+     "default": false,
+     "description": "Mover nodos: arrastrar con el puntero (marcador delante, dentro o detrás) o con el teclado: Ctrl/⌘+X coge, ↑/↓ eligen el sitio, Intro o Ctrl/⌘+V sueltan, Escape cancela. Cada paso se anuncia."
+    },
+    {
+     "name": "onMove",
+     "type": "(drop: TreeDrop, nodes: TreeNode[]) => void",
+     "description": "{ id, target, position: \"before\" | \"inside\" | \"after\" } y el árbol ya movido (con las ramas de carga diferida que guarda el árbol): `setNodes(nodes)`. El árbol no cambia `nodes` por su cuenta."
+    },
+    {
+     "name": "canDrop",
+     "type": "(drop: TreeDrop) => boolean",
+     "description": "Destinos que la aplicación no admite (además de soltar un nodo dentro de sí mismo, que nunca vale)."
+    },
+    {
+     "name": "dragLabels",
+     "type": "Partial<TreeDragLabels>",
+     "description": "Anuncios del arrastre: grabbed, before, inside, after, dropped, cancelled (`{name}` es la etiqueta)."
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 200,
+     "description": "Ventana virtual: con más filas visibles que el umbral, el árbol desplaza dentro de `--z-tree-height` (480 px), pinta solo lo que se ve y deja las filas en plano con aria-level, aria-setsize y aria-posinset. `true` siempre, `false` nunca."
     }
    ],
    "states": [
@@ -26309,7 +26722,10 @@
     "disabled",
     "checked",
     "indeterminate",
-    "renaming"
+    "renaming",
+    "loading",
+    "dragging",
+    "drop-target"
    ],
    "tokens": [
     "duration-fast",
@@ -26346,9 +26762,10 @@
     "z-tree__label",
     "z-tree__group",
     "z-tree__check",
-    "z-tree__rename"
+    "z-tree__rename",
+    "z-tree__spinner"
    ],
-   "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten. Con selectionMode=\"multiple\" el árbol lleva aria-multiselectable: Espacio alterna la selección del nodo enfocado, Mayús+flechas extiende el rango desde el ancla, Ctrl+A selecciona todo lo visible; con el puntero, Ctrl/Cmd alterna y Mayús extiende. Con checkable cada treeitem lleva aria-checked (true, false o mixed) y Espacio marca o desmarca el nodo y todo lo que cuelga de él. Con renamable, F2 o doble clic abren un campo con nombre accesible; Intro confirma, Escape cancela y el foco vuelve al nodo.",
+   "a11y": "Roles tree, treeitem y group con aria-expanded, aria-selected, aria-level, aria-setsize y aria-posinset. Foco itinerante: arriba/abajo recorren, derecha expande o entra, izquierda pliega o sube al padre, Inicio/Fin, Intro o Espacio seleccionan, y una letra salta al siguiente nodo que empieza por ella. En RTL izquierda y derecha se invierten. Con selectionMode=\"multiple\" el árbol lleva aria-multiselectable: Espacio alterna la selección del nodo enfocado, Mayús+flechas extiende el rango desde el ancla, Ctrl+A selecciona todo lo visible; con el puntero, Ctrl/Cmd alterna y Mayús extiende. Con checkable cada treeitem lleva aria-checked (true, false o mixed) y Espacio marca o desmarca el nodo y todo lo que cuelga de él. Con renamable, F2 o doble clic abren un campo con nombre accesible; Intro confirma, Escape cancela y el foco vuelve al nodo. Con `draggable`, el nodo cogido con el teclado lleva data-grabbed y el destino un marcador (línea delante o detrás, anillo dentro) que no depende solo del color; cada destino se anuncia en una región viva. Con ventana virtual, la parada de Tab, el nodo que se renombra y el cogido no salen nunca del documento; Ctrl+F del navegador solo encuentra las filas pintadas (y nunca las ramas plegadas).",
    "examples": [
     {
      "title": "Explorador de archivos",
@@ -26361,6 +26778,10 @@
     {
      "title": "Renombrar",
      "code": "<Tree\n  label=\"Files\"\n  renamable\n  onRename={(id, label) => rename(id, label)}\n  nodes={files}\n/>"
+    },
+    {
+     "title": "Mover nodos y carga diferida",
+     "code": "const [nodes, setNodes] = useState(files);\n<Tree\n  label=\"Files\"\n  nodes={nodes}\n  draggable\n  onMove={(_drop, next) => setNodes(next)}\n  loadChildren={(node) => fetch(`/api/folders/${node.id}`).then((r) => r.json())}\n/>"
     }
    ],
    "origin": "Nuevo, con el aspecto de las filas de lista de zutool.",
@@ -27062,6 +27483,12 @@
      "name": "footer",
      "type": "ReactNode",
      "description": "Pie bajo la lista (atajos, ayuda)."
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 150,
+     "description": "Ventana virtual, como en CommandPalette."
     }
    ],
    "states": [
@@ -27155,6 +27582,12 @@
      "name": "footer",
      "type": "ReactNode",
      "description": "Pie bajo la lista: atajos de navegación, ayuda o una acción."
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 150,
+     "description": "Ventana virtual: solo se pintan los comandos que se ven (el activo no sale del documento). `true` siempre, `false` nunca, un número es el umbral."
     }
    ],
    "states": [
@@ -27222,7 +27655,7 @@
     "z-palette__list",
     "z-palette__search"
    ],
-   "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
+   "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba. Con ventana virtual, cada comando lleva aria-setsize y aria-posinset.",
    "examples": [
     {
      "title": "Abrir con Ctrl/Cmd K",
@@ -29064,6 +29497,12 @@
     {
      "name": "presenceLabels",
      "type": "Partial<PresenceLabels>"
+    },
+    {
+     "name": "virtualize",
+     "type": "boolean | number",
+     "default": 200,
+     "description": "Ventana virtual: la lista desplaza dentro de `--z-member-list-height` (480 px) y solo pinta las filas que se ven. `true` siempre, `false` nunca, un número es el umbral. Modo DOM: `data-virtualize`."
     }
    ],
    "tokens": [
@@ -29095,9 +29534,10 @@
     "z-member-list__row",
     "z-member-list__role",
     "z-member-list__role-text",
-    "z-member-list__remove"
+    "z-member-list__remove",
+    "z-member-list__scroll"
    ],
-   "a11y": "Búsqueda con nombre; el número de resultados se anuncia en la región status de la pieza («3 results») tras teclear, no por tecla. Cada grupo es una sección con encabezado. El rol es un <select> nativo con nombre «Role for Ana López»; quitar es un botón «Remove Ana López» y al quitar el foco pasa a la fila siguiente. La presencia se lee con texto. Sin React: .z-member-list con data-title, data-editable, data-invitable, data-group-by, data-current-user y los datos en <script type=\"application/json\" data-props>{ \"members\": [...], \"roles\": [...] }; emite z:rolechange, z:remove y z:invite.",
+   "a11y": "Búsqueda con nombre; el número de resultados se anuncia en la región status de la pieza («3 results») tras teclear, no por tecla. Cada grupo es una sección con encabezado. El rol es un <select> nativo con nombre «Role for Ana López»; quitar es un botón «Remove Ana López» y al quitar el foco pasa a la fila siguiente. La presencia se lee con texto. Sin React: .z-member-list con data-title, data-editable, data-invitable, data-group-by, data-current-user y los datos en <script type=\"application/json\" data-props>{ \"members\": [...], \"roles\": [...] }; emite z:rolechange, z:remove y z:invite. Con ventana virtual, cada fila lleva aria-setsize y aria-posinset dentro de su grupo, y la fila con el foco no sale del documento.",
    "behavior": "dom",
    "examples": [
     {

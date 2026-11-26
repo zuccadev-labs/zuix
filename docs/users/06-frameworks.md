@@ -432,7 +432,7 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | | Tema y marca | `setTheme`, `setBrand` |
 | | Capas | `openDialog`, `closeDialog`, `openPopover`, `closePopover`, `place`, `openSubmenu`, `openMenubarMenu`, `setHintOpen`, `setDrawerSnap`, `startTour`, `closeActionBar`, `dismissBanner` |
 | | Avisos | `toast`, `toastPromise`, `confirm`, `announce` |
-| | Formularios | `setSelectValue`, `setComboboxValue`, `setComboboxOptions`, `setComboboxLoading`, `setListboxValue`, `setSliderValue`, `setOtpValue`, `setNumberInputValue`, `setTagsValue`, `reorderUpload` |
+| | Formularios | `setSelectValue`, `setComboboxValue`, `setComboboxOptions`, `setComboboxLoading`, `setListboxValue`, `setComboboxLoader`, `clearComboboxLoader`, `setSelectLoader`, `setListboxLoader`, `setSliderValue`, `setOtpValue`, `setNumberInputValue`, `setTagsValue`, `reorderUpload` |
 | | Navegación y estado | `selectTab`, `setCollapsibleOpen`, `expandSkeleton` |
 | | Descargas | `download`, `downloadBlob`, `downloadUrl`, `mimeFromName` |
 | | Atajos de teclado | `parseShortcut`, `normalizeShortcut`, `matchesShortcut`, `shortcutLabels` |
@@ -441,8 +441,8 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | | Rangos y trimestres | `timeRangeInfo`, `dateTimeRangeText`, `parseDateTimeRange`, `addQuarters`, `quarterOf`, `quarterRange` |
 | `/dom/forms` | Máscaras | `setMask`, `setMaskedValue`, `applyMask`, `extractRaw`, `maskTemplate`, `MASK_PRESETS` |
 | | Árboles | `searchPaths`, `filterTree`, `strategyValue` |
-| `/dom/data` | Árbol y paleta | `toggleTreeItem`, `selectTreeItem`, `checkTreeItem`, `renameTreeItem`, `openPalette` |
-| | Tablas | `sortTable`, `setPage`, `setDataTablePage`, `setDataTableSelection`, `dataTableSelection`, `dataTableCSVFromDom` |
+| `/dom/data` | Árbol y paleta | `toggleTreeItem`, `selectTreeItem`, `checkTreeItem`, `renameTreeItem`, `moveTreeItem`, `setTreeLoader`, `moveNode`, `TREE_DRAG_LABELS`, `openPalette` |
+| | Tablas | `sortTable`, `setPage`, `setDataTablePage`, `setDataTableSelection`, `dataTableSelection`, `dataTableCSVFromDom`, `setDataTableExpanded`, `setDataTableDetail` |
 | | Avisos | `badgeText`, `groupByDay`, `unreadCount` |
 | | Filtros | `toggleFilter`, `toggleOption`, `activeCount`, `chipText` |
 | | Opiniones e importes | `setReviewExpanded`, `formatMoney`, `summarizePrice` |
@@ -478,6 +478,11 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | CommandPalette | `zui/dom`: `<dialog class="z-liquid z-palette">` abierto con `data-z-open`, con `data-z-hotkey="mod+k"` o con `openPalette(el)`. Filtra por etiqueta, detalle, `data-keywords` y grupo; flechas, Inicio/Fin, Intro y Escape; `z:select` con `detail.value`. `data-keep-open` no cierra al elegir |
 | Tree | `zui/dom`: expandir, plegar, selección y teclado de árbol (flechas, Inicio/Fin, letra, Intro, Espacio). Las ramas plegadas van en el marcado con `hidden`. `z:change` con `detail.value` y `detail.expanded`; `toggleTreeItem(li)`, `selectTreeItem(li)` |
 | DataTable (orden) | `zui/dom`: ordena las filas presentes al pulsar una cabecera con `aria-sort` (ascendente, descendente, sin orden). Tipo en `<th data-sort="number\|text\|date">`, valor en `<td data-sort-value>`; `data-manual-sort` en la tabla solo avisa. `z:sort` con `detail.key`, `direction` y `column`; `sortTable(th, direction)` |
+| DataTable (rejilla) | `zui/dom`: con `data-grid` (o `role="grid"`/`"treegrid"`) en la tabla, teclado de rejilla y edición de las celdas `data-editable` con las reglas de la cabecera (`data-editor`, `data-required`, `data-min`, `data-max`, `data-pattern`, `data-options`). `z:celledit` y `z:rowedit` son cancelables: con `preventDefault()` el valor no se aplica y `detail.error` se muestra. Grupos y árbol por `aria-level`/`aria-expanded` (`z:expandchange`), detalle con `.z-table__expand` (`z:detailchange`), columnas con `.z-table__grip` (`z:columnorder`). Con más de 200 filas o `data-virtual`, ventana virtual |
+| Listas largas | `zui/dom`: Select, Combobox, Listbox y Tree con muchas entradas en el marcado llevan `data-deferred` (content-visibility: Ctrl+F y los lectores siguen encontrándolo todo). ConversationList, MemberList y TransferList usan la misma ventana virtual que React (`data-virtualize`) |
+| Opciones del servidor | `setComboboxLoader(combo, load, { debounce, minLength })`, `setSelectLoader(select, load)` (con búsqueda en la lista) y `setListboxLoader(listbox, load)`: antirrebote, cancelación (`signal`), estados de carga, vacío y error (botón `data-retry`) y páginas. `data-searchable` en un `.z-select` añade la búsqueda local |
+| Tree (mover y cargar) | `zui/dom`: `data-draggable` en el árbol: puntero, o Ctrl/⌘+X, ↑/↓, Intro y Escape; `z:move` { value, target, position } cancelable y `moveTreeItem(tree, drop)`. Ramas con `data-has-children` y `setTreeLoader(tree, load)` para la carga diferida |
+| Tabs (menú «Más») | `zui/dom`: `data-overflow="menu"` en `.z-tabs__list`: el botón y su menú se crean tras la tira (`data-more-label` en `.z-tabs`) |
 | Pagination | `zui/dom`: cambia de página, recalcula el rango con huecos y emite `z:change` con `detail.value`. `data-page-count`, `data-siblings`, `data-page-label="Page {page}"`; `setPage(nav, page)` |
 | Carousel | `zui/dom`: `<div class="z-carousel" data-z-carousel data-effect="lens\|none" data-loop>` con un hijo por slide; monta la tira, las flechas, el contador y los anuncios. Arrastre con inercia, bucle, teclado y `prefers-reduced-motion` con el mismo motor que React. `z:change` con `detail.index`; `carousel(el)` devuelve `{ next, prev, goTo, refresh, destroy }`. Zonas curvas en WebGL: [modo `gl`](#carousel-en-webgl-modo-gl) |
 | Agenda, gráficos, color, medios, tiempo, terminal, chat, IA, dashboard, usuarios, nodos, NotificationCenter, FilterBar y ReviewCard | `zui/dom`, con su familia: el marcado lo pinta la pieza a partir de `data-*` y `data-props` ([Piezas con datos](#piezas-con-datos)). Persona, UserCard, ProfileHeader, MetricCard, ReviewSummary, PriceTag y PriceBreakdown son solo CSS |

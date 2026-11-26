@@ -54,6 +54,12 @@
       "name": "footer",
       "type": "ReactNode",
       "description": "Pie bajo la lista: atajos de navegación, ayuda o una acción."
+    },
+    {
+      "name": "virtualize",
+      "type": "boolean | number",
+      "default": 150,
+      "description": "Ventana virtual: solo se pintan los comandos que se ven (el activo no sale del documento). `true` siempre, `false` nunca, un número es el umbral."
     }
   ],
   "states": ["open", "closed", "empty", "active-option", "disabled-option"],
@@ -115,7 +121,7 @@
     "z-palette__list",
     "z-palette__search"
   ],
-  "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba.",
+  "a11y": "`<dialog>` modal con un combobox (aria-activedescendant) sobre un listbox agrupado. Flechas arriba/abajo, Inicio/Fin, Intro ejecuta, Escape cierra y el foco vuelve a donde estaba. Con ventana virtual, cada comando lleva aria-setsize y aria-posinset.",
   "examples": [
     {
       "title": "Abrir con Ctrl/Cmd K",

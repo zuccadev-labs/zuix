@@ -45,8 +45,7 @@ export default async function ({ page, test, ok }) {
   });
 
   await test("DataTable sin React · filtro por columna, ancho con flechas, columna fijada y CSV", async () => {
-    const examples = contract.DataTable.examples;
-    const markup = examples[examples.length - 1].html;
+    const markup = contract.DataTable.examples.find((e) => e.title.startsWith("Filtros, ancho")).html;
     await page.evaluate(async (html) => {
       for (const old of document.querySelectorAll("[data-tr-layer]")) old.remove();
       const box = document.createElement("div");
