@@ -1918,9 +1918,23 @@ a[class*="skipToContent"]:focus {
   inline-size: min(100%, 520px);
   margin-block-start: var(--z-space-2);
 }
+/* Composición de la portada: la tarjeta de cristal con los controles delante y una tarjeta de metal detrás, girada. */
+.zd-showcase-stage {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  padding-block-start: var(--z-space-20);
+}
+.zd-showcase-card {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: var(--z-space-6);
+  z-index: var(--z-layer-below);
+  inline-size: min(78%, 22rem);
+  rotate: 6deg;
+  pointer-events: none;
+}
 .zd-showcase {
-  display: flex;
-  flex-direction: column;
   gap: var(--z-space-4);
   padding: var(--z-space-6);
   border-radius: var(--z-radius-panel);
@@ -1937,32 +1951,10 @@ a[class*="skipToContent"]:focus {
   padding-block-start: var(--z-space-4);
   border-block-start: 1px solid var(--z-line);
 }
-.zd-stats dl {
+.zd-stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--z-space-3);
-  margin: 0;
-}
-.zd-stat {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: var(--z-space-1);
-  padding: var(--z-space-5);
-  border-radius: var(--z-radius-xl);
-}
-.zd-stat dt {
-  color: var(--z-fg-muted);
-  font-size: var(--z-text-small);
-}
-.zd-stat dd {
-  margin: 0;
-  color: var(--z-fg);
-  font-family: var(--z-font-display);
-  font-size: var(--z-text-display);
-  font-weight: var(--z-weight-display);
-  line-height: 1;
-  letter-spacing: var(--z-tracking-tight);
-  font-variant-numeric: tabular-nums;
+  gap: var(--z-space-4);
 }
 .zd-home-section {
   display: flex;
@@ -1994,12 +1986,74 @@ a[class*="skipToContent"]:focus {
   color: var(--z-accent-text);
   font-weight: var(--z-weight-medium);
 }
-.zd-cards--home .zd-card {
-  border-color: var(--z-glass-border);
-  background: var(--z-glass-bg);
-  -webkit-backdrop-filter: var(--zd-glass);
-  backdrop-filter: var(--zd-glass);
-  box-shadow: inset 0 1px 0 var(--z-glass-highlight);
+/* Categorías: tarjeta elevada con una banda de portada (patrón y tono propios), la ficha del icono encima del corte y
+   el enlace extendido en el título. */
+.zd-cats > .zd-cat {
+  overflow: hidden;
+  gap: 0;
+}
+.zd-cat__cover {
+  block-size: 4.5rem;
+  background:
+    radial-gradient(90% 120% at 20% 0%, color-mix(in srgb, var(--z-card-hue) 55%, transparent), transparent 75%), var(--z-media-surface);
+}
+.zd-cat__cover .z-backdrop__layer {
+  --z-pattern-color: color-mix(in srgb, var(--z-card-hue) 40%, var(--z-media-fg));
+}
+.zd-cat__icon {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--z-control-height-lg);
+  block-size: var(--z-control-height-lg);
+  margin: calc(var(--z-control-height-lg) / -2) 0 0 var(--z-space-5);
+  border: 1px solid var(--z-line);
+  border-radius: var(--z-control-radius-lg);
+  background: var(--z-card-elevated-bg);
+  color: var(--z-card-text);
+  box-shadow: var(--z-elevation-rim), var(--z-elevation-1);
+}
+.zd-cat__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-1-5);
+  padding: var(--z-space-3) var(--z-space-5) var(--z-space-5);
+}
+.zd-cat__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--z-space-2);
+  margin: 0;
+  color: var(--z-fg);
+  font-size: var(--z-text-title);
+  font-weight: var(--z-weight-semibold);
+}
+.zd-cat__count {
+  color: var(--z-fg-subtle);
+  font-size: var(--z-text-caption);
+  font-variant-numeric: tabular-nums;
+}
+.zd-cat__text {
+  margin: 0;
+  color: var(--z-fg-muted);
+  font-size: var(--z-text-small);
+  line-height: var(--z-leading-ui);
+}
+/* Áreas de documentación: portadas con patrón. */
+.zd-areas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--z-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zd-areas > li {
+  display: flex;
+}
+.zd-areas .zd-area-card {
+  flex: 1;
+  min-block-size: 16rem;
 }
 /* Prisma de la portada: una pieza de la suite por slide, con su composición en vivo sobre una ilustración. */
 .zd-home-prism .zd-home-section__text a {
@@ -2486,7 +2540,7 @@ mark[data-markjs] {
   .zd-hero {
     grid-template-columns: minmax(0, 1fr);
   }
-  .zd-showcase {
+  .zd-showcase-stage {
     max-inline-size: 520px;
   }
 }
@@ -2514,7 +2568,7 @@ mark[data-markjs] {
     padding: var(--z-space-6) var(--z-space-5) var(--z-space-12);
     border-radius: var(--z-radius-panel);
   }
-  .zd-stats dl {
+  .zd-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -2563,6 +2617,13 @@ mark[data-markjs] {
     gap: var(--z-space-12);
     padding-block-start: var(--z-space-6);
   }
+  /* En el teléfono, la tarjeta de metal de la portada no cabe detrás sin tapar su número: fuera. */
+  .zd-showcase-card {
+    display: none;
+  }
+  .zd-showcase-stage {
+    padding-block-start: 0;
+  }
 }
 
 /* ── Preferencias de la persona ───────────────────────────────────────────── */
@@ -2580,8 +2641,7 @@ mark[data-markjs] {
 @media (prefers-reduced-transparency: reduce) {
   .zd-glass,
   .zd-reading,
-  .zd-hero__eyebrow,
-  .zd-cards--home .zd-card {
+  .zd-hero__eyebrow {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     background: var(--z-surface-solid);
@@ -3112,4 +3172,12 @@ mark[data-markjs] {
 }
 .zd-gallery__snippet--wrap code {
   white-space: inherit;
+}
+
+/* Hueco de una tarjeta de ejemplo con foto: el ancho de una tarjeta, no el de la página. */
+.zd-demo-card-slot {
+  inline-size: min(100%, 300px);
+}
+.zd-demo-card-slot[data-size="sm"] {
+  inline-size: min(100%, 220px);
 }

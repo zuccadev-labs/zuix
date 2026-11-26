@@ -206,6 +206,17 @@ export const content: Record<string, ExampleDemos> = {
         </div>
       );
     },
+    "Foto a sangre con fundido": () => {
+      const photo = usePhoto();
+      return (
+        <div className="zd-demo-card-slot">
+          <Card surface="elevated" tone="success">
+            <CardMedia placement="bleed" tint src={photo.forest.src} alt="" />
+            <CardHeader title="Lake House" subtitle="Canada" />
+          </Card>
+        </div>
+      );
+    },
   },
   JsonTree: {
     "Respuesta de una API": () => (

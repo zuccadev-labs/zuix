@@ -9,6 +9,9 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Añadido
 
+- Páginas del catálogo para las tarjetas de la 0.5 (`FeatureCard`, `ProductCard`, `PricingCard`, `PricingTable`,
+  `OfferCard`, `CardBanner`, `CategoryTile`, `StatGroup`, `RangeHistogram`, `BalanceCard`, `PaymentCard`,
+  `ModelPicker`) y retratos propios en `static/img/people` para sus vistas previas.
 - La guía «Conectar un editor visual» y la investigación del conector de editores, en el sitio y en `llms.txt`.
 - Páginas del catálogo para `ScatterChart`, `RadarChart`, `ComboChart`, `HeatmapChart`, `BulletChart`,
   `CategoryBar` y `AnimatedNumber`, con su vista previa sin framework, y `llms.txt` al día.
@@ -17,6 +20,15 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 - Demos en vivo de los ejemplos nuevos de zui: `DataTable` como rejilla (edición, fijadas a los dos lados, columnas
   reordenables), agrupada con agregados, en árbol con detalle y con 10 000 filas; `Select` con búsqueda y del
   servidor; `Combobox` del servidor; `Tabs` con menú «Más»; `Tree` que se mueve y carga ramas.
+
+### Cambiado
+
+- La portada usa las tarjetas de la 0.5: la composición del héroe es una tarjeta de cristal con halo y una tarjeta de
+  metal detrás; las cifras son StatTile elevadas con ficha de icono; cada categoría lleva una banda de portada con
+  patrón y tono y su ficha de icono, y las áreas de documentación son FeatureCard con patrón. Los patrones usan las
+  teselas de la hoja, sin semilla, para no sumar peso a la página.
+- El antetítulo de la portada de zuix ya no nombra la marca del sitio: «Suite de UI/UX de código abierto». La
+  plantilla sigue admitiendo `{brand}` en `home.eyebrow` para quien la use.
 
 ## [0.4.0] - 2026-11-23
 

@@ -37,7 +37,7 @@
   },
   "pages": { "components": true, "icons": true, "tokens": true, "loaders": true, "effects": true, "carousels": true },
   "home": {
-    "eyebrow": "Suite de UI/UX · este sitio usa la marca {brand}",
+    "eyebrow": "Suite de UI/UX de código abierto",
     "title": "Un estándar.",
     "emphasis": "Cualquier marca.",
     "suite": true
