@@ -47,6 +47,23 @@
       transparent
     );
   }
+  /* Iconos que llevan el sentido de lectura (responder, reenviar, deshacer, rehacer, entrar, salir): en RTL se
+     reflejan donde aparezcan. Las flechas y los chevrones de navegación los refleja cada componente, porque a veces
+     no deben girar (una barra de progreso de un vídeo, un desplegable). */
+  svg.z-icon:dir(rtl):is(
+      [data-icon="arrow-turn-up-left"],
+      [data-icon="arrow-turn-up-right"],
+      [data-icon="arrow-uturn-left"],
+      [data-icon="arrow-uturn-right"],
+      [data-icon="arrow-uturn-up-left"],
+      [data-icon="arrow-uturn-up-right"],
+      [data-icon="arrow-right-start-on-rectangle"],
+      [data-icon="arrow-left-start-on-rectangle"],
+      [data-icon="arrow-right-end-on-rectangle"],
+      [data-icon="arrow-left-end-on-rectangle"]
+    ) {
+    scale: -1 1;
+  }
   [dir="rtl"] [data-scroll-edges="start"] {
     -webkit-mask-image: linear-gradient(to left, transparent, var(--z-fg) var(--z-space-6));
     mask-image: linear-gradient(to left, transparent, var(--z-fg) var(--z-space-6));

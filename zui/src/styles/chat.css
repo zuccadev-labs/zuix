@@ -514,6 +514,13 @@
     line-height: 1;
     white-space: nowrap;
   }
+  /* La hora va al final de la última línea, donde el texto reservó su hueco (::after). Con `dir="auto"` el texto puede
+     ir en la dirección contraria a la de la página (inglés en una interfaz árabe, árabe en una inglesa): entonces su
+     final está en el otro lado de la burbuja. */
+  .z-message__bubble:dir(rtl):has(> .z-message__text:dir(ltr)) > .z-message__meta,
+  .z-message__bubble:dir(ltr):has(> .z-message__text:dir(rtl)) > .z-message__meta {
+    align-self: flex-start;
+  }
   .z-message:is([data-jumbo], [data-media="only"], [data-deleted]) .z-message__meta,
   .z-message:not(:has(.z-message__text)) .z-message__meta {
     margin-block-start: 0;

@@ -41,6 +41,12 @@
     user-select: none;
     outline: none;
   }
+  /* Un nodo suelto (fuera del lienzo) en una página RTL se coloca como dentro: la caja y sus puertos, que tienen lado
+     físico (`data-side="left"`), de izquierda a derecha; el contenido, en la dirección de la página. */
+  .z-node:dir(rtl) {
+    --z-node-dir: rtl;
+    direction: ltr;
+  }
   .z-node-canvas:dir(rtl) {
     --z-node-dir: rtl;
   }

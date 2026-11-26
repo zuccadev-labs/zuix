@@ -494,6 +494,9 @@
     font-size: var(--z-text-caption);
     line-height: var(--z-leading-code);
     white-space: pre-wrap;
+    /* Entrada y salida de la herramienta son código: se leen de izquierda a derecha también en una página RTL. */
+    direction: ltr;
+    text-align: left;
   }
   .z-tool-call__code:focus-visible {
     outline: var(--z-focus-width) solid var(--z-accent-ring);

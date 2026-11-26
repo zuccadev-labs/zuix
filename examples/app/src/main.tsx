@@ -8,7 +8,7 @@ import "@zuccadev-labs/zuix-zicon/all";
 import "../../fonts/fonts.css";
 import "./app.css";
 
-import { ToastProvider } from "@zuccadev-labs/zuix-zui";
+import { LocaleProvider, ToastProvider } from "@zuccadev-labs/zuix-zui";
 import { App } from "./App";
 import { Audit } from "./screens/audit/Audit";
 import { AuditSsr } from "./screens/audit/AuditSsr";
@@ -42,6 +42,9 @@ if (
 }
 // ?dir=rtl: cualquier pantalla (también el Shell) de derecha a izquierda.
 if (params.get("dir") === "rtl") document.documentElement.dir = "rtl";
+// ?lang=es: los textos de los componentes en ese idioma (LocaleProvider carga el paquete al montar).
+const lang = params.get("lang");
+if (lang) document.documentElement.lang = lang;
 
 createRoot(root).render(
   <StrictMode>
@@ -73,7 +76,13 @@ createRoot(root).render(
       </main>
     ) : (
       <ToastProvider>
-        <App />
+        {lang ? (
+          <LocaleProvider locale={lang}>
+            <App />
+          </LocaleProvider>
+        ) : (
+          <App />
+        )}
       </ToastProvider>
     )}
   </StrictMode>,

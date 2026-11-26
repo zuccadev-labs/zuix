@@ -57,7 +57,11 @@ describe("format", () => {
 describe("registro y mezcla", () => {
   const pack: LocalePack = {
     id: "xx",
-    messages: { cascader: { results: "{count, plural, one {# cosa} other {# cosas}}", nueva: "no existe en inglés" }, emojiPicker: { tones: ["T0", "T1"] }, timeline: { scales: { day: "Jours" } } },
+    messages: {
+      cascader: { results: "{count, plural, one {# cosa} other {# cosas}}", nueva: "no existe en inglés" },
+      emojiPicker: { tones: ["T0", "T1"] },
+      timeline: { scales: { day: "Jours" } },
+    },
   };
   registerLocale(pack);
   test("resuelve la etiqueta exacta o su idioma base; el inglés siempre", () => {
@@ -88,14 +92,20 @@ describe("registro y mezcla", () => {
   test("ámbito de idioma: se restaura al salir, también si lanza", () => {
     setDefaultLocale(undefined);
     assert.equal(currentLocale(), undefined);
-    assert.equal(withLocale("xx", () => currentLocale()), "xx");
+    assert.equal(
+      withLocale("xx", () => currentLocale()),
+      "xx",
+    );
     assert.throws(() =>
       withLocale("xx", () => {
         throw new Error("x");
       }),
     );
     assert.equal(currentLocale(), undefined);
-    assert.equal(withLocale("xx", () => localize("cascader", CASCADER_LABELS).results), pack.messages.cascader!.results);
+    assert.equal(
+      withLocale("xx", () => localize("cascader", CASCADER_LABELS).results),
+      pack.messages.cascader!.results,
+    );
   });
   test("idioma por defecto con aviso a los suscriptores", () => {
     const seen: (string | undefined)[] = [];
@@ -107,7 +117,10 @@ describe("registro y mezcla", () => {
     setDefaultLocale("xx");
     assert.deepEqual(seen, ["xx", undefined]);
     assert.equal(defaultLocale(), "xx");
-    assert.equal(withLocale(undefined, () => currentLocale()), "xx");
+    assert.equal(
+      withLocale(undefined, () => currentLocale()),
+      "xx",
+    );
     setDefaultLocale(undefined);
   });
 });
@@ -128,7 +141,9 @@ describe("Intl", () => {
 
 describe("paquetes de zui y zout", () => {
   const leaves = (o: unknown, p = ""): [string, string][] =>
-    Object.entries(o as Record<string, unknown>).flatMap(([k, v]) => (typeof v === "string" ? [[`${p}${k}`, v] as [string, string]] : leaves(v, `${p}${k}.`)));
+    Object.entries(o as Record<string, unknown>).flatMap(([k, v]) =>
+      typeof v === "string" ? [[`${p}${k}`, v] as [string, string]] : leaves(v, `${p}${k}.`),
+    );
   test("cada idioma carga bajo demanda y cada plantilla se resuelve sin restos de sintaxis", async () => {
     assert.deepEqual([...LOCALES], ["en", "es", "pt", "fr", "de"]);
     const en = new Map([...leaves(enZui.messages), ...leaves(enZout.messages)]);

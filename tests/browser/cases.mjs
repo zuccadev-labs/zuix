@@ -24,6 +24,7 @@ import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import listingCases from "./cases-listing.mjs";
 import popoverApiCases from "./cases-popover-api.mjs";
+import rtlLocaleCases from "./cases-rtl-locale.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
 const t = (id) => `[data-testid="${id}"]`;
@@ -3154,6 +3155,7 @@ export const cases = [
     datagridCases,
     scaleCases,
     listingCases,
+    rtlLocaleCases,
   ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────
