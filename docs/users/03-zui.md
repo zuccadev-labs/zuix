@@ -40,8 +40,8 @@ Cada componente declara en el contrato qué necesita para funcionar:
 
 | `behavior` | Significado | Cuántos |
 |---|---|---|
-| `none` | Solo CSS. Basta el marcado | 73 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 163 |
+| `none` | Solo CSS. Basta el marcado | 72 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 164 |
 | `react` | Solo funciona con el binding de React. Hoy ninguno | 0 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
@@ -676,6 +676,51 @@ Dentro de un contenedor con `dir="rtl"` las hojas se reflejan (usan propiedades 
 direccionales se voltean y el teclado se invierte donde el patrón lo pide: en `Tabs`, `Menu`, `Slider`,
 `RadioGroup`, `SegmentedControl`, `Calendar`, `Tree` y `Rating` la flecha izquierda avanza. La dirección se
 lee del DOM; no hay proveedor ni prop.
+
+En las familias de la 0.4 (chat, IA, dashboard, personas, nodos, terminal y tiempo) la regla es que una flecha
+lleva al elemento que está en ese lado de la pantalla:
+
+- Van de derecha a izquierda los filtros de `ConversationList`, la rejilla y las pestañas de `EmojiPicker`, las
+  columnas de `KanbanBoard`, los días de `Tracker`, las piezas de `DashboardGrid`, los archivos de `CodeViewer`,
+  las unidades de `Countdown` y las ciudades de `WorldClock`.
+- Siguen de izquierda a derecha, en cualquier dirección: el código (`CodeViewer`, `DiffViewer`, `Terminal`, la
+  entrada y salida de `ToolCall`), la rejilla de `LogConsole`, los segmentos de `DurationField` (se escriben como una
+  hora) y el lienzo de `NodeCanvas`, que es espacial: → lleva al nodo de la derecha y un puerto `data-side="left"`
+  está a la izquierda también en un nodo suelto.
+- Responder, reenviar, deshacer, rehacer, entrar y salir se reflejan donde aparezcan. La hora de un mensaje va al
+  final de su texto aunque el texto vaya en la dirección contraria a la de la página (`dir="auto"`).
+
+## Material 3 Expressive (0.5)
+
+Variantes opcionales sobre componentes que ya existían: sin ellas, nada cambia. Todas leen tokens y respetan el
+movimiento reducido.
+
+```tsx
+<Progress label="Exporting" value={64} variant="wavy" showValue />
+<CircularProgress label="Loading" variant="wavy" size="lg" />
+<Button variant="tonal" icon="eye">Preview</Button>
+<ButtonGroup label="View" connected>
+  <Button aria-pressed="true" icon="squares-2x2">Grid</Button>
+  <Button aria-pressed="false" icon="list-bullet">List</Button>
+</ButtonGroup>
+<Slider aria-label="Balance" defaultValue={[-20]} min={-50} max={50} origin="center" />
+<Field label="Email" labelPlacement="floating">
+  <Input type="email" autoComplete="email" />
+</Field>
+<Modal title="New event" fullScreen="compact" trigger={<Button>New event</Button>}>…</Modal>
+```
+
+| Variante | Qué hace |
+|---|---|
+| `Progress` y `CircularProgress` con `variant="wavy"` | Lo hecho es una onda y lo que falta, una línea (o un anillo) plana tras un hueco. La onda avanza mientras hay trabajo; con movimiento reducido se queda quieta y el anillo indeterminado gira más despacio. El `role="progressbar"` (o el `<progress>`) sigue siendo el control accesible |
+| `Button` con `variant="tonal"` | Relleno suave del acento, entre el primario y el secundario. Tokens `--z-button-tonal-bg`, `--z-button-tonal-bg-hover` y `--z-button-tonal-fg`. También en `IconButton` y `CopyButton` |
+| `ButtonGroup` con `connected` | 2 px entre piezas, esquinas interiores cerradas y las exteriores con el radio del botón. La pieza pulsada (`aria-pressed`, `data-state="on"` o `data-active`) recupera sus cuatro esquinas y se rellena: el estado se lee por color y por forma |
+| `Slider` con `origin="center"` | Con un tirador, la pista se rellena desde el punto medio entre `min` y `max` hasta el valor, con una marca en el centro. Para ajustes con cero en medio. En el modo DOM, `data-origin="center"` |
+| `Field` con `labelPlacement="floating"` | La etiqueta va dentro del campo mientras está vacío y sube al enfocarlo, al escribir o cuando el navegador lo autocompleta. Sigue siendo un `<label for>`. «Vacío» es `:placeholder-shown`: `Input` pone un marcador vacío si no le das uno, y el tuyo solo se ve con la etiqueta arriba. Con `Input` (también con icono); sin efecto en `layout="inline"` |
+| `Modal` con `fullScreen` | `compact` ocupa toda la ventana por debajo de 600 px de ancho; `always`, siempre. Sin radio, todo el alto dinámico, el pie fijo abajo y las zonas seguras |
+| `Fab` extendido y `FabMenu` | El texto del FAB extendido crece con la talla (`sm`, `md`, `lg`). El menú del FAB no tiene panel: una columna de acciones opacas alineadas al borde del FAB que entran escalonadas, y el «+» gira a cierre |
+
+Nada es una píldora: el grupo conectado y las acciones del menú del FAB son rectángulos de esquinas redondeadas.
 
 ## Táctil
 

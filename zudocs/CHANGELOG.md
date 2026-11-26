@@ -9,6 +9,9 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Añadido
 
+- La guía «Idiomas» en el sitio, y ejemplos con vista previa de las variantes de Material 3 Expressive (barra y
+  anillo ondulados, botón tonal, grupo conectado, Slider desde el centro, etiqueta flotante, Modal a pantalla
+  completa y FAB extendido por tallas).
 - La guía «Conectar un editor visual» y la investigación del conector de editores, en el sitio y en `llms.txt`.
 - Páginas del catálogo para `ScatterChart`, `RadarChart`, `ComboChart`, `HeatmapChart`, `BulletChart`,
   `CategoryBar` y `AnimatedNumber`, con su vista previa sin framework, y `llms.txt` al día.

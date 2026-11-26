@@ -5,6 +5,11 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Textos de `ChatLayout` y `DocsLayout` en `en`, `es`, `pt`, `fr` y `de` (`@zuccadev-labs/zuix-zout/locales/<id>`).
+  Dentro de un `LocaleProvider` de zui los layouts cargan los suyos; `loadZoutLocale(id)` los carga sin React.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

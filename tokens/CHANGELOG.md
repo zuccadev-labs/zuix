@@ -7,6 +7,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- `button-tonal-bg`, `button-tonal-bg-hover` y `button-tonal-fg` para el botón tonal de zui (sobre `accent-soft` y
+  `accent-text`).
 - Escala divergente del mapa de calor (`HeatmapChart` con `scale="diverging"`): `heatmap-neg-hue` (de
   `warning-text`) y `heatmap-pos-hue` (de `info-text`), cada una con cuatro niveles (`heatmap-neg-1…4`,
   `heatmap-pos-1…4`) mezclados con `surface-solid`. Ámbar y azul se distinguen con daltonismo y no dependen del

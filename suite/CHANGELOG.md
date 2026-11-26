@@ -7,6 +7,8 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- `@zuccadev-labs/zuix/zui/locales/<id>` y `/zout/locales/<id>` (`en`, `es`, `pt`, `fr`, `de`): los paquetes de
+  idioma de zui y zout.
 - `@zuccadev-labs/zuix/editor`, `/editor/react` y `/editor/catalog`: el conector de editores visuales de zui y su
   catálogo como módulo JSON.
 - `@zuccadev-labs/zuix/zui/dom/forms`: reexporta la familia nueva de zui (Cascader, TreeSelect y MaskedInput sin

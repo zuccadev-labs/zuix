@@ -7,6 +7,18 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Idiomas: paquetes de textos para `en`, `es`, `pt` (de Brasil), `fr` y `de` que cubren todas las constantes
+  `*_LABELS` (910 claves), en `@zuccadev-labs/zuix-zui/locales/<id>`, uno por módulo para cargarlos bajo demanda (en
+  el bundle de navegador, `zui.locale.<id>.js`). `LocaleProvider` y `useLocale` en React; `setLocale()` y el `lang`
+  heredado en el modo DOM, que vuelve a pintar lo montado y escribe `lang` en `<html>`. Las `labels` por prop siguen
+  mandando. Plurales con la sintaxis de ICU y `Intl.PluralRules`, listas con `Intl.ListFormat` (en inglés, la lista
+  con comas de siempre) y `formatMessage`, `formatNumber`, `formatDate`, `formatList`, `localize`, `loadLocale` y
+  `registerLocale` en la raíz y en `/dom/core`. Guía: [Idiomas](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/13-idiomas.md).
+- Material 3 Expressive, variantes opcionales: `Progress` y `CircularProgress` con `variant="wavy"`, `Button` (e
+  `IconButton` y `CopyButton`) con `variant="tonal"`, `ButtonGroup` con `connected`, `Slider` con `origin="center"`
+  (también `data-origin` sin React), `Field` con `labelPlacement="floating"` y `Modal` con `fullScreen`
+  (`compact` o `always`). El FAB extendido escala el texto con la talla y el menú del FAB pasa a una columna de
+  acciones sin panel que entran escalonadas, con el «+» que gira a cierre.
 - Conector para editores visuales de páginas por bloques: `@zuccadev-labs/zuix-zui/editor` (sin React) y
   `@zuccadev-labs/zuix-zui/editor/react`. Lo describe
   [Conectar un editor visual](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/12-conectar-un-editor.md).
@@ -121,6 +133,21 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `DataTable` ya no busca cada fila con `rows.indexOf` (con 10 000 filas eran 10⁸ comparaciones) y la selección
   ordena con un conjunto.
 - En el modo DOM, recolocar un nodo con clave al volver a pintar una pieza ya no le quita el foco.
+
+### Corregido (RTL)
+
+- La hora de un mensaje tapaba el texto cuando el texto iba en la dirección contraria a la de la página: ahora va
+  al final del texto.
+- La entrada y salida de `ToolCall` se escribían de derecha a izquierda en RTL: son código y van en LTR.
+- Responder, reenviar, deshacer, rehacer, entrar y salir no se reflejaban en RTL (menú de cuenta, mensajes,
+  `NodeControls`, firma).
+- Un `Node` suelto en una página RTL perdía sus puertos dentro de la caja.
+
+### Cambiado
+
+- Las constantes de textos que vivían en componentes (`MetricCard`, `ActivityFeed`, `SettingRow`, `AccountMenu`,
+  `Lightbox`, `Stories`, `Carousel`) pasan a `src/core` para entrar en los paquetes de idioma. Sus tipos se siguen
+  exportando desde el mismo sitio.
 
 ## [0.4.0] - 2026-11-23
 
