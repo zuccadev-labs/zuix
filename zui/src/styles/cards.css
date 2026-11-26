@@ -1241,13 +1241,14 @@
     align-items: flex-end;
     gap: var(--z-space-3);
     margin-block-start: auto;
+    --z-card-scrim: var(--z-media-scrim-tinted);
     padding: var(--z-space-16) var(--z-space-4) var(--z-space-4);
     background: linear-gradient(
       to bottom,
       transparent,
-      color-mix(in srgb, var(--z-media-scrim-tinted) 30%, transparent) calc(var(--z-space-16) * 0.35),
-      color-mix(in srgb, var(--z-media-scrim-tinted) 75%, transparent) calc(var(--z-space-16) * 0.7),
-      var(--z-media-scrim-tinted) var(--z-space-16)
+      color-mix(in srgb, var(--z-card-scrim) 30%, transparent) calc(var(--z-space-16) * 0.35),
+      color-mix(in srgb, var(--z-card-scrim) 75%, transparent) calc(var(--z-space-16) * 0.7),
+      var(--z-card-scrim) var(--z-space-16)
     );
   }
   .z-user-card:is([data-variant="portrait"], [data-variant="neon"]) .z-user-card__names {
