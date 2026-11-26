@@ -46,10 +46,27 @@ export default async function ({ page, test, ok, card, settle, shots, browserNam
   await test("Menu submenú: el puntero lo abre a la derecha tras un retardo, sin cerrar el padre ni mover el foco", async () => {
     await menuTrigger.click();
     await settle();
+    // El retardo se mide en la página: el instante en que el puntero entra en la entrada y el instante en que el
+    // submenú se abre (aria-expanded pasa a true en la misma tarea que showPopover). Comprobarlo desde fuera con
+    // «aún no está abierto» justo después de hover() depende de la latencia del protocolo: con la página cargada,
+    // esa ida y vuelta supera los 100 ms del retardo y la prueba fallaba sin que el menú hiciera nada mal.
+    await page.evaluate(() => {
+      const trigger = document.querySelector('#actions [data-z-submenu="#actions-share"]');
+      const times = { over: null, open: null };
+      window.__submenuTimes = times;
+      trigger.addEventListener("pointerover", () => (times.over ??= performance.now()));
+      new MutationObserver((_, observer) => {
+        if (trigger.getAttribute("aria-expanded") !== "true") return;
+        times.open = performance.now();
+        observer.disconnect();
+      }).observe(trigger, { attributes: true, attributeFilter: ["aria-expanded"] });
+    });
     await share.hover();
-    ok(!(await isOpen("#actions-share")), "abrió sin retardo");
-    await page.waitForTimeout(300);
+    await page.waitForFunction(() => window.__submenuTimes.open !== null, null, { timeout: 3000 }).catch(() => {});
     ok(await isOpen("#actions-share"), "el hover no abrió el submenú");
+    const times = await page.evaluate(() => window.__submenuTimes);
+    ok(times.over !== null, "el puntero no llegó a la entrada");
+    ok(times.open - times.over >= 95, `abrió sin retardo: ${Math.round(times.open - times.over)} ms`);
     ok(await isOpen("#actions"), "abrir el submenú cerró el menú padre");
     ok(
       (await share.getAttribute("aria-expanded")) === "true" && (await share.getAttribute("data-state")) === "open",
