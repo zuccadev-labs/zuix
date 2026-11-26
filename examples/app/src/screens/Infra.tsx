@@ -292,7 +292,7 @@ export function Infra() {
             <SpecList title="Hardware" columns={1} items={hardwareItems(d.hardware as InventoryHardware[])} />
             <Stack gap={3}>
               {(d.pools as StoragePoolData[]).map((p) => (
-                <StoragePool key={p.name} {...p} locale="en-US" headingLevel={4} />
+                <StoragePool key={p.name} {...p} locale="en-US" headingLevel={2} />
               ))}
               <SpecList title="Guests outside the DMZ" columns={2} items={guestItems(d.guests as InventoryGuest[])} />
             </Stack>

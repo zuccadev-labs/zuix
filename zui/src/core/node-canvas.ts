@@ -7,7 +7,7 @@
 // Nada de esto corre al importar: todo empieza en `bindNodeCanvas(root, options)`.
 
 import { announce } from "./announcer";
-import { edgeRoute, type EdgeRoute, type EdgeType, routeBounds, type Side } from "./edge-path";
+import { edgeRoute, type EdgeRoute, type EdgeType, polylineMidpoint, roundedPath, routeBounds, type Side } from "./edge-path";
 import { dashArray, edgeColor, edgeWidth, type EdgeWidthScale, pointAlong } from "./edge-style";
 import { cloneForExport, cloneToSVG, type ExportOptions, svgToPNG } from "./export-image";
 import { type OrthogonalOptions, routeOrthogonal } from "./orthogonal-route";
@@ -654,14 +654,15 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
 
   const cssId = (id: string) => id.replace(/[^\w-]/g, "_");
 
-  const endsOf = (e: GraphEdge) => {
+  /** Extremos de una arista. Sin `inset`, en la caja del nodo (lo que ve el enrutado ortogonal). */
+  const endsOf = (e: GraphEdge, inset = true) => {
     const a = index.get(e.source);
     const b = index.get(e.target);
     const ra = rects.get(e.source);
     const rb = rects.get(e.target);
     if (!a || !b || !ra || !rb) return null;
-    const s = anchorOf(a, ra, e.sourcePort, "source", portT.get(e.source), insetTop.get(e.source));
-    const t = anchorOf(b, rb, e.targetPort, "target", portT.get(e.target), insetTop.get(e.target));
+    const s = anchorOf(a, ra, e.sourcePort, "source", portT.get(e.source), inset ? insetTop.get(e.source) : 0);
+    const t = anchorOf(b, rb, e.targetPort, "target", portT.get(e.target), inset ? insetTop.get(e.target) : 0);
     return { source: s.point, sourceSide: s.side, target: t.point, targetSide: t.side };
   };
   // Rutas ortogonales: se calculan todas a la vez (esquivan nodos y se reparten en carriles) cuando cambia la
@@ -676,7 +677,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     const reqs = [];
     for (const e of graph.edges) {
       if ((e.type ?? o.edgeType ?? "bezier") !== "orthogonal") continue;
-      const ends = endsOf(e);
+      const ends = endsOf(e, false);
       if (ends) reqs.push({ id: e.id, ends, source: e.source, target: e.target, width: edgeWidth(e, o.edgeScale) });
     }
     if (quick) {
@@ -685,6 +686,20 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     }
     const obstacles = graph.nodes.filter((n) => !isGroup(n) && rects.has(n.id)).map((n) => ({ id: n.id, ...rects.get(n.id)! }));
     orthoRoutes = routeOrthogonal(reqs, obstacles, o.routing).routes;
+    // Las rutas se calculan contra la caja del nodo; en una tarjeta con pestaña, el tramo que entra por arriba se
+    // alarga hasta el borde de la tarjeta (sigue siendo vertical).
+    for (const r of reqs) {
+      const route = orthoRoutes.get(r.id);
+      const e = graph.edges.find((x) => x.id === r.id)!;
+      const s = r.ends.sourceSide === "top" ? (insetTop.get(e.source) ?? 0) : 0;
+      const t = r.ends.targetSide === "top" ? (insetTop.get(e.target) ?? 0) : 0;
+      if (!route || (!s && !t)) continue;
+      const points = route.points.map((p) => ({ ...p }));
+      if (s) points[0]!.y += s;
+      if (t) points[points.length - 1]!.y += t;
+      const { length, mid } = polylineMidpoint(points);
+      orthoRoutes.set(r.id, { d: roundedPath(points, o.routing?.radius ?? 10), label: mid, length, points });
+    }
     return orthoRoutes;
   };
 
@@ -734,7 +749,7 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     }
     return `url(#${uid}-arrow-${c.tone ?? "neutral"})`;
   };
-  const endLabel = (els: EdgeEls, which: "source" | "target", text: string | undefined, route: EdgeRoute, selected: boolean) => {
+  const endLabel = (els: EdgeEls, which: "source" | "target", text: string | undefined, route: EdgeRoute, selected: boolean, inset = 0) => {
     let el = els.ends[which];
     if (!text) {
       el?.remove();
@@ -752,7 +767,8 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
     if (el.textContent !== text) el.textContent = text;
     const pts = route.points;
     const from = which === "source" ? "start" : "end";
-    const p = pointAlong(pts, from, 16);
+    // Fuera de la pestaña de una tarjeta: la etiqueta va por encima de su borde.
+    const p = pointAlong(pts, from, 16 + inset);
     const a = which === "source" ? pts[0] : pts[pts.length - 1];
     const b = which === "source" ? pts[1] : pts[pts.length - 2];
     const vertical = !!a && !!b && Math.abs(a.x - b.x) < Math.abs(a.y - b.y);
@@ -876,8 +892,9 @@ export function bindNodeCanvas(root: HTMLElement, initial: NodeCanvasOptions): N
         els.label.remove();
         els.label = null;
       }
-      endLabel(els, "source", e.sourceLabel, route, selected);
-      endLabel(els, "target", e.targetLabel, route, selected);
+      const ends = e.sourceLabel || e.targetLabel ? endsOf(e) : null;
+      endLabel(els, "source", e.sourceLabel, route, selected, ends?.sourceSide === "top" ? (insetTop.get(e.source) ?? 0) : 0);
+      endLabel(els, "target", e.targetLabel, route, selected, ends?.targetSide === "top" ? (insetTop.get(e.target) ?? 0) : 0);
     }
     for (const [id, els] of edgeEls)
       if (!keep.has(id)) {

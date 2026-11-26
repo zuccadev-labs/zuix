@@ -190,6 +190,26 @@ describe("enrutado ortogonal", () => {
     assert.deepEqual(pts[pts.length - 1], { x: 300, y: 50 });
     assert.match(routes.get("e")!.d, / Q /);
   });
+  test("no vuelve a cruzar sus propios nodos fuera de los tramos de puerto", () => {
+    // El destino mira hacia fuera: la ruta tiene que rodearlo, no atravesarlo.
+    const a = { id: "a", x: 0, y: 0, width: 100, height: 60 };
+    const b = { id: "b", x: 300, y: 200, width: 160, height: 80 };
+    const { routes, fallbacks } = routeOrthogonal(
+      [
+        {
+          id: "e",
+          source: "a",
+          target: "b",
+          ends: { source: { x: 100, y: 30 }, sourceSide: "right", target: { x: 460, y: 240 }, targetSide: "right" },
+        },
+      ],
+      [a, b],
+    );
+    const pts = routes.get("e")!.points;
+    assert.deepEqual(fallbacks, []);
+    const inner = pts.slice(1, -1);
+    assert.equal(crosses(inner, b), false, JSON.stringify(pts));
+  });
   test("reparte en carriles los tramos compartidos", () => {
     const routes = [
       [

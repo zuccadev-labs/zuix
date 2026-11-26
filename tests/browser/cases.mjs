@@ -15,6 +15,7 @@ import timeTerminal from "./cases-time-terminal.mjs";
 import chatAi from "./cases-chat-ai.mjs";
 import dashboardPeople from "./cases-dashboard-people.mjs";
 import nodesCases from "./cases-nodes.mjs";
+import diagramCases from "./cases-diagrams.mjs";
 import transferCases from "./cases-transfer.mjs";
 import pickersCases from "./cases-pickers.mjs";
 import datagridCases from "./cases-datagrid.mjs";
@@ -3149,6 +3150,7 @@ export const cases = [
     dashboardPeople,
     carouselsCases,
     nodesCases,
+    diagramCases,
     transferCases,
     pickersCases,
     datagridCases,

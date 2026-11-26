@@ -95,13 +95,19 @@ const segBox = (a: Point, b: Point): Rect => ({
   height: Math.abs(a.y - b.y),
 });
 
-function blocked(points: readonly Point[], index: RectIndex, skip: ReadonlySet<string>): boolean {
+/**
+ * Verdadero si algún tramo atraviesa un obstáculo. Los nodos propios (`own`) solo se perdonan en el primer y el
+ * último tramo, los que salen y entran del puerto: el resto de la ruta tampoco puede cruzar su origen ni su destino.
+ */
+function blocked(points: readonly Point[], index: RectIndex, own: ReadonlySet<string>, strict = true): boolean {
   for (let i = 1; i < points.length; i++) {
     const a = points[i - 1]!;
     const b = points[i]!;
+    const stub = !strict || i === 1 || i === points.length - 1;
     for (const k of index.near(segBox(a, b))) {
       const r = index.rects[k]!;
-      if (!skip.has(r.id) && segmentHits(a, b, r)) return true;
+      if (stub && own.has(r.id)) continue;
+      if (segmentHits(a, b, r)) return true;
     }
   }
   return false;
@@ -240,6 +246,7 @@ function gridRoute(
   margin: number,
   bend: number,
   maxGrid: number,
+  strict: boolean,
 ): Point[] | null {
   const { source: s, target: t, sourceSide, targetSide } = ends;
   const n1 = NORMAL[sourceSide];
@@ -253,10 +260,11 @@ function gridRoute(
     width: Math.abs(a.x - b.x) + pad * 2,
     height: Math.abs(a.y - b.y) + pad * 2,
   };
+  // Los nodos propios también son obstáculos entre los dos tramos de puerto (a y b ya quedan fuera de ellos).
   const obstacles = index
     .near(area)
     .map((k) => index.rects[k]!)
-    .filter((r) => !skip.has(r.id));
+    .filter((r) => !skip.has(r.id) || strict);
   const pick = (values: number[], ends2: number[], mid: number): number[] => {
     const all = [...new Set([...values.map(Math.round), ...ends2.map((v) => Math.round(v * 100) / 100)])].sort((p, q) => p - q);
     if (all.length <= maxGrid) return all;
@@ -356,6 +364,8 @@ function routeAround(
 ): Point[] {
   const skip = new Set([req.source, req.target].filter((x): x is string => !!x));
   const pad = o.margin;
+  // Con tramos de puerto más largos que el margen, la ruta no puede volver a cruzar sus propios nodos.
+  const strict = o.offset > o.margin;
   const area = {
     x: Math.min(req.ends.source.x, req.ends.target.x) - 400,
     y: Math.min(req.ends.source.y, req.ends.target.y) - 400,
@@ -365,13 +375,13 @@ function routeAround(
   const near = index
     .near(area)
     .map((k) => index.rects[k]!)
-    .filter((r) => !skip.has(r.id));
+    .filter((r) => strict || !skip.has(r.id));
   // De la más barata a la más cara: la primera libre gana (orden estable: a igual coste, la de antes).
   const ranked = candidates(req.ends, o.offset, near, pad)
     .map((points, i) => ({ points, i, k: cost(points, o.bendCost) }))
     .sort((a, b) => a.k - b.k || a.i - b.i);
-  for (const c of ranked) if (!blocked(c.points, index, skip)) return c.points;
-  return gridRoute(req.ends, o.offset, index, skip, pad, o.bendCost, o.maxGrid) ?? orthogonalPoints(req.ends, o.offset);
+  for (const c of ranked) if (!blocked(c.points, index, skip, strict)) return c.points;
+  return gridRoute(req.ends, o.offset, index, skip, pad, o.bendCost, o.maxGrid, strict) ?? orthogonalPoints(req.ends, o.offset);
 }
 
 interface Seg {
@@ -492,7 +502,7 @@ export function routeOrthogonal(
   // Una ruta que aún cruza un obstáculo es un repliegue: se anota.
   requests.forEach((req, i) => {
     const skip = new Set([req.source, req.target].filter((x): x is string => !!x));
-    if (blocked(raw[i]!, index, skip)) fallbacks.push(req.id);
+    if (blocked(raw[i]!, index, skip, o.offset > o.margin)) fallbacks.push(req.id);
   });
   const widths = requests.map((r) => r.width ?? 2);
   const pts = options.nudge === false ? raw : nudgeParallel(raw, widths, options.spacing ?? 6);
