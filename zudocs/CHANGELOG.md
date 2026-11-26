@@ -7,6 +7,12 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ## [Sin publicar]
 
+### Añadido
+
+- Demos en vivo de los ejemplos nuevos de zui: `DataTable` como rejilla (edición, fijadas a los dos lados, columnas
+  reordenables), agrupada con agregados, en árbol con detalle y con 10 000 filas; `Select` con búsqueda y del
+  servidor; `Combobox` del servidor; `Tabs` con menú «Más»; `Tree` que se mueve y carga ramas.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido
