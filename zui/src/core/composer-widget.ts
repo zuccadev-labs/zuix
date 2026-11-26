@@ -555,13 +555,16 @@ function attach(root: HTMLElement, host: Host): () => void {
     if (target.closest(".z-composer__cancel-context")) {
       const c = host.config();
       host.emit(c.editing ? "cancel-edit" : c.kind === "prompt" && c.quote ? "quote-remove" : "cancel-reply", {});
+      // La aplicación quita la barra al recibir el evento: el foco vuelve al campo cuando ya se ha repintado.
       field()?.focus();
+      requestAnimationFrame(() => field()?.focus());
       return;
     }
     const ctx = target.closest<HTMLElement>(".z-composer__context-remove");
     if (ctx?.dataset.id) {
       host.emit("context-remove", { id: ctx.dataset.id });
       field()?.focus();
+      requestAnimationFrame(() => field()?.focus());
       return;
     }
     if (target.closest(".z-composer__record")) {
@@ -698,13 +701,13 @@ function tree(kind: "chat" | "prompt") {
       : kind === "prompt" && c.quote
         ? { icon: "arrow-turn-down-left", title: labels.quoting, text: c.quote.text, cancel: labels.removeQuote, quote: true }
         : c.replyTo
-        ? {
-            icon: "arrow-turn-up-left",
-            title: fill(labels.replyingTo, { name: c.replyTo.author ?? "" }),
-            text: c.replyTo.text ?? "",
-            cancel: labels.cancelReply,
-          }
-        : null;
+          ? {
+              icon: "arrow-turn-up-left",
+              title: fill(labels.replyingTo, { name: c.replyTo.author ?? "" }),
+              text: c.replyTo.text ?? "",
+              cancel: labels.cancelReply,
+            }
+          : null;
     const mention = s.mention;
     const mentionId = (i: number) => `${uid}-mention-${i}`;
     const fieldId = `${uid}-field`;

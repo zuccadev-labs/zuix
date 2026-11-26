@@ -20,24 +20,14 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "cover",
-        "compact",
-        "profile",
-        "neon",
-        "portrait"
-      ],
+      "values": ["cover", "compact", "profile", "neon", "portrait"],
       "default": "cover",
       "description": "`profile` limpia y elevada con foto de esquinas redondeadas, estadísticas en fichas y dos acciones; `neon` de color vivo con halo, ficha de rol con check y nombre en mayúsculas; `portrait` la foto entera con el nombre abajo sobre un desenfoque."
     },
     {
       "name": "headingLevel",
       "type": "enum",
-      "values": [
-        2,
-        3,
-        4
-      ],
+      "values": [2, 3, 4],
       "default": 3
     },
     {
@@ -47,21 +37,7 @@
     {
       "name": "tone",
       "type": "CardTone",
-      "values": [
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8"
-      ],
+      "values": ["accent", "info", "success", "warning", "danger", "1", "2", "3", "4", "5", "6", "7", "8"],
       "description": "Color de neon (borde, halo, subtítulo)."
     },
     {

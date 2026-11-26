@@ -16,17 +16,8 @@
       "description": "Semilla de la malla del fondo."
     }
   ],
-  "tokens": [
-    "panel-radius",
-    "accent",
-    "info",
-    "success",
-    "chart-3"
-  ],
-  "classes": [
-    "z-pricing-table",
-    "z-pricing-table__plans"
-  ],
+  "tokens": ["panel-radius", "accent", "info", "success", "chart-3"],
+  "classes": ["z-pricing-table", "z-pricing-table__plans"],
   "a11y": "section con nombre. La malla es aria-hidden.",
   "examples": [
     {

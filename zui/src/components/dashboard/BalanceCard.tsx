@@ -51,7 +51,13 @@ export function BalanceCard({
   const parts = moneyFormat({ currency, locale }).formatToParts(value);
   const cut = parts.findIndex((p) => p.type === "decimal");
   const whole = (cut < 0 ? parts : parts.slice(0, cut)).map((p) => p.value).join("");
-  const fraction = cut < 0 ? "" : parts.slice(cut).map((p) => p.value).join("");
+  const fraction =
+    cut < 0
+      ? ""
+      : parts
+          .slice(cut)
+          .map((p) => p.value)
+          .join("");
   const pct =
     delta === undefined
       ? null

@@ -51,23 +51,11 @@
     {
       "name": "headingLevel",
       "type": "enum",
-      "values": [
-        "2",
-        "3",
-        "4"
-      ],
+      "values": ["2", "3", "4"],
       "default": "2"
     }
   ],
-  "tokens": [
-    "accent-solid",
-    "accent-solid-hover",
-    "fg-on-accent",
-    "shadow-color",
-    "panel-radius",
-    "elevation-3",
-    "control-radius-xl"
-  ],
+  "tokens": ["accent-solid", "accent-solid-hover", "fg-on-accent", "shadow-color", "panel-radius", "elevation-3", "control-radius-xl"],
   "classes": [
     "z-balance-card",
     "z-balance-card__value",

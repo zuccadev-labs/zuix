@@ -7,22 +7,13 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "elevated",
-        "outlined",
-        "filled"
-      ],
+      "values": ["elevated", "outlined", "filled"],
       "default": "elevated"
     },
     {
       "name": "padding",
       "type": "enum",
-      "values": [
-        "none",
-        "sm",
-        "md",
-        "lg"
-      ],
+      "values": ["none", "sm", "md", "lg"],
       "default": "md"
     },
     {
@@ -34,35 +25,14 @@
     {
       "name": "surface",
       "type": "enum",
-      "values": [
-        "plain",
-        "elevated",
-        "glass",
-        "tinted",
-        "neon",
-        "metal"
-      ],
+      "values": ["plain", "elevated", "glass", "tinted", "neon", "metal"],
       "default": "plain",
       "description": "Material: `elevated` opaca con elevación por capas y canto luminoso; `glass` cristal líquido; `tinted` teñida; `neon` borde y halo del tono; `metal` relleno pleno cepillado con texto claro."
     },
     {
       "name": "tone",
       "type": "CardTone",
-      "values": [
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8"
-      ],
+      "values": ["accent", "info", "success", "warning", "danger", "1", "2", "3", "4", "5", "6", "7", "8"],
       "description": "Tono de tinted, neon, metal y del brillo (metal admite los tonos de estado y el acento)."
     },
     {
@@ -80,12 +50,7 @@
     {
       "name": "as",
       "type": "enum",
-      "values": [
-        "div",
-        "article",
-        "section",
-        "li"
-      ],
+      "values": ["div", "article", "section", "li"],
       "default": "div"
     },
     {
@@ -93,12 +58,7 @@
       "type": "HTMLAttributes<HTMLDivElement>"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active"
-  ],
+  "states": ["rest", "hover", "focus", "active"],
   "tokens": [
     "space-4",
     "space-3",
@@ -147,11 +107,7 @@
     "fg-on-accent",
     "accent-solid"
   ],
-  "classes": [
-    "z-card",
-    "z-card__corner",
-    "z-card__link"
-  ],
+  "classes": ["z-card", "z-card__corner", "z-card__link"],
   "a11y": "div (o el elemento de `as`). Tarjeta entera clicable: un solo enlace en el título (CardHeader href) con la zona de clic extendida; botones y enlaces de dentro quedan por encima. El foco se dibuja en la tarjeta. Sin transparencias, glass pasa a opaca; colores forzados: borde del sistema, sin sombras, halo ni grano.",
   "examples": [
     {

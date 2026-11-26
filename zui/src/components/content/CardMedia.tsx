@@ -40,7 +40,10 @@ export const CardMedia = withRef(function CardMedia({
   ...rest
 }: CardMediaProps) {
   return (
-    <AspectRatio {...rest} ratio={ratio} className={cx("z-card__media", className)}
+    <AspectRatio
+      {...rest}
+      ratio={ratio}
+      className={cx("z-card__media", className)}
       data-placement={placement}
       data-scrim={(scrim ?? (placement === "bleed" ? "bottom" : "none")) === "none" ? undefined : (scrim ?? "bottom")}
       data-tint={tint || undefined}

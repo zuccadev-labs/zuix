@@ -8,39 +8,19 @@
     {
       "name": "pattern",
       "type": "enum",
-      "values": [
-        "grid",
-        "dots",
-        "hex",
-        "mesh",
-        "stars",
-        "triangles",
-        "plus",
-        "pixels",
-        "contours",
-        "grain",
-        "halftone"
-      ],
+      "values": ["grid", "dots", "hex", "mesh", "stars", "triangles", "plus", "pixels", "contours", "grain", "halftone"],
       "default": "grid"
     },
     {
       "name": "intensity",
       "type": "enum",
-      "values": [
-        "subtle",
-        "medium",
-        "strong"
-      ],
+      "values": ["subtle", "medium", "strong"],
       "default": "medium"
     },
     {
       "name": "fade",
       "type": "enum",
-      "values": [
-        "radial",
-        "bottom",
-        "none"
-      ],
+      "values": ["radial", "bottom", "none"],
       "default": "radial",
       "description": "Desvanecido de la capa hacia los bordes."
     },
@@ -64,39 +44,14 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "neutral",
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger",
-        "media"
-      ],
+      "values": ["neutral", "accent", "info", "success", "warning", "danger", "media"],
       "default": "neutral",
       "description": "Color del dibujo; `media` es claro, para una portada oscura."
     }
   ],
-  "states": [
-    "rest",
-    "animated",
-    "offscreen"
-  ],
-  "tokens": [
-    "fg",
-    "accent",
-    "info",
-    "success",
-    "ease-standard",
-    "chart-3",
-    "grain-opacity",
-    "media-fg"
-  ],
-  "classes": [
-    "z-backdrop",
-    "z-backdrop__layer",
-    "z-backdrop__content"
-  ],
+  "states": ["rest", "animated", "offscreen"],
+  "tokens": ["fg", "accent", "info", "success", "ease-standard", "chart-3", "grain-opacity", "media-fg"],
+  "classes": ["z-backdrop", "z-backdrop__layer", "z-backdrop__content"],
   "cssVars": [
     "--z-backdrop-cell",
     "--z-pattern-tile",

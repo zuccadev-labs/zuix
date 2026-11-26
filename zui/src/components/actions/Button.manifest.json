@@ -7,28 +7,14 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "primary",
-        "secondary",
-        "outline",
-        "ghost",
-        "link",
-        "danger",
-        "glass"
-      ],
+      "values": ["primary", "secondary", "outline", "ghost", "link", "danger", "glass"],
       "default": "secondary",
       "description": "Intención. `outline`: contorno sin relleno. `link`: aspecto de enlace para una acción secundaria dentro de un texto o una barra (sigue siendo un botón; para navegar, `Link`). `glass`: velo oscuro desenfocado con texto claro, para ir sobre una foto o una portada."
     },
     {
       "name": "size",
       "type": "enum",
-      "values": [
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl"
-      ],
+      "values": ["xs", "sm", "md", "lg", "xl"],
       "default": "md",
       "description": "Altura: 24, 28, 34, 40 o 48 px, con su radio concéntrico (6, 8, 10, 12, 14)."
     },
@@ -60,14 +46,7 @@
       "description": "Atributos nativos de button (onClick, type, disabled, ref)."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active",
-    "disabled",
-    "loading"
-  ],
+  "states": ["rest", "hover", "focus", "active", "disabled", "loading"],
   "tokens": [
     "surface-2",
     "surface-3",
@@ -120,9 +99,7 @@
     "media-fg",
     "media-scrim"
   ],
-  "classes": [
-    "z-btn"
-  ],
+  "classes": ["z-btn"],
   "a11y": "Elemento button nativo, type=\"button\" por defecto. Con `loading` expone aria-busy y aria-disabled: no se activa, pero conserva el foco del teclado (un botón con `disabled` lo perdería).",
   "examples": [
     {

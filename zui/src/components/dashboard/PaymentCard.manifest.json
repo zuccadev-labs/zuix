@@ -36,13 +36,7 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger"
-      ],
+      "values": ["accent", "info", "success", "warning", "danger"],
       "default": "accent"
     },
     {
@@ -76,12 +70,7 @@
     "accent-solid",
     "font-mono"
   ],
-  "classes": [
-    "z-payment-card",
-    "z-payment-card__chip",
-    "z-payment-card__number",
-    "z-payment-card__field"
-  ],
+  "classes": ["z-payment-card", "z-payment-card__chip", "z-payment-card__number", "z-payment-card__field"],
   "a11y": "article con nombre «Card ending in 4242». Los puntos del número son aria-hidden; el lector oye las cuatro cifras.",
   "examples": [
     {

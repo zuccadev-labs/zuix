@@ -17,14 +17,8 @@
       "description": "Primer y último tramo dentro del rango."
     }
   ],
-  "tokens": [
-    "line-strong",
-    "accent"
-  ],
-  "classes": [
-    "z-range-histogram",
-    "z-range-histogram__bar"
-  ],
+  "tokens": ["line-strong", "accent"],
+  "classes": ["z-range-histogram", "z-range-histogram__bar"],
   "a11y": "aria-hidden: el valor lo anuncia el Slider. Colores forzados: GrayText y Highlight.",
   "examples": [
     {

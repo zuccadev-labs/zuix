@@ -13,18 +13,7 @@
 // - La malla no usa tesela: la semilla coloca cuatro manchas (`--z-mesh-x1…4`, `--z-mesh-y1…4`) y elige su color de
 //   la paleta de gráficos (`--z-mesh-c1…4`, referencias a tokens).
 
-export type PatternName =
-  | "grid"
-  | "dots"
-  | "hex"
-  | "mesh"
-  | "stars"
-  | "triangles"
-  | "plus"
-  | "pixels"
-  | "contours"
-  | "grain"
-  | "halftone";
+export type PatternName = "grid" | "dots" | "hex" | "mesh" | "stars" | "triangles" | "plus" | "pixels" | "contours" | "grain" | "halftone";
 
 /** Patrones con tesela generada por semilla. */
 export const SEEDED_PATTERNS = ["stars", "triangles", "plus", "pixels", "contours", "grain", "halftone"] as const;
@@ -126,7 +115,14 @@ function triangles(rand: () => number, s: number): string {
     const a = 4 + rand() * 7;
     const h = a * 0.866;
     const o = r2(0.3 + rand() * 0.7);
-    out += wrap(x, y, a, s, (cx, cy) => `<path d='M${r1(cx)} ${r1(cy - h / 1.5)}L${r1(cx + a / 2)} ${r1(cy + h / 3)}L${r1(cx - a / 2)} ${r1(cy + h / 3)}Z' fill-opacity='${o}'/>`);
+    out += wrap(
+      x,
+      y,
+      a,
+      s,
+      (cx, cy) =>
+        `<path d='M${r1(cx)} ${r1(cy - h / 1.5)}L${r1(cx + a / 2)} ${r1(cy + h / 3)}L${r1(cx - a / 2)} ${r1(cy + h / 3)}Z' fill-opacity='${o}'/>`,
+    );
   }
   return out;
 }
@@ -142,7 +138,14 @@ function plus(rand: () => number, s: number): string {
       const a = r1(3 + rand() * 6);
       const w = r1(Math.max(1.2, a / 3.2));
       const o = r2(0.35 + rand() * 0.65);
-      out += wrap(x, y, a, s, (cx, cy) => `<path d='M${r1(cx - a)} ${r1(cy - w / 2)}h${r1(a * 2)}v${w}h${r1(-a * 2)}ZM${r1(cx - w / 2)} ${r1(cy - a)}h${w}v${r1(a * 2)}h${-w}Z' fill-opacity='${o}'/>`);
+      out += wrap(
+        x,
+        y,
+        a,
+        s,
+        (cx, cy) =>
+          `<path d='M${r1(cx - a)} ${r1(cy - w / 2)}h${r1(a * 2)}v${w}h${r1(-a * 2)}ZM${r1(cx - w / 2)} ${r1(cy - a)}h${w}v${r1(a * 2)}h${-w}Z' fill-opacity='${o}'/>`,
+      );
     }
   return out;
 }
@@ -190,7 +193,8 @@ function contours(rand: () => number, s: number): string {
         if (b < level !== cc < level) pts.push([x + c, y + c * lerp(b, cc)]);
         if (dd < level !== cc < level) pts.push([x + c * lerp(dd, cc), y + c]);
         if (a < level !== dd < level) pts.push([x, y + c * lerp(a, dd)]);
-        for (let k = 0; k + 1 < pts.length; k += 2) d += `M${Math.round(pts[k]![0])} ${Math.round(pts[k]![1])}L${Math.round(pts[k + 1]![0])} ${Math.round(pts[k + 1]![1])}`;
+        for (let k = 0; k + 1 < pts.length; k += 2)
+          d += `M${Math.round(pts[k]![0])} ${Math.round(pts[k]![1])}L${Math.round(pts[k + 1]![0])} ${Math.round(pts[k + 1]![1])}`;
       }
   }
   return `<path d='${d}' fill='none' stroke='black' stroke-width='1' stroke-linecap='round'/>`;
@@ -242,7 +246,10 @@ export function patternSvg(pattern: SeededPattern, seed: number | string = 1, si
 
 /** La tesela como valor CSS `url("data:…")`, listo para `mask-image`. */
 export function patternUrl(pattern: SeededPattern, seed?: number | string, size?: number): string {
-  const svg = patternSvg(pattern, seed, size).replace(/[<>#"%{}\n]/g, (ch) => `%${ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`);
+  const svg = patternSvg(pattern, seed, size).replace(
+    /[<>#"%{}\n]/g,
+    (ch) => `%${ch.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`,
+  );
   // El `%23` del filtro ya va escapado: no se escapa dos veces.
   return `url("data:image/svg+xml,${svg.replace(/%2523/g, "%23")}")`;
 }

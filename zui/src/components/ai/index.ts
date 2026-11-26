@@ -6,7 +6,15 @@ export { AssistantMessage, type AiLabels, type AssistantMessageProps, type Assis
 export { BranchPicker, type BranchPickerProps } from "./BranchPicker";
 export { Citation, type CitationProps } from "./Citation";
 export { Markdown, type MarkdownProps } from "./Markdown";
-export { PromptInput, type PromptContext, type PromptFile, type PromptInputProps, type PromptModel, type PromptSubmit, type PromptTool } from "./PromptInput";
+export {
+  PromptInput,
+  type PromptContext,
+  type PromptFile,
+  type PromptInputProps,
+  type PromptModel,
+  type PromptSubmit,
+  type PromptTool,
+} from "./PromptInput";
 export { Reasoning, type ReasoningProps } from "./Reasoning";
 export { Sources, type SourcesProps } from "./Sources";
 export { Suggestions, type Suggestion, type SuggestionsProps } from "./Suggestions";

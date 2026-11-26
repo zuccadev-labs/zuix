@@ -23,31 +23,20 @@
     {
       "name": "placement",
       "type": "enum",
-      "values": [
-        "top",
-        "inset",
-        "bleed"
-      ],
+      "values": ["top", "inset", "bleed"],
       "default": "top",
       "description": "`top`: a sangre arriba; `inset`: dentro del relleno con radio concéntrico; `bleed`: cubre la tarjeta y el contenido va encima, abajo, sobre el fundido."
     },
     {
       "name": "loading",
       "type": "enum",
-      "values": [
-        "lazy",
-        "eager"
-      ],
+      "values": ["lazy", "eager"],
       "default": "lazy"
     },
     {
       "name": "scrim",
       "type": "enum",
-      "values": [
-        "none",
-        "bottom",
-        "full"
-      ],
+      "values": ["none", "bottom", "full"],
       "description": "Fundido de legibilidad. Con bleed, bottom por defecto: cada pieza de texto va sobre el velo pleno (4.5:1 sobre cualquier imagen)."
     },
     {
@@ -57,9 +46,7 @@
       "description": "Tiñe el fundido con el tono de la tarjeta."
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "card-radius",
     "radius-xs",
@@ -71,10 +58,7 @@
     "media-fg-muted",
     "shadow-color"
   ],
-  "classes": [
-    "z-card__media",
-    "z-aspect"
-  ],
+  "classes": ["z-card__media", "z-aspect"],
   "a11y": "La imagen lleva alt; si la tarjeta ya nombra lo que muestra (título), alt=\"\" la deja como decorativa.",
   "examples": [
     {

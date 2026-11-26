@@ -32,30 +32,13 @@
     {
       "name": "layout",
       "type": "enum",
-      "values": [
-        "bleed",
-        "inset"
-      ],
+      "values": ["bleed", "inset"],
       "default": "bleed"
     },
     {
       "name": "tone",
       "type": "CardTone",
-      "values": [
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8"
-      ],
+      "values": ["accent", "info", "success", "warning", "danger", "1", "2", "3", "4", "5", "6", "7", "8"],
       "description": "Color del fundido y del brillo."
     },
     {
@@ -86,19 +69,11 @@
     {
       "name": "headingLevel",
       "type": "enum",
-      "values": [
-        "2",
-        "3",
-        "4"
-      ],
+      "values": ["2", "3", "4"],
       "default": "3"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus"
-  ],
+  "states": ["rest", "hover", "focus"],
   "tokens": [
     "card-radius",
     "card-elevated-bg",

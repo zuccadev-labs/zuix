@@ -1318,11 +1318,15 @@ export const suggestionsWidget: typeof suggestionsBase = {
       const at = items.indexOf(event.target as HTMLButtonElement);
       if (at < 0) return;
       const to =
-        event.key === "ArrowDown" ? (at + 1) % items.length
-        : event.key === "ArrowUp" ? (at - 1 + items.length) % items.length
-        : event.key === "Home" ? 0
-        : event.key === "End" ? items.length - 1
-        : -1;
+        event.key === "ArrowDown"
+          ? (at + 1) % items.length
+          : event.key === "ArrowUp"
+            ? (at - 1 + items.length) % items.length
+            : event.key === "Home"
+              ? 0
+              : event.key === "End"
+                ? items.length - 1
+                : -1;
       if (to >= 0) {
         event.preventDefault();
         items[to]?.focus();

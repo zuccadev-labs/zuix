@@ -18,7 +18,11 @@ export interface CardBannerProps extends Omit<HTMLAttributes<HTMLDivElement>, "t
 export function CardBanner({ message, icon, tone = "success", position = "bottom", className, children, ...rest }: CardBannerProps) {
   const strip = (
     <div className="z-card-banner__strip">
-      {icon ? <Icon name={icon} size={16} /> : null}
+      {icon ? (
+        <span className="z-card-banner__icon" aria-hidden="true">
+          <Icon name={icon} size={16} />
+        </span>
+      ) : null}
       <span className="z-card-banner__message">{message}</span>
     </div>
   );

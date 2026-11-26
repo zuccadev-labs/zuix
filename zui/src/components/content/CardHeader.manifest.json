@@ -34,9 +34,7 @@
       "description": "El título es un enlace (.z-card__link) cuya zona de clic cubre la tarjeta; los demás controles siguen por encima."
     }
   ],
-  "states": [
-    "rest"
-  ],
+  "states": ["rest"],
   "tokens": [
     "space-3",
     "font-display",
@@ -56,14 +54,7 @@
     "glass-highlight",
     "line"
   ],
-  "classes": [
-    "z-card__header",
-    "z-card__heading",
-    "z-card__title",
-    "z-card__subtitle",
-    "z-card__action",
-    "z-card__icon"
-  ],
+  "classes": ["z-card__header", "z-card__heading", "z-card__title", "z-card__subtitle", "z-card__action", "z-card__icon"],
   "a11y": "El título es un encabezado real con nivel configurable.",
   "examples": [
     {

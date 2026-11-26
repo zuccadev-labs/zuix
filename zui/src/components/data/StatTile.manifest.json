@@ -30,25 +30,13 @@
     {
       "name": "deltaTone",
       "type": "enum",
-      "values": [
-        "neutral",
-        "accent",
-        "success",
-        "warning",
-        "danger",
-        "info"
-      ],
+      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
       "default": "neutral"
     },
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "glass",
-        "solid",
-        "soft",
-        "elevated"
-      ],
+      "values": ["glass", "solid", "soft", "elevated"],
       "default": "glass",
       "description": "`glass` cristal líquido, `solid` acento pleno, `soft` superficie de tarjeta, `elevated` opaca con elevación por capas."
     },
@@ -70,32 +58,18 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger"
-      ],
+      "values": ["accent", "info", "success", "warning", "danger"],
       "description": "Color de la ficha del icono."
     },
     {
       "name": "layout",
       "type": "enum",
-      "values": [
-        "inline",
-        "stacked"
-      ],
+      "values": ["inline", "stacked"],
       "default": "inline",
       "description": "`stacked`: el icono en ficha arriba y la etiqueta debajo."
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus",
-    "active"
-  ],
+  "states": ["rest", "hover", "focus", "active"],
   "tokens": [
     "fg-muted",
     "surface-3",
@@ -163,10 +137,7 @@
     "card-elevated-bg",
     "card-sheen"
   ],
-  "classes": [
-    "z-stat",
-    "z-sparkline"
-  ],
+  "classes": ["z-stat", "z-sparkline"],
   "a11y": "div; con onClick pasa a ser button con todo el contenido como nombre.",
   "examples": [
     {

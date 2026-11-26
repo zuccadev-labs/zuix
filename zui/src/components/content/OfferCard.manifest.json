@@ -45,11 +45,7 @@
     {
       "name": "headingLevel",
       "type": "enum",
-      "values": [
-        "2",
-        "3",
-        "4"
-      ],
+      "values": ["2", "3", "4"],
       "default": "3"
     }
   ],
@@ -77,13 +73,7 @@
     "success-text",
     "fg-muted"
   ],
-  "classes": [
-    "z-offer-card",
-    "z-offer-card__head",
-    "z-offer-card__meta",
-    "z-offer-card__aside",
-    "z-offer-card__actions"
-  ],
+  "classes": ["z-offer-card", "z-offer-card__head", "z-offer-card__meta", "z-offer-card__aside", "z-offer-card__actions"],
   "a11y": "article. Los datos llevan texto además del icono; la tarifa usa success-text (4.5:1).",
   "examples": [
     {

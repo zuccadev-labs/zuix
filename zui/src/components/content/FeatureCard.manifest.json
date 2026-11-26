@@ -22,19 +22,7 @@
     {
       "name": "pattern",
       "type": "enum",
-      "values": [
-        "grid",
-        "dots",
-        "hex",
-        "mesh",
-        "stars",
-        "triangles",
-        "plus",
-        "pixels",
-        "contours",
-        "grain",
-        "halftone"
-      ],
+      "values": ["grid", "dots", "hex", "mesh", "stars", "triangles", "plus", "pixels", "contours", "grain", "halftone"],
       "default": "stars",
       "description": "Dibujo de la portada (core/pattern)."
     },
@@ -46,21 +34,7 @@
     {
       "name": "tone",
       "type": "CardTone",
-      "values": [
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8"
-      ],
+      "values": ["accent", "info", "success", "warning", "danger", "1", "2", "3", "4", "5", "6", "7", "8"],
       "description": "Tono de la portada y del dibujo."
     },
     {
@@ -87,28 +61,17 @@
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "center",
-        "start"
-      ],
+      "values": ["center", "start"],
       "default": "center"
     },
     {
       "name": "headingLevel",
       "type": "enum",
-      "values": [
-        "2",
-        "3",
-        "4"
-      ],
+      "values": ["2", "3", "4"],
       "default": "3"
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus"
-  ],
+  "states": ["rest", "hover", "focus"],
   "tokens": [
     "card-radius",
     "card-elevated-bg",

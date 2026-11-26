@@ -22,13 +22,7 @@
     {
       "name": "tone",
       "type": "enum",
-      "values": [
-        "accent",
-        "info",
-        "success",
-        "warning",
-        "danger"
-      ],
+      "values": ["accent", "info", "success", "warning", "danger"],
       "default": "accent"
     },
     {
@@ -37,11 +31,7 @@
       "required": true
     }
   ],
-  "states": [
-    "rest",
-    "hover",
-    "focus"
-  ],
+  "states": ["rest", "hover", "focus"],
   "tokens": [
     "accent-solid",
     "success-solid",
@@ -54,13 +44,7 @@
     "elevation-3",
     "accent-ring"
   ],
-  "classes": [
-    "z-category-tile",
-    "z-category-tile__icon",
-    "z-category-tile__arrow",
-    "z-category-tile__title",
-    "z-category-tile__count"
-  ],
+  "classes": ["z-category-tile", "z-category-tile__icon", "z-category-tile__arrow", "z-category-tile__title", "z-category-tile__count"],
   "a11y": "Un solo enlace: su nombre es el título y la cifra. Texto fg-on-accent sobre *-solid. La flecha se refleja en RTL.",
   "examples": [
     {

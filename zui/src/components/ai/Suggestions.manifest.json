@@ -11,11 +11,7 @@
     {
       "name": "layout",
       "type": "enum",
-      "values": [
-        "row",
-        "grid",
-        "list"
-      ],
+      "values": ["row", "grid", "list"],
       "default": "row",
       "description": "`list`: panel de cristal en columna con flecha delante, ↑ ↓ para recorrer y Esc para cerrar."
     },
@@ -40,20 +36,8 @@
       "description": "Esc dentro de la lista."
     }
   ],
-  "states": [
-    "row",
-    "grid"
-  ],
-  "tokens": [
-    "surface-solid",
-    "surface-2",
-    "line",
-    "line-strong",
-    "radius-md",
-    "fg",
-    "fg-muted",
-    "accent-text"
-  ],
+  "states": ["row", "grid"],
+  "tokens": ["surface-solid", "surface-2", "line", "line-strong", "radius-md", "fg", "fg-muted", "accent-text"],
   "classes": [
     "z-suggestions",
     "z-suggestions__list",

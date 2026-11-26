@@ -203,7 +203,8 @@
     mask-image: var(--z-pattern-tile);
     mask-size: var(--z-pattern-size) var(--z-pattern-size);
     opacity: min(1, calc(0.7 * var(--z-backdrop-k) * var(--z-pattern-k, 1)));
-    transform: translate(var(--z-pattern-x, 0px), var(--z-pattern-y, 0px)) rotate(var(--z-pattern-rotate, 0deg)) scale(var(--z-pattern-scale, 1));
+    transform: translate(var(--z-pattern-x, 0px), var(--z-pattern-y, 0px)) rotate(var(--z-pattern-rotate, 0deg))
+      scale(var(--z-pattern-scale, 1));
     transform-origin: 50% 50%;
   }
   .z-backdrop[data-tone="accent"] {

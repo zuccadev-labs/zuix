@@ -117,13 +117,7 @@
       "type": "(detail: ComposerVoice) => void"
     }
   ],
-  "states": [
-    "ready",
-    "submitted",
-    "streaming",
-    "error",
-    "with-attachments"
-  ],
+  "states": ["ready", "submitted", "streaming", "error", "with-attachments"],
   "tokens": [
     "popup-bg",
     "popup-blur",

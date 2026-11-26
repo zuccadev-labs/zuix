@@ -41,7 +41,16 @@
     --z-card-text: var(--z-danger-text);
     --z-card-solid: var(--z-danger-solid);
   }
-  :is(.z-card, .z-user-card):is([data-tone="1"], [data-tone="2"], [data-tone="3"], [data-tone="4"], [data-tone="5"], [data-tone="6"], [data-tone="7"], [data-tone="8"]) {
+  :is(.z-card, .z-user-card):is(
+    [data-tone="1"],
+    [data-tone="2"],
+    [data-tone="3"],
+    [data-tone="4"],
+    [data-tone="5"],
+    [data-tone="6"],
+    [data-tone="7"],
+    [data-tone="8"]
+  ) {
     --z-card-text: var(--z-fg);
   }
   :is(.z-card, .z-user-card)[data-tone="1"] {
@@ -81,10 +90,7 @@
     --z-card-lift: var(--z-elevation-1);
     position: relative;
     isolation: isolate;
-    box-shadow:
-      var(--z-elevation-rim),
-      var(--z-card-lift),
-      var(--z-card-glow, 0 0 transparent);
+    box-shadow: var(--z-elevation-rim), var(--z-card-lift), var(--z-card-glow, 0 0 transparent);
   }
   .z-card[data-surface="elevated"] {
     --z-card-lift: var(--z-elevation-2);
@@ -107,27 +113,16 @@
       0 0 80px -16px color-mix(in srgb, var(--z-card-hue) 55%, transparent);
     border-color: var(--z-card-hue);
     background:
-      radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--z-card-hue) 14%, transparent), transparent 70%),
-      var(--z-card-neon-bg);
+      radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--z-card-hue) 14%, transparent), transparent 70%), var(--z-card-neon-bg);
   }
   /* Metal: relleno pleno del tono (texto claro, el par fg-on-accent / *-solid), cepillado fino y una banda de brillo. */
   .z-card[data-surface="metal"] {
     --z-card-lift: var(--z-elevation-3);
     border-color: color-mix(in srgb, var(--z-fg-on-accent) 18%, transparent);
     background:
-      linear-gradient(
-        112deg,
-        transparent 22%,
-        color-mix(in srgb, var(--z-fg-on-accent) 9%, transparent) 40%,
-        transparent 56%
-      ),
-      repeating-linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--z-fg-on-accent) 3%, transparent) 0 1px,
-        transparent 1px 3px
-      ),
-      radial-gradient(130% 100% at 0% 0%, color-mix(in srgb, var(--z-fg-on-accent) 12%, transparent), transparent 60%),
-      var(--z-card-solid);
+      linear-gradient(112deg, transparent 22%, color-mix(in srgb, var(--z-fg-on-accent) 9%, transparent) 40%, transparent 56%),
+      repeating-linear-gradient(90deg, color-mix(in srgb, var(--z-fg-on-accent) 3%, transparent) 0 1px, transparent 1px 3px),
+      radial-gradient(130% 100% at 0% 0%, color-mix(in srgb, var(--z-fg-on-accent) 12%, transparent), transparent 60%), var(--z-card-solid);
     color: var(--z-fg-on-accent);
   }
   .z-card[data-surface="metal"] :is(.z-card__subtitle, .z-card__title) {
@@ -140,9 +135,7 @@
       0 0 96px -24px color-mix(in srgb, var(--z-card-hue) 50%, transparent);
   }
   .z-card[data-glow]:not([data-surface]) {
-    box-shadow:
-      var(--z-card-shadow),
-      var(--z-card-glow);
+    box-shadow: var(--z-card-shadow), var(--z-card-glow);
   }
   /* Grano: ruido de feTurbulence como máscara sobre el color del texto, debajo del contenido. */
   .z-card[data-grain] {
@@ -334,6 +327,11 @@
     font-weight: var(--z-weight-medium);
     -webkit-backdrop-filter: blur(var(--z-space-3)) saturate(160%);
     backdrop-filter: blur(var(--z-space-3)) saturate(160%);
+  }
+
+  /* Los títulos heredan el color de su tarjeta (sobre foto, el claro): ninguna hoja de la página lo cambia. */
+  :is(.z-feature-card__title, .z-product-card__title, .z-offer-card__title, .z-pricing-card__name, .z-user-card__name) {
+    color: inherit;
   }
 
   /* ---- FeatureCard ---- */
@@ -629,8 +627,10 @@
   .z-pricing-card[data-featured] {
     border-color: color-mix(in srgb, var(--z-card-hue) 55%, transparent);
   }
+  /* Contenedores de consulta: con contención de ancho no tienen ancho propio; toman el de su sitio. */
   .z-pricing-table {
     container: z-pricing / inline-size;
+    inline-size: 100%;
     border-radius: var(--z-panel-radius);
   }
   .z-pricing-table__backdrop {
@@ -692,6 +692,7 @@
   }
   .z-offer-card__fact {
     display: inline-flex;
+    white-space: nowrap;
     align-items: center;
     gap: var(--z-space-1-5);
     color: var(--z-fg-muted);
@@ -759,7 +760,7 @@
   }
   .z-card-banner__strip {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: var(--z-space-2);
     margin: 0;
@@ -771,6 +772,13 @@
   }
   .z-card-banner__message {
     font-variant-numeric: tabular-nums;
+  }
+  /* El icono ocupa una línea de texto: queda a la altura de la primera aunque el mensaje parta en dos. */
+  .z-card-banner__icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    block-size: 1lh;
   }
   /* Una cuenta atrás dentro de la cinta toma su color (las unidades atenuadas no llegarían a 4.5:1 sobre el tono). */
   .z-card-banner__message .z-countdown,
@@ -906,9 +914,7 @@
   .z-stat[data-variant="elevated"] {
     border: 1px solid transparent;
     background: var(--z-card-sheen), var(--z-card-elevated-bg);
-    box-shadow:
-      var(--z-elevation-rim),
-      var(--z-elevation-2);
+    box-shadow: var(--z-elevation-rim), var(--z-elevation-2);
   }
   .z-stat[data-tone] .z-stat__icon {
     background: color-mix(in srgb, var(--z-card-hue) 18%, transparent);
@@ -929,6 +935,7 @@
   /* ---- BalanceCard ---- */
   .z-balance-card {
     container: z-balance / inline-size;
+    inline-size: 100%;
     position: relative;
     isolation: isolate;
     display: flex;
@@ -1049,7 +1056,8 @@
     aspect-ratio: 1.586;
     justify-content: space-between;
     gap: var(--z-space-2);
-    min-inline-size: 16rem;
+    inline-size: 100%;
+    min-inline-size: min(100%, 16rem);
     max-inline-size: 26rem;
     overflow: hidden;
     border-radius: var(--z-radius-xl);
@@ -1080,9 +1088,27 @@
     block-size: 2.125rem;
     border-radius: var(--z-radius-xs);
     background:
-      linear-gradient(90deg, transparent 32%, color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 32% 34%, transparent 34% 66%, color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 66% 68%, transparent 68%),
-      linear-gradient(180deg, transparent 30%, color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 30% 33%, transparent 33% 66%, color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 66% 69%, transparent 69%),
-      linear-gradient(135deg, color-mix(in srgb, var(--z-warning) 55%, var(--z-fg-on-accent)), color-mix(in srgb, var(--z-warning) 70%, var(--z-shadow-color)));
+      linear-gradient(
+        90deg,
+        transparent 32%,
+        color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 32% 34%,
+        transparent 34% 66%,
+        color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 66% 68%,
+        transparent 68%
+      ),
+      linear-gradient(
+        180deg,
+        transparent 30%,
+        color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 30% 33%,
+        transparent 33% 66%,
+        color-mix(in srgb, var(--z-shadow-color) 30%, transparent) 66% 69%,
+        transparent 69%
+      ),
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--z-warning) 55%, var(--z-fg-on-accent)),
+        color-mix(in srgb, var(--z-warning) 70%, var(--z-shadow-color))
+      );
     box-shadow:
       inset 0 0 0 1px color-mix(in srgb, var(--z-shadow-color) 30%, transparent),
       inset 0 1px 0 color-mix(in srgb, var(--z-fg-on-accent) 50%, transparent);
@@ -1124,9 +1150,7 @@
     padding: var(--z-space-5);
     border: 1px solid transparent;
     background: var(--z-card-sheen), var(--z-card-elevated-bg);
-    box-shadow:
-      var(--z-elevation-rim),
-      var(--z-elevation-2);
+    box-shadow: var(--z-elevation-rim), var(--z-elevation-2);
   }
   .z-user-card[data-variant="profile"] .z-user-card__identity {
     flex-wrap: nowrap;
@@ -1190,9 +1214,7 @@
     border-radius: var(--z-card-radius);
     background: var(--z-media-surface);
     color: var(--z-media-fg);
-    box-shadow:
-      var(--z-elevation-rim),
-      var(--z-elevation-2);
+    box-shadow: var(--z-elevation-rim), var(--z-elevation-2);
   }
   .z-user-card__photo {
     position: absolute;
@@ -1230,6 +1252,8 @@
     gap: var(--z-space-0-5);
   }
   .z-user-card:is([data-variant="portrait"], [data-variant="neon"]) .z-user-card__name {
+    overflow: visible;
+    overflow-wrap: anywhere;
     white-space: normal;
   }
   .z-user-card:is([data-variant="portrait"], [data-variant="neon"]) .z-user-card__tagline {

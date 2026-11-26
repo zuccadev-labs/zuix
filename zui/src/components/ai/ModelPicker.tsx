@@ -25,7 +25,7 @@ export interface ModelPickerToggle {
 }
 
 export interface ModelPickerLabels {
-  /** Nombre del botón para lectores: «Model: {model}». */
+  /** Prefijo del nombre del botón para lectores, delante del modelo visible: «Model: {model}». */
   trigger: string;
   options: string;
   models: string;
@@ -105,12 +105,8 @@ export function ModelPicker({
       items={items}
       className="z-model-picker__menu"
       trigger={
-        <button
-          type="button"
-          className={cx("z-btn z-btn--ghost z-model-picker", className)}
-          data-size={size}
-          aria-label={labels.trigger.replace("{model}", current?.label ?? "")}
-        >
+        <button type="button" className={cx("z-btn z-btn--ghost z-model-picker", className)} data-size={size}>
+          <span className="z-sr-only">{labels.trigger.replace("{model}", "").trim()} </span>
           {current?.media ? (
             <span className="z-model-picker__media" aria-hidden="true">
               {current.media}

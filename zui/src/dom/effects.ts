@@ -45,7 +45,11 @@ export function setDotMatrixPattern(el: HTMLElement, pattern: DotPattern, size: 
   );
 }
 
-const PATTERN_VARS = ["--z-pattern-tile", "--z-pattern-size", ...[1, 2, 3, 4].flatMap((i) => [`--z-mesh-x${i}`, `--z-mesh-y${i}`, `--z-mesh-c${i}`])];
+const PATTERN_VARS = [
+  "--z-pattern-tile",
+  "--z-pattern-size",
+  ...[1, 2, 3, 4].flatMap((i) => [`--z-mesh-x${i}`, `--z-mesh-y${i}`, `--z-mesh-c${i}`]),
+];
 
 /** Cambia el dibujo de un Backdrop: patrón y semilla (core/pattern). Sin semilla, el de la hoja. */
 export function setBackdropPattern(el: HTMLElement, pattern: PatternName, seed?: number | string): void {

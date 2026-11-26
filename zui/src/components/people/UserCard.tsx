@@ -110,7 +110,9 @@ export function UserCard({
           <div className="z-user-card__names">
             <H className="z-user-card__name">{name}</H>
             {variant === "neon" ? (
-              user.bio ? <span className="z-user-card__tagline">{user.bio}</span> : null
+              user.bio ? (
+                <span className="z-user-card__tagline">{user.bio}</span>
+              ) : null
             ) : user.role ? (
               <span className="z-user-card__tagline">{user.role}</span>
             ) : null}

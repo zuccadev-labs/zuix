@@ -28,7 +28,19 @@ export interface OfferCardProps extends Omit<HTMLAttributes<HTMLElement>, "title
 }
 
 /** Tarjeta de oferta o de perfil profesional: avatar, título, datos con icono, fichas, tarifa, descripción y acciones. */
-export function OfferCard({ title, avatar, meta, tags, aside, description, actions, href, headingLevel = 3, className, ...rest }: OfferCardProps) {
+export function OfferCard({
+  title,
+  avatar,
+  meta,
+  tags,
+  aside,
+  description,
+  actions,
+  href,
+  headingLevel = 3,
+  className,
+  ...rest
+}: OfferCardProps) {
   const H = `h${headingLevel}` as "h3";
   return (
     <Card {...rest} as="article" surface="elevated" padding="lg" className={cx("z-offer-card", className)}>

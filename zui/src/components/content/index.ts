@@ -26,7 +26,14 @@ export { ScrollArea, type ScrollAreaProps } from "./ScrollArea";
 export { Marquee, type MarqueeProps } from "./Marquee";
 export { FeatureCard, type FeatureCardProps } from "./FeatureCard";
 export { ProductCard, type ProductCardProps } from "./ProductCard";
-export { PricingCard, PricingTable, type PricingCardProps, type PricingCardLabels, type PricingFeature, type PricingTableProps } from "./PricingCard";
+export {
+  PricingCard,
+  PricingTable,
+  type PricingCardProps,
+  type PricingCardLabels,
+  type PricingFeature,
+  type PricingTableProps,
+} from "./PricingCard";
 export { OfferCard, type OfferCardProps, type OfferCardMeta } from "./OfferCard";
 export { CardBanner, type CardBannerProps } from "./CardBanner";
 export { CategoryTile, type CategoryTileProps } from "./CategoryTile";

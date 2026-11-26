@@ -14,20 +14,13 @@
     {
       "name": "variant",
       "type": "enum",
-      "values": [
-        "tiles",
-        "divided",
-        "plain"
-      ],
+      "values": ["tiles", "divided", "plain"],
       "default": "tiles"
     },
     {
       "name": "align",
       "type": "enum",
-      "values": [
-        "center",
-        "start"
-      ],
+      "values": ["center", "start"],
       "default": "center"
     },
     {
@@ -36,21 +29,8 @@
       "description": "Clase de cada dato."
     }
   ],
-  "tokens": [
-    "inset",
-    "line",
-    "radius-md",
-    "fg-muted",
-    "fg-subtle",
-    "font-display",
-    "text-heading-lg"
-  ],
-  "classes": [
-    "z-stat-group",
-    "z-stat-group__item",
-    "z-stat-group__label",
-    "z-stat-group__value"
-  ],
+  "tokens": ["inset", "line", "radius-md", "fg-muted", "fg-subtle", "font-display", "text-heading-lg"],
+  "classes": ["z-stat-group", "z-stat-group__item", "z-stat-group__label", "z-stat-group__value"],
   "a11y": "Lista de descripción (dl): cada dato es dt + dd.",
   "examples": [
     {
