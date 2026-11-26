@@ -1,0 +1,129 @@
+{
+  "name": "WebPreview",
+  "group": "ai",
+  "description": "Vista previa de una dirección en un iframe aislado (`sandbox`, sin referer, sin permisos), con barra de dirección, atrás y adelante entre lo visitado desde ella, recargar, abrir en otra pestaña y anchos de dispositivo. Solo http y https. Compatible con una CSP estricta: el ancho del marco es una variable escrita por CSSOM.",
+  "import": "import { WebPreview } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "url",
+      "type": "string",
+      "description": "Dirección (controlado)."
+    },
+    {
+      "name": "defaultUrl",
+      "type": "string"
+    },
+    {
+      "name": "onUrlChange",
+      "type": "(url: string) => void",
+      "description": "Dirección nueva desde la barra, atrás o adelante. Con `url`, la aplicación decide si la sigue."
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "description": "Título del iframe, su nombre accesible. Por defecto, el de `labels.preview`."
+    },
+    {
+      "name": "sandbox",
+      "type": "string",
+      "default": "allow-scripts allow-forms",
+      "description": "Permisos de `sandbox`; los desconocidos se descartan. Vacío: el más restrictivo."
+    },
+    {
+      "name": "allow",
+      "type": "string",
+      "default": "",
+      "description": "Política de permisos del marco."
+    },
+    {
+      "name": "viewport",
+      "type": "enum",
+      "values": [
+        "desktop",
+        "tablet",
+        "mobile"
+      ],
+      "description": "Controlado."
+    },
+    {
+      "name": "defaultViewport",
+      "type": "enum",
+      "values": [
+        "desktop",
+        "tablet",
+        "mobile"
+      ],
+      "default": "desktop"
+    },
+    {
+      "name": "onViewportChange",
+      "type": "(viewport) => void"
+    },
+    {
+      "name": "viewports",
+      "type": "boolean",
+      "default": false,
+      "description": "Botones de ancho de dispositivo."
+    },
+    {
+      "name": "editable",
+      "type": "boolean",
+      "default": true,
+      "description": "Barra de dirección editable."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<WebPreviewLabels>",
+      "description": "preview, address, back, forward, reload, open, viewports, desktop, tablet, mobile, invalid y empty, en inglés por defecto."
+    }
+  ],
+  "states": [
+    "empty",
+    "loading",
+    "loaded",
+    "invalid"
+  ],
+  "tokens": [
+    "surface",
+    "surface-2",
+    "surface-3",
+    "canvas",
+    "line",
+    "panel-radius",
+    "danger-soft",
+    "danger-text",
+    "accent",
+    "font-mono"
+  ],
+  "classes": [
+    "z-web-preview",
+    "z-web-preview__bar",
+    "z-web-preview__nav",
+    "z-web-preview__address",
+    "z-web-preview__input",
+    "z-web-preview__viewports",
+    "z-web-preview__viewport",
+    "z-web-preview__open",
+    "z-web-preview__error",
+    "z-web-preview__stage",
+    "z-web-preview__viewport-frame",
+    "z-web-preview__frame",
+    "z-web-preview__progress",
+    "z-web-preview__empty"
+  ],
+  "a11y": "El iframe lleva `title` (su nombre accesible, como pide la guía de accesibilidad) y no desactiva su desplazamiento. La barra es un formulario con nombre; el campo (texto con inputmode=url) se marca aria-invalid y se describe con el error si la dirección no es http o https. Atrás, adelante y recargar son botones con nombre; los anchos, botones con aria-pressed. Abrir en otra pestaña es un enlace con rel=noopener noreferrer. Una página que prohíbe que la enmarquen se queda en blanco: el navegador no lo cuenta. Sin React: .z-web-preview con data-url, data-title, data-sandbox, data-allow, data-viewport, data-viewports y data-editable; emite z:urlchange y z:viewportchange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Vista previa con anchos",
+      "code": "<WebPreview defaultUrl=\"https://example.com\" title=\"Example site\" viewports />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Vista previa con anchos",
+      "code": "<div class=\"z-web-preview\" data-viewports data-title=\"Example site\" style=\"--z-web-preview-height: 260px\"></div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: el WebPreview de AI Elements (Vercel) y las vistas previas de v0 y Bolt."
+}

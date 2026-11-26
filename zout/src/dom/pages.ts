@@ -1,6 +1,6 @@
 // Layouts de página sin framework (../pages): AppBar que se pliega al desplazar (`.z-appbar[data-collapse]`, con
-// respaldo donde no hay animaciones ligadas al desplazamiento) e índice de DocsLayout con la sección actual marcada
-// (`.z-docs-layout__toc`) y tira de secciones de SettingsLayout con el borde oculto difuminado. El resto de layouts de
+// respaldo donde no hay animaciones ligadas al desplazamiento), índice de DocsLayout escrito a mano antes de la 0.5
+// (`.z-docs-layout__toc` sin `.z-toc`; el de ahora es TableOfContents y lo monta @zuccadev-labs/zuix-zui/dom/page) y tira de secciones de SettingsLayout con el borde oculto difuminado. El resto de layouts de
 // página es solo marcado y CSS.
 import { trackScrollEdges } from "../edges";
 import { wireAppBar, wireScrollspy } from "../pages";
@@ -16,7 +16,7 @@ function all(root: ParentNode, selector: string): HTMLElement[] {
 
 export function hydratePages(root: ParentNode): void {
   for (const bar of all(root, ".z-appbar")) if (!wired.has(bar)) wired.set(bar, wireAppBar(bar));
-  for (const nav of all(root, ".z-docs-layout__toc")) if (!wired.has(nav)) wired.set(nav, wireScrollspy(nav));
+  for (const nav of all(root, ".z-docs-layout__toc:not(.z-toc)")) if (!wired.has(nav)) wired.set(nav, wireScrollspy(nav));
   for (const list of all(root, ".z-settings-layout__links")) if (!wired.has(list)) wired.set(list, trackScrollEdges(list));
 }
 

@@ -1,0 +1,92 @@
+{
+  "name": "ChatSearch",
+  "group": "chat",
+  "description": "Buscar en una conversación: campo, contador («2 of 7»), anterior y siguiente (Intro y Mayús + Intro) y cerrar (Escape). Busca sin mayúsculas ni acentos en el texto de los mensajes de `target` y resalta con la CSS Custom Highlight API, sin tocar el marcado de la lista. Vuelve a buscar cuando llegan mensajes.",
+  "import": "import { ChatSearch } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "target",
+      "type": "string",
+      "description": "Id del contenedor de los mensajes (una MessageList)."
+    },
+    {
+      "name": "selector",
+      "type": "string",
+      "default": ".z-message__text",
+      "description": "Elementos con el texto de cada mensaje dentro de `target`."
+    },
+    {
+      "name": "defaultQuery",
+      "type": "string"
+    },
+    {
+      "name": "matchCase",
+      "type": "boolean",
+      "default": false,
+      "description": "Distingue mayúsculas."
+    },
+    {
+      "name": "closable",
+      "type": "boolean",
+      "default": true,
+      "description": "Botón de cerrar y Escape."
+    },
+    {
+      "name": "onQueryChange",
+      "type": "(query: string) => void",
+      "description": "Lo escrito, tras un antirrebote corto."
+    },
+    {
+      "name": "onMatchChange",
+      "type": "(detail: { index; total; message }) => void",
+      "description": "Coincidencia actual: su posición, el total y el índice del mensaje entre los buscados."
+    },
+    {
+      "name": "onClose",
+      "type": "() => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<ChatSearchLabels>",
+      "description": "search, placeholder, count («{current} of {total}»), none, previous, next y close, en inglés por defecto."
+    }
+  ],
+  "states": [
+    "empty",
+    "results",
+    "no-results"
+  ],
+  "tokens": [
+    "warning-soft",
+    "accent-solid",
+    "fg-on-accent",
+    "fg",
+    "fg-muted",
+    "danger-text",
+    "text-caption"
+  ],
+  "classes": [
+    "z-chat-search",
+    "z-chat-search__field",
+    "z-chat-search__input",
+    "z-chat-search__count",
+    "z-chat-search__prev",
+    "z-chat-search__next",
+    "z-chat-search__close"
+  ],
+  "a11y": "role=search con nombre; el campo (type=search) se describe con el contador, que se anuncia al cambiar («2 of 7», «No results»). Anterior y siguiente son botones con nombre, desactivados sin resultados. La coincidencia actual se lleva a la vista (suave salvo movimiento reducido). El resaltado es de la Highlight API y sigue a los colores forzados (Mark, Highlight); sin la API, el mensaje con coincidencias se subraya y el actual se rodea. Sin React: .z-chat-search con data-target, data-selector, data-query, data-match-case y data-closable; emite z:querychange, z:matchchange y z:close.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Buscar en la conversación",
+      "code": "<ChatSearch target=\"messages\" defaultQuery=\"release\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Buscar en la conversación",
+      "code": "<div style=\"display: grid; gap: 12px; max-width: 420px\">\n  <div class=\"z-chat-search\" data-target=\"chat-search-demo\" data-query=\"release\"></div>\n  <ol id=\"chat-search-demo\" class=\"z-chat-search-demo\" style=\"display: grid; gap: 8px; margin: 0; padding: 0; list-style: none\">\n    <li class=\"z-message\"><div class=\"z-message__text\">The release notes are ready for review.</div></li>\n    <li class=\"z-message\"><div class=\"z-message__text\">I added the notes about the new tokens.</div></li>\n    <li class=\"z-message\"><div class=\"z-message__text\">Can you check the release date?</div></li>\n  </ol>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: la búsqueda en el chat de Telegram y WhatsApp y la CSS Custom Highlight API."
+}

@@ -208,21 +208,22 @@ init(datesModule, chartsModule);
 |---|---|---|
 | `/dom/core` | Diálogos, popovers, menús y submenús, tooltip, `toast`, `confirm`, pestañas, acordeón, casillas, interruptores, radios, Rating, acciones (Toolbar, CopyButton…), navegación (Menubar, Collapsible), capas (Drawer, HoverCard, Toggletip, Tour, ActionBar, Banner) y lo básico de formularios: Select, Combobox, Slider, OTPInput, FileUpload, NumberInput, PasswordInput, Field, Listbox y TagsInput | `init`, `use`, `hydrate`, `destroy`, `download`, utilidades de atajos |
 | `/dom/dates` | Calendar, DatePicker y sus variantes, DateField, TimeField, TimePicker, DateTimePicker, TimeRangePicker, DateTimeRangePicker, QuarterPicker | `datesModule`, `setCalendarOptions`… |
-| `/dom/forms` | Cascader, TreeSelect, MaskedInput | `formsModule`, `setMask`, `setMaskedValue`, `setWidgetProps`… |
+| `/dom/forms` | Cascader, TreeSelect, MaskedInput, Mentions | `formsModule`, `setMask`, `setMaskedValue`, `setMentionsLoader`, `setWidgetProps`… |
 | `/dom/data` | Tree, CommandPalette, orden de Table, Pagination, DataTable, TransferList, NotificationCenter, FilterBar y ReviewCard | `dataModule`, `sortTable`, `setReviewExpanded`, `formatMoney`, `summarizePrice`… |
 | `/dom/content` | FormatNumber, FormatByte, FormatDate, Highlight, Marquee, JsonTree, Stepper con paneles, Timer, RelativeTime | `contentModule`, `setJsonTreeValue`… |
 | `/dom/agenda` | EventCalendar, TimelineView, PerpetualYear, FreeBusy, SlotPicker, CalendarHeatmap, HabitCalendar (trae `/dom/dates`) | `agendaModule`, `setAgendaEvents`… |
 | `/dom/charts` | AnimatedNumber, AreaChart, BarChart, BulletChart, CategoryBar, ComboChart, DonutChart, HeatmapChart, LineChart, PieChart, RadarChart, ScatterChart, Sparkline | `chartsModule`, `setWidgetProps` |
 | `/dom/color` | ColorPicker, ColorArea, ColorSlider, ColorSwatchPicker, ColorField, ColorPickerTrigger | `colorModule`, `setColorValue` |
-| `/dom/media` | Carousel, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider, ShortcutInput, Confetti | `mediaModule`, `carousel`… |
+| `/dom/media` | Carousel, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider, ShortcutInput, Confetti, AudioPlayer, Waveform | `mediaModule`, `carousel`… |
 | `/dom/effects` | DotMatrix, Backdrop, BorderBeam, Glow, AttentionRing, TextEffect | `effectsModule`, `setDotMatrixPattern` |
 | `/dom/time` | Clock, AnalogClock, WorldClock, Countdown, DurationField, TimeZoneSelect (sobre el Combobox del núcleo) | `timeModule`, `refreshTimeZoneSelect`, `formatDuration` |
 | `/dom/terminal` | Terminal, LogConsole, CodeViewer, DiffViewer | `terminalModule`, `terminal(el)`, `appendLogEntries`, `setWidgetProps` |
-| `/dom/chat` | ConversationList, MessageList, Composer, EmojiPicker, VoiceNote, Reactions, CallCard, PinnedBar | `chatModule`, `messageList(el)`, `setWidgetProps`, `linkify`, `encodeMentions`, `chatRows` |
-| `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
+| `/dom/chat` | ConversationList, MessageList, Composer, EmojiPicker, VoiceNote, Reactions, CallCard, PinnedBar, ChatSearch | `chatModule`, `messageList(el)`, `setWidgetProps`, `linkify`, `encodeMentions`, `chatRows` |
+| `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker, WebPreview, VoiceInput, StackTrace | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
 | `/dom/dashboard` | Gauge, DeltaBadge, ProgressGoal, BarList, FunnelChart, Tracker, KanbanBoard, DashboardGrid | `dashboardModule`, `getDashboardLayout`, `setDashboardLayout`, `moveCard`, `setWidgetProps` |
 | `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader, SettingsSection y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
 | `/dom/nodes` | NodeCanvas (nodos, puertos, aristas, grupos, minimapa, controles), NodeListView | `nodesModule`, `nodeCanvas(el)`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout` |
+| `/dom/page` | TableOfContents, BackToTop, Affix, TopProgress, DataView, OverflowList, SearchView, Popconfirm | `pageModule`, `topProgress`, `setSearchViewOpen`, `goToSection` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
@@ -441,6 +442,7 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | | Rangos y trimestres | `timeRangeInfo`, `dateTimeRangeText`, `parseDateTimeRange`, `addQuarters`, `quarterOf`, `quarterRange` |
 | `/dom/forms` | Máscaras | `setMask`, `setMaskedValue`, `applyMask`, `extractRaw`, `maskTemplate`, `MASK_PRESETS` |
 | | Árboles | `searchPaths`, `filterTree`, `strategyValue` |
+| | Menciones | `setMentionsLoader`, `setMentionsItems` |
 | `/dom/data` | Árbol y paleta | `toggleTreeItem`, `selectTreeItem`, `checkTreeItem`, `renameTreeItem`, `moveTreeItem`, `setTreeLoader`, `moveNode`, `TREE_DRAG_LABELS`, `openPalette` |
 | | Tablas | `sortTable`, `setPage`, `setDataTablePage`, `setDataTableSelection`, `dataTableSelection`, `dataTableCSVFromDom`, `setDataTableExpanded`, `setDataTableDetail` |
 | | Avisos | `badgeText`, `groupByDay`, `unreadCount` |
@@ -457,12 +459,15 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | `/dom/chat` | Lista y entrega | `messageList`, `chatRows`, `dayLabel`, `arrivalText`, `typingText`, `mergeDelivery`, `toggleReaction` |
 | | Texto y enlaces | `linkify`, `safeHref`, `encodeMentions`, `mentionParts` |
 | | Emoji y voz | `EMOJI_SET`, `QUICK_REACTIONS`, `searchEmoji`, `peaksFrom` |
+| | Búsqueda | `findMatches` |
 | `/dom/ai` | Respuestas | `createTextStream`, `provisional`, `parseMarkdown`, `markdownText` |
 | | Ramas | `activePath`, `addBranch`, `branchInfo`, `selectBranch`, `stepBranch` |
 | | Uso | `compactTokens`, `formatCost` |
+| | Trazas y vista previa | `parseStack`, `stackText`, `normalizeUrl` |
 | `/dom/dashboard` | Rejilla | `getDashboardLayout`, `setDashboardLayout`, `normalizeLayout`, `parseLayout`, `serializeLayout`, `moveGridItem`, `resizeGridItem` |
 | | Kanban | `moveCard`, `locateCard` |
 | `/dom/people` | Miembros y perfil | `filterMembers`, `groupMembers`, `presenceText`, `validateProfile` |
+| `/dom/page` | Carga, índice y búsqueda | `topProgress`, `createProgress`, `goToSection`, `fitCount`, `setSearchViewOpen` |
 | `/dom/nodes` | Lienzo | `nodeCanvas`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout`, `parseGraph`, `serializeGraph`, `describeGraph` |
 | Todas las de piezas con datos | Datos y retirada | `setWidgetProps`, `destroyWidget` |
 

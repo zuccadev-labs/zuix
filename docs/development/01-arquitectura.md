@@ -52,7 +52,7 @@ ese ejemplo formatea números o fechas sin fijar `locale` (o `timeZone`, si mues
 zui/src/
   core/         lógica pura: sin React, sin efectos al importar
   primitives/   primitivas de React sobre core
-  components/   los 237 componentes, por grupo, cada uno con su manifiesto
+  components/   los 254 componentes, por grupo, cada uno con su manifiesto
   dom/          el modo sin framework, sobre core
   styles/       una hoja por grupo, en su @layer
 ```

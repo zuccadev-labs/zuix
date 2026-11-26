@@ -1,0 +1,102 @@
+{
+  "name": "StackTrace",
+  "group": "ai",
+  "description": "Traza de un error, plegable: el tipo y el mensaje, los marcos de la aplicación a la vista y los de terceros (node_modules, node:, extensiones) plegados en grupos, y copiar. Lee las pilas de Chrome, Node, Firefox y Safari.",
+  "import": "import { StackTrace } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "error",
+      "type": "string | Error",
+      "description": "La traza (`error.stack`) o el propio error."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": true,
+      "description": "Marcos a la vista al empezar."
+    },
+    {
+      "name": "showLibrary",
+      "type": "boolean",
+      "default": false,
+      "description": "Grupos de terceros abiertos al empezar."
+    },
+    {
+      "name": "libraryPatterns",
+      "type": "string[]",
+      "description": "Lo que marca un marco como de terceros si su archivo lo contiene."
+    },
+    {
+      "name": "selectable",
+      "type": "boolean",
+      "default": false,
+      "description": "Cada marco es un botón (`onFrameSelect`)."
+    },
+    {
+      "name": "onFrameSelect",
+      "type": "(frame: StackFrame, index: number) => void",
+      "description": "Con `selectable`: para abrir el marco en el editor."
+    },
+    {
+      "name": "onCopy",
+      "type": "(detail: { ok: boolean }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<StackTraceLabels>",
+      "description": "trace, copy, copied, copyFailed, expand, collapse, library («{count} library frames»), libraryOne, anonymous y frames, en inglés por defecto."
+    }
+  ],
+  "states": [
+    "open",
+    "collapsed",
+    "library-open"
+  ],
+  "tokens": [
+    "code-bg",
+    "line",
+    "panel-radius",
+    "danger",
+    "danger-text",
+    "fg",
+    "fg-muted",
+    "row-hover",
+    "font-mono",
+    "text-code"
+  ],
+  "classes": [
+    "z-stack-trace",
+    "z-stack-trace__head",
+    "z-stack-trace__icon",
+    "z-stack-trace__title",
+    "z-stack-trace__name",
+    "z-stack-trace__message",
+    "z-stack-trace__copy",
+    "z-stack-trace__toggle",
+    "z-stack-trace__chevron",
+    "z-stack-trace__frames",
+    "z-stack-trace__frame",
+    "z-stack-trace__line",
+    "z-stack-trace__open",
+    "z-stack-trace__fn",
+    "z-stack-trace__file",
+    "z-stack-trace__group",
+    "z-stack-trace__toggle-group",
+    "z-stack-trace__library"
+  ],
+  "a11y": "role=group «Stack trace». Plegar y cada grupo de terceros son botones con aria-expanded y aria-controls. La ruta completa de cada marco va en title; la visible se acorta a las dos últimas partes. Copiar anuncia el resultado en la región viva. El texto del error entra siempre como texto. Sin React: .z-stack-trace con `{ \"error\": \"…\" }` en data-props, data-open=\"false\", data-show-library, data-library-patterns y data-selectable; emite z:copy, z:toggle y z:frameselect { frame, index }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Error de una pantalla",
+      "code": "<StackTrace error={\"TypeError: Cannot read properties of undefined (reading 'map')\\n    at ProjectList (http://localhost:5173/src/screens/Projects.tsx:42:19)\\n    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom.js:11548:26)\\n    at mountIndeterminateComponent (http://localhost:5173/node_modules/.vite/deps/react-dom.js:14926:21)\\n    at loadProjects (http://localhost:5173/src/data/projects.ts:17:5)\"} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Error de una pantalla",
+      "code": "<div class=\"z-stack-trace\">\n  <script type=\"application/json\" data-props>{\"error\": \"TypeError: Cannot read properties of undefined (reading 'map')\\n    at ProjectList (http://localhost:5173/src/screens/Projects.tsx:42:19)\\n    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom.js:11548:26)\\n    at mountIndeterminateComponent (http://localhost:5173/node_modules/.vite/deps/react-dom.js:14926:21)\\n    at loadProjects (http://localhost:5173/src/data/projects.ts:17:5)\"}</script>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: el StackTrace de AI Elements y la página de error de Next.js (marcos de la aplicación y de terceros)."
+}

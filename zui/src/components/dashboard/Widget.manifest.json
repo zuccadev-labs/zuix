@@ -1,0 +1,109 @@
+{
+  "name": "Widget",
+  "group": "dashboard",
+  "description": "Marco de widget de un dashboard: cabecera con título, descripción, acciones y menú «⋯», y el cuerpo según su estado (cargando, vacío o error con reintento). Dentro de DashboardGrid es una de sus piezas y se mueve y se redimensiona con la rejilla; fuera, una tarjeta.",
+  "import": "import { Widget } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "id",
+      "type": "string",
+      "description": "El de su pieza en la disposición de DashboardGrid."
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "description": "Antes del menú (un selector de periodo)."
+    },
+    {
+      "name": "menu",
+      "type": "MenuEntry[]",
+      "description": "Entradas del menú de la cabecera."
+    },
+    {
+      "name": "status",
+      "type": "enum",
+      "values": [
+        "ready",
+        "loading",
+        "empty",
+        "error"
+      ],
+      "default": "ready",
+      "description": "Estado del cuerpo."
+    },
+    {
+      "name": "message",
+      "type": "ReactNode",
+      "description": "Texto del estado vacío o de error en vez del de `labels`."
+    },
+    {
+      "name": "onRetry",
+      "type": "() => void",
+      "description": "Reintentar desde el error; sin él no hay botón."
+    },
+    {
+      "name": "surface",
+      "type": "enum",
+      "values": [
+        "glass",
+        "solid"
+      ],
+      "default": "glass"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<WidgetLabels>",
+      "description": "menu («{title} options»), loading, empty, error y retry, en inglés por defecto."
+    }
+  ],
+  "states": [
+    "ready",
+    "loading",
+    "empty",
+    "error"
+  ],
+  "tokens": [
+    "card-radius",
+    "fg-muted",
+    "danger",
+    "text-small"
+  ],
+  "classes": [
+    "z-widget",
+    "z-widget__body",
+    "z-widget__state",
+    "z-widget__message",
+    "z-widget__retry"
+  ],
+  "a11y": "Una región (section) nombrada por su título, como cada pieza de DashboardGrid; en edición hereda su asa y su teclado. El menú es un menu button con nombre «Revenue options». Cargando, el cuerpo lleva aria-busy y un Spinner con nombre; el error es un role=alert con el botón de reintentar. Sin React es marcado: el menú lo abre @zuccadev-labs/zuix-zui/dom/core (data-z-open) y el reintento lo atiende la aplicación.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Con menú",
+      "code": "<Widget id=\"revenue\" title=\"Revenue\" description=\"Last 30 days\" menu={[{ id: \"refresh\", label: \"Refresh\", icon: \"arrow-path\" }, { id: \"remove\", label: \"Remove\", icon: \"trash\", danger: true }]}>\n  <StatTile label=\"Revenue\" value=\"$48.2k\" />\n</Widget>"
+    },
+    {
+      "title": "Error con reintento",
+      "code": "<Widget id=\"errors\" title=\"Errors\" status=\"error\" onRetry={() => {}} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Con menú",
+      "code": "<section class=\"z-dashboard-grid__item z-liquid z-widget\" data-id=\"revenue\" data-name=\"Revenue\" aria-labelledby=\"widget-demo-title\" style=\"max-width: 360px\">\n  <header class=\"z-dashboard-grid__head\">\n    <div class=\"z-dashboard-grid__titles\">\n      <h2 class=\"z-dashboard-grid__title\" id=\"widget-demo-title\">Revenue</h2>\n      <p class=\"z-dashboard-grid__description\">Last 30 days</p>\n    </div>\n    <div class=\"z-dashboard-grid__actions\">\n      <button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" aria-label=\"Revenue options\" title=\"Revenue options\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#widget-demo-menu\" data-z-placement=\"bottom-end\">\n        <z-icon name=\"ellipsis-horizontal\" size=\"16\"></z-icon>\n      </button>\n    </div>\n  </header>\n  <div class=\"z-dashboard-grid__body\">\n    <div class=\"z-widget__body\" data-status=\"ready\">\n      <div class=\"z-stat z-liquid\" data-variant=\"glass\">\n        <span class=\"z-stat__head\"><span class=\"z-stat__label\">Revenue</span></span>\n        <span class=\"z-stat__value\">$48.2k</span>\n      </div>\n    </div>\n  </div>\n</section>\n\n<div id=\"widget-demo-menu\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Revenue options\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"arrow-path\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Refresh</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-danger><span class=\"z-menu__icon\"><z-icon name=\"trash\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Remove</span></button>\n</div>"
+    },
+    {
+      "title": "Error con reintento",
+      "code": "<section class=\"z-dashboard-grid__item z-liquid z-widget\" data-id=\"errors\" data-name=\"Errors\" aria-labelledby=\"widget-error-title\" style=\"max-width: 360px\">\n  <header class=\"z-dashboard-grid__head\">\n    <div class=\"z-dashboard-grid__titles\">\n      <h2 class=\"z-dashboard-grid__title\" id=\"widget-error-title\">Errors</h2>\n    </div>\n  </header>\n  <div class=\"z-dashboard-grid__body\">\n    <div class=\"z-widget__body\" data-status=\"error\">\n      <div class=\"z-widget__state\" data-status=\"error\" role=\"alert\">\n        <z-icon name=\"exclamation-triangle\" size=\"20\"></z-icon>\n        <p class=\"z-widget__message\">Couldn't load this widget</p>\n        <button type=\"button\" class=\"z-btn z-btn--secondary z-widget__retry\" data-size=\"sm\">\n          <z-icon name=\"arrow-path\" size=\"14\"></z-icon>\n          Retry\n        </button>\n      </div>\n    </div>\n  </div>\n</section>"
+    }
+  ],
+  "origin": "Nuevo; compone DashboardGridItem, Menu y Spinner. Referencias: los marcos de widget de Grafana y Datadog."
+}

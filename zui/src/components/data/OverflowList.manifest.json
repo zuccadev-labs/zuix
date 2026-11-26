@@ -1,0 +1,83 @@
+{
+  "name": "OverflowList",
+  "group": "data",
+  "description": "Fila de elementos en la que los que no caben pasan a un menú «+N». Mide con un ResizeObserver; los que sobran siguen en el documento, fuera del flujo, invisibles e inertes, y el menú repite sus entradas. Recorta por el final o por el principio (migas de pan).",
+  "import": "import { OverflowList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "OverflowItem[]",
+      "description": "`{ id, label, icon, href, onSelect, disabled }`."
+    },
+    {
+      "name": "renderItem",
+      "type": "(item: OverflowItem) => ReactNode",
+      "description": "Cómo se pinta un elemento visible; por defecto, un botón fantasma o un enlace."
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "end",
+        "start"
+      ],
+      "default": "end",
+      "description": "Por dónde se recorta."
+    },
+    {
+      "name": "minVisible",
+      "type": "number",
+      "default": 0,
+      "description": "Los que se quedan siempre a la vista."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre del grupo."
+    },
+    {
+      "name": "moreLabel",
+      "type": "string",
+      "default": "{count} more",
+      "description": "Nombre del botón «+N»: «{count} more»."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": [
+        "sm",
+        "md"
+      ],
+      "default": "sm"
+    }
+  ],
+  "states": [
+    "fits",
+    "overflowing"
+  ],
+  "tokens": [
+    "space-1"
+  ],
+  "classes": [
+    "z-overflow-list",
+    "z-overflow-list__item",
+    "z-overflow-list__text",
+    "z-overflow-list__more",
+    "z-overflow-list__count"
+  ],
+  "a11y": "El botón «+N» es un menu button (APG): nombre «3 more», aria-haspopup=menu y el menú con las entradas que no caben. Los elementos ocultos llevan inert y aria-hidden: no se tabulan ni se leen dos veces. Sin React: .z-overflow-list con .z-overflow-list__item[data-id], .z-overflow-list__more (data-z-open al menú) y en el menú una entrada [data-overflow-for] por elemento; elegirla pulsa el elemento original. data-side, data-min-visible y data-more-label.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Navegación que se recorta",
+      "code": "<OverflowList label=\"Sections\" items={[{ id: \"home\", label: \"Home\" }, { id: \"projects\", label: \"Projects\" }, { id: \"reports\", label: \"Reports\" }, { id: \"billing\", label: \"Billing\" }, { id: \"members\", label: \"Members\" }, { id: \"settings\", label: \"Settings\" }]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Navegación que se recorta",
+      "code": "<div class=\"z-overflow-list\" role=\"group\" aria-label=\"Sections\" data-more-label=\"{count} more\" style=\"max-width: 340px\">\n  <div class=\"z-overflow-list__item\" data-id=\"home\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Home</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"projects\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Projects</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"reports\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Reports</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"billing\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Billing</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"members\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Members</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"settings\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Settings</span></button></div>\n  <button type=\"button\" class=\"z-btn z-btn--ghost z-overflow-list__more\" data-size=\"sm\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#overflow-menu\" data-z-placement=\"bottom-end\" aria-label=\"0 more\" data-overflow><span class=\"z-overflow-list__count\">+0</span></button>\n</div>\n\n<div id=\"overflow-menu\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"More sections\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"home\" hidden><span class=\"z-menu__text\">Home</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"projects\" hidden><span class=\"z-menu__text\">Projects</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"reports\" hidden><span class=\"z-menu__text\">Reports</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"billing\" hidden><span class=\"z-menu__text\">Billing</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"members\" hidden><span class=\"z-menu__text\">Members</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"settings\" hidden><span class=\"z-menu__text\">Settings</span></button>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: el OverflowList de Blueprint y las pestañas «Más» de Tabs de esta suite."
+}

@@ -137,3 +137,4 @@ export {
   type TimeRangePickerProps,
 } from "./TimeRangePicker";
 export { QuarterPicker, type QuarterPickerLabels, type QuarterPickerProps } from "./QuarterPicker";
+export { Mentions, type ChosenMention, type MentionItem, type MentionSource, type MentionsLabels, type MentionsProps } from "./Mentions";

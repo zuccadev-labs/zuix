@@ -9,6 +9,9 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
 
 ### Añadido
 
+- Páginas del catálogo de las piezas de página y de dominio de la 0.5 (TableOfContents, BackToTop, Affix,
+  TopProgress, DataView, OverflowList, Mentions, SearchView, Popconfirm, ChatSearch, WebPreview, Checkpoint,
+  VoiceInput, StackTrace, AudioPlayer, Waveform y Widget), con su vista previa sin React.
 - La guía «Conectar un editor visual» y la investigación del conector de editores, en el sitio y en `llms.txt`.
 - Páginas del catálogo para `ScatterChart`, `RadarChart`, `ComboChart`, `HeatmapChart`, `BulletChart`,
   `CategoryBar` y `AnimatedNumber`, con su vista previa sin framework, y `llms.txt` al día.

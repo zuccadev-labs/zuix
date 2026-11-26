@@ -28,6 +28,8 @@
 @import "./chat.css";
 @import "./ai.css";
 @import "./dashboard.css";
+@import "./page.css";
+@import "./ai-tools.css";
 @import "./people.css";
 @import "./fab.css";
 @import "./nodes.css";

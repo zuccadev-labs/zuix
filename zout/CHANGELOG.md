@@ -5,6 +5,13 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Cambiado
+
+- `DocsLayout` usa `TableOfContents` de zui para su índice, en columna y en su modo compacto: el mismo scrollspy,
+  desplazamiento suave que respeta el movimiento reducido y foco en la sección elegida. Sin React lo monta
+  `@zuccadev-labs/zuix-zui/dom/page`; el índice escrito a mano antes de la 0.5 lo sigue conectando
+  `@zuccadev-labs/zuix-zout/dom`, y sus clases (`z-docs-layout__toc-list`, `__toc-link`…) conservan sus estilos.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

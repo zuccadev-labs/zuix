@@ -1,0 +1,65 @@
+{
+  "name": "Mentions",
+  "group": "forms",
+  "description": "Menciones con `@` y `#` (o los disparadores que se pidan) sobre cualquier Textarea o Input que envuelva. La lista se ancla al cursor; los candidatos salen de una lista fija (filtrada sin acentos) o de una carga asíncrona con antirrebote y cancelación, la misma de Combobox y Listbox. Funciona con campos controlados de React.",
+  "import": "import { Mentions } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "sources",
+      "type": "MentionSource[]",
+      "description": "`{ trigger, items, load, label }` por disparador: candidatos fijos o `load(query, { signal, page })`."
+    },
+    {
+      "name": "onSelect",
+      "type": "(item: ChosenMention) => void",
+      "description": "Mención elegida (`{ id, label, trigger }`): guárdala para codificar el texto al enviar con `encodeMentions`."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<MentionsLabels>",
+      "description": "suggestions, loading, empty, error y count («{count} suggestions»), en inglés por defecto."
+    }
+  ],
+  "states": [
+    "closed",
+    "open",
+    "loading",
+    "empty",
+    "error"
+  ],
+  "tokens": [
+    "popup-bg",
+    "popup-radius",
+    "surface-2",
+    "accent-soft",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "danger-text",
+    "text-small",
+    "text-caption"
+  ],
+  "classes": [
+    "z-mentions",
+    "z-mentions__popup",
+    "z-mentions__option",
+    "z-mentions__avatar",
+    "z-mentions__description",
+    "z-mentions__status"
+  ],
+  "a11y": "Patrón APG «combobox» con lista emergente: el foco se queda en el campo, que lleva aria-autocomplete=list, aria-controls y aria-activedescendant (un <input> además role=combobox y aria-expanded; un <textarea> sigue siendo un cuadro de texto). ↑/↓ mueven la opción activa, Intro o Tab la insertan, Escape cierra sin perder lo escrito. El número de resultados y los estados de carga se anuncian en la región viva. Sin React: .z-mentions con el campo dentro y `{ \"sources\": [...] }` en data-props; carga con setMentionsLoader(el, trigger, load); emite z:mention { item }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Personas y canales",
+      "code": "<Mentions sources={[{ trigger: \"@\", label: \"People\", items: [{ id: \"u1\", label: \"Ana López\", description: \"Design\" }, { id: \"u2\", label: \"Bruno Díaz\", description: \"Engineering\" }] }, { trigger: \"#\", label: \"Channels\", items: [{ id: \"c1\", label: \"releases\" }, { id: \"c2\", label: \"design\" }] }]}>\n  <Textarea aria-label=\"Comment\" placeholder=\"Type @ or #\" rows={3} />\n</Mentions>"
+    }
+  ],
+  "html": [
+    {
+      "title": "Personas y canales",
+      "code": "<div class=\"z-mentions\" id=\"mentions-demo\">\n  <textarea class=\"z-textarea\" aria-label=\"Comment\" placeholder=\"Type @ or #\" rows=\"3\"></textarea>\n  <script type=\"application/json\" data-props>{\"sources\": [{\"trigger\": \"@\", \"label\": \"People\", \"items\": [{\"id\": \"u1\", \"label\": \"Ana López\", \"description\": \"Design\"}, {\"id\": \"u2\", \"label\": \"Bruno Díaz\", \"description\": \"Engineering\"}, {\"id\": \"u3\", \"label\": \"Carla Ruiz\", \"description\": \"Support\"}]}, {\"trigger\": \"#\", \"label\": \"Channels\", \"items\": [{\"id\": \"c1\", \"label\": \"releases\"}, {\"id\": \"c2\", \"label\": \"design\"}]}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Nuevo; reutiliza core/mentions (de Composer) y core/async-options (de Combobox). Referencias: Mentions de Ant Design y las menciones de GitHub y Slack."
+}

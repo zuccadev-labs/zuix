@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 237,
+ "count": 254,
  "groups": {
   "actions": [
    "Button",
@@ -34,14 +34,18 @@
    "Artifact",
    "AssistantMessage",
    "BranchPicker",
+   "Checkpoint",
    "Citation",
    "Markdown",
    "PromptInput",
    "Reasoning",
    "Sources",
+   "StackTrace",
    "Suggestions",
    "ToolCall",
-   "UsageMeter"
+   "UsageMeter",
+   "VoiceInput",
+   "WebPreview"
   ],
   "carousel": [
    "Carousel",
@@ -67,6 +71,7 @@
   "chat": [
    "CallCard",
    "ChatHeader",
+   "ChatSearch",
    "Composer",
    "ConversationList",
    "DeliveryStatus",
@@ -113,7 +118,8 @@
    "MetricCard",
    "MetricGroup",
    "ProgressGoal",
-   "Tracker"
+   "Tracker",
+   "Widget"
   ],
   "data": [
    "Avatar",
@@ -122,11 +128,13 @@
    "Chip",
    "CircularProgress",
    "DataTable",
+   "DataView",
    "DescriptionList",
    "FilterBar",
    "Item",
    "Kbd",
    "Meter",
+   "OverflowList",
    "PriceBreakdown",
    "PriceTag",
    "Progress",
@@ -158,7 +166,8 @@
    "NotificationBadge",
    "NotificationCenter",
    "Skeleton",
-   "Spinner"
+   "Spinner",
+   "TopProgress"
   ],
   "forms": [
    "Calendar",
@@ -188,6 +197,7 @@
    "InputGroup",
    "Listbox",
    "MaskedInput",
+   "Mentions",
    "MonthPicker",
    "NativeSelect",
    "NumberInput",
@@ -212,21 +222,26 @@
    "YearPicker"
   ],
   "media": [
+   "AudioPlayer",
    "CompareSlider",
    "ImageCropper",
    "ImageList",
    "Masonry",
    "QRCode",
-   "SignaturePad"
+   "SignaturePad",
+   "Waveform"
   ],
   "navigation": [
    "Accordion",
+   "Affix",
+   "BackToTop",
    "Breadcrumb",
    "Collapsible",
    "Menubar",
    "NavList",
    "Pagination",
    "Stepper",
+   "TableOfContents",
    "Tabs",
    "Tree"
   ],
@@ -247,7 +262,9 @@
    "HoverCard",
    "Menu",
    "Modal",
+   "Popconfirm",
    "Popover",
+   "SearchView",
    "Toast",
    "Toggletip",
    "Tooltip",
@@ -3303,6 +3320,96 @@
    "file": "zui/src/components/ai/BranchPicker.manifest.json"
   },
   {
+   "name": "Checkpoint",
+   "group": "ai",
+   "description": "Punto de restauración en una conversación de un asistente: una divisoria con su nombre, la hora y el botón de restaurar la conversación (y lo que dependa de ella) a ese punto.",
+   "import": "import { Checkpoint } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Checkpoint",
+     "description": "Nombre del punto («Before refactor»)."
+    },
+    {
+     "name": "time",
+     "type": "string",
+     "description": "Hora ya formateada («10:42»)."
+    },
+    {
+     "name": "dateTime",
+     "type": "string",
+     "description": "Instante para `<time datetime>` (ISO)."
+    },
+    {
+     "name": "description",
+     "type": "string",
+     "description": "Qué había en ese punto."
+    },
+    {
+     "name": "restored",
+     "type": "boolean",
+     "default": false,
+     "description": "Ya restaurado: el botón queda desactivado y lo dice."
+    },
+    {
+     "name": "onRestore",
+     "type": "() => void"
+    },
+    {
+     "name": "restoreLabel",
+     "type": "string",
+     "default": "Restore"
+    },
+    {
+     "name": "restoredLabel",
+     "type": "string",
+     "default": "Restored"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    }
+   ],
+   "states": [
+    "rest",
+    "restored",
+    "disabled"
+   ],
+   "tokens": [
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "accent",
+    "success-text",
+    "text-caption"
+   ],
+   "classes": [
+    "z-checkpoint",
+    "z-checkpoint__rule",
+    "z-checkpoint__badge",
+    "z-checkpoint__label",
+    "z-checkpoint__time",
+    "z-checkpoint__description",
+    "z-checkpoint__restore"
+   ],
+   "a11y": "role=group nombrado por el punto. El botón de restaurar se describe con el nombre del punto (aria-describedby): en una conversación con varios, «Restore» dice cuál. Las líneas son decorativas (aria-hidden). Sin React es solo marcado: el clic del botón lo atiende la aplicación.",
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Antes de un cambio",
+     "code": "<Checkpoint label=\"Before refactor\" time=\"10:42\" dateTime=\"2026-11-25T10:42:00Z\" />"
+    },
+    {
+     "title": "Restaurado",
+     "code": "<Checkpoint label=\"Plan approved\" time=\"09:15\" restored />"
+    }
+   ],
+   "origin": "Nuevo. Referencias: el Checkpoint de AI Elements (Vercel) y los puntos de restauración de los editores con agentes.",
+   "file": "zui/src/components/ai/Checkpoint.manifest.json"
+  },
+  {
    "name": "Citation",
    "group": "ai",
    "description": "Cita en línea a una fuente: un número que es un enlace, con una tarjeta (título y dominio) al pasar el puntero o enfocarla.",
@@ -3688,6 +3795,109 @@
    "file": "zui/src/components/ai/Sources.manifest.json"
   },
   {
+   "name": "StackTrace",
+   "group": "ai",
+   "description": "Traza de un error, plegable: el tipo y el mensaje, los marcos de la aplicación a la vista y los de terceros (node_modules, node:, extensiones) plegados en grupos, y copiar. Lee las pilas de Chrome, Node, Firefox y Safari.",
+   "import": "import { StackTrace } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "error",
+     "type": "string | Error",
+     "description": "La traza (`error.stack`) o el propio error."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": true,
+     "description": "Marcos a la vista al empezar."
+    },
+    {
+     "name": "showLibrary",
+     "type": "boolean",
+     "default": false,
+     "description": "Grupos de terceros abiertos al empezar."
+    },
+    {
+     "name": "libraryPatterns",
+     "type": "string[]",
+     "description": "Lo que marca un marco como de terceros si su archivo lo contiene."
+    },
+    {
+     "name": "selectable",
+     "type": "boolean",
+     "default": false,
+     "description": "Cada marco es un botón (`onFrameSelect`)."
+    },
+    {
+     "name": "onFrameSelect",
+     "type": "(frame: StackFrame, index: number) => void",
+     "description": "Con `selectable`: para abrir el marco en el editor."
+    },
+    {
+     "name": "onCopy",
+     "type": "(detail: { ok: boolean }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<StackTraceLabels>",
+     "description": "trace, copy, copied, copyFailed, expand, collapse, library («{count} library frames»), libraryOne, anonymous y frames, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "open",
+    "collapsed",
+    "library-open"
+   ],
+   "tokens": [
+    "code-bg",
+    "line",
+    "panel-radius",
+    "danger",
+    "danger-text",
+    "fg",
+    "fg-muted",
+    "row-hover",
+    "font-mono",
+    "text-code"
+   ],
+   "classes": [
+    "z-stack-trace",
+    "z-stack-trace__head",
+    "z-stack-trace__icon",
+    "z-stack-trace__title",
+    "z-stack-trace__name",
+    "z-stack-trace__message",
+    "z-stack-trace__copy",
+    "z-stack-trace__toggle",
+    "z-stack-trace__chevron",
+    "z-stack-trace__frames",
+    "z-stack-trace__frame",
+    "z-stack-trace__line",
+    "z-stack-trace__open",
+    "z-stack-trace__fn",
+    "z-stack-trace__file",
+    "z-stack-trace__group",
+    "z-stack-trace__toggle-group",
+    "z-stack-trace__library"
+   ],
+   "a11y": "role=group «Stack trace». Plegar y cada grupo de terceros son botones con aria-expanded y aria-controls. La ruta completa de cada marco va en title; la visible se acorta a las dos últimas partes. Copiar anuncia el resultado en la región viva. El texto del error entra siempre como texto. Sin React: .z-stack-trace con `{ \"error\": \"…\" }` en data-props, data-open=\"false\", data-show-library, data-library-patterns y data-selectable; emite z:copy, z:toggle y z:frameselect { frame, index }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Error de una pantalla",
+     "code": "<StackTrace error={\"TypeError: Cannot read properties of undefined (reading 'map')\\n    at ProjectList (http://localhost:5173/src/screens/Projects.tsx:42:19)\\n    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom.js:11548:26)\\n    at mountIndeterminateComponent (http://localhost:5173/node_modules/.vite/deps/react-dom.js:14926:21)\\n    at loadProjects (http://localhost:5173/src/data/projects.ts:17:5)\"} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Error de una pantalla",
+     "code": "<div class=\"z-stack-trace\">\n  <script type=\"application/json\" data-props>{\"error\": \"TypeError: Cannot read properties of undefined (reading 'map')\\n    at ProjectList (http://localhost:5173/src/screens/Projects.tsx:42:19)\\n    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom.js:11548:26)\\n    at mountIndeterminateComponent (http://localhost:5173/node_modules/.vite/deps/react-dom.js:14926:21)\\n    at loadProjects (http://localhost:5173/src/data/projects.ts:17:5)\"}</script>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: el StackTrace de AI Elements y la página de error de Next.js (marcos de la aplicación y de terceros).",
+   "file": "zui/src/components/ai/StackTrace.manifest.json"
+  },
+  {
    "name": "Suggestions",
    "group": "ai",
    "description": "Sugerencias de prompt: fila desplazable (con fundido en el borde solo si queda más) o rejilla de tarjetas para la pantalla de inicio.",
@@ -3926,6 +4136,237 @@
    ],
    "origin": "Diseño propio; referencia: Vercel AI Elements (Context).",
    "file": "zui/src/components/ai/UsageMeter.manifest.json"
+  },
+  {
+   "name": "VoiceInput",
+   "group": "ai",
+   "description": "Grabar una nota de voz con MediaRecorder: nivel de la señal (Web Audio), tiempo sin las pausas, pausar y seguir, cancelar y enviar. Sin MediaRecorder o fuera de un contexto seguro el botón queda desactivado con su motivo; sin permiso del micrófono lo dice y se puede volver a intentar. Al enviar, el audio, la duración y una onda de 40 picos lista para VoiceNote.",
+   "import": "import { VoiceInput } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "maxDuration",
+     "type": "number",
+     "description": "Segundos como mucho; al llegar, se envía sola."
+    },
+    {
+     "name": "bars",
+     "type": "number",
+     "default": 24,
+     "description": "Barras del nivel."
+    },
+    {
+     "name": "showLabel",
+     "type": "boolean",
+     "default": false,
+     "description": "Texto visible en el botón de grabar."
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onSend",
+     "type": "(recording: VoiceSend) => void",
+     "description": "`{ blob, duration, peaks, type }`."
+    },
+    {
+     "name": "onCancel",
+     "type": "() => void",
+     "description": "Cancelar o Escape."
+    },
+    {
+     "name": "onStart",
+     "type": "() => void"
+    },
+    {
+     "name": "onError",
+     "type": "(detail: { problem: \"unsupported\" | \"denied\" | \"failed\" }) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<VoiceInputLabels>",
+     "description": "record, pause, resume, cancel, send, time, recording, paused, cancelled, sent, unsupported, denied y failed, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "idle",
+    "requesting",
+    "recording",
+    "paused",
+    "error",
+    "unsupported"
+   ],
+   "tokens": [
+    "surface-2",
+    "line",
+    "control-radius-lg",
+    "danger",
+    "danger-text",
+    "accent",
+    "line-strong",
+    "fg",
+    "fg-muted"
+   ],
+   "classes": [
+    "z-voice-input",
+    "z-voice-input__record",
+    "z-voice-input__label",
+    "z-voice-input__message",
+    "z-voice-input__cancel",
+    "z-voice-input__dot",
+    "z-voice-input__time",
+    "z-voice-input__level",
+    "z-voice-input__bar",
+    "z-voice-input__pause",
+    "z-voice-input__send"
+   ],
+   "a11y": "Botón «Record voice message» (con aria-busy mientras se pide permiso). Grabando, un grupo con cancelar, tiempo (role=timer), nivel decorativo (aria-hidden), pausar o seguir (el nombre cambia) y enviar; el foco va a enviar al empezar y vuelve a grabar al terminar. Escape cancela. Los cambios de estado se anuncian («Recording», «Recording paused», «Recording sent»). Sin permiso, el motivo en un role=alert ligado al botón con aria-describedby. Sin React: .z-voice-input con data-max-duration, data-bars, data-show-label y data-disabled; emite z:start, z:pause, z:resume, z:send, z:cancel y z:error.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Grabar con texto",
+     "code": "<VoiceInput showLabel maxDuration={120} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Grabar con texto",
+     "code": "<div class=\"z-voice-input\" data-show-label data-max-duration=\"120\"></div>"
+    }
+   ],
+   "origin": "Nuevo; la grabación y la onda siguen a las de Composer. Referencias: las notas de voz de WhatsApp y Telegram y el SpeechInput de AI Elements.",
+   "file": "zui/src/components/ai/VoiceInput.manifest.json"
+  },
+  {
+   "name": "WebPreview",
+   "group": "ai",
+   "description": "Vista previa de una dirección en un iframe aislado (`sandbox`, sin referer, sin permisos), con barra de dirección, atrás y adelante entre lo visitado desde ella, recargar, abrir en otra pestaña y anchos de dispositivo. Solo http y https. Compatible con una CSP estricta: el ancho del marco es una variable escrita por CSSOM.",
+   "import": "import { WebPreview } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "url",
+     "type": "string",
+     "description": "Dirección (controlado)."
+    },
+    {
+     "name": "defaultUrl",
+     "type": "string"
+    },
+    {
+     "name": "onUrlChange",
+     "type": "(url: string) => void",
+     "description": "Dirección nueva desde la barra, atrás o adelante. Con `url`, la aplicación decide si la sigue."
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Título del iframe, su nombre accesible. Por defecto, el de `labels.preview`."
+    },
+    {
+     "name": "sandbox",
+     "type": "string",
+     "default": "allow-scripts allow-forms",
+     "description": "Permisos de `sandbox`; los desconocidos se descartan. Vacío: el más restrictivo."
+    },
+    {
+     "name": "allow",
+     "type": "string",
+     "default": "",
+     "description": "Política de permisos del marco."
+    },
+    {
+     "name": "viewport",
+     "type": "enum",
+     "values": [
+      "desktop",
+      "tablet",
+      "mobile"
+     ],
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultViewport",
+     "type": "enum",
+     "values": [
+      "desktop",
+      "tablet",
+      "mobile"
+     ],
+     "default": "desktop"
+    },
+    {
+     "name": "onViewportChange",
+     "type": "(viewport) => void"
+    },
+    {
+     "name": "viewports",
+     "type": "boolean",
+     "default": false,
+     "description": "Botones de ancho de dispositivo."
+    },
+    {
+     "name": "editable",
+     "type": "boolean",
+     "default": true,
+     "description": "Barra de dirección editable."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<WebPreviewLabels>",
+     "description": "preview, address, back, forward, reload, open, viewports, desktop, tablet, mobile, invalid y empty, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "empty",
+    "loading",
+    "loaded",
+    "invalid"
+   ],
+   "tokens": [
+    "surface",
+    "surface-2",
+    "surface-3",
+    "canvas",
+    "line",
+    "panel-radius",
+    "danger-soft",
+    "danger-text",
+    "accent",
+    "font-mono"
+   ],
+   "classes": [
+    "z-web-preview",
+    "z-web-preview__bar",
+    "z-web-preview__nav",
+    "z-web-preview__address",
+    "z-web-preview__input",
+    "z-web-preview__viewports",
+    "z-web-preview__viewport",
+    "z-web-preview__open",
+    "z-web-preview__error",
+    "z-web-preview__stage",
+    "z-web-preview__viewport-frame",
+    "z-web-preview__frame",
+    "z-web-preview__progress",
+    "z-web-preview__empty"
+   ],
+   "a11y": "El iframe lleva `title` (su nombre accesible, como pide la guía de accesibilidad) y no desactiva su desplazamiento. La barra es un formulario con nombre; el campo (texto con inputmode=url) se marca aria-invalid y se describe con el error si la dirección no es http o https. Atrás, adelante y recargar son botones con nombre; los anchos, botones con aria-pressed. Abrir en otra pestaña es un enlace con rel=noopener noreferrer. Una página que prohíbe que la enmarquen se queda en blanco: el navegador no lo cuenta. Sin React: .z-web-preview con data-url, data-title, data-sandbox, data-allow, data-viewport, data-viewports y data-editable; emite z:urlchange y z:viewportchange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Vista previa con anchos",
+     "code": "<WebPreview defaultUrl=\"https://example.com\" title=\"Example site\" viewports />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Vista previa con anchos",
+     "code": "<div class=\"z-web-preview\" data-viewports data-title=\"Example site\" style=\"--z-web-preview-height: 260px\"></div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: el WebPreview de AI Elements (Vercel) y las vistas previas de v0 y Bolt.",
+   "file": "zui/src/components/ai/WebPreview.manifest.json"
   },
   {
    "name": "Carousel",
@@ -7583,6 +8024,99 @@
    ],
    "origin": "Diseño propio; referencias: WhatsApp, Telegram y el ConversationHeader de MUI X Chat.",
    "file": "zui/src/components/chat/ChatHeader.manifest.json"
+  },
+  {
+   "name": "ChatSearch",
+   "group": "chat",
+   "description": "Buscar en una conversación: campo, contador («2 of 7»), anterior y siguiente (Intro y Mayús + Intro) y cerrar (Escape). Busca sin mayúsculas ni acentos en el texto de los mensajes de `target` y resalta con la CSS Custom Highlight API, sin tocar el marcado de la lista. Vuelve a buscar cuando llegan mensajes.",
+   "import": "import { ChatSearch } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "target",
+     "type": "string",
+     "description": "Id del contenedor de los mensajes (una MessageList)."
+    },
+    {
+     "name": "selector",
+     "type": "string",
+     "default": ".z-message__text",
+     "description": "Elementos con el texto de cada mensaje dentro de `target`."
+    },
+    {
+     "name": "defaultQuery",
+     "type": "string"
+    },
+    {
+     "name": "matchCase",
+     "type": "boolean",
+     "default": false,
+     "description": "Distingue mayúsculas."
+    },
+    {
+     "name": "closable",
+     "type": "boolean",
+     "default": true,
+     "description": "Botón de cerrar y Escape."
+    },
+    {
+     "name": "onQueryChange",
+     "type": "(query: string) => void",
+     "description": "Lo escrito, tras un antirrebote corto."
+    },
+    {
+     "name": "onMatchChange",
+     "type": "(detail: { index; total; message }) => void",
+     "description": "Coincidencia actual: su posición, el total y el índice del mensaje entre los buscados."
+    },
+    {
+     "name": "onClose",
+     "type": "() => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<ChatSearchLabels>",
+     "description": "search, placeholder, count («{current} of {total}»), none, previous, next y close, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "empty",
+    "results",
+    "no-results"
+   ],
+   "tokens": [
+    "warning-soft",
+    "accent-solid",
+    "fg-on-accent",
+    "fg",
+    "fg-muted",
+    "danger-text",
+    "text-caption"
+   ],
+   "classes": [
+    "z-chat-search",
+    "z-chat-search__field",
+    "z-chat-search__input",
+    "z-chat-search__count",
+    "z-chat-search__prev",
+    "z-chat-search__next",
+    "z-chat-search__close"
+   ],
+   "a11y": "role=search con nombre; el campo (type=search) se describe con el contador, que se anuncia al cambiar («2 of 7», «No results»). Anterior y siguiente son botones con nombre, desactivados sin resultados. La coincidencia actual se lleva a la vista (suave salvo movimiento reducido). El resaltado es de la Highlight API y sigue a los colores forzados (Mark, Highlight); sin la API, el mensaje con coincidencias se subraya y el actual se rodea. Sin React: .z-chat-search con data-target, data-selector, data-query, data-match-case y data-closable; emite z:querychange, z:matchchange y z:close.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Buscar en la conversación",
+     "code": "<ChatSearch target=\"messages\" defaultQuery=\"release\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Buscar en la conversación",
+     "code": "<div style=\"display: grid; gap: 12px; max-width: 420px\">\n  <div class=\"z-chat-search\" data-target=\"chat-search-demo\" data-query=\"release\"></div>\n  <ol id=\"chat-search-demo\" class=\"z-chat-search-demo\" style=\"display: grid; gap: 8px; margin: 0; padding: 0; list-style: none\">\n    <li class=\"z-message\"><div class=\"z-message__text\">The release notes are ready for review.</div></li>\n    <li class=\"z-message\"><div class=\"z-message__text\">I added the notes about the new tokens.</div></li>\n    <li class=\"z-message\"><div class=\"z-message__text\">Can you check the release date?</div></li>\n  </ol>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: la búsqueda en el chat de Telegram y WhatsApp y la CSS Custom Highlight API.",
+   "file": "zui/src/components/chat/ChatSearch.manifest.json"
   },
   {
    "name": "Composer",
@@ -11663,6 +12197,116 @@
    "file": "zui/src/components/dashboard/Tracker.manifest.json"
   },
   {
+   "name": "Widget",
+   "group": "dashboard",
+   "description": "Marco de widget de un dashboard: cabecera con título, descripción, acciones y menú «⋯», y el cuerpo según su estado (cargando, vacío o error con reintento). Dentro de DashboardGrid es una de sus piezas y se mueve y se redimensiona con la rejilla; fuera, una tarjeta.",
+   "import": "import { Widget } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "id",
+     "type": "string",
+     "description": "El de su pieza en la disposición de DashboardGrid."
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "actions",
+     "type": "ReactNode",
+     "description": "Antes del menú (un selector de periodo)."
+    },
+    {
+     "name": "menu",
+     "type": "MenuEntry[]",
+     "description": "Entradas del menú de la cabecera."
+    },
+    {
+     "name": "status",
+     "type": "enum",
+     "values": [
+      "ready",
+      "loading",
+      "empty",
+      "error"
+     ],
+     "default": "ready",
+     "description": "Estado del cuerpo."
+    },
+    {
+     "name": "message",
+     "type": "ReactNode",
+     "description": "Texto del estado vacío o de error en vez del de `labels`."
+    },
+    {
+     "name": "onRetry",
+     "type": "() => void",
+     "description": "Reintentar desde el error; sin él no hay botón."
+    },
+    {
+     "name": "surface",
+     "type": "enum",
+     "values": [
+      "glass",
+      "solid"
+     ],
+     "default": "glass"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<WidgetLabels>",
+     "description": "menu («{title} options»), loading, empty, error y retry, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "ready",
+    "loading",
+    "empty",
+    "error"
+   ],
+   "tokens": [
+    "card-radius",
+    "fg-muted",
+    "danger",
+    "text-small"
+   ],
+   "classes": [
+    "z-widget",
+    "z-widget__body",
+    "z-widget__state",
+    "z-widget__message",
+    "z-widget__retry"
+   ],
+   "a11y": "Una región (section) nombrada por su título, como cada pieza de DashboardGrid; en edición hereda su asa y su teclado. El menú es un menu button con nombre «Revenue options». Cargando, el cuerpo lleva aria-busy y un Spinner con nombre; el error es un role=alert con el botón de reintentar. Sin React es marcado: el menú lo abre @zuccadev-labs/zuix-zui/dom/core (data-z-open) y el reintento lo atiende la aplicación.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con menú",
+     "code": "<Widget id=\"revenue\" title=\"Revenue\" description=\"Last 30 days\" menu={[{ id: \"refresh\", label: \"Refresh\", icon: \"arrow-path\" }, { id: \"remove\", label: \"Remove\", icon: \"trash\", danger: true }]}>\n  <StatTile label=\"Revenue\" value=\"$48.2k\" />\n</Widget>"
+    },
+    {
+     "title": "Error con reintento",
+     "code": "<Widget id=\"errors\" title=\"Errors\" status=\"error\" onRetry={() => {}} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Con menú",
+     "code": "<section class=\"z-dashboard-grid__item z-liquid z-widget\" data-id=\"revenue\" data-name=\"Revenue\" aria-labelledby=\"widget-demo-title\" style=\"max-width: 360px\">\n  <header class=\"z-dashboard-grid__head\">\n    <div class=\"z-dashboard-grid__titles\">\n      <h2 class=\"z-dashboard-grid__title\" id=\"widget-demo-title\">Revenue</h2>\n      <p class=\"z-dashboard-grid__description\">Last 30 days</p>\n    </div>\n    <div class=\"z-dashboard-grid__actions\">\n      <button type=\"button\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"sm\" aria-label=\"Revenue options\" title=\"Revenue options\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#widget-demo-menu\" data-z-placement=\"bottom-end\">\n        <z-icon name=\"ellipsis-horizontal\" size=\"16\"></z-icon>\n      </button>\n    </div>\n  </header>\n  <div class=\"z-dashboard-grid__body\">\n    <div class=\"z-widget__body\" data-status=\"ready\">\n      <div class=\"z-stat z-liquid\" data-variant=\"glass\">\n        <span class=\"z-stat__head\"><span class=\"z-stat__label\">Revenue</span></span>\n        <span class=\"z-stat__value\">$48.2k</span>\n      </div>\n    </div>\n  </div>\n</section>\n\n<div id=\"widget-demo-menu\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"Revenue options\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\"><span class=\"z-menu__icon\"><z-icon name=\"arrow-path\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Refresh</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-danger><span class=\"z-menu__icon\"><z-icon name=\"trash\" size=\"14\"></z-icon></span><span class=\"z-menu__text\">Remove</span></button>\n</div>"
+    },
+    {
+     "title": "Error con reintento",
+     "code": "<section class=\"z-dashboard-grid__item z-liquid z-widget\" data-id=\"errors\" data-name=\"Errors\" aria-labelledby=\"widget-error-title\" style=\"max-width: 360px\">\n  <header class=\"z-dashboard-grid__head\">\n    <div class=\"z-dashboard-grid__titles\">\n      <h2 class=\"z-dashboard-grid__title\" id=\"widget-error-title\">Errors</h2>\n    </div>\n  </header>\n  <div class=\"z-dashboard-grid__body\">\n    <div class=\"z-widget__body\" data-status=\"error\">\n      <div class=\"z-widget__state\" data-status=\"error\" role=\"alert\">\n        <z-icon name=\"exclamation-triangle\" size=\"20\"></z-icon>\n        <p class=\"z-widget__message\">Couldn't load this widget</p>\n        <button type=\"button\" class=\"z-btn z-btn--secondary z-widget__retry\" data-size=\"sm\">\n          <z-icon name=\"arrow-path\" size=\"14\"></z-icon>\n          Retry\n        </button>\n      </div>\n    </div>\n  </div>\n</section>"
+    }
+   ],
+   "origin": "Nuevo; compone DashboardGridItem, Menu y Spinner. Referencias: los marcos de widget de Grafana y Datadog.",
+   "file": "zui/src/components/dashboard/Widget.manifest.json"
+  },
+  {
    "name": "Avatar",
    "group": "data",
    "description": "Imagen de persona o entidad, con iniciales o icono como respaldo.",
@@ -12797,6 +13441,109 @@
    "file": "zui/src/components/data/DataTable.manifest.json"
   },
   {
+   "name": "DataView",
+   "group": "data",
+   "description": "La misma colección como lista o como rejilla, con un conmutador (SegmentedControl) y la elección guardada en `localStorage` si se da `persistKey`. La rejilla reparte celdas con ancho mínimo, sin cortes por tamaño de pantalla.",
+   "import": "import { DataView } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "T[]"
+    },
+    {
+     "name": "renderItem",
+     "type": "(item: T, layout: \"list\" | \"grid\", index: number) => ReactNode",
+     "description": "Cómo se pinta un elemento en cada disposición."
+    },
+    {
+     "name": "getKey",
+     "type": "(item: T, index: number) => string | number",
+     "description": "Por defecto, el `id` del elemento o su índice."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre de la colección (lo lee el lector de pantalla en la lista)."
+    },
+    {
+     "name": "layout",
+     "type": "enum",
+     "values": [
+      "list",
+      "grid"
+     ],
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultLayout",
+     "type": "enum",
+     "values": [
+      "list",
+      "grid"
+     ],
+     "default": "list"
+    },
+    {
+     "name": "onLayoutChange",
+     "type": "(layout: \"list\" | \"grid\") => void"
+    },
+    {
+     "name": "persistKey",
+     "type": "string",
+     "description": "Clave de `localStorage`: la elección se guarda y se recupera tras montar (la primera pintura es la de `defaultLayout`)."
+    },
+    {
+     "name": "min",
+     "type": "number",
+     "default": 220,
+     "description": "Ancho mínimo de una celda de la rejilla, en px."
+    },
+    {
+     "name": "toolbar",
+     "type": "ReactNode",
+     "description": "Controles junto al conmutador (orden, filtro)."
+    },
+    {
+     "name": "empty",
+     "type": "ReactNode",
+     "description": "Lo que se ve sin elementos (un EmptyState)."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DataViewLabels>",
+     "description": "layout, list y grid, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "list",
+    "grid",
+    "empty"
+   ],
+   "tokens": [
+    "space-2",
+    "space-3"
+   ],
+   "classes": [
+    "z-dataview",
+    "z-dataview__bar",
+    "z-dataview__tools",
+    "z-dataview__switch",
+    "z-dataview__items",
+    "z-dataview__item",
+    "z-dataview__empty"
+   ],
+   "a11y": "El conmutador es un SegmentedControl (APG «radiogroup»: una parada de tabulación, flechas para cambiar). La colección es una lista con nombre (`label`); cambiar de disposición no mueve el foco ni el orden de lectura. El almacenamiento se lee con try/catch: en una ventana privada o con los datos bloqueados se queda en `defaultLayout`. Sin React: .z-dataview con data-layout y data-persist; emite z:layoutchange { layout }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Proyectos en lista o rejilla",
+     "code": "<DataView label=\"Projects\" defaultLayout=\"grid\" min={180} items={[{ id: \"atlas\", name: \"Atlas\" }, { id: \"borealis\", name: \"Borealis\" }, { id: \"cirrus\", name: \"Cirrus\" }]} renderItem={(p) => <Card padding=\"sm\">{p.name}</Card>} />"
+    }
+   ],
+   "origin": "Nuevo. Referencias: el DataView de PrimeReact y los conmutadores lista/rejilla de los gestores de archivos.",
+   "file": "zui/src/components/data/DataView.manifest.json"
+  },
+  {
    "name": "DescriptionList",
    "group": "data",
    "description": "Pares término–descripción en un <dl>: propiedades de un recurso, metadatos, resumen de una ficha.",
@@ -13337,6 +14084,90 @@
    ],
    "origin": "LinearMeter del design system base.",
    "file": "zui/src/components/data/Meter.manifest.json"
+  },
+  {
+   "name": "OverflowList",
+   "group": "data",
+   "description": "Fila de elementos en la que los que no caben pasan a un menú «+N». Mide con un ResizeObserver; los que sobran siguen en el documento, fuera del flujo, invisibles e inertes, y el menú repite sus entradas. Recorta por el final o por el principio (migas de pan).",
+   "import": "import { OverflowList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "OverflowItem[]",
+     "description": "`{ id, label, icon, href, onSelect, disabled }`."
+    },
+    {
+     "name": "renderItem",
+     "type": "(item: OverflowItem) => ReactNode",
+     "description": "Cómo se pinta un elemento visible; por defecto, un botón fantasma o un enlace."
+    },
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "end",
+      "start"
+     ],
+     "default": "end",
+     "description": "Por dónde se recorta."
+    },
+    {
+     "name": "minVisible",
+     "type": "number",
+     "default": 0,
+     "description": "Los que se quedan siempre a la vista."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre del grupo."
+    },
+    {
+     "name": "moreLabel",
+     "type": "string",
+     "default": "{count} more",
+     "description": "Nombre del botón «+N»: «{count} more»."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "sm"
+    }
+   ],
+   "states": [
+    "fits",
+    "overflowing"
+   ],
+   "tokens": [
+    "space-1"
+   ],
+   "classes": [
+    "z-overflow-list",
+    "z-overflow-list__item",
+    "z-overflow-list__text",
+    "z-overflow-list__more",
+    "z-overflow-list__count"
+   ],
+   "a11y": "El botón «+N» es un menu button (APG): nombre «3 more», aria-haspopup=menu y el menú con las entradas que no caben. Los elementos ocultos llevan inert y aria-hidden: no se tabulan ni se leen dos veces. Sin React: .z-overflow-list con .z-overflow-list__item[data-id], .z-overflow-list__more (data-z-open al menú) y en el menú una entrada [data-overflow-for] por elemento; elegirla pulsa el elemento original. data-side, data-min-visible y data-more-label.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Navegación que se recorta",
+     "code": "<OverflowList label=\"Sections\" items={[{ id: \"home\", label: \"Home\" }, { id: \"projects\", label: \"Projects\" }, { id: \"reports\", label: \"Reports\" }, { id: \"billing\", label: \"Billing\" }, { id: \"members\", label: \"Members\" }, { id: \"settings\", label: \"Settings\" }]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Navegación que se recorta",
+     "code": "<div class=\"z-overflow-list\" role=\"group\" aria-label=\"Sections\" data-more-label=\"{count} more\" style=\"max-width: 340px\">\n  <div class=\"z-overflow-list__item\" data-id=\"home\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Home</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"projects\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Projects</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"reports\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Reports</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"billing\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Billing</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"members\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Members</span></button></div>\n  <div class=\"z-overflow-list__item\" data-id=\"settings\"><button type=\"button\" class=\"z-btn z-btn--ghost\" data-size=\"sm\"><span class=\"z-overflow-list__text\">Settings</span></button></div>\n  <button type=\"button\" class=\"z-btn z-btn--ghost z-overflow-list__more\" data-size=\"sm\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#overflow-menu\" data-z-placement=\"bottom-end\" aria-label=\"0 more\" data-overflow><span class=\"z-overflow-list__count\">+0</span></button>\n</div>\n\n<div id=\"overflow-menu\" popover class=\"z-liquid z-menu\" role=\"menu\" aria-label=\"More sections\" data-size=\"md\">\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"home\" hidden><span class=\"z-menu__text\">Home</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"projects\" hidden><span class=\"z-menu__text\">Projects</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"reports\" hidden><span class=\"z-menu__text\">Reports</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"billing\" hidden><span class=\"z-menu__text\">Billing</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"members\" hidden><span class=\"z-menu__text\">Members</span></button>\n  <button type=\"button\" role=\"menuitem\" class=\"z-menu__item\" tabindex=\"-1\" data-overflow-for=\"settings\" hidden><span class=\"z-menu__text\">Settings</span></button>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: el OverflowList de Blueprint y las pestañas «Más» de Tabs de esta suite.",
+   "file": "zui/src/components/data/OverflowList.manifest.json"
   },
   {
    "name": "PriceBreakdown",
@@ -16482,6 +17313,92 @@
    ],
    "origin": "Spinner del design system base.",
    "file": "zui/src/components/feedback/Spinner.manifest.json"
+  },
+  {
+   "name": "TopProgress",
+   "group": "feedback",
+   "description": "Barra de carga fija arriba de la ventana para navegaciones y peticiones: con valor (0–100), indeterminada (`active`) o siguiendo el controlador imperativo `topProgress` (`start()`, `set()`, `inc()`, `done()`, `reset()`, al estilo de NProgress), que gotea deprisa al principio y cada vez más despacio. Anuncia el principio y el final.",
+   "import": "import { TopProgress } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "number",
+     "description": "0–100 (controlado): barra determinada."
+    },
+    {
+     "name": "active",
+     "type": "boolean",
+     "description": "En marcha (controlado). Sin `value`, indeterminada."
+    },
+    {
+     "name": "indeterminate",
+     "type": "boolean",
+     "default": false,
+     "description": "Franja que recorre la barra en vez de goteo."
+    },
+    {
+     "name": "controller",
+     "type": "ProgressController",
+     "description": "Controlador que sigue sin `value` ni `active`; `topProgress` por defecto, o uno de `createProgress()`."
+    },
+    {
+     "name": "announce",
+     "type": "boolean",
+     "default": true,
+     "description": "Anuncia «Loading» y «Loaded» en la región viva."
+    },
+    {
+     "name": "inline",
+     "type": "boolean",
+     "default": false,
+     "description": "Dentro de su contenedor (posición absoluta) en vez de fija en la ventana."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TopProgressLabels>",
+     "description": "loading (nombre y anuncio al empezar) y done (anuncio al terminar), en inglés por defecto."
+    }
+   ],
+   "states": [
+    "idle",
+    "loading",
+    "done",
+    "indeterminate"
+   ],
+   "tokens": [
+    "accent",
+    "layer-top",
+    "duration-slow",
+    "ease-out"
+   ],
+   "classes": [
+    "z-top-progress",
+    "z-top-progress__bar"
+   ],
+   "a11y": "role=progressbar con nombre, aria-valuemin, aria-valuemax y aria-valuenow (sin él si es indeterminada); en reposo, aria-hidden. El principio y el final se anuncian en la región viva compartida del documento (no dentro de la barra: sus hijos son presentacionales). La barra avanza con `scale`, sin animar el ancho; con movimiento reducido la indeterminada late despacio en vez de recorrer. Sin React: .z-top-progress sigue a `topProgress` de @zuccadev-labs/zuix-zui/dom/page, o a data-value, data-active, data-indeterminate y data-inline.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Con valor, dentro de su contenedor",
+     "code": "<TopProgress value={64} inline announce={false} />"
+    },
+    {
+     "title": "Indeterminada",
+     "code": "<TopProgress active inline announce={false} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Con valor, dentro de su contenedor",
+     "code": "<div style=\"position: relative; height: 24px\">\n  <div class=\"z-top-progress\" data-inline data-value=\"64\" data-announce=\"false\"></div>\n</div>"
+    },
+    {
+     "title": "Indeterminada",
+     "code": "<div style=\"position: relative; height: 24px\">\n  <div class=\"z-top-progress\" data-inline data-active data-announce=\"false\"></div>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: NProgress (goteo y API start/done) y la guía «progress» de modern-web-guidance.",
+   "file": "zui/src/components/feedback/TopProgress.manifest.json"
   },
   {
    "name": "Calendar",
@@ -21532,6 +22449,72 @@
    "file": "zui/src/components/forms/MaskedInput.manifest.json"
   },
   {
+   "name": "Mentions",
+   "group": "forms",
+   "description": "Menciones con `@` y `#` (o los disparadores que se pidan) sobre cualquier Textarea o Input que envuelva. La lista se ancla al cursor; los candidatos salen de una lista fija (filtrada sin acentos) o de una carga asíncrona con antirrebote y cancelación, la misma de Combobox y Listbox. Funciona con campos controlados de React.",
+   "import": "import { Mentions } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "sources",
+     "type": "MentionSource[]",
+     "description": "`{ trigger, items, load, label }` por disparador: candidatos fijos o `load(query, { signal, page })`."
+    },
+    {
+     "name": "onSelect",
+     "type": "(item: ChosenMention) => void",
+     "description": "Mención elegida (`{ id, label, trigger }`): guárdala para codificar el texto al enviar con `encodeMentions`."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<MentionsLabels>",
+     "description": "suggestions, loading, empty, error y count («{count} suggestions»), en inglés por defecto."
+    }
+   ],
+   "states": [
+    "closed",
+    "open",
+    "loading",
+    "empty",
+    "error"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-radius",
+    "surface-2",
+    "accent-soft",
+    "accent-text",
+    "fg",
+    "fg-muted",
+    "danger-text",
+    "text-small",
+    "text-caption"
+   ],
+   "classes": [
+    "z-mentions",
+    "z-mentions__popup",
+    "z-mentions__option",
+    "z-mentions__avatar",
+    "z-mentions__description",
+    "z-mentions__status"
+   ],
+   "a11y": "Patrón APG «combobox» con lista emergente: el foco se queda en el campo, que lleva aria-autocomplete=list, aria-controls y aria-activedescendant (un <input> además role=combobox y aria-expanded; un <textarea> sigue siendo un cuadro de texto). ↑/↓ mueven la opción activa, Intro o Tab la insertan, Escape cierra sin perder lo escrito. El número de resultados y los estados de carga se anuncian en la región viva. Sin React: .z-mentions con el campo dentro y `{ \"sources\": [...] }` en data-props; carga con setMentionsLoader(el, trigger, load); emite z:mention { item }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Personas y canales",
+     "code": "<Mentions sources={[{ trigger: \"@\", label: \"People\", items: [{ id: \"u1\", label: \"Ana López\", description: \"Design\" }, { id: \"u2\", label: \"Bruno Díaz\", description: \"Engineering\" }] }, { trigger: \"#\", label: \"Channels\", items: [{ id: \"c1\", label: \"releases\" }, { id: \"c2\", label: \"design\" }] }]}>\n  <Textarea aria-label=\"Comment\" placeholder=\"Type @ or #\" rows={3} />\n</Mentions>"
+    }
+   ],
+   "html": [
+    {
+     "title": "Personas y canales",
+     "code": "<div class=\"z-mentions\" id=\"mentions-demo\">\n  <textarea class=\"z-textarea\" aria-label=\"Comment\" placeholder=\"Type @ or #\" rows=\"3\"></textarea>\n  <script type=\"application/json\" data-props>{\"sources\": [{\"trigger\": \"@\", \"label\": \"People\", \"items\": [{\"id\": \"u1\", \"label\": \"Ana López\", \"description\": \"Design\"}, {\"id\": \"u2\", \"label\": \"Bruno Díaz\", \"description\": \"Engineering\"}, {\"id\": \"u3\", \"label\": \"Carla Ruiz\", \"description\": \"Support\"}]}, {\"trigger\": \"#\", \"label\": \"Channels\", \"items\": [{\"id\": \"c1\", \"label\": \"releases\"}, {\"id\": \"c2\", \"label\": \"design\"}]}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Nuevo; reutiliza core/mentions (de Composer) y core/async-options (de Combobox). Referencias: Mentions de Ant Design y las menciones de GitHub y Slack.",
+   "file": "zui/src/components/forms/Mentions.manifest.json"
+  },
+  {
    "name": "MonthPicker",
    "group": "forms",
    "description": "Selector de mes: DatePicker en la vista de meses (rejilla 3 × 4). Valor YYYY-MM, como <input type=\"month\">; en rango, de mes a mes.",
@@ -25005,6 +25988,140 @@
    "file": "zui/src/components/forms/YearPicker.manifest.json"
   },
   {
+   "name": "AudioPlayer",
+   "group": "media",
+   "description": "Reproductor de audio: reproducir y pausar, la onda que hace de deslizador de posición, tiempo, saltos atrás y adelante, velocidad y teclado (K o Espacio, J y L como en los reproductores de vídeo; flechas sobre la onda). La onda es precalculada o se calcula con Web Audio (`analyze`). Una sola pista suena a la vez en el documento.",
+   "import": "import { AudioPlayer } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "src",
+     "type": "string"
+    },
+    {
+     "name": "title",
+     "type": "string",
+     "description": "Nombre de la pista: también el del grupo."
+    },
+    {
+     "name": "subtitle",
+     "type": "string",
+     "description": "Línea bajo el título (autor, programa)."
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "description": "Segundos; si falta, la del audio al cargar sus metadatos."
+    },
+    {
+     "name": "peaks",
+     "type": "number[]",
+     "description": "Onda precalculada, en cualquier escala."
+    },
+    {
+     "name": "analyze",
+     "type": "boolean",
+     "default": false,
+     "description": "Calcula la onda con Web Audio si no hay `peaks` (descarga el audio entero)."
+    },
+    {
+     "name": "bars",
+     "type": "number",
+     "default": 72
+    },
+    {
+     "name": "rates",
+     "type": "number[]",
+     "default": [
+      1,
+      1.25,
+      1.5,
+      2,
+      0.75
+     ],
+     "description": "Velocidades que recorre el botón."
+    },
+    {
+     "name": "skipBack",
+     "type": "number",
+     "default": 10,
+     "description": "Segundos del salto atrás."
+    },
+    {
+     "name": "skipForward",
+     "type": "number",
+     "default": 10,
+     "description": "Segundos del salto adelante."
+    },
+    {
+     "name": "onPlay · onPause · onEnded",
+     "type": "() => void"
+    },
+    {
+     "name": "onSeek",
+     "type": "(position: number) => void"
+    },
+    {
+     "name": "onRateChange",
+     "type": "(rate: number) => void"
+    },
+    {
+     "name": "labels",
+     "type": "Partial<AudioPlayerLabels>",
+     "description": "player, play, pause, seek, back («Back {seconds} seconds»), forward y speed («Playback speed {rate}»), en inglés por defecto."
+    }
+   ],
+   "states": [
+    "paused",
+    "playing",
+    "loading",
+    "disabled"
+   ],
+   "tokens": [
+    "surface",
+    "line",
+    "panel-radius",
+    "accent",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "text-caption",
+    "text-small"
+   ],
+   "classes": [
+    "z-audio-player",
+    "z-audio-player__play",
+    "z-audio-player__main",
+    "z-audio-player__meta",
+    "z-audio-player__title",
+    "z-audio-player__subtitle",
+    "z-audio-player__wave",
+    "z-audio-player__times",
+    "z-audio-player__time",
+    "z-audio-player__controls",
+    "z-audio-player__back",
+    "z-audio-player__forward",
+    "z-audio-player__rate",
+    "z-audio-player__audio",
+    "z-waveform__bar"
+   ],
+   "a11y": "role=group nombrado por el título. Reproducir es un botón cuyo nombre cambia (Play, Pause); los saltos dicen cuánto («Back 10 seconds») y la velocidad la actual («Playback speed 1.5×»). La onda es role=slider con el tiempo en aria-valuetext. K o Espacio (fuera de un botón) reproducen, J y L saltan, en todo el grupo. Sin transcripción no hay alternativa al audio: dala junto al reproductor. Sin React: .z-audio-player con data-src, data-title, data-subtitle, data-duration, data-peaks, data-analyze, data-rates, data-skip-back y data-skip-forward; emite z:play, z:pause, z:ended, z:seek y z:ratechange.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Episodio",
+     "code": "<AudioPlayer title=\"Design systems at scale\" subtitle=\"Episode 12\" duration={1834} peaks={[3, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 4, 6, 8, 9, 7, 5, 3, 2, 4, 6, 9, 8, 6, 4, 3, 5]} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Episodio",
+     "code": "<div class=\"z-audio-player\" data-title=\"Design systems at scale\" data-subtitle=\"Episode 12\" data-duration=\"1834\" data-peaks=\"3 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3 4 6 8 9 7 5 3 2 4 6 9 8 6 4 3 5\" style=\"max-width: 560px\"></div>"
+    }
+   ],
+   "origin": "Nuevo; reutiliza la onda, el reloj, las velocidades y el control del <audio> de VoiceNote. Referencias: los reproductores de podcast y las teclas de YouTube.",
+   "file": "zui/src/components/media/AudioPlayer.manifest.json"
+  },
+  {
    "name": "CompareSlider",
    "group": "media",
    "description": "Comparador antes/después: dos capas apiladas y un divisor que se arrastra o se mueve con el teclado. Sirve para imágenes, capturas o cualquier contenido del mismo tamaño.",
@@ -25607,6 +26724,97 @@
    "file": "zui/src/components/media/SignaturePad.manifest.json"
   },
   {
+   "name": "Waveform",
+   "group": "media",
+   "description": "Forma de onda que hace de deslizador de posición: precalculada (`peaks`) o calculada de `src` con Web Audio (descarga y decodifica el audio). Es la misma onda que pintan VoiceNote y AudioPlayer.",
+   "import": "import { Waveform } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "peaks",
+     "type": "number[]",
+     "description": "Onda precalculada, en cualquier escala."
+    },
+    {
+     "name": "src",
+     "type": "string",
+     "description": "Audio del que calcularla si no hay `peaks` (con CORS si es de otro origen)."
+    },
+    {
+     "name": "duration",
+     "type": "number",
+     "description": "Segundos; si se calcula, la del audio."
+    },
+    {
+     "name": "position",
+     "type": "number",
+     "description": "Segundos (controlado)."
+    },
+    {
+     "name": "defaultPosition",
+     "type": "number",
+     "default": 0
+    },
+    {
+     "name": "bars",
+     "type": "number",
+     "default": 64
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Seek"
+    },
+    {
+     "name": "disabled",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onSeek",
+     "type": "(position: number) => void",
+     "description": "Posición elegida con el puntero o el teclado."
+    },
+    {
+     "name": "onPeaks",
+     "type": "(detail: { peaks; duration }) => void",
+     "description": "Onda calculada: guárdala para no volver a calcularla."
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "loading",
+    "disabled"
+   ],
+   "tokens": [
+    "line-strong",
+    "accent",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-waveform",
+    "z-waveform__wave",
+    "z-waveform__bar"
+   ],
+   "a11y": "role=slider (APG «slider») con aria-valuemin, aria-valuemax y aria-valuenow en segundos y aria-valuetext «0:07 / 0:42»: flechas cinco segundos (reflejadas en RTL), Re Pág y Av Pág quince, Inicio y Fin. aria-busy mientras se calcula. Las barras son decorativas. Sin React: .z-waveform con data-peaks, data-src, data-duration, data-position, data-bars y data-label; emite z:seek { position } y z:peaks.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Onda precalculada",
+     "code": "<Waveform duration={42} defaultPosition={12} peaks={[3, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 4, 6, 8, 9, 7, 5, 3, 2, 4, 6, 9, 8, 6, 4, 3, 5]} label=\"Seek interview\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Onda precalculada",
+     "code": "<div class=\"z-waveform\" data-duration=\"42\" data-position=\"12\" data-label=\"Seek interview\" data-peaks=\"3 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3 4 6 8 9 7 5 3 2 4 6 9 8 6 4 3 5\" style=\"max-width: 420px\"></div>"
+    }
+   ],
+   "origin": "Nuevo; reutiliza la onda y el control de VoiceNote. Referencias: wavesurfer.js y la onda de los mensajes de voz.",
+   "file": "zui/src/components/media/Waveform.manifest.json"
+  },
+  {
    "name": "Accordion",
    "group": "navigation",
    "description": "Secciones plegables apiladas.",
@@ -25738,6 +26946,145 @@
     }
    ],
    "file": "zui/src/components/navigation/Accordion.manifest.json"
+  },
+  {
+   "name": "Affix",
+   "group": "navigation",
+   "description": "Fija su contenido al desplazar con `position: sticky` (sin cálculos de posición en JavaScript). Un IntersectionObserver solo dice cuándo está pegado: `data-stuck` para la sombra y `onStuckChange` para la aplicación.",
+   "import": "import { Affix } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "top",
+      "bottom"
+     ],
+     "default": "top",
+     "description": "Borde al que se pega."
+    },
+    {
+     "name": "offset",
+     "type": "number",
+     "default": 0,
+     "description": "Distancia al borde en px (lo que tape una barra fija)."
+    },
+    {
+     "name": "onStuckChange",
+     "type": "(stuck: boolean) => void"
+    }
+   ],
+   "states": [
+    "rest",
+    "stuck"
+   ],
+   "tokens": [
+    "layer-sticky",
+    "shadow-sm",
+    "duration-fast"
+   ],
+   "classes": [
+    "z-affix"
+   ],
+   "a11y": "Sin semántica propia: no cambia el orden ni el árbol accesible, solo la posición visual. Sin React: .z-affix con data-side y --z-affix-offset; emite z:stuckchange { stuck }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Barra de filtros fija bajo la cabecera",
+     "code": "<Affix offset={8}>\n  <Toolbar label=\"Filters\">\n    <Button size=\"sm\" icon=\"funnel\">Filters</Button>\n  </Toolbar>\n</Affix>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: el Affix de Ant Design y Mantine, con `position: sticky` en lugar de posición fija calculada.",
+   "file": "zui/src/components/navigation/Affix.manifest.json"
+  },
+  {
+   "name": "BackToTop",
+   "group": "navigation",
+   "description": "Botón de volver arriba que aparece al pasar un umbral de desplazamiento. La colocación es CSS: `sticky` al pie de su contenedor (por defecto) o `fixed` en la esquina de la ventana. Sube suave salvo con movimiento reducido y deja el foco al principio, no en el `<body>`.",
+   "import": "import { BackToTop } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "threshold",
+     "type": "number",
+     "default": 400,
+     "description": "Px desplazados a partir de los que aparece."
+    },
+    {
+     "name": "target",
+     "type": "string",
+     "description": "Id del desplazador; por defecto, el ancestro que desplaza o el documento."
+    },
+    {
+     "name": "focusTarget",
+     "type": "string",
+     "description": "Id de lo que recibe el foco al subir; por defecto, el desplazador o el `<main>`."
+    },
+    {
+     "name": "placement",
+     "type": "enum",
+     "values": [
+      "sticky",
+      "fixed"
+     ],
+     "default": "sticky",
+     "description": "`sticky`: al pie de su contenedor; `fixed`: esquina de la ventana."
+    },
+    {
+     "name": "showLabel",
+     "type": "boolean",
+     "default": false,
+     "description": "Texto visible junto al icono."
+    },
+    {
+     "name": "smooth",
+     "type": "boolean",
+     "default": true
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Back to top"
+    },
+    {
+     "name": "onClick",
+     "type": "() => void",
+     "description": "Tras subir."
+    }
+   ],
+   "states": [
+    "hidden",
+    "visible",
+    "hover",
+    "focus"
+   ],
+   "tokens": [
+    "shadow-md",
+    "layer-sticky",
+    "duration-normal",
+    "ease-emphasized",
+    "space-4"
+   ],
+   "classes": [
+    "z-back-to-top",
+    "z-back-to-top__button",
+    "z-back-to-top__label"
+   ],
+   "a11y": "Botón con nombre («Back to top»; con icono solo, también en title). Oculto con visibility: hidden y tabindex=-1: fuera del orden de tabulación y del árbol accesible. Si se oculta con el foco dentro (Inicio, Re Pág), el foco pasa al destino (`focusTarget`, el desplazador o el `<main>`), como pide la guía «scroll-position-aware-elements». Sin React: .z-back-to-top con data-threshold, data-target, data-focus-target, data-placement, data-show-label y data-label; emite z:click.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Al pie de un panel que desplaza",
+     "code": "<BackToTop threshold={200} showLabel />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Al pie de un panel que desplaza",
+     "code": "<div id=\"btt-demo\" tabindex=\"0\" role=\"region\" aria-label=\"Changelog\" style=\"max-height: 200px; overflow: auto\">\n  <p style=\"min-height: 600px\">Scroll this panel to bring the button up.</p>\n  <div class=\"z-back-to-top\" data-threshold=\"120\" data-show-label data-label=\"Back to top\"></div>\n</div>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: la guía «scroll-position-aware-elements» de modern-web-guidance y el BackTop de Ant Design.",
+   "file": "zui/src/components/navigation/BackToTop.manifest.json"
   },
   {
    "name": "Breadcrumb",
@@ -26407,6 +27754,127 @@
     }
    ],
    "file": "zui/src/components/navigation/Stepper.manifest.json"
+  },
+  {
+   "name": "TableOfContents",
+   "group": "navigation",
+   "description": "Índice de la página con la sección que se lee marcada. Scrollspy propio con IntersectionObserver (una banda fina en la línea de lectura; `scrollend` para los saltos largos), niveles con sangría, desplazamiento suave que respeta el movimiento reducido, foco en la sección elegida y modo compacto (un desplegable que muestra la sección actual). DocsLayout de zout lo usa para su índice.",
+   "import": "import { TableOfContents } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "TocItem[]",
+     "description": "`{ id, label, level }`: id del encabezado, texto y nivel (1–6); el menor no lleva sangría."
+    },
+    {
+     "name": "active",
+     "type": "string | null",
+     "description": "Sección marcada (controlado). Sin él la marca el desplazamiento."
+    },
+    {
+     "name": "defaultActive",
+     "type": "string | null"
+    },
+    {
+     "name": "onActiveChange",
+     "type": "(id: string) => void",
+     "description": "La sección que se lee cambió (desplazamiento o clic)."
+    },
+    {
+     "name": "compact",
+     "type": "boolean",
+     "default": false,
+     "description": "Desplegable con la sección actual en el resumen, para columnas estrechas."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false,
+     "description": "Abierto al empezar, en modo compacto."
+    },
+    {
+     "name": "offset",
+     "type": "number",
+     "default": 0,
+     "description": "Lo que tapa arriba (una barra fija), en px: la línea de lectura y el destino del desplazamiento lo descuentan."
+    },
+    {
+     "name": "smooth",
+     "type": "boolean",
+     "default": true,
+     "description": "Desplazamiento suave al elegir; siempre instantáneo con movimiento reducido."
+    },
+    {
+     "name": "hideTitle",
+     "type": "boolean",
+     "default": false,
+     "description": "Sin título visible (la navegación conserva su nombre)."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<TableOfContentsLabels>",
+     "description": "title («On this page»): nombre de la navegación y título visible."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "current",
+    "compact",
+    "open"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-text",
+    "line",
+    "line-strong",
+    "surface",
+    "control-radius",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+   ],
+   "classes": [
+    "z-toc",
+    "z-toc__title",
+    "z-toc__list",
+    "z-toc__entry",
+    "z-toc__link",
+    "z-toc__compact",
+    "z-toc__summary",
+    "z-toc__summary-title",
+    "z-toc__summary-current",
+    "z-toc__chevron"
+   ],
+   "a11y": "role=navigation con nombre («On this page»); el título visible va con aria-hidden para no repetirlo. Lista ordenada de enlaces de fragmento; la sección que se lee lleva aria-current=\"true\" y se distingue por peso y por la marca del borde, no solo por el color. Al elegir, desplaza (suave salvo prefers-reduced-motion), añade la entrada al historial y lleva el foco a la sección (tabindex=-1 si no es enfocable). En modo compacto es un <details> nativo. Sin React: .z-toc con data-label, data-compact, data-open, data-offset, data-smooth=\"false\", data-active y `{ \"items\": [...] }` en <script type=\"application/json\" data-props>; emite z:activechange { id }.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Índice de un artículo",
+     "code": "<TableOfContents items={[{ id: \"intro\", label: \"Introduction\", level: 2 }, { id: \"install\", label: \"Install\", level: 2 }, { id: \"peer\", label: \"Peer dependencies\", level: 3 }, { id: \"usage\", label: \"Usage\", level: 2 }]} defaultActive=\"install\" />"
+    },
+    {
+     "title": "Compacto",
+     "code": "<TableOfContents compact items={[{ id: \"intro\", label: \"Introduction\" }, { id: \"install\", label: \"Install\" }]} defaultActive=\"intro\" />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Índice de un artículo",
+     "code": "<div style=\"display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 16px\">\n  <div id=\"toc-demo-article\" tabindex=\"0\" role=\"region\" aria-label=\"Release notes\" style=\"max-height: 220px; overflow: auto\">\n    <h3 id=\"toc-intro\">Introduction</h3>\n    <p style=\"min-height: 180px\">Why the release exists.</p>\n    <h3 id=\"toc-install\">Install</h3>\n    <p style=\"min-height: 180px\">Package manager and versions.</p>\n    <h4 id=\"toc-peer\">Peer dependencies</h4>\n    <p style=\"min-height: 180px\">React is optional.</p>\n    <h3 id=\"toc-usage\">Usage</h3>\n    <p style=\"min-height: 180px\">Import the styles first.</p>\n  </div>\n  <div class=\"z-toc\" data-label=\"On this page\" data-active=\"toc-intro\">\n    <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"toc-intro\", \"label\": \"Introduction\", \"level\": 3}, {\"id\": \"toc-install\", \"label\": \"Install\", \"level\": 3}, {\"id\": \"toc-peer\", \"label\": \"Peer dependencies\", \"level\": 4}, {\"id\": \"toc-usage\", \"label\": \"Usage\", \"level\": 3}]}</script>\n  </div>\n</div>"
+    },
+    {
+     "title": "Compacto",
+     "code": "<div class=\"z-toc\" data-compact data-label=\"On this page\" data-active=\"toc-install\" style=\"max-width: 280px\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"toc-intro\", \"label\": \"Introduction\", \"level\": 3}, {\"id\": \"toc-install\", \"label\": \"Install\", \"level\": 3}]}</script>\n</div>"
+    }
+   ],
+   "origin": "Nuevo; sustituye al índice propio de DocsLayout. Referencias: el patrón scrollspy de modern-web-guidance, el «On this page» de Docusaurus y Starlight.",
+   "file": "zui/src/components/navigation/TableOfContents.manifest.json"
   },
   {
    "name": "Tabs",
@@ -28597,6 +30065,136 @@
    "file": "zui/src/components/overlay/Modal.manifest.json"
   },
   {
+   "name": "Popconfirm",
+   "group": "overlay",
+   "description": "Confirmación en línea anclada a su disparador, para una acción que no merece un diálogo modal (borrar una fila, descartar un borrador). Es un Popover con título, descripción y los botones Cancelar y Confirmar; si `onConfirm` devuelve una promesa, el botón espera ocupado.",
+   "import": "import { Popconfirm } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "trigger",
+     "type": "ReactElement",
+     "description": "El botón que pide la confirmación."
+    },
+    {
+     "name": "title",
+     "type": "ReactNode"
+    },
+    {
+     "name": "description",
+     "type": "ReactNode"
+    },
+    {
+     "name": "intent",
+     "type": "enum",
+     "values": [
+      "default",
+      "danger"
+     ],
+     "default": "default",
+     "description": "`danger` marca la acción como destructiva."
+    },
+    {
+     "name": "icon",
+     "type": "IconName"
+    },
+    {
+     "name": "confirmLabel",
+     "type": "string",
+     "default": "Confirm"
+    },
+    {
+     "name": "cancelLabel",
+     "type": "string",
+     "default": "Cancel"
+    },
+    {
+     "name": "onConfirm",
+     "type": "() => void | Promise<unknown>",
+     "description": "Con una promesa, el botón queda ocupado; si se rechaza, la confirmación sigue abierta."
+    },
+    {
+     "name": "onCancel",
+     "type": "() => void",
+     "description": "Cancelar, Escape o un clic fuera."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "top",
+      "right",
+      "bottom",
+      "left"
+     ],
+     "default": "top"
+    },
+    {
+     "name": "align",
+     "type": "enum",
+     "values": [
+      "start",
+      "center",
+      "end"
+     ],
+     "default": "center"
+    }
+   ],
+   "states": [
+    "closed",
+    "open",
+    "busy"
+   ],
+   "tokens": [
+    "popup-bg",
+    "popup-radius",
+    "fg",
+    "fg-muted",
+    "info",
+    "danger",
+    "text-small",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-popconfirm",
+    "z-popconfirm__content",
+    "z-popconfirm__icon",
+    "z-popconfirm__text",
+    "z-popconfirm__title",
+    "z-popconfirm__description",
+    "z-popconfirm__actions"
+   ],
+   "a11y": "Popover role=dialog nombrado por su título (aria-labelledby). El foco empieza en Cancelar (la acción segura) y los dos botones llevan la descripción en aria-describedby, que es lo que el lector dice al entrar. Escape o un clic fuera cancelan y el foco vuelve al disparador; ocupado, Confirmar lleva aria-busy y aria-disabled sin perder el foco. Sin React: .z-popover.z-popconfirm[popover] con un botón [data-z-close] con autofocus y otro [data-z-confirm]; confirmar emite z:confirm en la capa y la cierra salvo preventDefault().",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Borrar una fila",
+     "code": "<Popconfirm intent=\"danger\" title=\"Delete this row?\" description=\"Its history goes with it.\" confirmLabel=\"Delete\" trigger={<Button variant=\"danger\" icon=\"trash\">Delete</Button>} />"
+    }
+   ],
+   "html": [
+    {
+     "title": "Borrar una fila",
+     "code": "<button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"md\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-z-open=\"#popconfirm-demo\" data-z-placement=\"top\">\n  <z-icon name=\"trash\" size=\"16\"></z-icon>\n  Delete\n</button>\n\n<div id=\"popconfirm-demo\" popover class=\"z-liquid z-popover z-popconfirm\" role=\"dialog\" aria-labelledby=\"popconfirm-demo-title\" data-arrow>\n  <div class=\"z-popover__body\">\n    <div class=\"z-popconfirm__content\" data-intent=\"danger\">\n      <span class=\"z-popconfirm__icon\" aria-hidden=\"true\"><z-icon name=\"exclamation-triangle\" size=\"18\"></z-icon></span>\n      <div class=\"z-popconfirm__text\">\n        <p class=\"z-popconfirm__title\" id=\"popconfirm-demo-title\">Delete this row?</p>\n        <p class=\"z-popconfirm__description\" id=\"popconfirm-demo-description\">Its history goes with it.</p>\n      </div>\n    </div>\n    <div class=\"z-popconfirm__actions\">\n      <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" autofocus aria-describedby=\"popconfirm-demo-description\" data-z-close>Cancel</button>\n      <button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"sm\" aria-describedby=\"popconfirm-demo-description\" data-z-confirm>Delete</button>\n    </div>\n  </div>\n</div>"
+    }
+   ],
+   "origin": "Nuevo; reutiliza Popover. Referencias: Popconfirm de Ant Design y la guía «dialog» de modern-web-guidance (foco en la acción segura).",
+   "file": "zui/src/components/overlay/Popconfirm.manifest.json"
+  },
+  {
    "name": "Popover",
    "group": "overlay",
    "description": "Panel flotante anclado a un disparador, para contenido interactivo breve.",
@@ -28755,6 +30353,123 @@
     }
    ],
    "file": "zui/src/components/overlay/Popover.manifest.json"
+  },
+  {
+   "name": "SearchView",
+   "group": "overlay",
+   "description": "Búsqueda de Material 3: una barra que al pulsarla crece hasta una vista de búsqueda, a pantalla completa en estrecho y acoplada bajo la barra en ancho. Es un `<dialog>` modal: Escape o volver cierran y el foco vuelve a la barra. El crecimiento es un recorte desde la caja de la barra, sin animación con movimiento reducido.",
+   "import": "import { SearchView } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "value",
+     "type": "string",
+     "description": "Lo escrito (controlado)."
+    },
+    {
+     "name": "defaultValue",
+     "type": "string"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(value: string) => void"
+    },
+    {
+     "name": "onSubmit",
+     "type": "(value: string) => void",
+     "description": "Intro en el campo."
+    },
+    {
+     "name": "open",
+     "type": "boolean",
+     "description": "Controlado."
+    },
+    {
+     "name": "defaultOpen",
+     "type": "boolean",
+     "default": false
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(open: boolean) => void"
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "default": "Search",
+     "description": "Nombre del campo y de la vista."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "default": "Search"
+    },
+    {
+     "name": "mode",
+     "type": "enum",
+     "values": [
+      "auto",
+      "fullscreen",
+      "docked"
+     ],
+     "default": "auto",
+     "description": "`auto`: pantalla completa por debajo de 600 px y acoplada por encima."
+    },
+    {
+     "name": "trailing",
+     "type": "ReactNode",
+     "description": "Al final de la barra (un avatar, un botón de voz)."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<SearchViewLabels>",
+     "description": "back y clear, en inglés por defecto."
+    }
+   ],
+   "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "filled"
+   ],
+   "tokens": [
+    "control-bg",
+    "control-bg-hover",
+    "control-border",
+    "control-radius-xl",
+    "control-height-xl",
+    "surface-solid",
+    "popup-shadow",
+    "scrim",
+    "line",
+    "fg",
+    "fg-muted",
+    "accent",
+    "duration-slow",
+    "ease-emphasized"
+   ],
+   "classes": [
+    "z-searchview",
+    "z-searchview__bar",
+    "z-searchview__text",
+    "z-searchview__trailing",
+    "z-searchview__view",
+    "z-searchview__header",
+    "z-searchview__back",
+    "z-searchview__input",
+    "z-searchview__clear",
+    "z-searchview__results"
+   ],
+   "a11y": "La barra es un botón con aria-haspopup=dialog, aria-expanded y aria-controls. La vista es un <dialog> abierto con showModal() (el resto de la página queda inerte) y nombrado por `label`; el foco entra en el campo (type=search) y vuelve a la barra al cerrar. Escape, el botón de volver y, acoplada, pulsar fuera cierran. Sin React: .z-searchview con la barra y el <dialog class=\"z-searchview__view\">; emite z:open, z:close, z:valuechange { value } y z:submit { value }; setSearchViewOpen(el, open).",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Buscar en la aplicación",
+     "code": "<SearchView label=\"Search projects\" placeholder=\"Search projects\">\n  <NavList label=\"Recent\">\n    <NavLink href=\"#atlas\" icon=\"folder\">Atlas</NavLink>\n    <NavLink href=\"#borealis\" icon=\"folder\">Borealis</NavLink>\n  </NavList>\n</SearchView>"
+    }
+   ],
+   "origin": "Nuevo. Referencias: search bar y search view de Material 3 (crecimiento desde la barra, vista acoplada en pantallas grandes).",
+   "file": "zui/src/components/overlay/SearchView.manifest.json"
   },
   {
    "name": "Toast",

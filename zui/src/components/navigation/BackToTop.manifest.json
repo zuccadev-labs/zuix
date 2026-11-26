@@ -1,0 +1,88 @@
+{
+  "name": "BackToTop",
+  "group": "navigation",
+  "description": "Botón de volver arriba que aparece al pasar un umbral de desplazamiento. La colocación es CSS: `sticky` al pie de su contenedor (por defecto) o `fixed` en la esquina de la ventana. Sube suave salvo con movimiento reducido y deja el foco al principio, no en el `<body>`.",
+  "import": "import { BackToTop } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "threshold",
+      "type": "number",
+      "default": 400,
+      "description": "Px desplazados a partir de los que aparece."
+    },
+    {
+      "name": "target",
+      "type": "string",
+      "description": "Id del desplazador; por defecto, el ancestro que desplaza o el documento."
+    },
+    {
+      "name": "focusTarget",
+      "type": "string",
+      "description": "Id de lo que recibe el foco al subir; por defecto, el desplazador o el `<main>`."
+    },
+    {
+      "name": "placement",
+      "type": "enum",
+      "values": [
+        "sticky",
+        "fixed"
+      ],
+      "default": "sticky",
+      "description": "`sticky`: al pie de su contenedor; `fixed`: esquina de la ventana."
+    },
+    {
+      "name": "showLabel",
+      "type": "boolean",
+      "default": false,
+      "description": "Texto visible junto al icono."
+    },
+    {
+      "name": "smooth",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Back to top"
+    },
+    {
+      "name": "onClick",
+      "type": "() => void",
+      "description": "Tras subir."
+    }
+  ],
+  "states": [
+    "hidden",
+    "visible",
+    "hover",
+    "focus"
+  ],
+  "tokens": [
+    "shadow-md",
+    "layer-sticky",
+    "duration-normal",
+    "ease-emphasized",
+    "space-4"
+  ],
+  "classes": [
+    "z-back-to-top",
+    "z-back-to-top__button",
+    "z-back-to-top__label"
+  ],
+  "a11y": "Botón con nombre («Back to top»; con icono solo, también en title). Oculto con visibility: hidden y tabindex=-1: fuera del orden de tabulación y del árbol accesible. Si se oculta con el foco dentro (Inicio, Re Pág), el foco pasa al destino (`focusTarget`, el desplazador o el `<main>`), como pide la guía «scroll-position-aware-elements». Sin React: .z-back-to-top con data-threshold, data-target, data-focus-target, data-placement, data-show-label y data-label; emite z:click.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Al pie de un panel que desplaza",
+      "code": "<BackToTop threshold={200} showLabel />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Al pie de un panel que desplaza",
+      "code": "<div id=\"btt-demo\" tabindex=\"0\" role=\"region\" aria-label=\"Changelog\" style=\"max-height: 200px; overflow: auto\">\n  <p style=\"min-height: 600px\">Scroll this panel to bring the button up.</p>\n  <div class=\"z-back-to-top\" data-threshold=\"120\" data-show-label data-label=\"Back to top\"></div>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: la guía «scroll-position-aware-elements» de modern-web-guidance y el BackTop de Ant Design."
+}

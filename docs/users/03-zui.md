@@ -1,11 +1,11 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 237 componentes en 19 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 254 componentes en 19 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
 React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
 cargar todo (`/dom`) o el núcleo (`/dom/core`) más las familias que use la página (`/dom/dates`, `/dom/agenda`,
-`/dom/charts`, `/dom/forms`…): ver [Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias).
+`/dom/charts`, `/dom/forms`, `/dom/page`…): ver [Elegir entrada](./06-frameworks.md#elegir-entrada-todo-o-por-familias).
 
 No depende de ninguna biblioteca de UI. En ejecución solo necesita `@zuccadev-labs/zuix-tokens`;
 `@zuccadev-labs/zuix-zicon` es un peer obligatorio y React y React DOM (18.2 o posterior, o 19) son peers opcionales.
@@ -17,22 +17,22 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Grupo | Componentes |
 |---|---|
 | Acciones | Button, ButtonGroup, CopyButton, DownloadTrigger, Fab, FabMenu, IconButton, Link, SegmentedControl, SplitButton, Swap, Toggle, ToggleGroup, Toolbar |
-| Formularios | Calendar, Cascader, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, DateTimeRangePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MaskedInput, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, QuarterPicker, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, TimeRangePicker, TransferList, TreeSelect, WeekPicker, YearPicker |
+| Formularios | Calendar, Cascader, Checkbox, CheckboxGroup, CircularSlider, ColorArea, ColorField, ColorPicker, ColorPickerTrigger, ColorSlider, ColorSwatchPicker, Combobox, DateField, DateInput, DatePicker, DateRangePicker, DateTimePicker, DateTimeRangePicker, Editable, Field, Fieldset, FileUpload, Form, Input, InputGroup, Listbox, MaskedInput, Mentions, MonthPicker, NativeSelect, NumberInput, OTPInput, PasswordInput, QuarterPicker, Radio, RadioGroup, SearchInput, Select, ShortcutInput, Slider, Switch, TagsInput, Textarea, TimeField, TimePicker, TimeRangePicker, TransferList, TreeSelect, WeekPicker, YearPicker |
 | Agenda | CalendarHeatmap, EventCalendar, FreeBusy, HabitCalendar, PerpetualYear, SlotPicker, TimelineView |
-| Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DescriptionList, FilterBar, Item, Kbd, Meter, PriceBreakdown, PriceTag, Progress, Rating, ReviewCard, ReviewSummary, StatTile, StatusDot, SummaryList, Table, Timeline |
+| Datos | Avatar, AvatarGroup, Badge, Chip, CircularProgress, DataTable, DataView, DescriptionList, FilterBar, Item, Kbd, Meter, OverflowList, PriceBreakdown, PriceTag, Progress, Rating, ReviewCard, ReviewSummary, StatTile, StatusDot, SummaryList, Table, Timeline |
 | Gráficos | AnimatedNumber, AreaChart, BarChart, BulletChart, CategoryBar, ComboChart, DonutChart, HeatmapChart, LineChart, PieChart, RadarChart, ScatterChart, Sparkline |
-| Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, NotificationBadge, NotificationCenter, Skeleton, Spinner |
+| Estado | Alert, Banner, DotMatrix, EmptyState, ErrorBoundary, ErrorState, LoadingOverlay, NotificationBadge, NotificationCenter, Skeleton, Spinner, TopProgress |
 | Contenido | AspectRatio, Callout, Card, CardFooter, CardHeader, CardMedia, CodeBlock, Divider, FormatByte, FormatDate, FormatDuration, FormatNumber, Highlight, JsonTree, Marquee, Panel, Prose, RelativeTime, ScrollArea, Timer |
-| Medios | CompareSlider, ImageCropper, ImageList, Masonry, QRCode, SignaturePad |
+| Medios | AudioPlayer, CompareSlider, ImageCropper, ImageList, Masonry, QRCode, SignaturePad, Waveform |
 | Efectos | AttentionRing, Backdrop, BorderBeam, Confetti, Glow, TextEffect |
-| Capas | ActionBar, Command, CommandPalette, ConfirmDialog, ContextMenu, Drawer, HoverCard, Menu, Modal, Popover, Toast, Toggletip, Tooltip, Tour |
-| Navegación | Accordion, Breadcrumb, Collapsible, Menubar, NavList, Pagination, Stepper, Tabs, Tree |
+| Capas | ActionBar, Command, CommandPalette, ConfirmDialog, ContextMenu, Drawer, HoverCard, Menu, Modal, Popconfirm, Popover, SearchView, Toast, Toggletip, Tooltip, Tour |
+| Navegación | Accordion, Affix, BackToTop, Breadcrumb, Collapsible, Menubar, NavList, Pagination, Stepper, TableOfContents, Tabs, Tree |
 | Carousel | Carousel, Gallery, Lightbox, Stories |
 | Tiempo | AnalogClock, Clock, Countdown, DurationField, TimeZoneSelect, WorldClock |
 | Terminal y código | CodeViewer, DiffViewer, LogConsole, Terminal |
-| Chat y mensajería | CallCard, ChatHeader, Composer, ConversationList, DeliveryStatus, EmojiPicker, MessageBubble, MessageList, PinnedBar, Reactions, ThreadSummary, TypingIndicator, VoiceNote |
-| IA y agentes | AgentPlan, AgentStatus, ApprovalCard, Artifact, AssistantMessage, BranchPicker, Citation, Markdown, PromptInput, Reasoning, Sources, Suggestions, ToolCall, UsageMeter |
-| Dashboard y tableros | ActivityFeed, BarList, DashboardGrid, DeltaBadge, FunnelChart, Gauge, KanbanBoard, Leaderboard, MetricCard, MetricGroup, ProgressGoal, Tracker |
+| Chat y mensajería | CallCard, ChatHeader, ChatSearch, Composer, ConversationList, DeliveryStatus, EmojiPicker, MessageBubble, MessageList, PinnedBar, Reactions, ThreadSummary, TypingIndicator, VoiceNote |
+| IA y agentes | AgentPlan, AgentStatus, ApprovalCard, Artifact, AssistantMessage, BranchPicker, Checkpoint, Citation, Markdown, PromptInput, Reasoning, Sources, StackTrace, Suggestions, ToolCall, UsageMeter, VoiceInput, WebPreview |
+| Dashboard y tableros | ActivityFeed, BarList, DashboardGrid, DeltaBadge, FunnelChart, Gauge, KanbanBoard, Leaderboard, MetricCard, MetricGroup, ProgressGoal, Tracker, Widget |
 | Usuarios y perfiles | AccountMenu, MemberList, Persona, PresenceBadge, ProfileEditor, ProfileHeader, SettingsSection, UserCard |
 | Nodos | Node, NodeCanvas, NodeControls, NodeListView, NodeMinimap |
 
@@ -40,8 +40,8 @@ Cada componente declara en el contrato qué necesita para funcionar:
 
 | `behavior` | Significado | Cuántos |
 |---|---|---|
-| `none` | Solo CSS. Basta el marcado | 73 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 163 |
+| `none` | Solo CSS. Basta el marcado | 74 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 179 |
 | `react` | Solo funciona con el binding de React. Hoy ninguno | 0 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
@@ -802,6 +802,184 @@ sin ella, `searchable` la añade y filtra las opciones locales conservando el t�
 vista. `overflow="menu"` deja las que caben y pone las demás en un menú «Más» tras la tira: el botón queda fuera del
 tablist, y la pestaña elegida nunca va al menú.
 
+## Piezas de página y de dominio (0.5)
+
+Diecisiete piezas que antes resolvía cada aplicación por su cuenta. Las de página son las que acompañan a un
+documento largo o a una colección; las de dominio, las que repiten los productos de chat, asistentes, dashboards y
+audio. Todas siguen el mismo reparto: la lógica pura en `core/` (con pruebas de propiedades), el árbol o la
+interacción compartidos por React y el modo DOM, y los textos visibles por `labels`, en inglés por defecto. Sin React:
+TableOfContents, BackToTop, Affix, TopProgress, DataView, OverflowList, SearchView y Popconfirm en `/dom/page`;
+ChatSearch en `/dom/chat`; WebPreview, VoiceInput y StackTrace en `/dom/ai`; AudioPlayer y Waveform en `/dom/media`;
+Mentions en `/dom/forms`. Checkpoint es solo marcado y Widget, marcado más el menú del núcleo.
+
+### TableOfContents
+
+Índice de la página con la sección que se lee marcada con `aria-current="true"`. No escucha cada `scroll`: un
+IntersectionObserver vigila una banda de 1 px en la línea de lectura (un cuarto del alto visible bajo `offset`, como
+mucho 160 px) y solo mide cuando un encabezado la cruza; `scrollend` cubre los saltos largos (Inicio, Fin), que la banda
+no ve, y al final del documento se marca la última sección aunque sea corta. Al elegir un enlace desplaza (suave, salvo
+con `prefers-reduced-motion` o `smooth={false}`), añade la entrada al historial y lleva el foco a la sección. `compact`
+lo convierte en un `<details>` con la sección actual en el resumen. `active` lo controla la aplicación;
+`onActiveChange` avisa de cada cambio. DocsLayout de zout ya no tiene índice propio: usa este, en las dos formas.
+
+Probé la vía nativa (`scroll-target-group` y `:target-current`), pero no admite un desplazamiento por una barra fija
+ni un índice controlado, y solo existe en Chromium; la dejo para cuando la tengan todos los motores.
+
+```tsx
+<TableOfContents offset={64} items={[{ id: "install", label: "Install", level: 2 }, { id: "peer", label: "Peer dependencies", level: 3 }]} />
+```
+
+```html
+<div class="z-toc" data-offset="64">
+  <script type="application/json" data-props>{"items":[{"id":"install","label":"Install","level":2}]}</script>
+</div>
+```
+
+Sin `data-props`, el modo DOM lee la lista de los enlaces `.z-toc__link` ya escritos (así monta el índice que renderiza
+el servidor).
+
+### BackToTop y Affix
+
+BackToTop aparece al pasar `threshold` px (400) del desplazador (`target`, o el ancestro que desplaza). La colocación
+es CSS: `sticky` al pie de su contenedor, sin calcular posiciones, o `fixed` en la esquina de la ventana. Al pulsar sube
+y deja el foco en `focusTarget`, el desplazador o el `<main>`; si se oculta con el foco dentro (Inicio, Re Pág), el foco
+va al mismo sitio en vez de perderse en el `<body>`. Oculto, sale del orden de tabulación.
+
+Affix fija su contenido con `position: sticky` (`side`, `offset`); un IntersectionObserver solo dice cuándo está
+pegado, para la sombra (`data-stuck`) y para `onStuckChange`.
+
+```tsx
+<Affix offset={64}><Toolbar label="Filters">…</Toolbar></Affix>
+<BackToTop threshold={300} showLabel />
+```
+
+### TopProgress
+
+Barra de carga fija arriba. Tres formas: con `value` (0–100), indeterminada con `active`, o siguiendo un controlador
+imperativo al estilo de NProgress: `topProgress.start()`, `set(0.5)`, `inc()`, `done()` y `reset()`. El goteo avanza
+deprisa al principio y cada vez más despacio sin llegar al final; `done()` llena la barra y la oculta. `createProgress()`
+da otro controlador para una barra propia (`controller`). El principio y el final se anuncian («Loading», «Loaded»)
+en la región viva del documento, no dentro de la barra, cuyos hijos son presentacionales. Con `inline` va dentro de su
+contenedor.
+
+```tsx
+import { TopProgress, topProgress } from "@zuccadev-labs/zuix-zui";
+
+<TopProgress />;
+router.on("start", () => topProgress.start());
+router.on("done", () => topProgress.done());
+```
+
+### DataView
+
+La misma colección como lista o como rejilla, con un conmutador (SegmentedControl). `renderItem(item, layout)` pinta
+cada elemento; la rejilla reparte celdas de `min` px (220) sin cortes por tamaño de pantalla. Con `persistKey` la
+elección se guarda en `localStorage` y se recupera tras montar: la primera pintura es siempre la de `defaultLayout`,
+así el render del servidor coincide. El almacenamiento se lee con try/catch (ventana privada, datos bloqueados).
+
+```tsx
+<DataView label="Projects" persistKey="projects-layout" items={projects} renderItem={(p, layout) => <ProjectCard project={p} compact={layout === "list"} />} />
+```
+
+### OverflowList
+
+Una fila de elementos en la que lo que no cabe pasa a un menú «+N». Un ResizeObserver mide la fila; los que sobran
+siguen en el documento, fuera del flujo, invisibles e inertes, para poder medirlos, y el menú los repite. `side="start"`
+recorta por el principio (migas de pan) y `minVisible` deja siempre algunos. Sin React, cada elemento lleva `data-id` y
+el menú una entrada `[data-overflow-for]` por elemento; elegirla pulsa el original.
+
+### Mentions
+
+Menciones con `@` y `#` sobre cualquier Textarea o Input que envuelva. Cada fuente es `{ trigger, items }` o
+`{ trigger, load }`: la carga asíncrona es la de Combobox y Listbox (antirrebote, cancelación con `AbortSignal`,
+estados de carga, vacío y error). La lista se ancla al cursor (un espejo del campo da su posición) y sigue el patrón
+combobox: el foco se queda en el campo, ↑/↓ mueven la opción activa (`aria-activedescendant`), Intro o Tab insertan y
+Escape cierra. Funciona con un campo controlado de React: el texto se escribe con el setter nativo y un evento `input`.
+Al enviar, `encodeMentions` pasa lo visible a tokens.
+
+```tsx
+<Mentions sources={[{ trigger: "@", items: people }, { trigger: "#", load: (q, { signal }) => searchChannels(q, signal) }]} onSelect={remember}>
+  <Textarea aria-label="Comment" value={text} onChange={(e) => setText(e.target.value)} />
+</Mentions>
+```
+
+Sin React: `.z-mentions` con el campo dentro y `{ "sources": [...] }` en `data-props`; `setMentionsLoader(el, "#",
+load)` y `setMentionsItems(el, "@", items)`; emite `z:mention { item }`.
+
+### SearchView
+
+La búsqueda de Material 3: una barra que al pulsarla crece hasta una vista de búsqueda. Por debajo de 600 px ocupa la
+pantalla; por encima se queda acoplada sobre la barra, con su ancho (`mode` lo fija). Es un `<dialog>` abierto con
+`showModal()`: lo de debajo queda inerte, Escape o volver cierran y el foco vuelve a la barra. El crecimiento es un
+`clip-path` desde la caja de la barra, sin animación con movimiento reducido. `value` y `open` se pueden controlar; los
+resultados son los hijos.
+
+### Popconfirm
+
+Confirmación en línea anclada al disparador, para lo que no merece un diálogo modal. Es un Popover con título,
+descripción y Cancelar y Confirmar. El foco empieza en Cancelar, la acción segura, y los dos botones llevan la
+descripción en `aria-describedby`; Escape o un clic fuera cancelan. Si `onConfirm` devuelve una promesa, Confirmar
+espera ocupado (`aria-busy`) y, si se rechaza, la confirmación sigue abierta. Sin React: un `.z-popover.z-popconfirm`
+con `[data-z-close]` y `[data-z-confirm]`; confirmar emite `z:confirm` y cierra, salvo `preventDefault()`.
+
+### ChatSearch
+
+Buscar dentro de una conversación: campo, contador («2 of 7»), anterior y siguiente (Intro, Mayús + Intro) y cerrar
+(Escape). Busca sin mayúsculas ni acentos en el texto de los mensajes de `target` (`selector`, `.z-message__text`
+por defecto) y resalta con la CSS Custom Highlight API, sin tocar el marcado de la lista; sin la API, subraya el mensaje
+y rodea el actual. Cuando llegan mensajes, vuelve a buscar. `onMatchChange` da el índice del mensaje, para quien
+pinte una lista virtual y tenga que llevarlo a la vista.
+
+### WebPreview
+
+Vista previa de una dirección en un iframe aislado: `sandbox` («allow-scripts allow-forms» por defecto; los permisos
+desconocidos se descartan), sin referer y sin permisos (`allow`). La barra solo admite http y https (sin esquema
+supone https), lleva atrás y adelante entre lo visitado desde ella (el historial de un iframe de otro origen no se puede
+leer), recargar, abrir en otra pestaña y anchos de dispositivo (`viewports`). Funciona con una CSP estricta: el ancho
+es una variable escrita por CSSOM. Una página que prohíbe que la enmarquen se queda en blanco y el navegador no lo
+cuenta; por eso siempre está «Open in new tab».
+
+### Checkpoint
+
+Punto de restauración en una conversación con un asistente: una divisoria con nombre, hora (`time`, `dateTime`),
+`description` y el botón de restaurar (`onRestore`), que se describe con el nombre del punto. `restored` lo desactiva.
+
+### VoiceInput
+
+Grabar una nota de voz con MediaRecorder: nivel de la señal con Web Audio, tiempo sin las pausas, pausar y seguir,
+cancelar (o Escape) y enviar. `onSend` recibe `{ blob, duration, peaks, type }`, con 40 picos listos para VoiceNote.
+Sin MediaRecorder o fuera de un contexto seguro, el botón queda desactivado con su motivo; sin permiso del micrófono,
+lo dice en un `role="alert"` y se puede volver a intentar (`onError`). `maxDuration` envía sola al llegar.
+
+### StackTrace
+
+Traza de un error, plegable. Lee las pilas de V8 (Chrome, Node, Edge), Firefox y Safari, separa los marcos de la
+aplicación de los de terceros (`libraryPatterns`: `node_modules`, `node:`, extensiones…) y pliega los de terceros
+seguidos en grupos. Copiar deja la traza en el formato de V8. Con `selectable`, cada marco es un botón
+(`onFrameSelect`) para abrirlo en el editor. `parseStack`, `groupFrames` y `stackText` se exportan sueltos.
+
+### AudioPlayer y Waveform
+
+AudioPlayer: reproducir, la onda como deslizador de posición, tiempo, saltos (`skipBack`, `skipForward`), velocidad
+(`rates`) y teclado: K o Espacio reproducen, J y L saltan, las flechas buscan sobre la onda. Waveform es esa onda
+sola, con `position` controlable y `onSeek`. Las dos aceptan `peaks` precalculados o la calculan con Web Audio (en
+AudioPlayer, con `analyze`; descarga el audio entero y necesita CORS si es de otro origen). La onda, el reloj, las
+velocidades y el control del `<audio>` son los de VoiceNote: una sola pista suena a la vez en el documento.
+
+### Widget
+
+Marco de widget de un dashboard: título, descripción, `actions`, un menú «⋯» (`menu`) y el cuerpo según `status`:
+cargando (`aria-busy` y un Spinner con nombre), vacío o error con `onRetry`. Dentro de DashboardGrid es una de sus
+piezas, así que se mueve y se redimensiona con la rejilla, con su teclado; fuera, una tarjeta.
+
+```tsx
+<DashboardGrid layout={layout} onLayoutChange={setLayout}>
+  <Widget id="revenue" title="Revenue" status={revenue.status} onRetry={revenue.retry} menu={[{ id: "refresh", label: "Refresh" }]}>
+    <StatTile label="Revenue" value={revenue.value} />
+  </Widget>
+</DashboardGrid>
+```
+
 ## Reglas de uso
 
 1. No se pasan colores, radios ni sombras por `style` o clases sueltas.
@@ -830,8 +1008,9 @@ fuera de ellos. Son funciones puras salvo los hooks; las firmas están en las de
 | Atajos de teclado | `parseShortcut`, `normalizeShortcut`, `matchesShortcut`, `shortcutFromEvent`, `shortcutLabels`, `formatShortcutValue`, `ariaKeyshortcuts`, `isApplePlatform` |
 | Descargas | `download`, `mimeFromName` |
 | Medios y efectos | `qrcodeSvg`, `cropImage`, `cropImageBlob`, `signatureValue`, `signatureBlob`, `confetti`, `DOT_PATTERNS` |
-| Chat | `mergeDelivery`, `toggleReaction`, `encodeMentions`, `mentionParts`, `linkify`, `safeHref`, `searchEmoji`, `peaksFrom`, `EMOJI_SET`, `QUICK_REACTIONS` |
-| IA | `createTextStream`, `provisional`, `activePath`, `addBranch`, `branchInfo`, `selectBranch`, `stepBranch`, `siblings` |
+| Chat | `mergeDelivery`, `toggleReaction`, `encodeMentions`, `mentionParts`, `linkify`, `safeHref`, `searchEmoji`, `peaksFrom`, `findMatches`, `EMOJI_SET`, `QUICK_REACTIONS` |
+| IA | `createTextStream`, `provisional`, `activePath`, `addBranch`, `branchInfo`, `selectBranch`, `stepBranch`, `siblings`, `parseStack`, `groupFrames`, `stackText`, `normalizeUrl` |
+| Carga de página | `topProgress`, `createProgress` |
 | Dashboard | `computeDelta`, `computePace`, `elapsedFraction`, `funnelStages`, `normalizeLayout`, `parseLayout`, `serializeLayout`, `sortLayout`, `compactLayout`, `fitColumns`, `moveGridItem`, `resizeGridItem`, `moveCard`, `locateCard` |
 | Usuarios | `presenceText`, `presenceRank`, `PRESENCE_LABELS`, `initialsOf`, `filterMembers`, `groupMembers`, `sortByName`, `sortByPresence`, `validateProfile`, `validHandle`, `bioCounter` |
 | Listas largas y árboles | `wantsVirtual`, `virtualWindow`, `moveNode` |

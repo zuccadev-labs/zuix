@@ -1,0 +1,133 @@
+{
+  "name": "AudioPlayer",
+  "group": "media",
+  "description": "Reproductor de audio: reproducir y pausar, la onda que hace de deslizador de posición, tiempo, saltos atrás y adelante, velocidad y teclado (K o Espacio, J y L como en los reproductores de vídeo; flechas sobre la onda). La onda es precalculada o se calcula con Web Audio (`analyze`). Una sola pista suena a la vez en el documento.",
+  "import": "import { AudioPlayer } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "src",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "description": "Nombre de la pista: también el del grupo."
+    },
+    {
+      "name": "subtitle",
+      "type": "string",
+      "description": "Línea bajo el título (autor, programa)."
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "description": "Segundos; si falta, la del audio al cargar sus metadatos."
+    },
+    {
+      "name": "peaks",
+      "type": "number[]",
+      "description": "Onda precalculada, en cualquier escala."
+    },
+    {
+      "name": "analyze",
+      "type": "boolean",
+      "default": false,
+      "description": "Calcula la onda con Web Audio si no hay `peaks` (descarga el audio entero)."
+    },
+    {
+      "name": "bars",
+      "type": "number",
+      "default": 72
+    },
+    {
+      "name": "rates",
+      "type": "number[]",
+      "default": [
+        1,
+        1.25,
+        1.5,
+        2,
+        0.75
+      ],
+      "description": "Velocidades que recorre el botón."
+    },
+    {
+      "name": "skipBack",
+      "type": "number",
+      "default": 10,
+      "description": "Segundos del salto atrás."
+    },
+    {
+      "name": "skipForward",
+      "type": "number",
+      "default": 10,
+      "description": "Segundos del salto adelante."
+    },
+    {
+      "name": "onPlay · onPause · onEnded",
+      "type": "() => void"
+    },
+    {
+      "name": "onSeek",
+      "type": "(position: number) => void"
+    },
+    {
+      "name": "onRateChange",
+      "type": "(rate: number) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<AudioPlayerLabels>",
+      "description": "player, play, pause, seek, back («Back {seconds} seconds»), forward y speed («Playback speed {rate}»), en inglés por defecto."
+    }
+  ],
+  "states": [
+    "paused",
+    "playing",
+    "loading",
+    "disabled"
+  ],
+  "tokens": [
+    "surface",
+    "line",
+    "panel-radius",
+    "accent",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "text-caption",
+    "text-small"
+  ],
+  "classes": [
+    "z-audio-player",
+    "z-audio-player__play",
+    "z-audio-player__main",
+    "z-audio-player__meta",
+    "z-audio-player__title",
+    "z-audio-player__subtitle",
+    "z-audio-player__wave",
+    "z-audio-player__times",
+    "z-audio-player__time",
+    "z-audio-player__controls",
+    "z-audio-player__back",
+    "z-audio-player__forward",
+    "z-audio-player__rate",
+    "z-audio-player__audio",
+    "z-waveform__bar"
+  ],
+  "a11y": "role=group nombrado por el título. Reproducir es un botón cuyo nombre cambia (Play, Pause); los saltos dicen cuánto («Back 10 seconds») y la velocidad la actual («Playback speed 1.5×»). La onda es role=slider con el tiempo en aria-valuetext. K o Espacio (fuera de un botón) reproducen, J y L saltan, en todo el grupo. Sin transcripción no hay alternativa al audio: dala junto al reproductor. Sin React: .z-audio-player con data-src, data-title, data-subtitle, data-duration, data-peaks, data-analyze, data-rates, data-skip-back y data-skip-forward; emite z:play, z:pause, z:ended, z:seek y z:ratechange.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Episodio",
+      "code": "<AudioPlayer title=\"Design systems at scale\" subtitle=\"Episode 12\" duration={1834} peaks={[3, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 4, 6, 8, 9, 7, 5, 3, 2, 4, 6, 9, 8, 6, 4, 3, 5]} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Episodio",
+      "code": "<div class=\"z-audio-player\" data-title=\"Design systems at scale\" data-subtitle=\"Episode 12\" data-duration=\"1834\" data-peaks=\"3 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3 4 6 8 9 7 5 3 2 4 6 9 8 6 4 3 5\" style=\"max-width: 560px\"></div>"
+    }
+  ],
+  "origin": "Nuevo; reutiliza la onda, el reloj, las velocidades y el control del <audio> de VoiceNote. Referencias: los reproductores de podcast y las teclas de YouTube."
+}

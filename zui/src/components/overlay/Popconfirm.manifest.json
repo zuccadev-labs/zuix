@@ -1,0 +1,129 @@
+{
+  "name": "Popconfirm",
+  "group": "overlay",
+  "description": "Confirmación en línea anclada a su disparador, para una acción que no merece un diálogo modal (borrar una fila, descartar un borrador). Es un Popover con título, descripción y los botones Cancelar y Confirmar; si `onConfirm` devuelve una promesa, el botón espera ocupado.",
+  "import": "import { Popconfirm } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "trigger",
+      "type": "ReactElement",
+      "description": "El botón que pide la confirmación."
+    },
+    {
+      "name": "title",
+      "type": "ReactNode"
+    },
+    {
+      "name": "description",
+      "type": "ReactNode"
+    },
+    {
+      "name": "intent",
+      "type": "enum",
+      "values": [
+        "default",
+        "danger"
+      ],
+      "default": "default",
+      "description": "`danger` marca la acción como destructiva."
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "confirmLabel",
+      "type": "string",
+      "default": "Confirm"
+    },
+    {
+      "name": "cancelLabel",
+      "type": "string",
+      "default": "Cancel"
+    },
+    {
+      "name": "onConfirm",
+      "type": "() => void | Promise<unknown>",
+      "description": "Con una promesa, el botón queda ocupado; si se rechaza, la confirmación sigue abierta."
+    },
+    {
+      "name": "onCancel",
+      "type": "() => void",
+      "description": "Cancelar, Escape o un clic fuera."
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ],
+      "default": "top"
+    },
+    {
+      "name": "align",
+      "type": "enum",
+      "values": [
+        "start",
+        "center",
+        "end"
+      ],
+      "default": "center"
+    }
+  ],
+  "states": [
+    "closed",
+    "open",
+    "busy"
+  ],
+  "tokens": [
+    "popup-bg",
+    "popup-radius",
+    "fg",
+    "fg-muted",
+    "info",
+    "danger",
+    "text-small",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-popconfirm",
+    "z-popconfirm__content",
+    "z-popconfirm__icon",
+    "z-popconfirm__text",
+    "z-popconfirm__title",
+    "z-popconfirm__description",
+    "z-popconfirm__actions"
+  ],
+  "a11y": "Popover role=dialog nombrado por su título (aria-labelledby). El foco empieza en Cancelar (la acción segura) y los dos botones llevan la descripción en aria-describedby, que es lo que el lector dice al entrar. Escape o un clic fuera cancelan y el foco vuelve al disparador; ocupado, Confirmar lleva aria-busy y aria-disabled sin perder el foco. Sin React: .z-popover.z-popconfirm[popover] con un botón [data-z-close] con autofocus y otro [data-z-confirm]; confirmar emite z:confirm en la capa y la cierra salvo preventDefault().",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Borrar una fila",
+      "code": "<Popconfirm intent=\"danger\" title=\"Delete this row?\" description=\"Its history goes with it.\" confirmLabel=\"Delete\" trigger={<Button variant=\"danger\" icon=\"trash\">Delete</Button>} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Borrar una fila",
+      "code": "<button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"md\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-z-open=\"#popconfirm-demo\" data-z-placement=\"top\">\n  <z-icon name=\"trash\" size=\"16\"></z-icon>\n  Delete\n</button>\n\n<div id=\"popconfirm-demo\" popover class=\"z-liquid z-popover z-popconfirm\" role=\"dialog\" aria-labelledby=\"popconfirm-demo-title\" data-arrow>\n  <div class=\"z-popover__body\">\n    <div class=\"z-popconfirm__content\" data-intent=\"danger\">\n      <span class=\"z-popconfirm__icon\" aria-hidden=\"true\"><z-icon name=\"exclamation-triangle\" size=\"18\"></z-icon></span>\n      <div class=\"z-popconfirm__text\">\n        <p class=\"z-popconfirm__title\" id=\"popconfirm-demo-title\">Delete this row?</p>\n        <p class=\"z-popconfirm__description\" id=\"popconfirm-demo-description\">Its history goes with it.</p>\n      </div>\n    </div>\n    <div class=\"z-popconfirm__actions\">\n      <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\" autofocus aria-describedby=\"popconfirm-demo-description\" data-z-close>Cancel</button>\n      <button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"sm\" aria-describedby=\"popconfirm-demo-description\" data-z-confirm>Delete</button>\n    </div>\n  </div>\n</div>"
+    }
+  ],
+  "origin": "Nuevo; reutiliza Popover. Referencias: Popconfirm de Ant Design y la guía «dialog» de modern-web-guidance (foco en la acción segura)."
+}

@@ -1,0 +1,100 @@
+{
+  "name": "VoiceInput",
+  "group": "ai",
+  "description": "Grabar una nota de voz con MediaRecorder: nivel de la señal (Web Audio), tiempo sin las pausas, pausar y seguir, cancelar y enviar. Sin MediaRecorder o fuera de un contexto seguro el botón queda desactivado con su motivo; sin permiso del micrófono lo dice y se puede volver a intentar. Al enviar, el audio, la duración y una onda de 40 picos lista para VoiceNote.",
+  "import": "import { VoiceInput } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "maxDuration",
+      "type": "number",
+      "description": "Segundos como mucho; al llegar, se envía sola."
+    },
+    {
+      "name": "bars",
+      "type": "number",
+      "default": 24,
+      "description": "Barras del nivel."
+    },
+    {
+      "name": "showLabel",
+      "type": "boolean",
+      "default": false,
+      "description": "Texto visible en el botón de grabar."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onSend",
+      "type": "(recording: VoiceSend) => void",
+      "description": "`{ blob, duration, peaks, type }`."
+    },
+    {
+      "name": "onCancel",
+      "type": "() => void",
+      "description": "Cancelar o Escape."
+    },
+    {
+      "name": "onStart",
+      "type": "() => void"
+    },
+    {
+      "name": "onError",
+      "type": "(detail: { problem: \"unsupported\" | \"denied\" | \"failed\" }) => void"
+    },
+    {
+      "name": "labels",
+      "type": "Partial<VoiceInputLabels>",
+      "description": "record, pause, resume, cancel, send, time, recording, paused, cancelled, sent, unsupported, denied y failed, en inglés por defecto."
+    }
+  ],
+  "states": [
+    "idle",
+    "requesting",
+    "recording",
+    "paused",
+    "error",
+    "unsupported"
+  ],
+  "tokens": [
+    "surface-2",
+    "line",
+    "control-radius-lg",
+    "danger",
+    "danger-text",
+    "accent",
+    "line-strong",
+    "fg",
+    "fg-muted"
+  ],
+  "classes": [
+    "z-voice-input",
+    "z-voice-input__record",
+    "z-voice-input__label",
+    "z-voice-input__message",
+    "z-voice-input__cancel",
+    "z-voice-input__dot",
+    "z-voice-input__time",
+    "z-voice-input__level",
+    "z-voice-input__bar",
+    "z-voice-input__pause",
+    "z-voice-input__send"
+  ],
+  "a11y": "Botón «Record voice message» (con aria-busy mientras se pide permiso). Grabando, un grupo con cancelar, tiempo (role=timer), nivel decorativo (aria-hidden), pausar o seguir (el nombre cambia) y enviar; el foco va a enviar al empezar y vuelve a grabar al terminar. Escape cancela. Los cambios de estado se anuncian («Recording», «Recording paused», «Recording sent»). Sin permiso, el motivo en un role=alert ligado al botón con aria-describedby. Sin React: .z-voice-input con data-max-duration, data-bars, data-show-label y data-disabled; emite z:start, z:pause, z:resume, z:send, z:cancel y z:error.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Grabar con texto",
+      "code": "<VoiceInput showLabel maxDuration={120} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Grabar con texto",
+      "code": "<div class=\"z-voice-input\" data-show-label data-max-duration=\"120\"></div>"
+    }
+  ],
+  "origin": "Nuevo; la grabación y la onda siguen a las de Composer. Referencias: las notas de voz de WhatsApp y Telegram y el SpeechInput de AI Elements."
+}

@@ -29,3 +29,5 @@ export { encodeMentions, mentionParts } from "../../core/mentions";
 export { linkify, safeHref } from "../../core/linkify";
 export { EMOJI_SET, QUICK_REACTIONS, searchEmoji } from "../../core/emoji-data";
 export { peaksFrom } from "../../core/waveform";
+export { ChatSearch, type ChatSearchLabels, type ChatSearchProps } from "./ChatSearch";
+export { findMatches, type TextMatch } from "../../core/chat-search";

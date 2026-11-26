@@ -1,0 +1,120 @@
+{
+  "name": "TableOfContents",
+  "group": "navigation",
+  "description": "Índice de la página con la sección que se lee marcada. Scrollspy propio con IntersectionObserver (una banda fina en la línea de lectura; `scrollend` para los saltos largos), niveles con sangría, desplazamiento suave que respeta el movimiento reducido, foco en la sección elegida y modo compacto (un desplegable que muestra la sección actual). DocsLayout de zout lo usa para su índice.",
+  "import": "import { TableOfContents } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "TocItem[]",
+      "description": "`{ id, label, level }`: id del encabezado, texto y nivel (1–6); el menor no lleva sangría."
+    },
+    {
+      "name": "active",
+      "type": "string | null",
+      "description": "Sección marcada (controlado). Sin él la marca el desplazamiento."
+    },
+    {
+      "name": "defaultActive",
+      "type": "string | null"
+    },
+    {
+      "name": "onActiveChange",
+      "type": "(id: string) => void",
+      "description": "La sección que se lee cambió (desplazamiento o clic)."
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "default": false,
+      "description": "Desplegable con la sección actual en el resumen, para columnas estrechas."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false,
+      "description": "Abierto al empezar, en modo compacto."
+    },
+    {
+      "name": "offset",
+      "type": "number",
+      "default": 0,
+      "description": "Lo que tapa arriba (una barra fija), en px: la línea de lectura y el destino del desplazamiento lo descuentan."
+    },
+    {
+      "name": "smooth",
+      "type": "boolean",
+      "default": true,
+      "description": "Desplazamiento suave al elegir; siempre instantáneo con movimiento reducido."
+    },
+    {
+      "name": "hideTitle",
+      "type": "boolean",
+      "default": false,
+      "description": "Sin título visible (la navegación conserva su nombre)."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TableOfContentsLabels>",
+      "description": "title («On this page»): nombre de la navegación y título visible."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "current",
+    "compact",
+    "open"
+  ],
+  "tokens": [
+    "fg",
+    "fg-muted",
+    "accent",
+    "accent-text",
+    "line",
+    "line-strong",
+    "surface",
+    "control-radius",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-toc",
+    "z-toc__title",
+    "z-toc__list",
+    "z-toc__entry",
+    "z-toc__link",
+    "z-toc__compact",
+    "z-toc__summary",
+    "z-toc__summary-title",
+    "z-toc__summary-current",
+    "z-toc__chevron"
+  ],
+  "a11y": "role=navigation con nombre («On this page»); el título visible va con aria-hidden para no repetirlo. Lista ordenada de enlaces de fragmento; la sección que se lee lleva aria-current=\"true\" y se distingue por peso y por la marca del borde, no solo por el color. Al elegir, desplaza (suave salvo prefers-reduced-motion), añade la entrada al historial y lleva el foco a la sección (tabindex=-1 si no es enfocable). En modo compacto es un <details> nativo. Sin React: .z-toc con data-label, data-compact, data-open, data-offset, data-smooth=\"false\", data-active y `{ \"items\": [...] }` en <script type=\"application/json\" data-props>; emite z:activechange { id }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Índice de un artículo",
+      "code": "<TableOfContents items={[{ id: \"intro\", label: \"Introduction\", level: 2 }, { id: \"install\", label: \"Install\", level: 2 }, { id: \"peer\", label: \"Peer dependencies\", level: 3 }, { id: \"usage\", label: \"Usage\", level: 2 }]} defaultActive=\"install\" />"
+    },
+    {
+      "title": "Compacto",
+      "code": "<TableOfContents compact items={[{ id: \"intro\", label: \"Introduction\" }, { id: \"install\", label: \"Install\" }]} defaultActive=\"intro\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Índice de un artículo",
+      "code": "<div style=\"display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 16px\">\n  <div id=\"toc-demo-article\" tabindex=\"0\" role=\"region\" aria-label=\"Release notes\" style=\"max-height: 220px; overflow: auto\">\n    <h3 id=\"toc-intro\">Introduction</h3>\n    <p style=\"min-height: 180px\">Why the release exists.</p>\n    <h3 id=\"toc-install\">Install</h3>\n    <p style=\"min-height: 180px\">Package manager and versions.</p>\n    <h4 id=\"toc-peer\">Peer dependencies</h4>\n    <p style=\"min-height: 180px\">React is optional.</p>\n    <h3 id=\"toc-usage\">Usage</h3>\n    <p style=\"min-height: 180px\">Import the styles first.</p>\n  </div>\n  <div class=\"z-toc\" data-label=\"On this page\" data-active=\"toc-intro\">\n    <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"toc-intro\", \"label\": \"Introduction\", \"level\": 3}, {\"id\": \"toc-install\", \"label\": \"Install\", \"level\": 3}, {\"id\": \"toc-peer\", \"label\": \"Peer dependencies\", \"level\": 4}, {\"id\": \"toc-usage\", \"label\": \"Usage\", \"level\": 3}]}</script>\n  </div>\n</div>"
+    },
+    {
+      "title": "Compacto",
+      "code": "<div class=\"z-toc\" data-compact data-label=\"On this page\" data-active=\"toc-install\" style=\"max-width: 280px\">\n  <script type=\"application/json\" data-props>{\"items\": [{\"id\": \"toc-intro\", \"label\": \"Introduction\", \"level\": 3}, {\"id\": \"toc-install\", \"label\": \"Install\", \"level\": 3}]}</script>\n</div>"
+    }
+  ],
+  "origin": "Nuevo; sustituye al índice propio de DocsLayout. Referencias: el patrón scrollspy de modern-web-guidance, el «On this page» de Docusaurus y Starlight."
+}

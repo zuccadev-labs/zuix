@@ -527,6 +527,12 @@
     display: none;
     grid-area: toc;
   }
+  /* El índice es TableOfContents de zui (.z-toc): aquí solo su sitio en la rejilla. En estrecho, el compacto va sobre
+     el artículo; en ancho, la columna de la derecha, fija al desplazar. Las reglas que siguen son las del índice escrito
+     a mano antes de la 0.5 (<nav> con .z-docs-layout__toc-list), que sigue siendo parte del contrato. */
+  .z-toc.z-docs-layout__toc-compact {
+    margin-block-end: var(--z-space-4);
+  }
   .z-docs-layout__toc-title {
     margin: 0 0 var(--z-space-2);
     color: var(--z-fg);
@@ -573,7 +579,7 @@
   [dir="rtl"] .z-docs-layout__toc-link[aria-current] {
     box-shadow: inset -2px 0 0 var(--z-accent);
   }
-  .z-docs-layout__toc-compact {
+  .z-docs-layout__toc-compact:not(.z-toc) {
     padding: var(--z-space-1) var(--z-space-3);
     border: 1px solid var(--z-line);
     border-radius: var(--z-radius-md);

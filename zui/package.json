@@ -53,6 +53,7 @@
     "./dom/dashboard": "./src/dom/families/dashboard.ts",
     "./dom/people": "./src/dom/families/people.ts",
     "./dom/nodes": "./src/dom/families/nodes.ts",
+    "./dom/page": "./src/dom/families/page.ts",
     "./dom/carousel-gl": "./src/dom/carousel-gl.ts",
     "./editor": "./src/editor/index.ts",
     "./editor/react": "./src/editor/react.ts",
@@ -187,6 +188,10 @@
       "./dom/nodes": {
         "types": "./dist/esm/dom/families/nodes.d.ts",
         "default": "./dist/esm/dom/families/nodes.js"
+      },
+      "./dom/page": {
+        "types": "./dist/esm/dom/families/page.d.ts",
+        "default": "./dist/esm/dom/families/page.js"
       },
       "./dom/carousel-gl": {
         "types": "./dist/esm/dom/carousel-gl.d.ts",

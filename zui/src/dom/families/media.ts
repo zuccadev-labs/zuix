@@ -1,10 +1,11 @@
 // @zuccadev-labs/zuix-zui/dom/media — Carousel, Stories, Gallery, Lightbox, CompareSlider, ImageCropper, QRCode, SignaturePad, CircularSlider,
-// ShortcutInput, Confetti y DownloadTrigger con origen remoto, sin framework. Registro: init(mediaModule) o
+// ShortcutInput, Confetti, DownloadTrigger con origen remoto, AudioPlayer y Waveform, sin framework. Registro: init(mediaModule) o
 // use(mediaModule) junto a @zuccadev-labs/zuix-zui/dom/core.
 import * as carousel from "../carousel";
 import * as media from "../media";
 import * as stories from "../stories";
 import type { DomModule } from "../shared";
+import { audioPart } from "../widgets-domain";
 
 export { carousel, type CarouselHandle, type CarouselOptions, type CarouselRasterSize, type CarouselRasterSource } from "../carousel";
 export { setCompareValue } from "../media";
@@ -22,5 +23,6 @@ export const mediaModule: DomModule = {
     { rank: 41, setup: stories.setup, hydrate: stories.hydrate },
     { rank: 44, setup: media.setup, hydrate: media.hydrate },
     media.mediaWidgets,
+    audioPart,
   ],
 };

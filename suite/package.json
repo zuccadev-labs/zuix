@@ -109,6 +109,10 @@
       "types": "./zui-dom-nodes.d.ts",
       "default": "./zui-dom-nodes.js"
     },
+    "./zui/dom/page": {
+      "types": "./zui-dom-page.d.ts",
+      "default": "./zui-dom-page.js"
+    },
     "./zui/dom/carousel-gl": {
       "types": "./zui-dom-carousel-gl.d.ts",
       "default": "./zui-dom-carousel-gl.js"

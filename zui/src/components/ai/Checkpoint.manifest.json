@@ -1,0 +1,89 @@
+{
+  "name": "Checkpoint",
+  "group": "ai",
+  "description": "Punto de restauración en una conversación de un asistente: una divisoria con su nombre, la hora y el botón de restaurar la conversación (y lo que dependa de ella) a ese punto.",
+  "import": "import { Checkpoint } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Checkpoint",
+      "description": "Nombre del punto («Before refactor»)."
+    },
+    {
+      "name": "time",
+      "type": "string",
+      "description": "Hora ya formateada («10:42»)."
+    },
+    {
+      "name": "dateTime",
+      "type": "string",
+      "description": "Instante para `<time datetime>` (ISO)."
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "description": "Qué había en ese punto."
+    },
+    {
+      "name": "restored",
+      "type": "boolean",
+      "default": false,
+      "description": "Ya restaurado: el botón queda desactivado y lo dice."
+    },
+    {
+      "name": "onRestore",
+      "type": "() => void"
+    },
+    {
+      "name": "restoreLabel",
+      "type": "string",
+      "default": "Restore"
+    },
+    {
+      "name": "restoredLabel",
+      "type": "string",
+      "default": "Restored"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    }
+  ],
+  "states": [
+    "rest",
+    "restored",
+    "disabled"
+  ],
+  "tokens": [
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "accent",
+    "success-text",
+    "text-caption"
+  ],
+  "classes": [
+    "z-checkpoint",
+    "z-checkpoint__rule",
+    "z-checkpoint__badge",
+    "z-checkpoint__label",
+    "z-checkpoint__time",
+    "z-checkpoint__description",
+    "z-checkpoint__restore"
+  ],
+  "a11y": "role=group nombrado por el punto. El botón de restaurar se describe con el nombre del punto (aria-describedby): en una conversación con varios, «Restore» dice cuál. Las líneas son decorativas (aria-hidden). Sin React es solo marcado: el clic del botón lo atiende la aplicación.",
+  "behavior": "none",
+  "examples": [
+    {
+      "title": "Antes de un cambio",
+      "code": "<Checkpoint label=\"Before refactor\" time=\"10:42\" dateTime=\"2026-11-25T10:42:00Z\" />"
+    },
+    {
+      "title": "Restaurado",
+      "code": "<Checkpoint label=\"Plan approved\" time=\"09:15\" restored />"
+    }
+  ],
+  "origin": "Nuevo. Referencias: el Checkpoint de AI Elements (Vercel) y los puntos de restauración de los editores con agentes."
+}

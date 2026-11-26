@@ -48,3 +48,5 @@ export {
   type FilterOption,
   type FilterValue,
 } from "./FilterBar";
+export { DataView, type DataViewLabels, type DataViewLayout, type DataViewProps } from "./DataView";
+export { OverflowList, type OverflowItem, type OverflowListProps } from "./OverflowList";

@@ -1,0 +1,90 @@
+{
+  "name": "Waveform",
+  "group": "media",
+  "description": "Forma de onda que hace de deslizador de posición: precalculada (`peaks`) o calculada de `src` con Web Audio (descarga y decodifica el audio). Es la misma onda que pintan VoiceNote y AudioPlayer.",
+  "import": "import { Waveform } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "peaks",
+      "type": "number[]",
+      "description": "Onda precalculada, en cualquier escala."
+    },
+    {
+      "name": "src",
+      "type": "string",
+      "description": "Audio del que calcularla si no hay `peaks` (con CORS si es de otro origen)."
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "description": "Segundos; si se calcula, la del audio."
+    },
+    {
+      "name": "position",
+      "type": "number",
+      "description": "Segundos (controlado)."
+    },
+    {
+      "name": "defaultPosition",
+      "type": "number",
+      "default": 0
+    },
+    {
+      "name": "bars",
+      "type": "number",
+      "default": 64
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Seek"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onSeek",
+      "type": "(position: number) => void",
+      "description": "Posición elegida con el puntero o el teclado."
+    },
+    {
+      "name": "onPeaks",
+      "type": "(detail: { peaks; duration }) => void",
+      "description": "Onda calculada: guárdala para no volver a calcularla."
+    }
+  ],
+  "states": [
+    "rest",
+    "focus",
+    "loading",
+    "disabled"
+  ],
+  "tokens": [
+    "line-strong",
+    "accent",
+    "focus-width",
+    "accent-ring"
+  ],
+  "classes": [
+    "z-waveform",
+    "z-waveform__wave",
+    "z-waveform__bar"
+  ],
+  "a11y": "role=slider (APG «slider») con aria-valuemin, aria-valuemax y aria-valuenow en segundos y aria-valuetext «0:07 / 0:42»: flechas cinco segundos (reflejadas en RTL), Re Pág y Av Pág quince, Inicio y Fin. aria-busy mientras se calcula. Las barras son decorativas. Sin React: .z-waveform con data-peaks, data-src, data-duration, data-position, data-bars y data-label; emite z:seek { position } y z:peaks.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Onda precalculada",
+      "code": "<Waveform duration={42} defaultPosition={12} peaks={[3, 5, 8, 6, 9, 4, 3, 7, 9, 6, 4, 2, 5, 8, 7, 3, 4, 6, 8, 9, 7, 5, 3, 2, 4, 6, 9, 8, 6, 4, 3, 5]} label=\"Seek interview\" />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Onda precalculada",
+      "code": "<div class=\"z-waveform\" data-duration=\"42\" data-position=\"12\" data-label=\"Seek interview\" data-peaks=\"3 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3 4 6 8 9 7 5 3 2 4 6 9 8 6 4 3 5\" style=\"max-width: 420px\"></div>"
+    }
+  ],
+  "origin": "Nuevo; reutiliza la onda y el control de VoiceNote. Referencias: wavesurfer.js y la onda de los mensajes de voz."
+}

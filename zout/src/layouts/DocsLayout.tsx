@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useRef, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Icon } from "@zuccadev-labs/zuix-zicon/core";
+import { TableOfContents } from "@zuccadev-labs/zuix-zui";
 import { cx } from "../cx";
-import { wireScrollspy } from "../pages";
 
 export interface DocsTocItem {
   id: string;
@@ -56,21 +56,11 @@ export interface DocsLayoutProps {
  */
 export function DocsLayout({ header, sidebar, toc, previous, next, labels: labelsProp, children, className }: DocsLayoutProps) {
   const labels = { ...DOCS_LABELS, ...labelsProp };
-  const tocRef = useRef<HTMLElement | null>(null);
-  useEffect(() => (tocRef.current ? wireScrollspy(tocRef.current) : undefined), []);
-  const tocList = toc?.length ? (
-    <ul className="z-docs-layout__toc-list">
-      {toc.map((t) => (
-        <li key={t.id} data-level={t.level ?? 2}>
-          <a className="z-docs-layout__toc-link" href={`#${t.id}`}>
-            {t.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  ) : null;
+  // El índice es TableOfContents de zui: el mismo scrollspy, los mismos niveles y el mismo modo compacto.
+  const items = toc?.map((t) => ({ id: t.id, label: t.label, level: t.level ?? 2 }));
+  const hasToc = Boolean(items?.length);
   return (
-    <div className={cx("z-docs-layout", className)} data-toc={toc?.length ? "" : undefined} data-sidebar={sidebar ? "" : undefined}>
+    <div className={cx("z-docs-layout", className)} data-toc={hasToc ? "" : undefined} data-sidebar={sidebar ? "" : undefined}>
       <div className="z-docs-layout__grid">
         {header ? <div className="z-docs-layout__header">{header}</div> : null}
         {sidebar ? (
@@ -79,15 +69,7 @@ export function DocsLayout({ header, sidebar, toc, previous, next, labels: label
           </nav>
         ) : null}
         <div className="z-docs-layout__main">
-          {tocList ? (
-            <details className="z-docs-layout__toc-compact">
-              <summary className="z-docs-layout__toc-summary">
-                {labels.onThisPage}
-                <Icon name="chevron-down" size={14} />
-              </summary>
-              {tocList}
-            </details>
-          ) : null}
+          {hasToc ? <TableOfContents className="z-docs-layout__toc-compact" compact items={items} labels={{ title: labels.onThisPage }} /> : null}
           <article className="z-docs-layout__article">{children}</article>
           {previous || next ? (
             <nav className="z-docs-layout__pager" aria-label={labels.pager}>
@@ -114,14 +96,7 @@ export function DocsLayout({ header, sidebar, toc, previous, next, labels: label
             </nav>
           ) : null}
         </div>
-        {tocList ? (
-          <nav ref={tocRef} className="z-docs-layout__toc" aria-label={labels.toc}>
-            <p className="z-docs-layout__toc-title" aria-hidden="true">
-              {labels.toc}
-            </p>
-            {tocList}
-          </nav>
-        ) : null}
+        {hasToc ? <TableOfContents className="z-docs-layout__toc" items={items} labels={{ title: labels.toc }} /> : null}
       </div>
     </div>
   );

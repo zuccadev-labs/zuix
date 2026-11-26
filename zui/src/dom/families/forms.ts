@@ -1,4 +1,4 @@
-// @zuccadev-labs/zuix-zui/dom/forms — Cascader, TreeSelect y MaskedInput sin framework. Registro: init(formsModule) o
+// @zuccadev-labs/zuix-zui/dom/forms — Cascader, TreeSelect, MaskedInput y Mentions sin framework. Registro: init(formsModule) o
 // use(formsModule) junto a @zuccadev-labs/zuix-zui/dom/core.
 //
 // Cascader    .z-cascader con data-name, data-multiple, data-searchable, data-change-on-select, data-clearable,
@@ -10,6 +10,8 @@
 //             data-disabled, data-strategy, data-max-chips, data-placeholder, data-label y `{ "nodes": […],
 //             "value": …, "defaultExpanded": […] }` en data-props. z:change { value, label | labels }.
 // MaskedInput ver ../forms-masked.
+// Mentions    .z-mentions con el campo dentro y `{ "sources": [{ "trigger": "@", "items": […], "label" }] }` en data-props.
+//             Carga asíncrona: setMentionsLoader(el, "#", load). z:mention { item }.
 import { registerIcons } from "@zuccadev-labs/zuix-zicon/dom";
 import { check } from "@zuccadev-labs/zuix-zicon/icons/check";
 import { chevronDown } from "@zuccadev-labs/zuix-zicon/icons/chevron-down";
@@ -21,8 +23,10 @@ import { treeSelectWidget } from "../../core/tree-select-widget";
 import { maskedPart } from "../forms-masked";
 import type { DomModule } from "../shared";
 import { widgetPart } from "../widgets";
+import { mentionsPart } from "../widgets-domain";
 
 export { setMask, setMaskedValue } from "../forms-masked";
+export { setMentionsItems, setMentionsLoader } from "../widgets-domain";
 export { destroyWidget, setWidgetProps } from "../widgets";
 export { applyMask, extractRaw, maskTemplate, MASK_PRESETS, type MaskPreset, type MaskSpec } from "../../core/mask";
 export { searchPaths, type CascaderOption } from "../../core/cascader";
@@ -32,5 +36,5 @@ registerIcons([check, chevronDown, chevronLeft, chevronRight, xMark]);
 
 export const formsModule: DomModule = {
   name: "forms",
-  parts: [widgetPart(45.1, [cascaderWidget, treeSelectWidget]), maskedPart],
+  parts: [widgetPart(45.1, [cascaderWidget, treeSelectWidget]), maskedPart, mentionsPart],
 };

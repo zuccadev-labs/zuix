@@ -15,3 +15,5 @@ export {
 } from "./SignaturePad";
 export { ImageList, type ImageListItem, type ImageListProps } from "./ImageList";
 export { Masonry, type MasonryProps } from "./Masonry";
+export { AudioPlayer, type AudioPlayerLabels, type AudioPlayerProps } from "./AudioPlayer";
+export { Waveform, type WaveformProps } from "./Waveform";

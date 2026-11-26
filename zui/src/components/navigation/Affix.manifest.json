@@ -1,0 +1,49 @@
+{
+  "name": "Affix",
+  "group": "navigation",
+  "description": "Fija su contenido al desplazar con `position: sticky` (sin cálculos de posición en JavaScript). Un IntersectionObserver solo dice cuándo está pegado: `data-stuck` para la sombra y `onStuckChange` para la aplicación.",
+  "import": "import { Affix } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "side",
+      "type": "enum",
+      "values": [
+        "top",
+        "bottom"
+      ],
+      "default": "top",
+      "description": "Borde al que se pega."
+    },
+    {
+      "name": "offset",
+      "type": "number",
+      "default": 0,
+      "description": "Distancia al borde en px (lo que tape una barra fija)."
+    },
+    {
+      "name": "onStuckChange",
+      "type": "(stuck: boolean) => void"
+    }
+  ],
+  "states": [
+    "rest",
+    "stuck"
+  ],
+  "tokens": [
+    "layer-sticky",
+    "shadow-sm",
+    "duration-fast"
+  ],
+  "classes": [
+    "z-affix"
+  ],
+  "a11y": "Sin semántica propia: no cambia el orden ni el árbol accesible, solo la posición visual. Sin React: .z-affix con data-side y --z-affix-offset; emite z:stuckchange { stuck }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Barra de filtros fija bajo la cabecera",
+      "code": "<Affix offset={8}>\n  <Toolbar label=\"Filters\">\n    <Button size=\"sm\" icon=\"funnel\">Filters</Button>\n  </Toolbar>\n</Affix>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: el Affix de Ant Design y Mantine, con `position: sticky` en lugar de posición fija calculada."
+}

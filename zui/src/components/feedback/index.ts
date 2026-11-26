@@ -24,3 +24,6 @@ export {
   type NotificationCenterProps,
   type NotificationItem,
 } from "./NotificationCenter";
+export { TopProgress, type ProgressController, type TopProgressLabels, type TopProgressProps } from "./TopProgress";
+// Controlador imperativo de la barra superior (al estilo de NProgress) y uno propio para otra barra.
+export { createProgress, topProgress, type ProgressSnapshot, type ProgressStatus } from "../../core/top-progress";

@@ -1,0 +1,85 @@
+{
+  "name": "TopProgress",
+  "group": "feedback",
+  "description": "Barra de carga fija arriba de la ventana para navegaciones y peticiones: con valor (0–100), indeterminada (`active`) o siguiendo el controlador imperativo `topProgress` (`start()`, `set()`, `inc()`, `done()`, `reset()`, al estilo de NProgress), que gotea deprisa al principio y cada vez más despacio. Anuncia el principio y el final.",
+  "import": "import { TopProgress } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "number",
+      "description": "0–100 (controlado): barra determinada."
+    },
+    {
+      "name": "active",
+      "type": "boolean",
+      "description": "En marcha (controlado). Sin `value`, indeterminada."
+    },
+    {
+      "name": "indeterminate",
+      "type": "boolean",
+      "default": false,
+      "description": "Franja que recorre la barra en vez de goteo."
+    },
+    {
+      "name": "controller",
+      "type": "ProgressController",
+      "description": "Controlador que sigue sin `value` ni `active`; `topProgress` por defecto, o uno de `createProgress()`."
+    },
+    {
+      "name": "announce",
+      "type": "boolean",
+      "default": true,
+      "description": "Anuncia «Loading» y «Loaded» en la región viva."
+    },
+    {
+      "name": "inline",
+      "type": "boolean",
+      "default": false,
+      "description": "Dentro de su contenedor (posición absoluta) en vez de fija en la ventana."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<TopProgressLabels>",
+      "description": "loading (nombre y anuncio al empezar) y done (anuncio al terminar), en inglés por defecto."
+    }
+  ],
+  "states": [
+    "idle",
+    "loading",
+    "done",
+    "indeterminate"
+  ],
+  "tokens": [
+    "accent",
+    "layer-top",
+    "duration-slow",
+    "ease-out"
+  ],
+  "classes": [
+    "z-top-progress",
+    "z-top-progress__bar"
+  ],
+  "a11y": "role=progressbar con nombre, aria-valuemin, aria-valuemax y aria-valuenow (sin él si es indeterminada); en reposo, aria-hidden. El principio y el final se anuncian en la región viva compartida del documento (no dentro de la barra: sus hijos son presentacionales). La barra avanza con `scale`, sin animar el ancho; con movimiento reducido la indeterminada late despacio en vez de recorrer. Sin React: .z-top-progress sigue a `topProgress` de @zuccadev-labs/zuix-zui/dom/page, o a data-value, data-active, data-indeterminate y data-inline.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Con valor, dentro de su contenedor",
+      "code": "<TopProgress value={64} inline announce={false} />"
+    },
+    {
+      "title": "Indeterminada",
+      "code": "<TopProgress active inline announce={false} />"
+    }
+  ],
+  "html": [
+    {
+      "title": "Con valor, dentro de su contenedor",
+      "code": "<div style=\"position: relative; height: 24px\">\n  <div class=\"z-top-progress\" data-inline data-value=\"64\" data-announce=\"false\"></div>\n</div>"
+    },
+    {
+      "title": "Indeterminada",
+      "code": "<div style=\"position: relative; height: 24px\">\n  <div class=\"z-top-progress\" data-inline data-active data-announce=\"false\"></div>\n</div>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: NProgress (goteo y API start/done) y la guía «progress» de modern-web-guidance."
+}

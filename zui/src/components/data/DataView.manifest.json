@@ -1,0 +1,102 @@
+{
+  "name": "DataView",
+  "group": "data",
+  "description": "La misma colección como lista o como rejilla, con un conmutador (SegmentedControl) y la elección guardada en `localStorage` si se da `persistKey`. La rejilla reparte celdas con ancho mínimo, sin cortes por tamaño de pantalla.",
+  "import": "import { DataView } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "T[]"
+    },
+    {
+      "name": "renderItem",
+      "type": "(item: T, layout: \"list\" | \"grid\", index: number) => ReactNode",
+      "description": "Cómo se pinta un elemento en cada disposición."
+    },
+    {
+      "name": "getKey",
+      "type": "(item: T, index: number) => string | number",
+      "description": "Por defecto, el `id` del elemento o su índice."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre de la colección (lo lee el lector de pantalla en la lista)."
+    },
+    {
+      "name": "layout",
+      "type": "enum",
+      "values": [
+        "list",
+        "grid"
+      ],
+      "description": "Controlado."
+    },
+    {
+      "name": "defaultLayout",
+      "type": "enum",
+      "values": [
+        "list",
+        "grid"
+      ],
+      "default": "list"
+    },
+    {
+      "name": "onLayoutChange",
+      "type": "(layout: \"list\" | \"grid\") => void"
+    },
+    {
+      "name": "persistKey",
+      "type": "string",
+      "description": "Clave de `localStorage`: la elección se guarda y se recupera tras montar (la primera pintura es la de `defaultLayout`)."
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "default": 220,
+      "description": "Ancho mínimo de una celda de la rejilla, en px."
+    },
+    {
+      "name": "toolbar",
+      "type": "ReactNode",
+      "description": "Controles junto al conmutador (orden, filtro)."
+    },
+    {
+      "name": "empty",
+      "type": "ReactNode",
+      "description": "Lo que se ve sin elementos (un EmptyState)."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DataViewLabels>",
+      "description": "layout, list y grid, en inglés por defecto."
+    }
+  ],
+  "states": [
+    "list",
+    "grid",
+    "empty"
+  ],
+  "tokens": [
+    "space-2",
+    "space-3"
+  ],
+  "classes": [
+    "z-dataview",
+    "z-dataview__bar",
+    "z-dataview__tools",
+    "z-dataview__switch",
+    "z-dataview__items",
+    "z-dataview__item",
+    "z-dataview__empty"
+  ],
+  "a11y": "El conmutador es un SegmentedControl (APG «radiogroup»: una parada de tabulación, flechas para cambiar). La colección es una lista con nombre (`label`); cambiar de disposición no mueve el foco ni el orden de lectura. El almacenamiento se lee con try/catch: en una ventana privada o con los datos bloqueados se queda en `defaultLayout`. Sin React: .z-dataview con data-layout y data-persist; emite z:layoutchange { layout }.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Proyectos en lista o rejilla",
+      "code": "<DataView label=\"Projects\" defaultLayout=\"grid\" min={180} items={[{ id: \"atlas\", name: \"Atlas\" }, { id: \"borealis\", name: \"Borealis\" }, { id: \"cirrus\", name: \"Cirrus\" }]} renderItem={(p) => <Card padding=\"sm\">{p.name}</Card>} />"
+    }
+  ],
+  "origin": "Nuevo. Referencias: el DataView de PrimeReact y los conmutadores lista/rejilla de los gestores de archivos."
+}

@@ -1,0 +1,116 @@
+{
+  "name": "SearchView",
+  "group": "overlay",
+  "description": "Búsqueda de Material 3: una barra que al pulsarla crece hasta una vista de búsqueda, a pantalla completa en estrecho y acoplada bajo la barra en ancho. Es un `<dialog>` modal: Escape o volver cierran y el foco vuelve a la barra. El crecimiento es un recorte desde la caja de la barra, sin animación con movimiento reducido.",
+  "import": "import { SearchView } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "value",
+      "type": "string",
+      "description": "Lo escrito (controlado)."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string"
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void"
+    },
+    {
+      "name": "onSubmit",
+      "type": "(value: string) => void",
+      "description": "Intro en el campo."
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "description": "Controlado."
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "default": "Search",
+      "description": "Nombre del campo y de la vista."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "default": "Search"
+    },
+    {
+      "name": "mode",
+      "type": "enum",
+      "values": [
+        "auto",
+        "fullscreen",
+        "docked"
+      ],
+      "default": "auto",
+      "description": "`auto`: pantalla completa por debajo de 600 px y acoplada por encima."
+    },
+    {
+      "name": "trailing",
+      "type": "ReactNode",
+      "description": "Al final de la barra (un avatar, un botón de voz)."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<SearchViewLabels>",
+      "description": "back y clear, en inglés por defecto."
+    }
+  ],
+  "states": [
+    "rest",
+    "hover",
+    "focus",
+    "open",
+    "filled"
+  ],
+  "tokens": [
+    "control-bg",
+    "control-bg-hover",
+    "control-border",
+    "control-radius-xl",
+    "control-height-xl",
+    "surface-solid",
+    "popup-shadow",
+    "scrim",
+    "line",
+    "fg",
+    "fg-muted",
+    "accent",
+    "duration-slow",
+    "ease-emphasized"
+  ],
+  "classes": [
+    "z-searchview",
+    "z-searchview__bar",
+    "z-searchview__text",
+    "z-searchview__trailing",
+    "z-searchview__view",
+    "z-searchview__header",
+    "z-searchview__back",
+    "z-searchview__input",
+    "z-searchview__clear",
+    "z-searchview__results"
+  ],
+  "a11y": "La barra es un botón con aria-haspopup=dialog, aria-expanded y aria-controls. La vista es un <dialog> abierto con showModal() (el resto de la página queda inerte) y nombrado por `label`; el foco entra en el campo (type=search) y vuelve a la barra al cerrar. Escape, el botón de volver y, acoplada, pulsar fuera cierran. Sin React: .z-searchview con la barra y el <dialog class=\"z-searchview__view\">; emite z:open, z:close, z:valuechange { value } y z:submit { value }; setSearchViewOpen(el, open).",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Buscar en la aplicación",
+      "code": "<SearchView label=\"Search projects\" placeholder=\"Search projects\">\n  <NavList label=\"Recent\">\n    <NavLink href=\"#atlas\" icon=\"folder\">Atlas</NavLink>\n    <NavLink href=\"#borealis\" icon=\"folder\">Borealis</NavLink>\n  </NavList>\n</SearchView>"
+    }
+  ],
+  "origin": "Nuevo. Referencias: search bar y search view de Material 3 (crecimiento desde la barra, vista acoplada en pantallas grandes)."
+}

@@ -17,3 +17,10 @@ export type { BranchNode, BranchSelection } from "../../core/branches";
 // Árbol de la conversación (ramas al editar o regenerar) y acumulador de texto en streaming.
 export { activePath, addBranch, branchInfo, selectBranch, siblings, stepBranch } from "../../core/branches";
 export { createTextStream, provisional } from "../../core/stream-text";
+export { WebPreview, type WebPreviewLabels, type WebPreviewProps, type WebPreviewViewport } from "./WebPreview";
+export { Checkpoint, type CheckpointProps } from "./Checkpoint";
+export { VoiceInput, type RecorderProblem, type VoiceInputLabels, type VoiceInputProps, type VoiceSend } from "./VoiceInput";
+export { StackTrace, type StackFrame, type StackTraceLabels, type StackTraceProps } from "./StackTrace";
+// Lectura de pilas de error (Chrome, Node, Firefox, Safari) y dirección de la vista previa.
+export { parseStack, groupFrames, stackText, type ParsedError } from "../../core/stack-trace";
+export { normalizeUrl } from "../../core/web-preview";

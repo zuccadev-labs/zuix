@@ -27,3 +27,4 @@ export { MetricCard, type MetricCardLabels, type MetricCardProps } from "./Metri
 export { MetricGroup, type MetricGroupProps } from "./MetricGroup";
 export { ProgressGoal, type ProgressGoalLabels, type ProgressGoalProps } from "./ProgressGoal";
 export { Tracker, type TrackerDay, type TrackerLabels, type TrackerProps, type TrackerStatus } from "./Tracker";
+export { Widget, type WidgetLabels, type WidgetProps, type WidgetStatus } from "./Widget";

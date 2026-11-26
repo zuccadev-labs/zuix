@@ -8,3 +8,6 @@ export { Tree, TREE_DRAG_LABELS, type TreeProps, type TreeNode, type TreeDrop, t
 export { NavList, NavLink, type NavListProps, type NavLinkProps } from "./NavList";
 export { Collapsible, type CollapsibleProps } from "./Collapsible";
 export { Menubar, type MenubarMenu, type MenubarProps } from "./Menubar";
+export { TableOfContents, type TableOfContentsLabels, type TableOfContentsProps, type TocItem } from "./TableOfContents";
+export { BackToTop, type BackToTopProps } from "./BackToTop";
+export { Affix, type AffixProps } from "./Affix";

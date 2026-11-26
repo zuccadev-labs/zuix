@@ -682,18 +682,18 @@
     "z-docs-layout__sidebar",
     "z-docs-layout__main",
     "z-docs-layout__toc-compact",
-    "z-docs-layout__toc-summary",
     "z-docs-layout__article",
     "z-docs-layout__pager",
     "z-docs-layout__page",
     "z-docs-layout__page-hint",
     "z-docs-layout__page-title",
     "z-docs-layout__toc",
+    "z-docs-layout__toc-summary",
     "z-docs-layout__toc-title",
     "z-docs-layout__toc-list",
     "z-docs-layout__toc-link"
    ],
-   "a11y": "Dos nav con nombres distintos (Documentation y On this page) y una tercera para la paginación (rel=prev y rel=next). El enlace de la sección que se lee lleva aria-current. En estrecho el índice es un <details> nativo.",
+   "a11y": "Dos nav con nombres distintos (Documentation y On this page) y una tercera para la paginación (rel=prev y rel=next). El índice es TableOfContents de zui: la sección que se lee lleva aria-current=\"true\", el clic desplaza (suave salvo movimiento reducido) y enfoca la sección; en estrecho es su modo compacto, un <details> nativo. Sin React lo monta @zuccadev-labs/zuix-zui/dom/page a partir de sus enlaces; el índice escrito a mano antes de la 0.5 lo sigue conectando @zuccadev-labs/zuix-zout/dom.",
    "behavior": "dom",
    "examples": [
     {

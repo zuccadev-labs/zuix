@@ -100,6 +100,29 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `Tabs`: `overflow="menu"` lleva las pestañas que no caben a un menú «Más» (`moreLabel`); con `scroll`, la pestaña
   elegida se lleva a la vista dentro de la tira. Modo DOM: `data-overflow="menu"` en la tira.
 - `wantsVirtual` y `virtualWindow` en la raíz.
+- Piezas de página: `TableOfContents` (scrollspy con IntersectionObserver, niveles, `aria-current`, desplazamiento
+  suave que respeta el movimiento reducido, foco en la sección y modo compacto), `BackToTop` (aparece al pasar un
+  umbral, `sticky` o `fixed`, y deja el foco al principio), `Affix` (`position: sticky` con `data-stuck`),
+  `TopProgress` con el controlador `topProgress` (`start`, `set`, `inc`, `done`, `reset`) y `createProgress`,
+  `DataView` (lista o rejilla con conmutador y `persistKey`) y `OverflowList` (lo que no cabe, a un menú «+N»).
+- `Mentions`: menciones con `@` y `#` sobre cualquier Textarea o Input, con la lista anclada al cursor, patrón
+  combobox y carga asíncrona (la de Combobox y Listbox).
+- `SearchView` (búsqueda de Material 3 que crece desde la barra: pantalla completa en estrecho, acoplada en ancho) y
+  `Popconfirm` (confirmación en línea sobre Popover, con espera si `onConfirm` devuelve una promesa).
+- `ChatSearch`: buscar en una conversación con contador, anterior y siguiente, y resaltado con la CSS Custom
+  Highlight API sin tocar el marcado de la lista. `findMatches` en la raíz y en `/dom/chat`.
+- IA: `WebPreview` (iframe con `sandbox`, barra de dirección http/https, historial propio, anchos de dispositivo,
+  compatible con CSP estricta), `Checkpoint` (punto de restauración), `VoiceInput` (grabar con MediaRecorder: nivel,
+  tiempo sin pausas, pausar, cancelar y enviar; degrada sin MediaRecorder o sin permiso) y `StackTrace` (pilas de V8,
+  Firefox y Safari con los marcos de terceros plegados y copiar). `parseStack`, `groupFrames`, `stackText` y
+  `normalizeUrl` en la raíz.
+- Medios: `AudioPlayer` (saltos, velocidad, teclas K, J y L) y `Waveform` (onda como deslizador, precalculada o
+  calculada con Web Audio), sobre la onda y el control del `<audio>` de `VoiceNote`.
+- Dashboard: `Widget`, marco de pieza de `DashboardGrid` con menú y estados de carga, vacío y error con reintento.
+- `@zuccadev-labs/zuix-zui/dom/page`: familia sin framework de TableOfContents, BackToTop, Affix, TopProgress,
+  DataView, OverflowList, SearchView y Popconfirm (`pageModule`, `topProgress`, `setSearchViewOpen`, `goToSection`).
+  ChatSearch entra en `/dom/chat`; WebPreview, VoiceInput y StackTrace en `/dom/ai`; AudioPlayer y Waveform en
+  `/dom/media`; Mentions en `/dom/forms` (`setMentionsLoader`, `setMentionsItems`).
 
 ### Cambiado
 
@@ -121,6 +144,9 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 - `DataTable` ya no busca cada fila con `rows.indexOf` (con 10 000 filas eran 10⁸ comparaciones) y la selección
   ordena con un conjunto.
 - En el modo DOM, recolocar un nodo con clave al volver a pintar una pieza ya no le quita el foco.
+- La prueba del submenú de Menu en `test:html` («abrió sin retardo») fallaba con la página cargada: comprobaba desde
+  fuera que el submenú aún no estaba abierto y la ida y vuelta al navegador pasaba de los 100 ms del retardo. Ahora
+  mide en la página el tiempo entre la entrada del puntero y la apertura. El menú no cambia.
 
 ## [0.4.0] - 2026-11-23
 
