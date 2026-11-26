@@ -1,0 +1,45 @@
+{
+  "name": "Redact",
+  "group": "nodes",
+  "exports": ["useRedaction"],
+  "description": "Dato sensible (dominio, IP, correo o texto) que se enmascara para capturas y exportaciones. Con el interruptor global encendido (setRedaction) el valor real no llega al DOM: sale uno genérico y estable (app.example.com, 203.0.113.7). Marca data-sensitive, que reconocen el modo DOM (applyRedaction, [data-z-redact-toggle]) y exportSVG.",
+  "import": "import { Redact, setRedaction, useRedaction } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "children",
+      "type": "string | number",
+      "description": "El valor sensible."
+    },
+    {
+      "name": "kind",
+      "type": "enum",
+      "values": ["auto", "domain", "ip", "email", "text"],
+      "default": "auto",
+      "description": "Qué contiene. auto busca dominios, IP y correos; text oculta el texto entero."
+    },
+    {
+      "name": "redacted",
+      "type": "boolean",
+      "description": "Fuerza el estado; sin él, sigue el interruptor global."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "description": "Sustituto fijo."
+    }
+  ],
+  "states": ["rest", "redacted"],
+  "tokens": ["fg-subtle"],
+  "classes": ["z-redact"],
+  "a11y": "Texto normal. Enmascarado, el lector de pantalla lee el sustituto, no el original (que no está en el documento). Un subrayado punteado indica que el valor está enmascarado.",
+  "examples": [
+    {
+      "title": "Dominio público",
+      "code": "<Redact kind=\"domain\">git.example.net</Redact>"
+    },
+    {
+      "title": "Enmascarado a la fuerza",
+      "code": "<Inline gap={3}>\n  <Redact kind=\"ip\" redacted>81.40.12.7</Redact>\n  <Redact kind=\"domain\" redacted>photos.mylab.example</Redact>\n  <Redact kind=\"text\" redacted>Home Wi-Fi</Redact>\n</Inline>"
+    }
+  ]
+}

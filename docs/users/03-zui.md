@@ -1,6 +1,6 @@
 # Zui
 
-`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 237 componentes en 19 grupos. Cada
+`@zuccadev-labs/zuix-zui` es el sistema de componentes de la suite: 244 componentes en 19 grupos. Cada
 componente es un contrato de HTML y CSS que solo lee tokens, así que una marca nueva no modifica componentes
 y el mismo marcado sirve en cualquier framework. El paquete trae dos formas de darle vida: el binding de
 React y `@zuccadev-labs/zuix-zui/dom`, sin framework ([Frameworks](./06-frameworks.md)). Sin framework se puede
@@ -35,13 +35,14 @@ El catálogo en vivo, con el código de cada ejemplo, está en [Componentes](/co
 | Dashboard y tableros | ActivityFeed, BarList, DashboardGrid, DeltaBadge, FunnelChart, Gauge, KanbanBoard, Leaderboard, MetricCard, MetricGroup, ProgressGoal, Tracker |
 | Usuarios y perfiles | AccountMenu, MemberList, Persona, PresenceBadge, ProfileEditor, ProfileHeader, SettingsSection, UserCard |
 | Nodos | Node, NodeCanvas, NodeControls, NodeListView, NodeMinimap |
+| Diagramas | DeviceSummary, DiagramLegend, FolderCard, PortPanel, Redact, SpecList, StoragePool |
 
 Cada componente declara en el contrato qué necesita para funcionar:
 
 | `behavior` | Significado | Cuántos |
 |---|---|---|
-| `none` | Solo CSS. Basta el marcado | 73 |
-| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 163 |
+| `none` | Solo CSS. Basta el marcado | 79 |
+| `dom` | Necesita `@zuccadev-labs/zuix-zui/dom`, o el binding de React | 164 |
 | `react` | Solo funciona con el binding de React. Hoy ninguno | 0 |
 
 `ErrorBoundary` es el único que solo existe en React: es un límite de errores de React, no un marcado.
@@ -471,6 +472,28 @@ export function Flow() {
 El lienzo es una sola parada de Tab: las flechas van al nodo más cercano, Alt y flechas lo mueven e Intro entra en
 él. Cada nodo se describe con sus puertos y conexiones. `setNodeGraph(el, graph)` cambia el grafo; `serializeGraph` y `parseGraph` lo guardan.
 
+### Diagramas de infraestructura
+
+El mismo lienzo dibuja diagramas de red y de laboratorio: aristas con grosor por velocidad (`weight: "10G"`),
+discontinuas, punteadas o dobles (troncales), con color de token o libre y etiquetas en los extremos; el tipo
+`orthogonal` esquiva los nodos y reparte en carriles las aristas que comparten tramo. Nodos `cloud`, `folder`
+(tarjeta con pestaña) y `text`, y zonas (`type: "zone"`) con su color. Las piezas sueltas:
+
+| Componente | Qué es |
+|---|---|
+| `FolderCard` | Tarjeta con pestaña de carpeta («Core switch · switch»), dentro o fuera del lienzo |
+| `PortPanel` | Cara de un equipo: RJ45, SFP, QSFP o coaxial, estado, marcas de VLAN y destino; los conectores son anclas de aristas |
+| `StoragePool` | Pool de discos con vdevs, tolerancia a fallos y uso |
+| `DiagramLegend` | Leyenda que se deduce del grafo (`legendFromGraph`) |
+| `DeviceSummary` | Modelo, IP, host y detalle de un equipo |
+| `SpecList` | Losetas de especificaciones (hardware, servicios, redes) |
+| `Redact` | Dato sensible que se enmascara con el interruptor global `setRedaction` (`useRedaction`, `isRedacted`, `redactText`) |
+
+`diagramFromInventory(inventario)` convierte un inventario JSON en el grafo, colocado por niveles; el esquema es
+`INVENTORY_SCHEMA` y `validateInventory` señala referencias rotas. `exportSVG(el)` y `exportPNG(el)` exportan
+cualquier elemento, y `handle.exportSVG()` el lienzo entero. La guía completa, con el esquema y los límites de la
+exportación, está en [Diagramas de infraestructura](./13-diagramas-de-infraestructura.md).
+
 ### Avisos
 
 `NotificationCenter` (campana con panel de avisos agrupados por día) y `NotificationBadge` (contador con tope).
@@ -836,6 +859,7 @@ fuera de ellos. Son funciones puras salvo los hooks; las firmas están en las de
 | Usuarios | `presenceText`, `presenceRank`, `PRESENCE_LABELS`, `initialsOf`, `filterMembers`, `groupMembers`, `sortByName`, `sortByPresence`, `validateProfile`, `validHandle`, `bioCounter` |
 | Listas largas y árboles | `wantsVirtual`, `virtualWindow`, `moveNode` |
 | Nodos | `layeredLayout`, `parseGraph`, `serializeGraph`, `describeGraph`, `describeNode` |
+| Diagramas | `diagramFromInventory`, `validateInventory`, `INVENTORY_SCHEMA`, `legendFromGraph`, `routeOrthogonal`, `cloudPath`, `parseRate`, `SPEED_SCALE`, `exportSVG`, `exportPNG`, `svgToPNG`, `setRedaction`, `isRedacted`, `redactText`, `useRedaction` |
 | Textos por defecto | `REVIEW_SUMMARY_LABELS`, `REVIEW_CARD_LABELS`, `FILTER_BAR_LABELS`, `NOTIFICATION_CENTER_LABELS`, `TREE_DRAG_LABELS` |
 
 ## Manifiestos

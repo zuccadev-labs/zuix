@@ -7,6 +7,27 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ### Añadido
 
+- Diagramas de infraestructura sobre `NodeCanvas`. Lo describe
+  [Diagramas de infraestructura](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/13-diagramas-de-infraestructura.md).
+  - Aristas con estilo, todo opcional en `GraphEdge`: `weight` con escala configurable (`edgeScale`, por defecto
+    `SPEED_SCALE`, de 10M a 100G e interpolación logarítmica), `width`, `dash` (`dashed`, `dotted`), `double`
+    (troncal con núcleo), `color` (tono, token o color libre, con su flecha), `sourceLabel` y `targetLabel`, y
+    `kind` para la leyenda.
+  - Tipo de arista `orthogonal`: esquinas redondeadas, esquiva los nodos (formas sencillas y A* sobre la rejilla
+    local) y reparte en carriles las que comparten tramo. Determinista; 600 aristas entre 300 nodos en unos
+    330 ms. `routeOrthogonal` y la opción `routing`.
+  - Nodos `cloud`, `folder` (pestaña de carpeta) y `text`, y zonas (`type: "zone"`) con borde discontinuo, etiqueta,
+    nota y color. Puertos `anchor`: la arista sale del elemento que dibuja el cuerpo del nodo.
+  - `FolderCard`, `PortPanel` (RJ45, SFP, QSFP y coaxial con estado, marcas de VLAN, destino y teclado),
+    `StoragePool`, `DiagramLegend` (con `legendFromGraph`), `DeviceSummary`, `SpecList` y `Redact`.
+  - `diagramFromInventory`, `validateInventory` e `INVENTORY_SCHEMA` (JSON Schema 2020-12): de un inventario JSON a
+    un grafo colocado por niveles. `layeredLayout` acepta `minLayer`.
+  - Exportar a SVG autocontenido y a PNG: `exportSVG`, `exportPNG` y `svgToPNG` para cualquier elemento, y
+    `handle.exportSVG` y `handle.exportPNG` para el lienzo entero. `handle.sizes` da las medidas reales y la opción
+    `cull={false}` pinta todo.
+  - Enmascarado de datos sensibles: `setRedaction`, `useRedaction`, `isRedacted`, `redactText`; en el modo DOM,
+    `[data-sensitive]`, `[data-z-redact-toggle]` y `applyRedaction`.
+  - `styles/diagram.css` (en `styles.css`).
 - Conector para editores visuales de páginas por bloques: `@zuccadev-labs/zuix-zui/editor` (sin React) y
   `@zuccadev-labs/zuix-zui/editor/react`. Lo describe
   [Conectar un editor visual](https://github.com/zuccadev-labs/zuix/blob/main/docs/users/12-conectar-un-editor.md).

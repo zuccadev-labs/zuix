@@ -5,6 +5,14 @@ versión en toda la suite ([Versionado](https://github.com/zuccadev-labs/zuix/bl
 
 ## [Sin publicar]
 
+### Añadido
+
+- Iconos propios de la aplicación en tiempo de ejecución: `registerAppIcons` y `defineIcon` validan nombre, caja,
+  trazados (solo comandos de trazado), pinturas e imagen (`safeImageUrl`), y `parseSvgIcon` lee un SVG dado como
+  texto sin `innerHTML` ni `DOMParser` (sirve con Trusted Types). `IconDef` admite `viewBox`, `image` y trazados con
+  pintura propia; `<Icon>`, `<z-icon>`, `iconSvg` e `iconElement` los dibujan. La interfaz `CustomIcons` da tipos a
+  los nombres propios. `iconParts` e `iconFrame` en `/dom`.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

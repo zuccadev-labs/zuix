@@ -1,6 +1,6 @@
 {
  "name": "@zuccadev-labs/zuix-zui",
- "count": 237,
+ "count": 244,
  "groups": {
   "actions": [
    "Button",
@@ -231,11 +231,18 @@
    "Tree"
   ],
   "nodes": [
+   "DeviceSummary",
+   "DiagramLegend",
+   "FolderCard",
    "Node",
    "NodeCanvas",
    "NodeControls",
    "NodeListView",
-   "NodeMinimap"
+   "NodeMinimap",
+   "PortPanel",
+   "Redact",
+   "SpecList",
+   "StoragePool"
   ],
   "overlay": [
    "ActionBar",
@@ -26799,13 +26806,290 @@
    "file": "zui/src/components/navigation/Tree.manifest.json"
   },
   {
+   "name": "DeviceSummary",
+   "group": "nodes",
+   "description": "Resumen de un equipo: icono o logotipo, modelo, dirección IP y nombre de host (en monoespaciada y enmascarables con Redact) y líneas de detalle. Es el encabezado de una tarjeta de diagrama.",
+   "import": "import { DeviceSummary } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "description": "Modelo o nombre completo."
+    },
+    {
+     "name": "icon",
+     "type": "IconName",
+     "description": "Icono de zicon o uno propio de la aplicación (registerAppIcons)."
+    },
+    {
+     "name": "media",
+     "type": "ReactNode",
+     "description": "Imagen o logotipo en lugar del icono."
+    },
+    {
+     "name": "ip",
+     "type": "string"
+    },
+    {
+     "name": "hostname",
+     "type": "string"
+    },
+    {
+     "name": "meta",
+     "type": "ReactNode | ReactNode[]",
+     "description": "Líneas de detalle (sistema y versión)."
+    },
+    {
+     "name": "tone",
+     "type": "enum",
+     "values": [
+      "neutral",
+      "accent",
+      "success",
+      "warning",
+      "danger",
+      "info"
+     ],
+     "default": "neutral"
+    }
+   ],
+   "states": [
+    "rest",
+    "redacted"
+   ],
+   "tokens": [
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "warning-text",
+    "info-text",
+    "accent-soft",
+    "accent-text",
+    "control-height-lg",
+    "control-radius",
+    "font-mono",
+    "text-body",
+    "text-caption",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-device",
+    "z-device__media",
+    "z-device__text",
+    "z-device__title",
+    "z-device__address",
+    "z-device__ip",
+    "z-device__sep",
+    "z-device__host",
+    "z-device__meta"
+   ],
+   "a11y": "Texto. El icono es decorativo; la IP y el host van dentro de Redact y se enmascaran con el interruptor global.",
+   "examples": [
+    {
+     "title": "Switch",
+     "code": "<DeviceSummary icon=\"server-stack\" title=\"Managed switch · 8× 2.5G\" ip=\"10.0.99.2\" hostname=\"switch.internal\" meta=\"Switch OS 7.1\" />"
+    },
+    {
+     "title": "Servidor con tono",
+     "code": "<DeviceSummary icon=\"server\" tone=\"accent\" title=\"Tower server\" ip=\"10.0.10.20\" hostname=\"hv.internal\" meta={[\"Hypervisor 9.1\", \"64 GB · 16 cores\"]} />"
+    }
+   ],
+   "file": "zui/src/components/nodes/DeviceSummary.manifest.json"
+  },
+  {
+   "name": "DiagramLegend",
+   "group": "nodes",
+   "description": "Leyenda de un diagrama: estilos de línea por categoría de arista (continua, discontinua, punteada, doble, con su color), grosores por valor (la velocidad de un enlace), colores de zona y símbolos. Se deduce del propio grafo con legendFromGraph, así no se desincroniza del dibujo; cada muestra se pinta con las mismas reglas que las aristas del lienzo.",
+   "import": "import { DiagramLegend } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "graph",
+     "type": "Graph",
+     "description": "Grafo del que se deduce la leyenda (aristas con kind, weight, dash, double, color; nodos zone)."
+    },
+    {
+     "name": "options",
+     "type": "LegendOptions",
+     "description": "{ kinds?: textos por categoría, scale?, widths?, zones?, symbols?: { key, label, symbol }[] }. Un símbolo es un icono, «vlan», «share», «chip:TEXTO» o «text:TEXTO»."
+    },
+    {
+     "name": "entries",
+     "type": "LegendEntry[]",
+     "description": "Filas ya calculadas (en lugar de graph)."
+    },
+    {
+     "name": "title",
+     "type": "string"
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "default": 3
+    },
+    {
+     "name": "columns",
+     "type": "enum",
+     "values": [
+      1,
+      2
+     ],
+     "default": 1
+    },
+    {
+     "name": "labels",
+     "type": "Partial<DiagramLegendLabels>",
+     "description": "legend, widths, solid, dashed, dotted, double, width, zone."
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "fg",
+    "fg-muted",
+    "line-strong",
+    "info",
+    "info-text",
+    "accent",
+    "radius-xs",
+    "font-mono",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "text-title",
+    "weight-bold"
+   ],
+   "classes": [
+    "z-diagram-legend",
+    "z-diagram-legend__title",
+    "z-diagram-legend__list",
+    "z-diagram-legend__item",
+    "z-diagram-legend__key",
+    "z-diagram-legend__swatch",
+    "z-diagram-legend__label",
+    "z-diagram-legend__widths",
+    "z-diagram-legend__width",
+    "z-diagram-legend__value",
+    "z-diagram-legend__zone",
+    "z-diagram-legend__share",
+    "z-diagram-legend__chip",
+    "z-diagram-legend__text",
+    "z-diagram-legend__symbol"
+   ],
+   "a11y": "Lista con un título (o con aria-label «Legend»). Las muestras son decorativas; cada fila lleva delante, solo para lectores, el tipo de línea («Dashed line: », «Double line: », «Zone: »), así la diferencia no depende de verla.",
+   "examples": [
+    {
+     "title": "Desde un grafo",
+     "code": "<DiagramLegend\n  title=\"Legend\"\n  graph={{\n    nodes: [{ id: \"dmz\", type: \"zone\", position: { x: 0, y: 0 }, data: { label: \"VLAN 20 · DMZ\", color: \"chart-2\" } }],\n    edges: [\n      { id: \"a\", source: \"dmz\", target: \"dmz\", kind: \"trunk\", double: true, weight: \"10G\" },\n      { id: \"b\", source: \"dmz\", target: \"dmz\", kind: \"access\", color: \"chart-1\", weight: \"2.5G\" },\n      { id: \"c\", source: \"dmz\", target: \"dmz\", kind: \"wan\", color: \"danger\", weight: \"1G\" },\n      { id: \"d\", source: \"dmz\", target: \"dmz\", kind: \"console\", dash: \"dashed\", weight: \"100M\" },\n    ],\n  }}\n  options={{\n    kinds: { trunk: \"802.1Q trunk (tagged VLANs)\", access: \"Access port, colored by VLAN\", wan: \"WAN uplink\", console: \"KVM console\" },\n    symbols: [{ key: \"lan\", label: \"only from LAN or VPN\", symbol: \"chip:LAN\" }, { key: \"vlan\", label: \"port VLANs (tall = untagged)\", symbol: \"vlan\" }],\n  }}\n/>"
+    }
+   ],
+   "file": "zui/src/components/nodes/DiagramLegend.manifest.json"
+  },
+  {
+   "name": "FolderCard",
+   "group": "nodes",
+   "exports": [
+    "FolderTab"
+   ],
+   "description": "Tarjeta con pestaña de carpeta: el título y su tipo van en una pestaña sobre el borde («Core switch · switch») y el contenido debajo, con borde de color opcional. Se usa dentro de un NodeCanvas (nodo con type: \"folder\", que pinta el mismo marcado) y fuera de él, en cualquier página. FolderTab es la pestaña suelta.",
+   "import": "import { FolderCard } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "description": "Título de la pestaña."
+    },
+    {
+     "name": "kind",
+     "type": "ReactNode",
+     "description": "Lo que sigue al punto en la pestaña («switch», «server»)."
+    },
+    {
+     "name": "icon",
+     "type": "IconName"
+    },
+    {
+     "name": "color",
+     "type": "string",
+     "description": "Color del borde: tono (accent, danger…), token (chart-3) o color libre."
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "default": 3
+    },
+    {
+     "name": "footer",
+     "type": "ReactNode",
+     "description": "Línea de notas bajo el contenido."
+    }
+   ],
+   "states": [
+    "rest",
+    "selected"
+   ],
+   "tokens": [
+    "surface-solid",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-sm",
+    "radius-md",
+    "radius-lg",
+    "text-title",
+    "text-small",
+    "text-caption",
+    "weight-bold",
+    "weight-medium",
+    "layer-raised",
+    "accent"
+   ],
+   "classes": [
+    "z-folder-card",
+    "z-folder-card__tab",
+    "z-folder-card__icon",
+    "z-folder-card__title",
+    "z-folder-card__kind",
+    "z-folder-card__body",
+    "z-folder-card__footer"
+   ],
+   "a11y": "Una section nombrada por su título cuando lleva id (aria-labelledby). El punto que separa título y tipo es contenido generado con texto alternativo vacío: no se lee.",
+   "examples": [
+    {
+     "title": "Equipo de red",
+     "code": "<FolderCard id=\"core\" title=\"Core switch\" kind=\"switch\" icon=\"server-stack\" color=\"chart-6\" footer=\"configured as a pure L2 switch\">\n  <DeviceSummary icon=\"server-stack\" title=\"Managed switch · 8× 2.5G + 2× SFP+\" ip=\"10.0.99.2\" hostname=\"switch.internal\" meta=\"Switch OS 7.1\" />\n</FolderCard>"
+    },
+    {
+     "title": "Aviso con borde de peligro",
+     "code": "<FolderCard title=\"Open to the internet\" kind=\"port forwards\" icon=\"globe-alt\" color=\"danger\">\n  Ports 80 and 443 go to the reverse proxy. Everything else is closed.\n</FolderCard>"
+    }
+   ],
+   "file": "zui/src/components/nodes/FolderCard.manifest.json"
+  },
+  {
    "name": "Node",
    "group": "nodes",
    "exports": [
     "NodeGroup",
     "NodePort"
    ],
-   "description": "Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y asa de redimensionado. Con type: \"group\" (o NodeGroup) es un grupo o subflujo. NodePort es el puerto suelto. Solo marcado: dentro de NodeCanvas lo mueve el lienzo.",
+   "description": "Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y asa de redimensionado. Con type: \"group\" (o NodeGroup) es un grupo o subflujo; con zone, una zona de borde discontinuo con su color (data.color) y nota; con cloud, una nube; con folder, una tarjeta con pestaña de carpeta (data.kind tras el título, data.color en el borde); con text, un rótulo sin caja. NodePort es el puerto suelto. Solo marcado: dentro de NodeCanvas lo mueve el lienzo.",
    "import": "import { Node, NodeGroup, NodePort } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
@@ -26889,7 +27173,14 @@
     "z-node-port__label",
     "z-node-group",
     "z-node-group__header",
-    "z-node-group__title"
+    "z-node-group__title",
+    "z-node__shape",
+    "z-node-group__note",
+    "z-folder-card",
+    "z-folder-card__tab",
+    "z-folder-card__title",
+    "z-folder-card__kind",
+    "z-folder-card__body"
    ],
    "a11y": "group con aria-roledescription «node» y el título como nombre. El estado se dice en texto («running», «error»), no solo con color. Cada puerto es un <button> con nombre («Input json», «Output true») y objetivo de 24 px. En el lienzo, los controles del cuerpo salen del orden de Tab hasta que se entra en el nodo con Intro.",
    "examples": [
@@ -26900,6 +27191,10 @@
     {
      "title": "Grupo",
      "code": "<NodeGroup node={{ id: \"g\", position: { x: 0, y: 0 }, size: { width: 360, height: 200 }, data: { label: \"Retry block\" } }} />"
+    },
+    {
+     "title": "Nube, carpeta y zona",
+     "code": "<Inline gap={4} align=\"start\">\n  <div style={{ position: \"relative\", width: 220, height: 120 }}>\n    <Node node={{ id: \"i\", type: \"cloud\", position: { x: 0, y: 0 }, size: { width: 220, height: 120 }, data: { label: \"Internet\", description: \"dynamic IPv4\" } }} />\n  </div>\n  <div style={{ position: \"relative\", width: 260, height: 120 }}>\n    <Node node={{ id: \"f\", type: \"folder\", position: { x: 0, y: 0 }, size: { width: 260, height: 120 }, data: { label: \"Firewall\", kind: \"router\", color: \"danger\", description: \"Fanless mini PC\" } }} />\n  </div>\n  <div style={{ position: \"relative\", width: 260, height: 120 }}>\n    <NodeGroup node={{ id: \"z\", type: \"zone\", position: { x: 0, y: 0 }, size: { width: 260, height: 120 }, data: { label: \"VLAN 20 · DMZ\", color: \"chart-2\", description: \"no access to LAN\" } }} />\n  </div>\n</Inline>"
     }
    ],
    "file": "zui/src/components/nodes/Node.manifest.json"
@@ -26907,18 +27202,18 @@
   {
    "name": "NodeCanvas",
    "group": "nodes",
-   "description": "Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y trazo animado), zoom con Ctrl/⌘ + rueda o pellizco, desplazamiento con la rueda, arrastrando el fondo o con flechas, imán a la cuadrícula, caja de selección con Mayús, mover y redimensionar, conectar arrastrando desde un puerto (o con dos clics, o con el teclado), reconectar arrastrando el extremo de una arista, borrar, copiar/pegar/duplicar, deshacer/rehacer, grupos (subflujos), minimapa, controles y disposición automática por capas. Solo pinta lo que se ve: 500 nodos y 800 aristas se mueven con fluidez.",
+   "description": "Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada, escalonada suave y ortogonal que esquiva los nodos y reparte en carriles las que comparten tramo; con flecha, etiqueta, trazo animado y, para diagramas, grosor por valor, discontinua, punteada, doble con núcleo, color libre y etiquetas de extremo), zoom con Ctrl/⌘ + rueda o pellizco, desplazamiento con la rueda, arrastrando el fondo o con flechas, imán a la cuadrícula, caja de selección con Mayús, mover y redimensionar, conectar arrastrando desde un puerto (o con dos clics, o con el teclado), reconectar arrastrando el extremo de una arista, borrar, copiar/pegar/duplicar, deshacer/rehacer, grupos (subflujos), minimapa, controles y disposición automática por capas. Solo pinta lo que se ve: 500 nodos y 800 aristas se mueven con fluidez. Exporta el diagrama entero a SVG autocontenido y a PNG (handle.exportSVG, handle.exportPNG).",
    "import": "import { NodeCanvas } from \"@zuccadev-labs/zuix-zui\"",
    "props": [
     {
      "name": "nodes",
      "type": "GraphNode[]",
-     "description": "Nodos (controlado): { id, position: { x, y }, size?, parentId?, type?, data: { label, icon, description, status, tone }, ports?: { id, kind: 'source' | 'target', side?, type?, label?, max? }[], draggable?, selectable? }. Los hijos de un grupo van en posición relativa a él."
+     "description": "Nodos (controlado): { id, position: { x, y }, size?, parentId?, type?, data: { label, icon, description, status, tone }, ports?: { id, kind: 'source' | 'target', side?, type?, label?, max? }[], draggable?, selectable? }. Los hijos de un grupo van en posición relativa a él. type: group, zone (zona con color: data.color), cloud, folder (pestaña: data.kind) o text (rótulo sin caja). Un puerto con anchor: true lo dibuja el cuerpo (un PortPanel) y la arista sale de él."
     },
     {
      "name": "edges",
      "type": "GraphEdge[]",
-     "description": "Aristas (controlado): { id, source, sourcePort?, target, targetPort?, type?, animated?, label?, markerEnd?, tone? }."
+     "description": "Aristas (controlado): { id, source, sourcePort?, target, targetPort?, type?: 'straight' | 'bezier' | 'step' | 'smoothstep' | 'orthogonal', animated?, label?, markerEnd?, tone?, width?, weight? (valor de la escala: '10G'), dash?: 'solid' | 'dashed' | 'dotted', double?, color? (tono, token o color libre), sourceLabel?, targetLabel?, kind? (categoría para la leyenda) }."
     },
     {
      "name": "defaultNodes",
@@ -27019,6 +27314,22 @@
      "default": "bezier"
     },
     {
+     "name": "edgeScale",
+     "type": "EdgeWidthScale",
+     "description": "Escala de grosores para weight: { valor: px }. Por defecto SPEED_SCALE (10M a 100G); un valor que se lee como caudal se interpola en escala logarítmica."
+    },
+    {
+     "name": "routing",
+     "type": "OrthogonalOptions",
+     "description": "Enrutado orthogonal: { margin?, offset?, radius?, spacing?, nudge?, bendCost?, maxGrid? }."
+    },
+    {
+     "name": "cull",
+     "type": "boolean",
+     "default": true,
+     "description": "Pintar solo lo que se ve. Con false se pinta todo (diagramas pequeños, impresión)."
+    },
+    {
      "name": "layoutDirection",
      "type": "enum",
      "values": [
@@ -27114,7 +27425,11 @@
     "layer-raised",
     "control-height-md",
     "control-height-xs",
-    "control-radius-sm"
+    "control-radius-sm",
+    "diagram-trunk-core",
+    "font-mono",
+    "text-fine",
+    "info"
    ],
    "classes": [
     "z-node-canvas",
@@ -27134,9 +27449,11 @@
     "z-edge__path",
     "z-edge__hit",
     "z-edge__end",
-    "z-edge__label"
+    "z-edge__label",
+    "z-edge__core",
+    "z-edge__end-label"
    ],
-   "a11y": "El lienzo es un group con aria-roledescription «diagram», nombre y descripción (resumen del grafo e instrucciones de teclado); no usa role=application. Cada nodo es un group con aria-roledescription «node», su título como nombre y una descripción generada («2 inputs, 1 outputs; connected to Filter and Save»). Una sola parada de Tab con foco itinerante entre nodos: flechas al nodo más cercano en esa dirección (sin candidato no se toca la tecla), Intro entra en el nodo (sus controles y puertos pasan a ser tabulables) y Escape sale al nodo y luego al lienzo, donde las flechas desplazan. Alt+flechas mueven el nodo una celda del imán (Mayús+Alt, diez), Espacio selecciona, Ctrl+A todo, Supr borra con anuncio y Ctrl+Z deshace; ] y [ siguen las conexiones de salida y de entrada; + − 0 y F hacen zoom, 100 % y encajar; Ctrl+C/X/V/D copian, cortan, pegan y duplican; Ctrl+G agrupa y Ctrl+Mayús+G desagrupa. Conectar con teclado: Intro en un puerto lo coge, las flechas o Tab recorren los puertos compatibles (resaltados y anunciados «Input in of Filter, 1 of 3»), Intro conecta y Escape cancela. Con el puntero, además de arrastrar, se conecta con dos clics. Los puertos miden 24 px aunque el punto mida 12. Los anuncios van al anunciador central. Con movimiento reducido las aristas animadas quedan quietas y llevan flecha; la animación se pausa fuera de pantalla. Sin React: .z-node-canvas[data-z-node-canvas] con data-snap, data-min-zoom, data-max-zoom, data-readonly, data-edge-type, data-allow-cycles=\"false\", data-fit=\"false\", data-controls=\"false\", data-minimap=\"false\" y data-layout-button; los nodos como hijos (.z-node[data-id][data-x][data-y], data-parent, data-width, data-height) y las aristas en <script type=\"application/json\" class=\"z-node-canvas__edges\">, o el grafo entero en <script type=\"application/json\" data-graph>. nodeCanvas(el) devuelve la misma API que la ref; setNodeGraph(el, graph) cambia el modelo; emite z:graphchange { graph, change }, z:viewportchange, z:selectionchange, z:connect y z:lockchange.",
+   "a11y": "El lienzo es un group con aria-roledescription «diagram», nombre y descripción (resumen del grafo e instrucciones de teclado); no usa role=application. Cada nodo es un group con aria-roledescription «node», su título como nombre y una descripción generada («2 inputs, 1 outputs; connected to Filter and Save»). Una sola parada de Tab con foco itinerante entre nodos: flechas al nodo más cercano en esa dirección (sin candidato no se toca la tecla), Intro entra en el nodo (sus controles y puertos pasan a ser tabulables) y Escape sale al nodo y luego al lienzo, donde las flechas desplazan. Alt+flechas mueven el nodo una celda del imán (Mayús+Alt, diez), Espacio selecciona, Ctrl+A todo, Supr borra con anuncio y Ctrl+Z deshace; ] y [ siguen las conexiones de salida y de entrada; + − 0 y F hacen zoom, 100 % y encajar; Ctrl+C/X/V/D copian, cortan, pegan y duplican; Ctrl+G agrupa y Ctrl+Mayús+G desagrupa. Conectar con teclado: Intro en un puerto lo coge, las flechas o Tab recorren los puertos compatibles (resaltados y anunciados «Input in of Filter, 1 of 3»), Intro conecta y Escape cancela. Con el puntero, además de arrastrar, se conecta con dos clics. Los puertos miden 24 px aunque el punto mida 12. Los anuncios van al anunciador central. Con movimiento reducido las aristas animadas quedan quietas y llevan flecha; la animación se pausa fuera de pantalla. Sin React: .z-node-canvas[data-z-node-canvas] con data-snap, data-min-zoom, data-max-zoom, data-readonly, data-edge-type, data-allow-cycles=\"false\", data-fit=\"false\", data-controls=\"false\", data-minimap=\"false\" y data-layout-button; los nodos como hijos (.z-node[data-id][data-x][data-y], data-parent, data-width, data-height) y las aristas en <script type=\"application/json\" class=\"z-node-canvas__edges\">, o el grafo entero en <script type=\"application/json\" data-graph>. nodeCanvas(el) devuelve la misma API que la ref; setNodeGraph(el, graph) cambia el modelo; emite z:graphchange { graph, change }, z:viewportchange, z:selectionchange, z:connect y z:lockchange. Las aristas con estilo no dependen del color: el tipo de línea (discontinua, punteada, doble) y el grosor se ven también con forced-colors, donde todo se pinta con CanvasText.",
    "behavior": "dom",
    "examples": [
     {
@@ -27146,6 +27463,10 @@
     {
      "title": "Controlado, con cuerpo propio",
      "code": "<NodeCanvas nodes={nodes} edges={edges} onNodesChange={setNodes} onEdgesChange={setEdges} edgeType=\"smoothstep\" renderNode={(node) => <Switch label=\"Enabled\" />} controls={{ showLayout: true }} />"
+    },
+    {
+     "title": "Red con aristas con estilo",
+     "code": "<NodeCanvas\n  aria-label=\"Small network\"\n  readOnly\n  edgeType=\"orthogonal\"\n  defaultNodes={[\n    { id: \"net\", type: \"cloud\", position: { x: 180, y: 0 }, data: { label: \"Internet\", description: \"1 Gbit/s\" }, ports: [{ id: \"down\", kind: \"source\", side: \"bottom\" }] },\n    { id: \"sw\", type: \"folder\", position: { x: 120, y: 200 }, data: { label: \"Core switch\", kind: \"switch\", color: \"chart-6\", description: \"8× 2.5G + 2× SFP+\" }, ports: [{ id: \"up\", kind: \"target\", side: \"top\" }, { id: \"a\", kind: \"source\", side: \"bottom\" }, { id: \"b\", kind: \"source\", side: \"bottom\" }] },\n    { id: \"pc\", type: \"folder\", position: { x: 0, y: 420 }, data: { label: \"Desk\", kind: \"workstation\", color: \"chart-1\" }, ports: [{ id: \"up\", kind: \"target\", side: \"top\" }] },\n    { id: \"hv\", type: \"folder\", position: { x: 320, y: 420 }, data: { label: \"Server\", kind: \"server\" }, ports: [{ id: \"up\", kind: \"target\", side: \"top\" }] },\n  ]}\n  defaultEdges={[\n    { id: \"wan\", source: \"net\", sourcePort: \"down\", target: \"sw\", targetPort: \"up\", color: \"danger\", weight: \"1G\", targetLabel: \"1G\", markerEnd: \"none\" },\n    { id: \"lan\", source: \"sw\", sourcePort: \"a\", target: \"pc\", targetPort: \"up\", color: \"chart-1\", weight: \"2.5G\", targetLabel: \"2.5G\", markerEnd: \"none\" },\n    { id: \"trunk\", source: \"sw\", sourcePort: \"b\", target: \"hv\", targetPort: \"up\", double: true, weight: \"10G\", targetLabel: \"10G\", markerEnd: \"none\" },\n  ]}\n/>"
     }
    ],
    "html": [
@@ -27353,6 +27674,386 @@
     }
    ],
    "file": "zui/src/components/nodes/NodeMinimap.manifest.json"
+  },
+  {
+   "name": "PortPanel",
+   "group": "nodes",
+   "description": "Cara de un equipo de red: conectores RJ45, SFP, QSFP o coaxial numerados, con estado (libre, enlazado, deshabilitado, expuesto), marcas de VLAN (barra alta = sin etiquetar, barras cortas = etiquetadas, color por VLAN) y la etiqueta de destino bajo cada puerto. Dentro de un NodeCanvas cada conector es el ancla de las aristas de su puerto (puertos del nodo con anchor: true): la arista sale del conector exacto.",
+   "import": "import { PortPanel } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "ports",
+     "type": "PanelPort[]",
+     "description": "{ id, label?, connector?: 'rj45' | 'sfp' | 'qsfp' | 'coax', state?: 'free' | 'linked' | 'disabled' | 'exposed', untagged?, tagged?, to?, speed?, note?, group?, side? }. Sin estado: linked si tiene destino, free si no."
+    },
+    {
+     "name": "vlans",
+     "type": "PanelVlan[]",
+     "description": "{ id, name?, color? }: nombre y color (tono, token o color libre) de cada VLAN."
+    },
+    {
+     "name": "label",
+     "type": "string",
+     "description": "Nombre accesible del panel. Por defecto «Ports»."
+    },
+    {
+     "name": "selected",
+     "type": "string",
+     "description": "Puerto resaltado."
+    },
+    {
+     "name": "onSelectedChange",
+     "type": "(id) => void",
+     "description": "Puerto elegido con Intro, Espacio o un clic."
+    },
+    {
+     "name": "side",
+     "type": "enum",
+     "values": [
+      "top",
+      "bottom"
+     ],
+     "default": "bottom",
+     "description": "Lado del nodo por el que salen las aristas (cada puerto puede llevar el suyo)."
+    },
+    {
+     "name": "size",
+     "type": "enum",
+     "values": [
+      "sm",
+      "md"
+     ],
+     "default": "md"
+    },
+    {
+     "name": "showTargets",
+     "type": "boolean",
+     "default": true,
+     "description": "Rótulos de destino bajo los puertos."
+    },
+    {
+     "name": "labels",
+     "type": "Partial<PortPanelLabels>",
+     "description": "Textos: port («Port {label}»), free, linked («connected to {to}»), disabled, exposed, untagged, tagged y los nombres de los conectores."
+    },
+    {
+     "name": "locale",
+     "type": "string",
+     "description": "Idioma de las listas de VLAN en la descripción."
+    },
+    {
+     "name": "idPrefix",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "rest",
+    "focus",
+    "selected",
+    "free",
+    "linked",
+    "disabled",
+    "exposed"
+   ],
+   "tokens": [
+    "port-jack-bg",
+    "port-socket",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "surface-3",
+    "glass-highlight",
+    "radius-xs",
+    "font-mono",
+    "text-fine",
+    "focus-width",
+    "chart-1",
+    "chart-2",
+    "chart-4",
+    "chart-5",
+    "chart-6"
+   ],
+   "classes": [
+    "z-port-panel",
+    "z-port-panel__group",
+    "z-port",
+    "z-port__number",
+    "z-port__jack",
+    "z-port__socket",
+    "z-port__vlans",
+    "z-port__vlan",
+    "z-port__to"
+   ],
+   "a11y": "Listbox horizontal con foco itinerante (una parada de tabulación): flechas, Inicio y Fin van de puerto en puerto; Intro, Espacio o un clic lo eligen. Cada opción se anuncia entera («Port 2, connected to Desk, untagged VLAN 10 LAN, 1G»); el color de las VLAN y del conector no es la única pista. La cara del equipo no se refleja en RTL. Con forced-colors las marcas se pintan con CanvasText y conservan su altura.",
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Switch con VLAN",
+     "code": "<PortPanel\n  label=\"Core switch ports\"\n  vlans={[\n    { id: \"lan\", name: \"LAN\", color: \"chart-1\" },\n    { id: \"iot\", name: \"IoT\", color: \"chart-4\" },\n    { id: \"mgmt\", name: \"MGMT\", color: \"chart-6\" },\n  ]}\n  ports={[\n    { id: \"p1\", label: \"1\", tagged: [\"lan\", \"iot\", \"mgmt\"], to: \"Firewall\" },\n    { id: \"p2\", label: \"2\", untagged: \"lan\", to: \"Desk\", speed: \"2.5G\" },\n    { id: \"p3\", label: \"3\" },\n    { id: \"p4\", label: \"4\", untagged: \"mgmt\", tagged: [\"lan\", \"iot\"], to: \"Access point\" },\n    { id: \"p5\", label: \"5\", state: \"disabled\", note: \"bad cable\" },\n    { id: \"s1\", label: \"SFP+1\", connector: \"sfp\", untagged: \"lan\", to: \"Server\", speed: \"10G\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Puerto expuesto y coaxial",
+     "code": "<PortPanel\n  size=\"sm\"\n  label=\"Gateway ports\"\n  ports={[\n    { id: \"cable\", label: \"Cable\", connector: \"coax\", to: \"internet\" },\n    { id: \"lan1\", label: \"1G\", state: \"exposed\", to: \"exposed host\" },\n    { id: \"lan2\", label: \"1G\" },\n  ]}\n/>"
+    }
+   ],
+   "file": "zui/src/components/nodes/PortPanel.manifest.json"
+  },
+  {
+   "name": "Redact",
+   "group": "nodes",
+   "exports": [
+    "useRedaction"
+   ],
+   "description": "Dato sensible (dominio, IP, correo o texto) que se enmascara para capturas y exportaciones. Con el interruptor global encendido (setRedaction) el valor real no llega al DOM: sale uno genérico y estable (app.example.com, 203.0.113.7). Marca data-sensitive, que reconocen el modo DOM (applyRedaction, [data-z-redact-toggle]) y exportSVG.",
+   "import": "import { Redact, setRedaction, useRedaction } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "children",
+     "type": "string | number",
+     "description": "El valor sensible."
+    },
+    {
+     "name": "kind",
+     "type": "enum",
+     "values": [
+      "auto",
+      "domain",
+      "ip",
+      "email",
+      "text"
+     ],
+     "default": "auto",
+     "description": "Qué contiene. auto busca dominios, IP y correos; text oculta el texto entero."
+    },
+    {
+     "name": "redacted",
+     "type": "boolean",
+     "description": "Fuerza el estado; sin él, sigue el interruptor global."
+    },
+    {
+     "name": "placeholder",
+     "type": "string",
+     "description": "Sustituto fijo."
+    }
+   ],
+   "states": [
+    "rest",
+    "redacted"
+   ],
+   "tokens": [
+    "fg-subtle"
+   ],
+   "classes": [
+    "z-redact"
+   ],
+   "a11y": "Texto normal. Enmascarado, el lector de pantalla lee el sustituto, no el original (que no está en el documento). Un subrayado punteado indica que el valor está enmascarado.",
+   "examples": [
+    {
+     "title": "Dominio público",
+     "code": "<Redact kind=\"domain\">git.example.net</Redact>"
+    },
+    {
+     "title": "Enmascarado a la fuerza",
+     "code": "<Inline gap={3}>\n  <Redact kind=\"ip\" redacted>81.40.12.7</Redact>\n  <Redact kind=\"domain\" redacted>photos.mylab.example</Redact>\n  <Redact kind=\"text\" redacted>Home Wi-Fi</Redact>\n</Inline>"
+    }
+   ],
+   "file": "zui/src/components/nodes/Redact.manifest.json"
+  },
+  {
+   "name": "SpecList",
+   "group": "nodes",
+   "description": "Lista de especificaciones en losetas: tipo (en versalitas), pieza y detalle, con icono y marca de color opcionales. Sirve para el hardware de un servidor, los servicios de un router, las redes de un laboratorio o cualquier ficha técnica corta.",
+   "import": "import { SpecList } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "items",
+     "type": "SpecItem[]",
+     "description": "{ label?, value, note?, icon?, tone?, color? }. color (token o color libre, el de una VLAN) gana a tone."
+    },
+    {
+     "name": "columns",
+     "type": "enum",
+     "values": [
+      1,
+      2,
+      3,
+      "auto"
+     ],
+     "default": "auto"
+    },
+    {
+     "name": "title",
+     "type": "ReactNode",
+     "description": "Encabezado en versalitas sobre la lista."
+    }
+   ],
+   "states": [
+    "rest"
+   ],
+   "tokens": [
+    "surface-2",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "accent",
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "radius-sm",
+    "text-fine",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-wide"
+   ],
+   "classes": [
+    "z-spec-group",
+    "z-spec-group__title",
+    "z-spec-list",
+    "z-spec",
+    "z-spec__icon",
+    "z-spec__text",
+    "z-spec__label",
+    "z-spec__value",
+    "z-spec__note"
+   ],
+   "a11y": "Una lista (ul) de elementos con su texto; la marca de color y los iconos son decorativos.",
+   "examples": [
+    {
+     "title": "Hardware",
+     "code": "<SpecList\n  title=\"Hardware\"\n  columns={2}\n  items={[\n    { label: \"CPU\", value: \"16-core CPU\", note: \"32 threads\", icon: \"cpu-chip\" },\n    { label: \"Memory\", value: \"64 GB DDR5\", note: \"ECC\", icon: \"rectangle-stack\" },\n    { label: \"Network\", value: \"Dual 10G SFP+\", note: \"VLAN-aware bridge\", icon: \"arrows-right-left\" },\n    { label: \"SSD\", value: \"NVMe 2 TB\", note: \"guest disks\", icon: \"circle-stack\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Redes con su color",
+     "code": "<SpecList\n  columns={1}\n  items={[\n    { label: \"VLAN 10\", value: \"LAN · 10.0.10.0/24\", note: \"trusted\", color: \"chart-1\" },\n    { label: \"VLAN 20\", value: \"DMZ · 10.0.20.0/24\", note: \"services only\", color: \"chart-2\" },\n    { label: \"Uplink\", value: \"WAN · 192.168.1.0/24\", note: \"untrusted\", tone: \"danger\" },\n  ]}\n/>"
+    }
+   ],
+   "file": "zui/src/components/nodes/SpecList.manifest.json"
+  },
+  {
+   "name": "StoragePool",
+   "group": "nodes",
+   "description": "Pool de discos: nombre, resumen de discos, uso con libre y total, y cada vdev con su fila de discos (HDD, SSD, NVMe), su tipo (RAIDZ1/2/3, mirror, single, stripe), cuántos discos pueden fallar y una nota.",
+   "import": "import { StoragePool } from \"@zuccadev-labs/zuix-zui\"",
+   "props": [
+    {
+     "name": "name",
+     "type": "string"
+    },
+    {
+     "name": "vdevs",
+     "type": "PoolVdev[]",
+     "description": "{ role?, layout: 'single' | 'stripe' | 'mirror' | 'raidz1' | 'raidz2' | 'raidz3', disks, disk: 'hdd' | 'ssd' | 'nvme', model?, note? }."
+    },
+    {
+     "name": "used",
+     "type": "number",
+     "description": "Bytes usados."
+    },
+    {
+     "name": "size",
+     "type": "number",
+     "description": "Bytes utilizables."
+    },
+    {
+     "name": "note",
+     "type": "string"
+    },
+    {
+     "name": "units",
+     "type": "enum",
+     "values": [
+      "binary",
+      "decimal"
+     ],
+     "default": "binary",
+     "description": "TiB/GiB (como ZFS) o TB/GB."
+    },
+    {
+     "name": "headingLevel",
+     "type": "enum",
+     "values": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "default": 3
+    },
+    {
+     "name": "labels",
+     "type": "Partial<StoragePoolLabels>",
+     "description": "usage («{percent} used · {free} free · {size} usable»), mayFail ({ one, other }), noRedundancy, layouts, disks, diskCount, meter."
+    },
+    {
+     "name": "locale",
+     "type": "string"
+    }
+   ],
+   "states": [
+    "rest",
+    "high",
+    "critical"
+   ],
+   "tokens": [
+    "surface-2",
+    "surface-3",
+    "surface-solid",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "accent",
+    "warning",
+    "warning-text",
+    "danger",
+    "radius-md",
+    "radius-xs",
+    "radius-full",
+    "text-title",
+    "text-small",
+    "text-caption",
+    "weight-bold",
+    "weight-semibold"
+   ],
+   "classes": [
+    "z-storage-pool",
+    "z-storage-pool__head",
+    "z-storage-pool__name",
+    "z-storage-pool__disks",
+    "z-storage-pool__usage",
+    "z-storage-pool__meter",
+    "z-storage-pool__fill",
+    "z-storage-pool__vdevs",
+    "z-storage-pool__vdev",
+    "z-storage-pool__drives",
+    "z-storage-pool__title",
+    "z-storage-pool__meta",
+    "z-storage-pool__note",
+    "z-disk",
+    "z-disk__face"
+   ],
+   "a11y": "Una section con el nombre del pool. El uso es un meter con su valor en texto (aria-valuetext); por encima del 80 % y del 90 % la barra cambia de color, pero el porcentaje está siempre escrito. La fila de discos es decorativa: el resumen y el tipo de cada vdev están en texto.",
+   "examples": [
+    {
+     "title": "RAIDZ2 con vdev especial",
+     "code": "<StoragePool\n  locale=\"en-US\"\n  name=\"tank\"\n  used={21.4 * 1024 ** 4}\n  size={43.6 * 1024 ** 4}\n  vdevs={[\n    { role: \"data\", layout: \"raidz2\", disks: 6, disk: \"hdd\", model: \"6× 12 TB HDD\" },\n    { role: \"special vdev\", layout: \"mirror\", disks: 2, disk: \"ssd\", note: \"metadata · 18 / 238 GiB used\" },\n  ]}\n/>"
+    },
+    {
+     "title": "Un disco sin redundancia",
+     "code": "<StoragePool\n  locale=\"en-US\"\n  name=\"fast\"\n  used={830 * 1024 ** 3}\n  size={900 * 1024 ** 3}\n  note=\"hourly snapshots · synced offsite\"\n  vdevs={[{ role: \"data\", layout: \"single\", disks: 1, disk: \"nvme\", model: \"NVMe 1 TB\" }]}\n/>"
+    }
+   ],
+   "file": "zui/src/components/nodes/StoragePool.manifest.json"
   },
   {
    "name": "ActionBar",

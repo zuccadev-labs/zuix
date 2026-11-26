@@ -15,7 +15,7 @@ export type { Viewport } from "../../core/viewport";
 export type { EdgeType, Side as PortSide } from "../../core/edge-path";
 export { layeredLayout, type LayoutOptions, type LayoutResult } from "../../core/layout-layers";
 export { parseGraph, serializeGraph, describeGraph, describeNode } from "../../core/graph";
-export { FolderCard, type FolderCardProps } from "./FolderCard";
+export { FolderCard, type FolderCardProps, FolderTab, type FolderTabProps } from "./FolderCard";
 export {
   PortPanel,
   type PortPanelProps,

@@ -591,6 +591,7 @@
   .z-diagram-legend__item {
     display: grid;
     grid-column: span 2;
+    grid-template-columns: minmax(52px, max-content) minmax(0, 1fr);
     grid-template-columns: subgrid;
     align-items: center;
     color: var(--z-fg-muted);

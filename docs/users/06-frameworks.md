@@ -222,7 +222,7 @@ init(datesModule, chartsModule);
 | `/dom/ai` | AssistantMessage, PromptInput, Markdown, Reasoning, ToolCall, ApprovalCard, AgentPlan, Sources, Suggestions, Artifact, BranchPicker | `aiModule`, `setWidgetProps`, `createTextStream`, `parseMarkdown`, `activePath` |
 | `/dom/dashboard` | Gauge, DeltaBadge, ProgressGoal, BarList, FunnelChart, Tracker, KanbanBoard, DashboardGrid | `dashboardModule`, `getDashboardLayout`, `setDashboardLayout`, `moveCard`, `setWidgetProps` |
 | `/dom/people` | MemberList, ProfileEditor (Persona, UserCard, ProfileHeader, SettingsSection y SettingRow son solo marcado) | `peopleModule`, `filterMembers`, `validateProfile`, `setWidgetProps` |
-| `/dom/nodes` | NodeCanvas (nodos, puertos, aristas, grupos, minimapa, controles), NodeListView | `nodesModule`, `nodeCanvas(el)`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout` |
+| `/dom/nodes` | NodeCanvas (nodos, puertos, aristas, grupos, minimapa, controles), NodeListView, PortPanel, enmascarado (`[data-sensitive]`, `[data-z-redact-toggle]`) | `nodesModule`, `nodeCanvas(el)`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout`, `exportSVG`, `applyRedaction` |
 
 `init(módulo, …)` y `use(módulo, …)` son repetibles: cada familia se registra una vez, en cualquier orden, y si
 `init()` ya corrió, `use()` conecta la familia nueva y prepara el documento. `@zuccadev-labs/zuix-zui/dom`
@@ -464,6 +464,9 @@ las declaraciones de tipos del paquete. `@zuccadev-labs/zuix-zui/dom` lo reexpor
 | | Kanban | `moveCard`, `locateCard` |
 | `/dom/people` | Miembros y perfil | `filterMembers`, `groupMembers`, `presenceText`, `validateProfile` |
 | `/dom/nodes` | Lienzo | `nodeCanvas`, `setNodeGraph`, `destroyNodeCanvas`, `layeredLayout`, `parseGraph`, `serializeGraph`, `describeGraph` |
+| | Diagramas | `diagramFromInventory`, `validateInventory`, `INVENTORY_SCHEMA`, `legendFromGraph`, `routeOrthogonal`, `SPEED_SCALE` |
+| | Exportar | `exportSVG`, `exportPNG`, `svgToPNG` |
+| | Enmascarado | `applyRedaction`, `setRedaction`, `isRedacted`, `onRedactionChange`, `redactText` |
 | Todas las de piezas con datos | Datos y retirada | `setWidgetProps`, `destroyWidget` |
 
 ## Qué cubre cada capa

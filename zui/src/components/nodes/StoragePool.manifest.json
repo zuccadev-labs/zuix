@@ -1,0 +1,103 @@
+{
+  "name": "StoragePool",
+  "group": "nodes",
+  "description": "Pool de discos: nombre, resumen de discos, uso con libre y total, y cada vdev con su fila de discos (HDD, SSD, NVMe), su tipo (RAIDZ1/2/3, mirror, single, stripe), cuántos discos pueden fallar y una nota.",
+  "import": "import { StoragePool } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "vdevs",
+      "type": "PoolVdev[]",
+      "description": "{ role?, layout: 'single' | 'stripe' | 'mirror' | 'raidz1' | 'raidz2' | 'raidz3', disks, disk: 'hdd' | 'ssd' | 'nvme', model?, note? }."
+    },
+    {
+      "name": "used",
+      "type": "number",
+      "description": "Bytes usados."
+    },
+    {
+      "name": "size",
+      "type": "number",
+      "description": "Bytes utilizables."
+    },
+    {
+      "name": "note",
+      "type": "string"
+    },
+    {
+      "name": "units",
+      "type": "enum",
+      "values": ["binary", "decimal"],
+      "default": "binary",
+      "description": "TiB/GiB (como ZFS) o TB/GB."
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [2, 3, 4, 5, 6],
+      "default": 3
+    },
+    {
+      "name": "labels",
+      "type": "Partial<StoragePoolLabels>",
+      "description": "usage («{percent} used · {free} free · {size} usable»), mayFail ({ one, other }), noRedundancy, layouts, disks, diskCount, meter."
+    },
+    {
+      "name": "locale",
+      "type": "string"
+    }
+  ],
+  "states": ["rest", "high", "critical"],
+  "tokens": [
+    "surface-2",
+    "surface-3",
+    "surface-solid",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "accent",
+    "warning",
+    "warning-text",
+    "danger",
+    "radius-md",
+    "radius-xs",
+    "radius-full",
+    "text-title",
+    "text-small",
+    "text-caption",
+    "weight-bold",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-storage-pool",
+    "z-storage-pool__head",
+    "z-storage-pool__name",
+    "z-storage-pool__disks",
+    "z-storage-pool__usage",
+    "z-storage-pool__meter",
+    "z-storage-pool__fill",
+    "z-storage-pool__vdevs",
+    "z-storage-pool__vdev",
+    "z-storage-pool__drives",
+    "z-storage-pool__title",
+    "z-storage-pool__meta",
+    "z-storage-pool__note",
+    "z-disk",
+    "z-disk__face"
+  ],
+  "a11y": "Una section con el nombre del pool. El uso es un meter con su valor en texto (aria-valuetext); por encima del 80 % y del 90 % la barra cambia de color, pero el porcentaje está siempre escrito. La fila de discos es decorativa: el resumen y el tipo de cada vdev están en texto.",
+  "examples": [
+    {
+      "title": "RAIDZ2 con vdev especial",
+      "code": "<StoragePool\n  locale=\"en-US\"\n  name=\"tank\"\n  used={21.4 * 1024 ** 4}\n  size={43.6 * 1024 ** 4}\n  vdevs={[\n    { role: \"data\", layout: \"raidz2\", disks: 6, disk: \"hdd\", model: \"6× 12 TB HDD\" },\n    { role: \"special vdev\", layout: \"mirror\", disks: 2, disk: \"ssd\", note: \"metadata · 18 / 238 GiB used\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Un disco sin redundancia",
+      "code": "<StoragePool\n  locale=\"en-US\"\n  name=\"fast\"\n  used={830 * 1024 ** 3}\n  size={900 * 1024 ** 3}\n  note=\"hourly snapshots · synced offsite\"\n  vdevs={[{ role: \"data\", layout: \"single\", disks: 1, disk: \"nvme\", model: \"NVMe 1 TB\" }]}\n/>"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "name": "SpecList",
+  "group": "nodes",
+  "description": "Lista de especificaciones en losetas: tipo (en versalitas), pieza y detalle, con icono y marca de color opcionales. Sirve para el hardware de un servidor, los servicios de un router, las redes de un laboratorio o cualquier ficha técnica corta.",
+  "import": "import { SpecList } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "items",
+      "type": "SpecItem[]",
+      "description": "{ label?, value, note?, icon?, tone?, color? }. color (token o color libre, el de una VLAN) gana a tone."
+    },
+    {
+      "name": "columns",
+      "type": "enum",
+      "values": [1, 2, 3, "auto"],
+      "default": "auto"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "description": "Encabezado en versalitas sobre la lista."
+    }
+  ],
+  "states": ["rest"],
+  "tokens": [
+    "surface-2",
+    "line",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "accent",
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "radius-sm",
+    "text-fine",
+    "text-small",
+    "text-caption",
+    "weight-semibold",
+    "tracking-wide"
+  ],
+  "classes": [
+    "z-spec-group",
+    "z-spec-group__title",
+    "z-spec-list",
+    "z-spec",
+    "z-spec__icon",
+    "z-spec__text",
+    "z-spec__label",
+    "z-spec__value",
+    "z-spec__note"
+  ],
+  "a11y": "Una lista (ul) de elementos con su texto; la marca de color y los iconos son decorativos.",
+  "examples": [
+    {
+      "title": "Hardware",
+      "code": "<SpecList\n  title=\"Hardware\"\n  columns={2}\n  items={[\n    { label: \"CPU\", value: \"16-core CPU\", note: \"32 threads\", icon: \"cpu-chip\" },\n    { label: \"Memory\", value: \"64 GB DDR5\", note: \"ECC\", icon: \"rectangle-stack\" },\n    { label: \"Network\", value: \"Dual 10G SFP+\", note: \"VLAN-aware bridge\", icon: \"arrows-right-left\" },\n    { label: \"SSD\", value: \"NVMe 2 TB\", note: \"guest disks\", icon: \"circle-stack\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Redes con su color",
+      "code": "<SpecList\n  columns={1}\n  items={[\n    { label: \"VLAN 10\", value: \"LAN · 10.0.10.0/24\", note: \"trusted\", color: \"chart-1\" },\n    { label: \"VLAN 20\", value: \"DMZ · 10.0.20.0/24\", note: \"services only\", color: \"chart-2\" },\n    { label: \"Uplink\", value: \"WAN · 192.168.1.0/24\", note: \"untrusted\", tone: \"danger\" },\n  ]}\n/>"
+    }
+  ]
+}

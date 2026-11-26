@@ -106,6 +106,41 @@ icono sin registrar sale vacío y la consola lo avisa.
 | `onIconsRegistered(fn)` | `/core`, `/dom` | Avisa en cada registro; devuelve la función que deja de escuchar |
 | `iconElement(name, options)`, `iconSvg(name, options)`, `iconPaths(name, variant)` | `/dom` | Un `<svg>` construido con el DOM, una cadena SVG escapada o los trazados en crudo |
 | `defineIconElement(tag)` | `/dom` | Define `<z-icon>` (u otro nombre). Idempotente. `/element` ya lo llama |
+| `iconParts(name, variant)`, `iconFrame(name)` | `/dom` | Los trazados con su pintura y la caja e imagen de un icono |
+
+## Iconos propios de la aplicación
+
+zuix no trae logotipos ni iconos de terceros. Una aplicación que quiere el logotipo de un producto en un diagrama
+(o un glifo propio) lo registra en tiempo de ejecución, y desde ese momento `<Icon name>`, `<z-icon name>` y los
+nodos de NodeCanvas lo dibujan como cualquier otro:
+
+```ts
+import { registerAppIcons } from "@zuccadev-labs/zuix-zicon/core";
+
+registerAppIcons([
+  // Trazados (con pintura propia o heredando el color del texto) y su caja.
+  { name: "acme-mark", viewBox: "0 0 32 32", paths: [{ d: "M4 4h24v24H4z", fill: "#0b6" }, "M10 10h12v12H10z"] },
+  // Un SVG como texto: se leen su caja y sus formas, nada más.
+  { name: "acme-logo", svg: acmeLogoSvg },
+  // Un logotipo a todo color como imagen.
+  { name: "acme-photo", viewBox: "0 0 64 32", image: "/logos/acme.png" },
+]);
+```
+
+Antes de registrar, `defineIcon` valida cada icono y lanza un `TypeError` con el problema: nombre en kebab-case que
+no pise uno del set, caja numérica, trazados con solo comandos y números de trazado, y una imagen con URL `https:`,
+del mismo sitio o `data:image/…` (`safeImageUrl`). Una pintura con `url()` se descarta. `parseSvgIcon(svg)` lee los
+atributos de `path`, `circle`, `ellipse`, `rect`, `polygon` y `polyline` sin crear elementos: no usa `innerHTML` ni
+`DOMParser`, así que sirve con Trusted Types y en el servidor, y un `<script>` o un `<use>` del SVG se ignoran. Para
+que `<Icon name="acme-mark">` compile con tipos:
+
+```ts
+declare module "@zuccadev-labs/zuix-zicon" {
+  interface CustomIcons {
+    "acme-mark": true;
+  }
+}
+```
 
 ## Nombres
 

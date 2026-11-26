@@ -1,0 +1,84 @@
+{
+  "name": "DiagramLegend",
+  "group": "nodes",
+  "description": "Leyenda de un diagrama: estilos de línea por categoría de arista (continua, discontinua, punteada, doble, con su color), grosores por valor (la velocidad de un enlace), colores de zona y símbolos. Se deduce del propio grafo con legendFromGraph, así no se desincroniza del dibujo; cada muestra se pinta con las mismas reglas que las aristas del lienzo.",
+  "import": "import { DiagramLegend } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "graph",
+      "type": "Graph",
+      "description": "Grafo del que se deduce la leyenda (aristas con kind, weight, dash, double, color; nodos zone)."
+    },
+    {
+      "name": "options",
+      "type": "LegendOptions",
+      "description": "{ kinds?: textos por categoría, scale?, widths?, zones?, symbols?: { key, label, symbol }[] }. Un símbolo es un icono, «vlan», «share», «chip:TEXTO» o «text:TEXTO»."
+    },
+    {
+      "name": "entries",
+      "type": "LegendEntry[]",
+      "description": "Filas ya calculadas (en lugar de graph)."
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [2, 3, 4, 5, 6],
+      "default": 3
+    },
+    {
+      "name": "columns",
+      "type": "enum",
+      "values": [1, 2],
+      "default": 1
+    },
+    {
+      "name": "labels",
+      "type": "Partial<DiagramLegendLabels>",
+      "description": "legend, widths, solid, dashed, dotted, double, width, zone."
+    }
+  ],
+  "states": ["rest"],
+  "tokens": [
+    "fg",
+    "fg-muted",
+    "line-strong",
+    "info",
+    "info-text",
+    "accent",
+    "radius-xs",
+    "font-mono",
+    "text-small",
+    "text-caption",
+    "text-fine",
+    "text-title",
+    "weight-bold"
+  ],
+  "classes": [
+    "z-diagram-legend",
+    "z-diagram-legend__title",
+    "z-diagram-legend__list",
+    "z-diagram-legend__item",
+    "z-diagram-legend__key",
+    "z-diagram-legend__swatch",
+    "z-diagram-legend__label",
+    "z-diagram-legend__widths",
+    "z-diagram-legend__width",
+    "z-diagram-legend__value",
+    "z-diagram-legend__zone",
+    "z-diagram-legend__share",
+    "z-diagram-legend__chip",
+    "z-diagram-legend__text",
+    "z-diagram-legend__symbol"
+  ],
+  "a11y": "Lista con un título (o con aria-label «Legend»). Las muestras son decorativas; cada fila lleva delante, solo para lectores, el tipo de línea («Dashed line: », «Double line: », «Zone: »), así la diferencia no depende de verla.",
+  "examples": [
+    {
+      "title": "Desde un grafo",
+      "code": "<DiagramLegend\n  title=\"Legend\"\n  graph={{\n    nodes: [{ id: \"dmz\", type: \"zone\", position: { x: 0, y: 0 }, data: { label: \"VLAN 20 · DMZ\", color: \"chart-2\" } }],\n    edges: [\n      { id: \"a\", source: \"dmz\", target: \"dmz\", kind: \"trunk\", double: true, weight: \"10G\" },\n      { id: \"b\", source: \"dmz\", target: \"dmz\", kind: \"access\", color: \"chart-1\", weight: \"2.5G\" },\n      { id: \"c\", source: \"dmz\", target: \"dmz\", kind: \"wan\", color: \"danger\", weight: \"1G\" },\n      { id: \"d\", source: \"dmz\", target: \"dmz\", kind: \"console\", dash: \"dashed\", weight: \"100M\" },\n    ],\n  }}\n  options={{\n    kinds: { trunk: \"802.1Q trunk (tagged VLANs)\", access: \"Access port, colored by VLAN\", wan: \"WAN uplink\", console: \"KVM console\" },\n    symbols: [{ key: \"lan\", label: \"only from LAN or VPN\", symbol: \"chip:LAN\" }, { key: \"vlan\", label: \"port VLANs (tall = untagged)\", symbol: \"vlan\" }],\n  }}\n/>"
+    }
+  ]
+}

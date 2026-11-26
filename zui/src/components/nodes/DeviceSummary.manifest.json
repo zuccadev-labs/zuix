@@ -1,0 +1,81 @@
+{
+  "name": "DeviceSummary",
+  "group": "nodes",
+  "description": "Resumen de un equipo: icono o logotipo, modelo, dirección IP y nombre de host (en monoespaciada y enmascarables con Redact) y líneas de detalle. Es el encabezado de una tarjeta de diagrama.",
+  "import": "import { DeviceSummary } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "description": "Modelo o nombre completo."
+    },
+    {
+      "name": "icon",
+      "type": "IconName",
+      "description": "Icono de zicon o uno propio de la aplicación (registerAppIcons)."
+    },
+    {
+      "name": "media",
+      "type": "ReactNode",
+      "description": "Imagen o logotipo en lugar del icono."
+    },
+    {
+      "name": "ip",
+      "type": "string"
+    },
+    {
+      "name": "hostname",
+      "type": "string"
+    },
+    {
+      "name": "meta",
+      "type": "ReactNode | ReactNode[]",
+      "description": "Líneas de detalle (sistema y versión)."
+    },
+    {
+      "name": "tone",
+      "type": "enum",
+      "values": ["neutral", "accent", "success", "warning", "danger", "info"],
+      "default": "neutral"
+    }
+  ],
+  "states": ["rest", "redacted"],
+  "tokens": [
+    "surface-3",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "warning-text",
+    "info-text",
+    "accent-soft",
+    "accent-text",
+    "control-height-lg",
+    "control-radius",
+    "font-mono",
+    "text-body",
+    "text-caption",
+    "weight-semibold"
+  ],
+  "classes": [
+    "z-device",
+    "z-device__media",
+    "z-device__text",
+    "z-device__title",
+    "z-device__address",
+    "z-device__ip",
+    "z-device__sep",
+    "z-device__host",
+    "z-device__meta"
+  ],
+  "a11y": "Texto. El icono es decorativo; la IP y el host van dentro de Redact y se enmascaran con el interruptor global.",
+  "examples": [
+    {
+      "title": "Switch",
+      "code": "<DeviceSummary icon=\"server-stack\" title=\"Managed switch · 8× 2.5G\" ip=\"10.0.99.2\" hostname=\"switch.internal\" meta=\"Switch OS 7.1\" />"
+    },
+    {
+      "title": "Servidor con tono",
+      "code": "<DeviceSummary icon=\"server\" tone=\"accent\" title=\"Tower server\" ip=\"10.0.10.20\" hostname=\"hv.internal\" meta={[\"Hypervisor 9.1\", \"64 GB · 16 cores\"]} />"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "name": "FolderCard",
+  "group": "nodes",
+  "exports": ["FolderTab"],
+  "description": "Tarjeta con pestaña de carpeta: el título y su tipo van en una pestaña sobre el borde («Core switch · switch») y el contenido debajo, con borde de color opcional. Se usa dentro de un NodeCanvas (nodo con type: \"folder\", que pinta el mismo marcado) y fuera de él, en cualquier página. FolderTab es la pestaña suelta.",
+  "import": "import { FolderCard } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "description": "Título de la pestaña."
+    },
+    {
+      "name": "kind",
+      "type": "ReactNode",
+      "description": "Lo que sigue al punto en la pestaña («switch», «server»)."
+    },
+    {
+      "name": "icon",
+      "type": "IconName"
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "description": "Color del borde: tono (accent, danger…), token (chart-3) o color libre."
+    },
+    {
+      "name": "headingLevel",
+      "type": "enum",
+      "values": [2, 3, 4, 5, 6],
+      "default": 3
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode",
+      "description": "Línea de notas bajo el contenido."
+    }
+  ],
+  "states": ["rest", "selected"],
+  "tokens": [
+    "surface-solid",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "radius-sm",
+    "radius-md",
+    "radius-lg",
+    "text-title",
+    "text-small",
+    "text-caption",
+    "weight-bold",
+    "weight-medium",
+    "layer-raised",
+    "accent"
+  ],
+  "classes": [
+    "z-folder-card",
+    "z-folder-card__tab",
+    "z-folder-card__icon",
+    "z-folder-card__title",
+    "z-folder-card__kind",
+    "z-folder-card__body",
+    "z-folder-card__footer"
+  ],
+  "a11y": "Una section nombrada por su título cuando lleva id (aria-labelledby). El punto que separa título y tipo es contenido generado con texto alternativo vacío: no se lee.",
+  "examples": [
+    {
+      "title": "Equipo de red",
+      "code": "<FolderCard id=\"core\" title=\"Core switch\" kind=\"switch\" icon=\"server-stack\" color=\"chart-6\" footer=\"configured as a pure L2 switch\">\n  <DeviceSummary icon=\"server-stack\" title=\"Managed switch · 8× 2.5G + 2× SFP+\" ip=\"10.0.99.2\" hostname=\"switch.internal\" meta=\"Switch OS 7.1\" />\n</FolderCard>"
+    },
+    {
+      "title": "Aviso con borde de peligro",
+      "code": "<FolderCard title=\"Open to the internet\" kind=\"port forwards\" icon=\"globe-alt\" color=\"danger\">\n  Ports 80 and 443 go to the reverse proxy. Everything else is closed.\n</FolderCard>"
+    }
+  ]
+}

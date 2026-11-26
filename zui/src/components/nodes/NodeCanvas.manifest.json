@@ -1,18 +1,18 @@
 {
   "name": "NodeCanvas",
   "group": "nodes",
-  "description": "Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada y escalonada suave, con flecha, etiqueta y trazo animado), zoom con Ctrl/⌘ + rueda o pellizco, desplazamiento con la rueda, arrastrando el fondo o con flechas, imán a la cuadrícula, caja de selección con Mayús, mover y redimensionar, conectar arrastrando desde un puerto (o con dos clics, o con el teclado), reconectar arrastrando el extremo de una arista, borrar, copiar/pegar/duplicar, deshacer/rehacer, grupos (subflujos), minimapa, controles y disposición automática por capas. Solo pinta lo que se ve: 500 nodos y 800 aristas se mueven con fluidez.",
+  "description": "Lienzo de nodos propio, sin React Flow: nodos HTML (admiten cualquier pieza de zui) con puertos de entrada y salida, aristas SVG (recta, bézier, escalonada, escalonada suave y ortogonal que esquiva los nodos y reparte en carriles las que comparten tramo; con flecha, etiqueta, trazo animado y, para diagramas, grosor por valor, discontinua, punteada, doble con núcleo, color libre y etiquetas de extremo), zoom con Ctrl/⌘ + rueda o pellizco, desplazamiento con la rueda, arrastrando el fondo o con flechas, imán a la cuadrícula, caja de selección con Mayús, mover y redimensionar, conectar arrastrando desde un puerto (o con dos clics, o con el teclado), reconectar arrastrando el extremo de una arista, borrar, copiar/pegar/duplicar, deshacer/rehacer, grupos (subflujos), minimapa, controles y disposición automática por capas. Solo pinta lo que se ve: 500 nodos y 800 aristas se mueven con fluidez. Exporta el diagrama entero a SVG autocontenido y a PNG (handle.exportSVG, handle.exportPNG).",
   "import": "import { NodeCanvas } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
       "name": "nodes",
       "type": "GraphNode[]",
-      "description": "Nodos (controlado): { id, position: { x, y }, size?, parentId?, type?, data: { label, icon, description, status, tone }, ports?: { id, kind: 'source' | 'target', side?, type?, label?, max? }[], draggable?, selectable? }. Los hijos de un grupo van en posición relativa a él."
+      "description": "Nodos (controlado): { id, position: { x, y }, size?, parentId?, type?, data: { label, icon, description, status, tone }, ports?: { id, kind: 'source' | 'target', side?, type?, label?, max? }[], draggable?, selectable? }. Los hijos de un grupo van en posición relativa a él. type: group, zone (zona con color: data.color), cloud, folder (pestaña: data.kind) o text (rótulo sin caja). Un puerto con anchor: true lo dibuja el cuerpo (un PortPanel) y la arista sale de él."
     },
     {
       "name": "edges",
       "type": "GraphEdge[]",
-      "description": "Aristas (controlado): { id, source, sourcePort?, target, targetPort?, type?, animated?, label?, markerEnd?, tone? }."
+      "description": "Aristas (controlado): { id, source, sourcePort?, target, targetPort?, type?: 'straight' | 'bezier' | 'step' | 'smoothstep' | 'orthogonal', animated?, label?, markerEnd?, tone?, width?, weight? (valor de la escala: '10G'), dash?: 'solid' | 'dashed' | 'dotted', double?, color? (tono, token o color libre), sourceLabel?, targetLabel?, kind? (categoría para la leyenda) }."
     },
     {
       "name": "defaultNodes",
@@ -108,6 +108,22 @@
       "default": "bezier"
     },
     {
+      "name": "edgeScale",
+      "type": "EdgeWidthScale",
+      "description": "Escala de grosores para weight: { valor: px }. Por defecto SPEED_SCALE (10M a 100G); un valor que se lee como caudal se interpola en escala logarítmica."
+    },
+    {
+      "name": "routing",
+      "type": "OrthogonalOptions",
+      "description": "Enrutado orthogonal: { margin?, offset?, radius?, spacing?, nudge?, bendCost?, maxGrid? }."
+    },
+    {
+      "name": "cull",
+      "type": "boolean",
+      "default": true,
+      "description": "Pintar solo lo que se ve. Con false se pinta todo (diagramas pequeños, impresión)."
+    },
+    {
       "name": "layoutDirection",
       "type": "enum",
       "values": ["LR", "TB"],
@@ -188,7 +204,11 @@
     "layer-raised",
     "control-height-md",
     "control-height-xs",
-    "control-radius-sm"
+    "control-radius-sm",
+    "diagram-trunk-core",
+    "font-mono",
+    "text-fine",
+    "info"
   ],
   "classes": [
     "z-node-canvas",
@@ -208,9 +228,11 @@
     "z-edge__path",
     "z-edge__hit",
     "z-edge__end",
-    "z-edge__label"
+    "z-edge__label",
+    "z-edge__core",
+    "z-edge__end-label"
   ],
-  "a11y": "El lienzo es un group con aria-roledescription «diagram», nombre y descripción (resumen del grafo e instrucciones de teclado); no usa role=application. Cada nodo es un group con aria-roledescription «node», su título como nombre y una descripción generada («2 inputs, 1 outputs; connected to Filter and Save»). Una sola parada de Tab con foco itinerante entre nodos: flechas al nodo más cercano en esa dirección (sin candidato no se toca la tecla), Intro entra en el nodo (sus controles y puertos pasan a ser tabulables) y Escape sale al nodo y luego al lienzo, donde las flechas desplazan. Alt+flechas mueven el nodo una celda del imán (Mayús+Alt, diez), Espacio selecciona, Ctrl+A todo, Supr borra con anuncio y Ctrl+Z deshace; ] y [ siguen las conexiones de salida y de entrada; + − 0 y F hacen zoom, 100 % y encajar; Ctrl+C/X/V/D copian, cortan, pegan y duplican; Ctrl+G agrupa y Ctrl+Mayús+G desagrupa. Conectar con teclado: Intro en un puerto lo coge, las flechas o Tab recorren los puertos compatibles (resaltados y anunciados «Input in of Filter, 1 of 3»), Intro conecta y Escape cancela. Con el puntero, además de arrastrar, se conecta con dos clics. Los puertos miden 24 px aunque el punto mida 12. Los anuncios van al anunciador central. Con movimiento reducido las aristas animadas quedan quietas y llevan flecha; la animación se pausa fuera de pantalla. Sin React: .z-node-canvas[data-z-node-canvas] con data-snap, data-min-zoom, data-max-zoom, data-readonly, data-edge-type, data-allow-cycles=\"false\", data-fit=\"false\", data-controls=\"false\", data-minimap=\"false\" y data-layout-button; los nodos como hijos (.z-node[data-id][data-x][data-y], data-parent, data-width, data-height) y las aristas en <script type=\"application/json\" class=\"z-node-canvas__edges\">, o el grafo entero en <script type=\"application/json\" data-graph>. nodeCanvas(el) devuelve la misma API que la ref; setNodeGraph(el, graph) cambia el modelo; emite z:graphchange { graph, change }, z:viewportchange, z:selectionchange, z:connect y z:lockchange.",
+  "a11y": "El lienzo es un group con aria-roledescription «diagram», nombre y descripción (resumen del grafo e instrucciones de teclado); no usa role=application. Cada nodo es un group con aria-roledescription «node», su título como nombre y una descripción generada («2 inputs, 1 outputs; connected to Filter and Save»). Una sola parada de Tab con foco itinerante entre nodos: flechas al nodo más cercano en esa dirección (sin candidato no se toca la tecla), Intro entra en el nodo (sus controles y puertos pasan a ser tabulables) y Escape sale al nodo y luego al lienzo, donde las flechas desplazan. Alt+flechas mueven el nodo una celda del imán (Mayús+Alt, diez), Espacio selecciona, Ctrl+A todo, Supr borra con anuncio y Ctrl+Z deshace; ] y [ siguen las conexiones de salida y de entrada; + − 0 y F hacen zoom, 100 % y encajar; Ctrl+C/X/V/D copian, cortan, pegan y duplican; Ctrl+G agrupa y Ctrl+Mayús+G desagrupa. Conectar con teclado: Intro en un puerto lo coge, las flechas o Tab recorren los puertos compatibles (resaltados y anunciados «Input in of Filter, 1 of 3»), Intro conecta y Escape cancela. Con el puntero, además de arrastrar, se conecta con dos clics. Los puertos miden 24 px aunque el punto mida 12. Los anuncios van al anunciador central. Con movimiento reducido las aristas animadas quedan quietas y llevan flecha; la animación se pausa fuera de pantalla. Sin React: .z-node-canvas[data-z-node-canvas] con data-snap, data-min-zoom, data-max-zoom, data-readonly, data-edge-type, data-allow-cycles=\"false\", data-fit=\"false\", data-controls=\"false\", data-minimap=\"false\" y data-layout-button; los nodos como hijos (.z-node[data-id][data-x][data-y], data-parent, data-width, data-height) y las aristas en <script type=\"application/json\" class=\"z-node-canvas__edges\">, o el grafo entero en <script type=\"application/json\" data-graph>. nodeCanvas(el) devuelve la misma API que la ref; setNodeGraph(el, graph) cambia el modelo; emite z:graphchange { graph, change }, z:viewportchange, z:selectionchange, z:connect y z:lockchange. Las aristas con estilo no dependen del color: el tipo de línea (discontinua, punteada, doble) y el grosor se ven también con forced-colors, donde todo se pinta con CanvasText.",
   "behavior": "dom",
   "examples": [
     {
@@ -220,6 +242,10 @@
     {
       "title": "Controlado, con cuerpo propio",
       "code": "<NodeCanvas nodes={nodes} edges={edges} onNodesChange={setNodes} onEdgesChange={setEdges} edgeType=\"smoothstep\" renderNode={(node) => <Switch label=\"Enabled\" />} controls={{ showLayout: true }} />"
+    },
+    {
+      "title": "Red con aristas con estilo",
+      "code": "<NodeCanvas\n  aria-label=\"Small network\"\n  readOnly\n  edgeType=\"orthogonal\"\n  defaultNodes={[\n    { id: \"net\", type: \"cloud\", position: { x: 180, y: 0 }, data: { label: \"Internet\", description: \"1 Gbit/s\" }, ports: [{ id: \"down\", kind: \"source\", side: \"bottom\" }] },\n    { id: \"sw\", type: \"folder\", position: { x: 120, y: 200 }, data: { label: \"Core switch\", kind: \"switch\", color: \"chart-6\", description: \"8× 2.5G + 2× SFP+\" }, ports: [{ id: \"up\", kind: \"target\", side: \"top\" }, { id: \"a\", kind: \"source\", side: \"bottom\" }, { id: \"b\", kind: \"source\", side: \"bottom\" }] },\n    { id: \"pc\", type: \"folder\", position: { x: 0, y: 420 }, data: { label: \"Desk\", kind: \"workstation\", color: \"chart-1\" }, ports: [{ id: \"up\", kind: \"target\", side: \"top\" }] },\n    { id: \"hv\", type: \"folder\", position: { x: 320, y: 420 }, data: { label: \"Server\", kind: \"server\" }, ports: [{ id: \"up\", kind: \"target\", side: \"top\" }] },\n  ]}\n  defaultEdges={[\n    { id: \"wan\", source: \"net\", sourcePort: \"down\", target: \"sw\", targetPort: \"up\", color: \"danger\", weight: \"1G\", targetLabel: \"1G\", markerEnd: \"none\" },\n    { id: \"lan\", source: \"sw\", sourcePort: \"a\", target: \"pc\", targetPort: \"up\", color: \"chart-1\", weight: \"2.5G\", targetLabel: \"2.5G\", markerEnd: \"none\" },\n    { id: \"trunk\", source: \"sw\", sourcePort: \"b\", target: \"hv\", targetPort: \"up\", double: true, weight: \"10G\", targetLabel: \"10G\", markerEnd: \"none\" },\n  ]}\n/>"
     }
   ],
   "html": [

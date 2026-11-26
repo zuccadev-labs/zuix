@@ -1,0 +1,114 @@
+{
+  "name": "PortPanel",
+  "group": "nodes",
+  "description": "Cara de un equipo de red: conectores RJ45, SFP, QSFP o coaxial numerados, con estado (libre, enlazado, deshabilitado, expuesto), marcas de VLAN (barra alta = sin etiquetar, barras cortas = etiquetadas, color por VLAN) y la etiqueta de destino bajo cada puerto. Dentro de un NodeCanvas cada conector es el ancla de las aristas de su puerto (puertos del nodo con anchor: true): la arista sale del conector exacto.",
+  "import": "import { PortPanel } from \"@zuccadev-labs/zuix-zui\"",
+  "props": [
+    {
+      "name": "ports",
+      "type": "PanelPort[]",
+      "description": "{ id, label?, connector?: 'rj45' | 'sfp' | 'qsfp' | 'coax', state?: 'free' | 'linked' | 'disabled' | 'exposed', untagged?, tagged?, to?, speed?, note?, group?, side? }. Sin estado: linked si tiene destino, free si no."
+    },
+    {
+      "name": "vlans",
+      "type": "PanelVlan[]",
+      "description": "{ id, name?, color? }: nombre y color (tono, token o color libre) de cada VLAN."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "description": "Nombre accesible del panel. Por defecto «Ports»."
+    },
+    {
+      "name": "selected",
+      "type": "string",
+      "description": "Puerto resaltado."
+    },
+    {
+      "name": "onSelectedChange",
+      "type": "(id) => void",
+      "description": "Puerto elegido con Intro, Espacio o un clic."
+    },
+    {
+      "name": "side",
+      "type": "enum",
+      "values": ["top", "bottom"],
+      "default": "bottom",
+      "description": "Lado del nodo por el que salen las aristas (cada puerto puede llevar el suyo)."
+    },
+    {
+      "name": "size",
+      "type": "enum",
+      "values": ["sm", "md"],
+      "default": "md"
+    },
+    {
+      "name": "showTargets",
+      "type": "boolean",
+      "default": true,
+      "description": "Rótulos de destino bajo los puertos."
+    },
+    {
+      "name": "labels",
+      "type": "Partial<PortPanelLabels>",
+      "description": "Textos: port («Port {label}»), free, linked («connected to {to}»), disabled, exposed, untagged, tagged y los nombres de los conectores."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "description": "Idioma de las listas de VLAN en la descripción."
+    },
+    {
+      "name": "idPrefix",
+      "type": "string"
+    }
+  ],
+  "states": ["rest", "focus", "selected", "free", "linked", "disabled", "exposed"],
+  "tokens": [
+    "port-jack-bg",
+    "port-socket",
+    "line-strong",
+    "fg",
+    "fg-muted",
+    "fg-subtle",
+    "accent",
+    "accent-ring",
+    "danger",
+    "danger-soft",
+    "danger-text",
+    "surface-3",
+    "glass-highlight",
+    "radius-xs",
+    "font-mono",
+    "text-fine",
+    "focus-width",
+    "chart-1",
+    "chart-2",
+    "chart-4",
+    "chart-5",
+    "chart-6"
+  ],
+  "classes": [
+    "z-port-panel",
+    "z-port-panel__group",
+    "z-port",
+    "z-port__number",
+    "z-port__jack",
+    "z-port__socket",
+    "z-port__vlans",
+    "z-port__vlan",
+    "z-port__to"
+  ],
+  "a11y": "Listbox horizontal con foco itinerante (una parada de tabulación): flechas, Inicio y Fin van de puerto en puerto; Intro, Espacio o un clic lo eligen. Cada opción se anuncia entera («Port 2, connected to Desk, untagged VLAN 10 LAN, 1G»); el color de las VLAN y del conector no es la única pista. La cara del equipo no se refleja en RTL. Con forced-colors las marcas se pintan con CanvasText y conservan su altura.",
+  "behavior": "dom",
+  "examples": [
+    {
+      "title": "Switch con VLAN",
+      "code": "<PortPanel\n  label=\"Core switch ports\"\n  vlans={[\n    { id: \"lan\", name: \"LAN\", color: \"chart-1\" },\n    { id: \"iot\", name: \"IoT\", color: \"chart-4\" },\n    { id: \"mgmt\", name: \"MGMT\", color: \"chart-6\" },\n  ]}\n  ports={[\n    { id: \"p1\", label: \"1\", tagged: [\"lan\", \"iot\", \"mgmt\"], to: \"Firewall\" },\n    { id: \"p2\", label: \"2\", untagged: \"lan\", to: \"Desk\", speed: \"2.5G\" },\n    { id: \"p3\", label: \"3\" },\n    { id: \"p4\", label: \"4\", untagged: \"mgmt\", tagged: [\"lan\", \"iot\"], to: \"Access point\" },\n    { id: \"p5\", label: \"5\", state: \"disabled\", note: \"bad cable\" },\n    { id: \"s1\", label: \"SFP+1\", connector: \"sfp\", untagged: \"lan\", to: \"Server\", speed: \"10G\" },\n  ]}\n/>"
+    },
+    {
+      "title": "Puerto expuesto y coaxial",
+      "code": "<PortPanel\n  size=\"sm\"\n  label=\"Gateway ports\"\n  ports={[\n    { id: \"cable\", label: \"Cable\", connector: \"coax\", to: \"internet\" },\n    { id: \"lan1\", label: \"1G\", state: \"exposed\", to: \"exposed host\" },\n    { id: \"lan2\", label: \"1G\" },\n  ]}\n/>"
+    }
+  ]
+}

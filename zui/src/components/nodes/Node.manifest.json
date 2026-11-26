@@ -2,7 +2,7 @@
   "name": "Node",
   "group": "nodes",
   "exports": ["NodeGroup", "NodePort"],
-  "description": "Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y asa de redimensionado. Con type: \"group\" (o NodeGroup) es un grupo o subflujo. NodePort es el puerto suelto. Solo marcado: dentro de NodeCanvas lo mueve el lienzo.",
+  "description": "Nodo de un lienzo: caja con cabecera (icono, título y estado), cuerpo libre, puertos de entrada y salida con tipo, estados seleccionado, ejecutando (trazo que recorre el borde), correcto y error, y asa de redimensionado. Con type: \"group\" (o NodeGroup) es un grupo o subflujo; con zone, una zona de borde discontinuo con su color (data.color) y nota; con cloud, una nube; con folder, una tarjeta con pestaña de carpeta (data.kind tras el título, data.color en el borde); con text, un rótulo sin caja. NodePort es el puerto suelto. Solo marcado: dentro de NodeCanvas lo mueve el lienzo.",
   "import": "import { Node, NodeGroup, NodePort } from \"@zuccadev-labs/zuix-zui\"",
   "props": [
     {
@@ -78,7 +78,14 @@
     "z-node-port__label",
     "z-node-group",
     "z-node-group__header",
-    "z-node-group__title"
+    "z-node-group__title",
+    "z-node__shape",
+    "z-node-group__note",
+    "z-folder-card",
+    "z-folder-card__tab",
+    "z-folder-card__title",
+    "z-folder-card__kind",
+    "z-folder-card__body"
   ],
   "a11y": "group con aria-roledescription «node» y el título como nombre. El estado se dice en texto («running», «error»), no solo con color. Cada puerto es un <button> con nombre («Input json», «Output true») y objetivo de 24 px. En el lienzo, los controles del cuerpo salen del orden de Tab hasta que se entra en el nodo con Intro.",
   "examples": [
@@ -89,6 +96,10 @@
     {
       "title": "Grupo",
       "code": "<NodeGroup node={{ id: \"g\", position: { x: 0, y: 0 }, size: { width: 360, height: 200 }, data: { label: \"Retry block\" } }} />"
+    },
+    {
+      "title": "Nube, carpeta y zona",
+      "code": "<Inline gap={4} align=\"start\">\n  <div style={{ position: \"relative\", width: 220, height: 120 }}>\n    <Node node={{ id: \"i\", type: \"cloud\", position: { x: 0, y: 0 }, size: { width: 220, height: 120 }, data: { label: \"Internet\", description: \"dynamic IPv4\" } }} />\n  </div>\n  <div style={{ position: \"relative\", width: 260, height: 120 }}>\n    <Node node={{ id: \"f\", type: \"folder\", position: { x: 0, y: 0 }, size: { width: 260, height: 120 }, data: { label: \"Firewall\", kind: \"router\", color: \"danger\", description: \"Fanless mini PC\" } }} />\n  </div>\n  <div style={{ position: \"relative\", width: 260, height: 120 }}>\n    <NodeGroup node={{ id: \"z\", type: \"zone\", position: { x: 0, y: 0 }, size: { width: 260, height: 120 }, data: { label: \"VLAN 20 · DMZ\", color: \"chart-2\", description: \"no access to LAN\" } }} />\n  </div>\n</Inline>"
     }
   ]
 }
