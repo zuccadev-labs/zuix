@@ -453,6 +453,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: var(--z-space-1);
+  /* La etiqueta entera es el objetivo de la casilla: con puntero grueso, al menos el objetivo táctil. */
+  min-block-size: var(--z-touch-target, auto);
 }
 /* Workspace: sidebar de demostración dentro de una tarjeta. */
 .app-sidebar-demo {
