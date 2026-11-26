@@ -23,6 +23,7 @@ import carouselsCases from "./cases-carousels.mjs";
 import charts from "./cases-charts.mjs";
 import reading from "./cases-reading.mjs";
 import listingCases from "./cases-listing.mjs";
+import cardsCases from "./cases-cards.mjs";
 import popoverApiCases from "./cases-popover-api.mjs";
 import { carouselAtRest } from "../rest.mjs";
 
@@ -288,6 +289,7 @@ const SCREENS = [
   "login",
   "flows",
   "listing",
+  "cards",
 ];
 
 export const cases = [
@@ -3154,6 +3156,7 @@ export const cases = [
     datagridCases,
     scaleCases,
     listingCases,
+    cardsCases,
   ].flatMap((build) => build(helpers())),
 
   // ───────────────────────────── DateField, TimeField y TimePicker ─────────────────────────────

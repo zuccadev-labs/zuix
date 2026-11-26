@@ -842,3 +842,93 @@ body {
 .app-scale__chats .z-conversation-list__filters {
   flex: none;
 }
+
+/* ---- Pantalla Cards ---- */
+.app-cards-grid {
+  align-items: start;
+}
+.app-balance-owner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--z-space-2);
+  font-weight: var(--z-weight-semibold);
+}
+.app-spending__art {
+  min-block-size: 15rem;
+  border-radius: inherit;
+}
+.app-spending__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-2);
+  padding: var(--z-space-5);
+}
+.app-spending__value {
+  margin: 0;
+  font-family: var(--z-font-display);
+  font-size: var(--z-text-display);
+  font-weight: var(--z-weight-display);
+  letter-spacing: var(--z-tracking-display);
+}
+.app-explore {
+  overflow: hidden;
+}
+.app-explore__hero {
+  border-radius: inherit;
+}
+.app-explore__hello {
+  padding: var(--z-space-8) var(--z-space-5) var(--z-space-4);
+}
+.app-explore__hello p {
+  margin: 0;
+  color: var(--z-fg-muted);
+}
+.app-explore__hello h3 {
+  margin: 0;
+  font-family: var(--z-font-display);
+  font-size: var(--z-text-hero);
+  font-weight: var(--z-weight-display);
+  letter-spacing: var(--z-tracking-display);
+  line-height: var(--z-leading-tight);
+}
+.app-explore__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-4);
+  padding: 0 var(--z-space-5) var(--z-space-5);
+}
+.app-filters {
+  gap: var(--z-space-5);
+}
+.app-filters__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--z-space-3);
+  margin: 0;
+  font-size: var(--z-text-title);
+}
+.app-filters__stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+.app-filters__price {
+  display: flex;
+  flex-direction: column;
+  gap: var(--z-space-2);
+}
+.app-filters__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--z-space-3);
+  padding-block-start: var(--z-space-4);
+  border-block-start: 1px solid var(--z-line);
+}
+.app-ai {
+  gap: var(--z-space-4);
+}
+.app-model {
+  display: flex;
+  justify-content: flex-start;
+}

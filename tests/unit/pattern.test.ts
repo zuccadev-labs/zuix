@@ -73,7 +73,11 @@ describe("core/pattern", () => {
     const xs = [...svg.matchAll(/cx='(-?[\d.]+)'/g)].map((m) => Number(m[1]));
     assert.ok(xs.some((x) => x < 0) || xs.some((x) => x > 192) || xs.every((x) => x >= 0 && x <= 192));
     const edge = xs.filter((x) => x < 4);
-    for (const x of edge) assert.ok(xs.some((o) => Math.abs(o - (x + 192)) < 0.11), `copia de ${x}`);
+    for (const x of edge)
+      assert.ok(
+        xs.some((o) => Math.abs(o - (x + 192)) < 0.11),
+        `copia de ${x}`,
+      );
   });
 
   test("meshVars: cuatro manchas con posición en % y colores distintos de la paleta", () => {

@@ -724,7 +724,7 @@ for (const browserName of wanted) {
       ok((await page.locator("h1").count()) === 1, "la portada no tiene un único h1");
       const cta = page.locator(".zd-hero__actions a").first();
       ok(!!fileFor(new URL(await cta.evaluate((a) => a.href)).pathname), "la llamada a la acción lleva a una página que no existe");
-      ok((await page.locator("a.zd-area").count()) > 0, "la portada no lista áreas");
+      ok((await page.locator(".zd-area-card a.z-card__link").count()) > 0, "la portada no lista áreas");
       const empty = await page.evaluate(() =>
         [...document.querySelectorAll("svg.z-icon")].filter((s) => !s.querySelector("path")).map((s) => s.dataset.icon),
       );
