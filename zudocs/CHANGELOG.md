@@ -20,6 +20,10 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   reordenables), agrupada con agregados, en árbol con detalle y con 10 000 filas; `Select` con búsqueda y del
   servidor; `Combobox` del servidor; `Tabs` con menú «Más»; `Tree` que se mueve y carga ramas.
 
+### Corregido
+
+- El equilibrado de títulos del sitio (`text-wrap: balance`) ya no alcanza a los títulos de las piezas de zui: una pestaña de `FolderCard` no se parte en dos líneas.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

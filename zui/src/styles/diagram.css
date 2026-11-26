@@ -383,7 +383,7 @@
     block-size: var(--z-space-2);
   }
   .z-port__to {
-    max-inline-size: calc(var(--z-port-w) * 2.2);
+    max-inline-size: calc(var(--z-port-w) * 2.8);
     overflow: hidden;
     color: var(--z-fg);
     font-size: var(--z-text-caption);

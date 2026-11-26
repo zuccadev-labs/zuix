@@ -60,7 +60,7 @@ body::before {
   outline: var(--z-focus-width) solid var(--z-accent-ring);
   outline-offset: var(--z-focus-offset);
 }
-:where(h1, h2, h3, h4) {
+:where(h1, h2, h3, h4):not(:where([class^="z-"], [class*=" z-"])) {
   font-family: var(--z-font-display);
   text-wrap: balance;
 }
