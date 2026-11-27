@@ -382,6 +382,48 @@
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="ModelPicker" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ModelPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-btn z-btn--ghost z-model-picker" data-size="sm" aria-haspopup="menu" aria-expanded="false" data-z-open="#models">
+  <span class="z-sr-only">Model: </span>
+  <z-icon name="sparkles" size="16"></z-icon>
+  <span class="z-model-picker__label">Aurora 3</span>
+  <span class="z-model-picker__badge">Beta</span>
+  <z-icon name="chevron-up-down" size="14"></z-icon>
+</button>
+
+<div id="models" popover class="z-liquid z-menu z-model-picker__menu" role="menu" aria-label="Model" data-size="lg">
+  <div class="z-menu__label">Options</div>
+  <button type="button" role="menuitemcheckbox" aria-checked="false" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"></span>
+    <span class="z-menu__text">Auto</span>
+    <span class="z-menu__switch" aria-hidden="true"></span>
+  </button>
+  <div class="z-menu__separator" role="separator"></div>
+  <div class="z-menu__group" role="group" aria-labelledby="models-list">
+    <div class="z-menu__label" id="models-list">Models</div>
+    <button type="button" role="menuitemradio" aria-checked="true" class="z-menu__item" tabindex="-1" value="aurora-3">
+      <span class="z-menu__icon" aria-hidden="true"><z-icon name="sparkles" size="14"></z-icon></span>
+      <span class="z-menu__text">Aurora 3</span>
+      <span class="z-menu__badge">Beta</span>
+      <span class="z-menu__icon z-menu__check" data-kind="checkbox" data-end aria-hidden="true"><z-icon name="check" size="14"></z-icon></span>
+    </button>
+    <button type="button" role="menuitemradio" aria-checked="false" class="z-menu__item" tabindex="-1" value="orbit">
+      <span class="z-menu__icon" aria-hidden="true"><z-icon name="cpu-chip" size="14"></z-icon></span>
+      <span class="z-menu__text">Orbit 5</span>
+      <span class="z-menu__icon z-menu__check" data-kind="checkbox" data-end aria-hidden="true"><z-icon name="check" size="14"></z-icon></span>
+    </button>
+  </div>
+  <div class="z-menu__separator" role="separator"></div>
+  <button type="button" role="menuitemcheckbox" aria-checked="true" class="z-menu__item" tabindex="-1">
+    <span class="z-menu__icon"><z-icon name="clock" size="14"></z-icon></span>
+    <span class="z-menu__text">Temporary chat</span>
+    <span class="z-menu__switch" aria-hidden="true"></span>
+  </button>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="PromptInput" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">PromptInput</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -978,6 +1020,35 @@
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="CardBanner" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">CardBanner</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-card-banner" data-position="top" data-tone="info">
+  <div class="z-card-banner__strip">
+    <span class="z-card-banner__icon" aria-hidden="true">
+      <z-icon name="clock" size="16"></z-icon>
+    </span>
+    <span class="z-card-banner__message">Available now, open to new projects</span>
+  </div>
+  <div class="z-card-banner__card">
+    <article class="z-card z-offer-card" data-variant="elevated" data-surface="elevated" data-padding="lg">
+      <div class="z-offer-card__head">
+        <div class="z-offer-card__heading">
+          <h3 class="z-offer-card__title">Amine Tiffrent</h3>
+          <div class="z-offer-card__meta">
+            <span class="z-offer-card__fact">
+              <z-icon name="map-pin" size="14"></z-icon>
+              Algiers
+            </span>
+          </div>
+        </div>
+        <p class="z-offer-card__aside">$20/hour</p>
+      </div>
+    </article>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="CardFooter" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">CardFooter</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1025,6 +1096,21 @@
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="CategoryTile" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">CategoryTile</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<a href="/hotels" class="z-category-tile" data-tone="accent">
+  <span class="z-category-tile__icon" aria-hidden="true">
+    <z-icon name="building-office" size="18"></z-icon>
+  </span>
+  <span class="z-category-tile__arrow" aria-hidden="true">
+    <z-icon name="arrow-up-right" size="14"></z-icon>
+  </span>
+  <span class="z-category-tile__title">Hotels</span>
+  <span class="z-category-tile__count">1.4k</span>
+</a>
+  </div>
+</section>
 <section class="z-card demo" data-component="CodeBlock" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">CodeBlock</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1050,6 +1136,23 @@ pnpm dev</code>
 <div role="separator" aria-orientation="horizontal" class="z-divider" data-orientation="horizontal" data-spacing="md" data-emphasis="subtle" data-label="true">
   <span class="z-divider__label">or</span>
 </div>
+  </div>
+</section>
+<section class="z-card demo" data-component="FeatureCard" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">FeatureCard</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<article data-pattern="stars" data-align="center" class="z-card z-feature-card" data-variant="elevated" data-surface="elevated" data-tone="info" data-padding="none">
+  <div class="z-backdrop z-feature-card__cover" data-pattern="stars" data-intensity="medium" data-fade="none" data-tone="media" data-seed="3" style="--z-pattern-tile:url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;180&#x27; height=&#x27;180&#x27; viewBox=&#x27;0 0 180 180&#x27;%3E%3Ccircle cx=&#x27;129.6&#x27; cy=&#x27;7&#x27; r=&#x27;0.41&#x27; fill-opacity=&#x27;0.71&#x27;/%3E%3Ccircle cx=&#x27;86.6&#x27; cy=&#x27;87.6&#x27; r=&#x27;0.55&#x27; fill-opacity=&#x27;0.58&#x27;/%3E%3Ccircle cx=&#x27;35.1&#x27; cy=&#x27;15&#x27; r=&#x27;0.71&#x27; fill-opacity=&#x27;0.73&#x27;/%3E%3Ccircle cx=&#x27;158.4&#x27; cy=&#x27;58.3&#x27; r=&#x27;0.57&#x27; fill-opacity=&#x27;0.65&#x27;/%3E%3Ccircle cx=&#x27;94.8&#x27; cy=&#x27;149.7&#x27; r=&#x27;0.36&#x27; fill-opacity=&#x27;0.78&#x27;/%3E%3Ccircle cx=&#x27;55.9&#x27; cy=&#x27;168.6&#x27; r=&#x27;0.67&#x27; fill-opacity=&#x27;0.68&#x27;/%3E%3Ccircle cx=&#x27;27.8&#x27; cy=&#x27;66.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.26&#x27;/%3E%3Ccircle cx=&#x27;86.1&#x27; cy=&#x27;155.4&#x27; r=&#x27;0.86&#x27; fill-opacity=&#x27;0.72&#x27;/%3E%3Ccircle cx=&#x27;105.2&#x27; cy=&#x27;104.7&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.57&#x27;/%3E%3Ccircle cx=&#x27;150.9&#x27; cy=&#x27;74.3&#x27; r=&#x27;0.72&#x27; fill-opacity=&#x27;0.59&#x27;/%3E%3Ccircle cx=&#x27;139.7&#x27; cy=&#x27;154&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.66&#x27;/%3E%3Cpath d=&#x27;M126 78.9L127 82.9L131 83.9L127 84.9L126 88.9L125 84.9L121 83.9L125 82.9Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Cpath d=&#x27;M128.3 117.1L129.2 121L133.1 121.9L129.2 122.8L128.3 126.7L127.4 122.8L123.5 121.9L127.4 121Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Ccircle cx=&#x27;10.2&#x27; cy=&#x27;11.9&#x27; r=&#x27;1&#x27; fill-opacity=&#x27;0.46&#x27;/%3E%3Ccircle cx=&#x27;97.2&#x27; cy=&#x27;52.2&#x27; r=&#x27;0.76&#x27; fill-opacity=&#x27;0.6&#x27;/%3E%3Ccircle cx=&#x27;70.4&#x27; cy=&#x27;136.1&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.64&#x27;/%3E%3Ccircle cx=&#x27;135.1&#x27; cy=&#x27;138.6&#x27; r=&#x27;0.66&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;124.3&#x27; cy=&#x27;139.3&#x27; r=&#x27;1.09&#x27; fill-opacity=&#x27;0.84&#x27;/%3E%3Ccircle cx=&#x27;-3.5&#x27; cy=&#x27;104.9&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.74&#x27;/%3E%3Ccircle cx=&#x27;176.5&#x27; cy=&#x27;104.9&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.74&#x27;/%3E%3Cpath d=&#x27;M56.9 108.4L57.7 111.8L61.1 112.6L57.7 113.4L56.9 116.8L56.1 113.4L52.7 112.6L56.1 111.8Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Ccircle cx=&#x27;107.8&#x27; cy=&#x27;25.4&#x27; r=&#x27;0.76&#x27; fill-opacity=&#x27;0.4&#x27;/%3E%3Ccircle cx=&#x27;158.6&#x27; cy=&#x27;8.8&#x27; r=&#x27;0.42&#x27; fill-opacity=&#x27;0.5&#x27;/%3E%3Ccircle cx=&#x27;160.1&#x27; cy=&#x27;5.2&#x27; r=&#x27;0.43&#x27; fill-opacity=&#x27;0.42&#x27;/%3E%3Ccircle cx=&#x27;-1.2&#x27; cy=&#x27;94.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;178.8&#x27; cy=&#x27;94.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;116.8&#x27; cy=&#x27;113.4&#x27; r=&#x27;0.87&#x27; fill-opacity=&#x27;0.73&#x27;/%3E%3Ccircle cx=&#x27;22.6&#x27; cy=&#x27;34.7&#x27; r=&#x27;0.81&#x27; fill-opacity=&#x27;0.66&#x27;/%3E%3Ccircle cx=&#x27;104&#x27; cy=&#x27;131.1&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.31&#x27;/%3E%3Ccircle cx=&#x27;173.6&#x27; cy=&#x27;35.1&#x27; r=&#x27;0.72&#x27; fill-opacity=&#x27;0.51&#x27;/%3E%3Ccircle cx=&#x27;99.3&#x27; cy=&#x27;50&#x27; r=&#x27;0.36&#x27; fill-opacity=&#x27;0.53&#x27;/%3E%3Ccircle cx=&#x27;140.3&#x27; cy=&#x27;60.6&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.84&#x27;/%3E%3Ccircle cx=&#x27;14.2&#x27; cy=&#x27;18.5&#x27; r=&#x27;0.45&#x27; fill-opacity=&#x27;0.77&#x27;/%3E%3Ccircle cx=&#x27;138.8&#x27; cy=&#x27;151.1&#x27; r=&#x27;0.4&#x27; fill-opacity=&#x27;0.45&#x27;/%3E%3Ccircle cx=&#x27;46.9&#x27; cy=&#x27;24&#x27; r=&#x27;0.66&#x27; fill-opacity=&#x27;0.39&#x27;/%3E%3Ccircle cx=&#x27;3.4&#x27; cy=&#x27;98.4&#x27; r=&#x27;0.64&#x27; fill-opacity=&#x27;0.83&#x27;/%3E%3Ccircle cx=&#x27;183.4&#x27; cy=&#x27;98.4&#x27; r=&#x27;0.64&#x27; fill-opacity=&#x27;0.83&#x27;/%3E%3Ccircle cx=&#x27;161&#x27; cy=&#x27;162.5&#x27; r=&#x27;0.59&#x27; fill-opacity=&#x27;0.42&#x27;/%3E%3Ccircle cx=&#x27;36.7&#x27; cy=&#x27;138&#x27; r=&#x27;0.5&#x27; fill-opacity=&#x27;0.48&#x27;/%3E%3C/svg%3E&quot;);--z-pattern-size:180px">
+    <div class="z-backdrop__layer" aria-hidden="true"></div>
+    <div class="z-backdrop__content"></div>
+  </div>
+  <div class="z-feature-card__body">
+    <h3 class="z-feature-card__title">
+      <a class="z-card__link" href="/security">Fingerprint security</a>
+    </h3>
+    <p class="z-feature-card__description">Biometric sign-in keeps every account unique and safe.</p>
+  </div>
+</article>
   </div>
 </section>
 <section class="z-card demo" data-component="FormatByte" data-behavior="dom">
@@ -1135,6 +1238,43 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="OfferCard" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">OfferCard</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<article class="z-card z-offer-card" data-variant="elevated" data-surface="elevated" data-padding="lg">
+  <div class="z-offer-card__head">
+    <div class="z-offer-card__heading">
+      <h3 class="z-offer-card__title">Landing page designer</h3>
+      <div class="z-offer-card__meta">
+        <span class="z-offer-card__fact">
+          <z-icon name="bookmark" size="14"></z-icon>
+          Saved 2 days ago
+        </span>
+        <span class="z-badge" data-tone="success" data-variant="soft" data-size="md">
+          <z-icon name="banknotes" size="12"></z-icon>
+          $600
+        </span>
+        <span class="z-badge" data-tone="info" data-variant="soft" data-size="md">
+          <z-icon name="clock" size="12"></z-icon>
+          1 week
+        </span>
+      </div>
+    </div>
+  </div>
+  <p class="z-offer-card__description">A clean, modern landing page for a dental SaaS product.</p>
+  <div class="z-offer-card__actions">
+    <button type="button" class="z-btn z-btn--primary" data-size="md">
+      <z-icon name="paper-airplane" size="16"></z-icon>
+      Apply
+    </button>
+    <button type="button" class="z-btn z-btn--danger" data-size="md">
+      <z-icon name="trash" size="16"></z-icon>
+      Remove
+    </button>
+  </div>
+</article>
+  </div>
+</section>
 <section class="z-card demo" data-component="Panel" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Panel</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1158,6 +1298,145 @@ malaga" data-ignore-accents="">Un
     <span class="z-stat__value">48,120</span>
   </div>
 </section>
+  </div>
+</section>
+<section class="z-card demo" data-component="PricingCard" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">PricingCard</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<article data-featured="true" class="z-card z-liquid z-pricing-card" data-variant="elevated" data-surface="glass" data-tone="info" data-glow="true" data-padding="lg">
+  <span class="z-pricing-card__blob" aria-hidden="true"></span>
+  <div class="z-pricing-card__head">
+    <h3 class="z-pricing-card__name">Professional</h3>
+    <span class="z-pricing-card__badge">Most popular</span>
+  </div>
+  <p class="z-pricing-card__price">
+    <span class="z-pricing-card__amount">$39</span>
+    <span class="z-pricing-card__period">/ month</span>
+  </p>
+  <ul class="z-pricing-card__features">
+    <li class="z-pricing-card__feature" data-included="">
+      <z-icon name="check-circle" size="18"></z-icon>
+      <span>
+        <span class="z-sr-only">Included: </span>
+        Unlimited projects
+      </span>
+    </li>
+    <li class="z-pricing-card__feature" data-included="">
+      <z-icon name="check-circle" size="18"></z-icon>
+      <span>
+        <span class="z-sr-only">Included: </span>
+        Priority support
+      </span>
+    </li>
+    <li class="z-pricing-card__feature">
+      <z-icon name="x-circle" size="18"></z-icon>
+      <span>
+        <span class="z-sr-only">Not included: </span>
+        Audit log
+      </span>
+    </li>
+  </ul>
+  <div class="z-pricing-card__action">
+    <button type="button" class="z-btn z-btn--primary" data-size="md">Choose Professional</button>
+  </div>
+</article>
+  </div>
+</section>
+<section class="z-card demo" data-component="PricingTable" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">PricingTable</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<section aria-label="Plans" class="z-pricing-table">
+  <div class="z-backdrop z-pricing-table__backdrop" data-pattern="mesh" data-intensity="strong" data-fade="none" data-seed="11" style="--z-mesh-x1:51%;--z-mesh-y1:53%;--z-mesh-c1:var(--z-chart-4);--z-mesh-x2:58%;--z-mesh-y2:81%;--z-mesh-c2:var(--z-accent);--z-mesh-x3:53%;--z-mesh-y3:59%;--z-mesh-c3:var(--z-chart-3);--z-mesh-x4:48%;--z-mesh-y4:80%;--z-mesh-c4:var(--z-chart-5)">
+    <div class="z-backdrop__layer" aria-hidden="true"></div>
+    <div class="z-backdrop__content">
+      <div class="z-pricing-table__plans">
+        <article class="z-card z-liquid z-pricing-card" data-variant="elevated" data-surface="glass" data-tone="success" data-padding="lg">
+          <span class="z-pricing-card__blob" aria-hidden="true"></span>
+          <div class="z-pricing-card__head">
+            <h3 class="z-pricing-card__name">Basic</h3>
+          </div>
+          <p class="z-pricing-card__price">
+            <span class="z-pricing-card__amount">$29</span>
+            <span class="z-pricing-card__period">/ month</span>
+          </p>
+          <ul class="z-pricing-card__features">
+            <li class="z-pricing-card__feature" data-included="">
+              <z-icon name="check-circle" size="18"></z-icon>
+              <span>
+                <span class="z-sr-only">Included: </span>
+                3 projects
+              </span>
+            </li>
+            <li class="z-pricing-card__feature">
+              <z-icon name="x-circle" size="18"></z-icon>
+              <span>
+                <span class="z-sr-only">Not included: </span>
+                Custom brands
+              </span>
+            </li>
+          </ul>
+          <div class="z-pricing-card__action">
+            <button type="button" class="z-btn z-btn--secondary" data-size="md">Choose Basic</button>
+          </div>
+        </article>
+        <article data-featured="true" class="z-card z-liquid z-pricing-card" data-variant="elevated" data-surface="glass" data-tone="info" data-glow="true" data-padding="lg">
+          <span class="z-pricing-card__blob" aria-hidden="true"></span>
+          <div class="z-pricing-card__head">
+            <h3 class="z-pricing-card__name">Professional</h3>
+            <span class="z-pricing-card__badge">Most popular</span>
+          </div>
+          <p class="z-pricing-card__price">
+            <span class="z-pricing-card__amount">$39</span>
+            <span class="z-pricing-card__period">/ month</span>
+          </p>
+          <ul class="z-pricing-card__features">
+            <li class="z-pricing-card__feature" data-included="">
+              <z-icon name="check-circle" size="18"></z-icon>
+              <span>
+                <span class="z-sr-only">Included: </span>
+                Unlimited projects
+              </span>
+            </li>
+            <li class="z-pricing-card__feature" data-included="">
+              <z-icon name="check-circle" size="18"></z-icon>
+              <span>
+                <span class="z-sr-only">Included: </span>
+                Custom brands
+              </span>
+            </li>
+          </ul>
+          <div class="z-pricing-card__action">
+            <button type="button" class="z-btn z-btn--primary" data-size="md">Choose Professional</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+  </div>
+</section>
+<section class="z-card demo" data-component="ProductCard" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">ProductCard</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<article data-layout="bleed" class="z-card z-product-card" data-variant="elevated" data-surface="elevated" data-tone="info" data-padding="md">
+  <div data-placement="bleed" data-scrim="bottom" data-tint="true" class="z-aspect z-card__media" style="--z-aspect:1.7777777777777777">
+    <img src="/img/carousel/glacier.svg" alt="" loading="lazy" decoding="async"/>
+  </div>
+  <div class="z-product-card__body">
+    <span class="z-price z-product-card__price" data-size="lg">
+      <span class="z-price__current">$256</span>
+    </span>
+    <div class="z-product-card__heading">
+      <h3 class="z-product-card__title">
+        <a class="z-card__link" href="/shop/glacier">Glacier shell jacket</a>
+      </h3>
+    </div>
+    <p class="z-product-card__subtitle">Wind-proof, packable</p>
+    <div class="z-product-card__action">
+      <button type="button" class="z-btn z-btn--glass" data-size="md">Buy now</button>
+    </div>
+  </div>
+</article>
   </div>
 </section>
 <section class="z-card demo" data-component="Prose" data-behavior="none">
@@ -1293,6 +1572,59 @@ malaga" data-ignore-accents="">Un
     </ol>
   </section>
 </section>
+  </div>
+</section>
+<section class="z-card demo" data-component="BalanceCard" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">BalanceCard</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<article class="z-balance-card" aria-label="Total balance">
+  <h2 class="z-balance-card__label">Total balance</h2>
+  <data class="z-balance-card__value" value="84250.8">$84,250
+    <span class="z-balance-card__fraction">.80</span>
+  </data>
+  <p class="z-balance-card__delta">
+    <span class="z-balance-card__chip">
+      <z-icon name="arrow-up-right" size="12"></z-icon>
+      +8.42%
+    </span>
+    +$6,540.20 this month
+  </p>
+  <span class="z-sparkline z-balance-card__trend" role="img" aria-label="Total balance: from 42 to 71, low 41, high 71" data-type="area" data-color="1" data-values="42,44,41,47,52,50,58,63,71" data-label="Total balance" data-locale="en-US">
+    <svg class="z-sparkline__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="z-sparkline__area" d="M0 90.23L12.5 84.483L25 93.103L37.5 75.862L50 61.494L62.5 67.241L75 44.253L87.5 29.885L100 6.897L100 100L87.5 100L75 100L62.5 100L50 100L37.5 100L25 100L12.5 100L0 100Z">
+    </path>
+    <path class="z-sparkline__line" d="M0 90.23L12.5 84.483L25 93.103L37.5 75.862L50 61.494L62.5 67.241L75 44.253L87.5 29.885L100 6.897">
+  </path>
+</svg>
+<span class="z-sparkline__end" aria-hidden="true" style="--x:1;--y:0.931"></span>
+</span>
+<ul class="z-balance-card__actions">
+<li>
+  <button type="button" class="z-balance-card__action">
+    <span class="z-balance-card__action-icon" aria-hidden="true">
+      <z-icon name="arrow-up-tray" size="18"></z-icon>
+    </span>
+    Send
+  </button>
+</li>
+<li>
+  <button type="button" class="z-balance-card__action">
+    <span class="z-balance-card__action-icon" aria-hidden="true">
+      <z-icon name="arrow-down-tray" size="18"></z-icon>
+    </span>
+    Request
+  </button>
+</li>
+<li>
+  <button type="button" class="z-balance-card__action">
+    <span class="z-balance-card__action-icon" aria-hidden="true">
+      <z-icon name="plus" size="18"></z-icon>
+    </span>
+    Top up
+  </button>
+</li>
+</ul>
+</article>
   </div>
 </section>
 <section class="z-card demo" data-component="BarList" data-behavior="dom">
@@ -1642,6 +1974,35 @@ malaga" data-ignore-accents="">Un
 </section>
   </div>
 </section>
+<section class="z-card demo" data-component="PaymentCard" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">PaymentCard</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<article aria-label="Card ending in 4242" class="z-card z-payment-card" data-variant="elevated" data-surface="metal" data-tone="accent" data-grain="true" data-padding="lg">
+  <div class="z-payment-card__top">
+    <span class="z-payment-card__issuer">zuix bank</span>
+    <span class="z-payment-card__contactless" aria-hidden="true">
+      <z-icon name="wifi" size="20"></z-icon>
+    </span>
+  </div>
+  <span class="z-payment-card__chip" aria-hidden="true"></span>
+  <p class="z-payment-card__number">
+    <span aria-hidden="true">•••• •••• •••• </span>
+    <span class="z-sr-only">Card ending in </span>
+    4242
+  </p>
+  <div class="z-payment-card__bottom">
+    <span class="z-payment-card__field">
+      <span class="z-payment-card__caption">Card holder</span>
+      Ana Ruiz
+    </span>
+    <span class="z-payment-card__field">
+      <span class="z-payment-card__caption">Expires</span>
+      08/29
+    </span>
+  </div>
+</article>
+  </div>
+</section>
 <section class="z-card demo" data-component="ProgressGoal" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">ProgressGoal</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -1930,6 +2291,23 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="RangeHistogram" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">RangeHistogram</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-range-histogram" aria-hidden="true">
+  <span class="z-range-histogram__bar" style="--z-bar:0.1"></span>
+  <span class="z-range-histogram__bar" style="--z-bar:0.25"></span>
+  <span class="z-range-histogram__bar" data-in="" style="--z-bar:0.45"></span>
+  <span class="z-range-histogram__bar" data-in="" style="--z-bar:0.7"></span>
+  <span class="z-range-histogram__bar" data-in="" style="--z-bar:1"></span>
+  <span class="z-range-histogram__bar" data-in="" style="--z-bar:0.9"></span>
+  <span class="z-range-histogram__bar" data-in="" style="--z-bar:0.6"></span>
+  <span class="z-range-histogram__bar" style="--z-bar:0.35"></span>
+  <span class="z-range-histogram__bar" style="--z-bar:0.2"></span>
+  <span class="z-range-histogram__bar" style="--z-bar:0.1"></span>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Rating" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Rating</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -2103,6 +2481,25 @@ malaga" data-ignore-accents="">Un
     </ul>
   </div>
 </div>
+  </div>
+</section>
+<section class="z-card demo" data-component="StatGroup" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">StatGroup</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<dl class="z-stat-group" data-variant="tiles" data-align="center">
+  <div class="z-stat-group__item">
+    <dt class="z-stat-group__label">Countries</dt>
+    <dd class="z-stat-group__value">28</dd>
+  </div>
+  <div class="z-stat-group__item">
+    <dt class="z-stat-group__label">Exhibitions</dt>
+    <dd class="z-stat-group__value">10</dd>
+  </div>
+  <div class="z-stat-group__item">
+    <dt class="z-stat-group__label">Rating</dt>
+    <dd class="z-stat-group__value">4.9</dd>
+  </div>
+</dl>
   </div>
 </section>
 <section class="z-card demo" data-component="StatTile" data-behavior="none">
@@ -4823,18 +5220,18 @@ malaga" data-ignore-accents="">Un
     <span class="z-user-card__role">Design</span>
   </div>
   <p class="z-user-card__bio">Design systems and the odd typeface.</p>
-  <dl class="z-user-card__stats">
-    <div class="z-user-card__stat">
-      <dt>Followers</dt>
-      <dd>1.2k</dd>
+  <dl class="z-stat-group z-user-card__stats" data-variant="plain" data-align="start">
+    <div class="z-stat-group__item z-user-card__stat">
+      <dt class="z-stat-group__label">Followers</dt>
+      <dd class="z-stat-group__value">1.2k</dd>
     </div>
-    <div class="z-user-card__stat">
-      <dt>Projects</dt>
-      <dd>34</dd>
+    <div class="z-stat-group__item z-user-card__stat">
+      <dt class="z-stat-group__label">Projects</dt>
+      <dd class="z-stat-group__value">34</dd>
     </div>
-    <div class="z-user-card__stat">
-      <dt>Reviews</dt>
-      <dd>210</dd>
+    <div class="z-stat-group__item z-user-card__stat">
+      <dt class="z-stat-group__label">Reviews</dt>
+      <dd class="z-stat-group__value">210</dd>
     </div>
   </dl>
   <div class="z-user-card__actions">

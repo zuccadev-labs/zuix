@@ -627,21 +627,41 @@
     }
    ]
   },
+  "ModelPicker": {
+   "group": "ai",
+   "classes": [
+    "z-model-picker",
+    "z-menu__switch",
+    "z-menu__badge"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Modelos y opciones",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--ghost z-model-picker\" data-size=\"sm\" aria-haspopup=\"menu\" aria-expanded=\"false\" data-z-open=\"#models\">\n  <span class=\"z-sr-only\">Model: </span>\n  <z-icon name=\"sparkles\" size=\"16\"></z-icon>\n  <span class=\"z-model-picker__label\">Aurora 3</span>\n  <span class=\"z-model-picker__badge\">Beta</span>\n  <z-icon name=\"chevron-up-down\" size=\"14\"></z-icon>\n</button>\n\n<div id=\"models\" popover class=\"z-liquid z-menu z-model-picker__menu\" role=\"menu\" aria-label=\"Model\" data-size=\"lg\">\n  <div class=\"z-menu__label\">Options</div>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"></span>\n    <span class=\"z-menu__text\">Auto</span>\n    <span class=\"z-menu__switch\" aria-hidden=\"true\"></span>\n  </button>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <div class=\"z-menu__group\" role=\"group\" aria-labelledby=\"models-list\">\n    <div class=\"z-menu__label\" id=\"models-list\">Models</div>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\" value=\"aurora-3\">\n      <span class=\"z-menu__icon\" aria-hidden=\"true\"><z-icon name=\"sparkles\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Aurora 3</span>\n      <span class=\"z-menu__badge\">Beta</span>\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" data-end aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </button>\n    <button type=\"button\" role=\"menuitemradio\" aria-checked=\"false\" class=\"z-menu__item\" tabindex=\"-1\" value=\"orbit\">\n      <span class=\"z-menu__icon\" aria-hidden=\"true\"><z-icon name=\"cpu-chip\" size=\"14\"></z-icon></span>\n      <span class=\"z-menu__text\">Orbit 5</span>\n      <span class=\"z-menu__icon z-menu__check\" data-kind=\"checkbox\" data-end aria-hidden=\"true\"><z-icon name=\"check\" size=\"14\"></z-icon></span>\n    </button>\n  </div>\n  <div class=\"z-menu__separator\" role=\"separator\"></div>\n  <button type=\"button\" role=\"menuitemcheckbox\" aria-checked=\"true\" class=\"z-menu__item\" tabindex=\"-1\">\n    <span class=\"z-menu__icon\"><z-icon name=\"clock\" size=\"14\"></z-icon></span>\n    <span class=\"z-menu__text\">Temporary chat</span>\n    <span class=\"z-menu__switch\" aria-hidden=\"true\"></span>\n  </button>\n</div>",
+     "source": "manual"
+    }
+   ]
+  },
   "PromptInput": {
    "group": "ai",
    "classes": [
-    "z-prompt-input",
     "z-composer",
+    "z-composer__context-chip",
+    "z-composer__contexts",
+    "z-composer__drop",
+    "z-composer__footer",
     "z-composer__form",
     "z-composer__input",
+    "z-composer__mic",
+    "z-composer__model",
     "z-composer__send",
     "z-composer__stop",
-    "z-composer__footer",
-    "z-composer__model",
-    "z-composer__toolset",
     "z-composer__tool",
+    "z-composer__toolset",
     "z-composer__usage",
-    "z-composer__usage-meter"
+    "z-composer__usage-meter",
+    "z-prompt-input"
    ],
    "behavior": "dom",
    "examples": [
@@ -1485,7 +1505,9 @@
   "Card": {
    "group": "content",
    "classes": [
-    "z-card"
+    "z-card",
+    "z-card__corner",
+    "z-card__link"
    ],
    "behavior": "none",
    "examples": [
@@ -1497,6 +1519,32 @@
     {
      "title": "Activable",
      "html": "<div role=\"button\" tabindex=\"0\" class=\"z-card\" data-variant=\"outlined\" data-padding=\"md\" data-interactive=\"true\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Atlas</h3>\n      <p class=\"z-card__subtitle\">Ana Ruiz</p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Materiales",
+     "html": "<div class=\"z-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-padding=\"md\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Elevated</h3>\n      <p class=\"z-card__subtitle\">Layered shadows</p>\n    </div>\n  </div>\n</div>\n<div class=\"z-card\" data-variant=\"elevated\" data-surface=\"tinted\" data-tone=\"info\" data-padding=\"md\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Tinted</h3>\n      <p class=\"z-card__subtitle\">Washed with its tone</p>\n    </div>\n  </div>\n</div>\n<div class=\"z-card\" data-variant=\"elevated\" data-surface=\"neon\" data-tone=\"danger\" data-padding=\"md\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Neon</h3>\n      <p class=\"z-card__subtitle\">Rim and halo</p>\n    </div>\n  </div>\n</div>\n<div class=\"z-card\" data-variant=\"elevated\" data-surface=\"metal\" data-grain=\"true\" data-padding=\"md\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">Metal</h3>\n      <p class=\"z-card__subtitle\">Brushed with grain</p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Tarjeta entera clicable",
+     "html": "<article class=\"z-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-padding=\"md\">\n  <div class=\"z-card__header\">\n    <div class=\"z-card__heading\">\n      <h3 class=\"z-card__title\">\n        <a class=\"z-card__link\" href=\"/projects/atlas\">Atlas</a>\n      </h3>\n      <p class=\"z-card__subtitle\">Design tokens rollout</p>\n    </div>\n  </div>\n  <div class=\"z-card__footer\" data-align=\"end\">\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\">Share</button>\n  </div>\n</article>",
+     "source": "generated"
+    }
+   ]
+  },
+  "CardBanner": {
+   "group": "content",
+   "classes": [
+    "z-card-banner",
+    "z-card-banner__strip",
+    "z-card-banner__card"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Disponible ahora",
+     "html": "<div class=\"z-card-banner\" data-position=\"top\" data-tone=\"info\">\n  <div class=\"z-card-banner__strip\">\n    <span class=\"z-card-banner__icon\" aria-hidden=\"true\">\n      <z-icon name=\"clock\" size=\"16\"></z-icon>\n    </span>\n    <span class=\"z-card-banner__message\">Available now, open to new projects</span>\n  </div>\n  <div class=\"z-card-banner__card\">\n    <article class=\"z-card z-offer-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-padding=\"lg\">\n      <div class=\"z-offer-card__head\">\n        <div class=\"z-offer-card__heading\">\n          <h3 class=\"z-offer-card__title\">Amine Tiffrent</h3>\n          <div class=\"z-offer-card__meta\">\n            <span class=\"z-offer-card__fact\">\n              <z-icon name=\"map-pin\" size=\"14\"></z-icon>\n              Algiers\n            </span>\n          </div>\n        </div>\n        <p class=\"z-offer-card__aside\">$20/hour</p>\n      </div>\n    </article>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -1554,6 +1602,24 @@
     }
    ]
   },
+  "CategoryTile": {
+   "group": "content",
+   "classes": [
+    "z-category-tile",
+    "z-category-tile__icon",
+    "z-category-tile__arrow",
+    "z-category-tile__title",
+    "z-category-tile__count"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Hoteles",
+     "html": "<a href=\"/hotels\" class=\"z-category-tile\" data-tone=\"accent\">\n  <span class=\"z-category-tile__icon\" aria-hidden=\"true\">\n    <z-icon name=\"building-office\" size=\"18\"></z-icon>\n  </span>\n  <span class=\"z-category-tile__arrow\" aria-hidden=\"true\">\n    <z-icon name=\"arrow-up-right\" size=\"14\"></z-icon>\n  </span>\n  <span class=\"z-category-tile__title\">Hotels</span>\n  <span class=\"z-category-tile__count\">1.4k</span>\n</a>",
+     "source": "generated"
+    }
+   ]
+  },
   "CodeBlock": {
    "group": "content",
    "classes": [
@@ -1588,6 +1654,35 @@
     {
      "title": "Vertical en una barra",
      "html": "<div style=\"display:flex;align-items:center\">\n  <button type=\"button\" title=\"Bold\" aria-label=\"Bold\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n    <z-icon name=\"bold\" size=\"16\"></z-icon>\n  </button>\n  <div role=\"separator\" aria-orientation=\"vertical\" class=\"z-divider\" data-orientation=\"vertical\" data-spacing=\"sm\" data-emphasis=\"subtle\"></div>\n  <button type=\"button\" title=\"Insert link\" aria-label=\"Insert link\" class=\"z-btn z-btn--icon z-btn--ghost\" data-size=\"md\">\n    <z-icon name=\"link\" size=\"16\"></z-icon>\n  </button>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "FeatureCard": {
+   "group": "content",
+   "classes": [
+    "z-feature-card",
+    "z-feature-card__cover",
+    "z-feature-card__body",
+    "z-feature-card__title",
+    "z-feature-card__description",
+    "z-card__link"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Cielo de estrellas",
+     "html": "<article data-pattern=\"stars\" data-align=\"center\" class=\"z-card z-feature-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-tone=\"info\" data-padding=\"none\">\n  <div class=\"z-backdrop z-feature-card__cover\" data-pattern=\"stars\" data-intensity=\"medium\" data-fade=\"none\" data-tone=\"media\" data-seed=\"3\" style=\"--z-pattern-tile:url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;180&#x27; height=&#x27;180&#x27; viewBox=&#x27;0 0 180 180&#x27;%3E%3Ccircle cx=&#x27;129.6&#x27; cy=&#x27;7&#x27; r=&#x27;0.41&#x27; fill-opacity=&#x27;0.71&#x27;/%3E%3Ccircle cx=&#x27;86.6&#x27; cy=&#x27;87.6&#x27; r=&#x27;0.55&#x27; fill-opacity=&#x27;0.58&#x27;/%3E%3Ccircle cx=&#x27;35.1&#x27; cy=&#x27;15&#x27; r=&#x27;0.71&#x27; fill-opacity=&#x27;0.73&#x27;/%3E%3Ccircle cx=&#x27;158.4&#x27; cy=&#x27;58.3&#x27; r=&#x27;0.57&#x27; fill-opacity=&#x27;0.65&#x27;/%3E%3Ccircle cx=&#x27;94.8&#x27; cy=&#x27;149.7&#x27; r=&#x27;0.36&#x27; fill-opacity=&#x27;0.78&#x27;/%3E%3Ccircle cx=&#x27;55.9&#x27; cy=&#x27;168.6&#x27; r=&#x27;0.67&#x27; fill-opacity=&#x27;0.68&#x27;/%3E%3Ccircle cx=&#x27;27.8&#x27; cy=&#x27;66.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.26&#x27;/%3E%3Ccircle cx=&#x27;86.1&#x27; cy=&#x27;155.4&#x27; r=&#x27;0.86&#x27; fill-opacity=&#x27;0.72&#x27;/%3E%3Ccircle cx=&#x27;105.2&#x27; cy=&#x27;104.7&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.57&#x27;/%3E%3Ccircle cx=&#x27;150.9&#x27; cy=&#x27;74.3&#x27; r=&#x27;0.72&#x27; fill-opacity=&#x27;0.59&#x27;/%3E%3Ccircle cx=&#x27;139.7&#x27; cy=&#x27;154&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.66&#x27;/%3E%3Cpath d=&#x27;M126 78.9L127 82.9L131 83.9L127 84.9L126 88.9L125 84.9L121 83.9L125 82.9Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Cpath d=&#x27;M128.3 117.1L129.2 121L133.1 121.9L129.2 122.8L128.3 126.7L127.4 122.8L123.5 121.9L127.4 121Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Ccircle cx=&#x27;10.2&#x27; cy=&#x27;11.9&#x27; r=&#x27;1&#x27; fill-opacity=&#x27;0.46&#x27;/%3E%3Ccircle cx=&#x27;97.2&#x27; cy=&#x27;52.2&#x27; r=&#x27;0.76&#x27; fill-opacity=&#x27;0.6&#x27;/%3E%3Ccircle cx=&#x27;70.4&#x27; cy=&#x27;136.1&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.64&#x27;/%3E%3Ccircle cx=&#x27;135.1&#x27; cy=&#x27;138.6&#x27; r=&#x27;0.66&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;124.3&#x27; cy=&#x27;139.3&#x27; r=&#x27;1.09&#x27; fill-opacity=&#x27;0.84&#x27;/%3E%3Ccircle cx=&#x27;-3.5&#x27; cy=&#x27;104.9&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.74&#x27;/%3E%3Ccircle cx=&#x27;176.5&#x27; cy=&#x27;104.9&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.74&#x27;/%3E%3Cpath d=&#x27;M56.9 108.4L57.7 111.8L61.1 112.6L57.7 113.4L56.9 116.8L56.1 113.4L52.7 112.6L56.1 111.8Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Ccircle cx=&#x27;107.8&#x27; cy=&#x27;25.4&#x27; r=&#x27;0.76&#x27; fill-opacity=&#x27;0.4&#x27;/%3E%3Ccircle cx=&#x27;158.6&#x27; cy=&#x27;8.8&#x27; r=&#x27;0.42&#x27; fill-opacity=&#x27;0.5&#x27;/%3E%3Ccircle cx=&#x27;160.1&#x27; cy=&#x27;5.2&#x27; r=&#x27;0.43&#x27; fill-opacity=&#x27;0.42&#x27;/%3E%3Ccircle cx=&#x27;-1.2&#x27; cy=&#x27;94.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;178.8&#x27; cy=&#x27;94.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;116.8&#x27; cy=&#x27;113.4&#x27; r=&#x27;0.87&#x27; fill-opacity=&#x27;0.73&#x27;/%3E%3Ccircle cx=&#x27;22.6&#x27; cy=&#x27;34.7&#x27; r=&#x27;0.81&#x27; fill-opacity=&#x27;0.66&#x27;/%3E%3Ccircle cx=&#x27;104&#x27; cy=&#x27;131.1&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.31&#x27;/%3E%3Ccircle cx=&#x27;173.6&#x27; cy=&#x27;35.1&#x27; r=&#x27;0.72&#x27; fill-opacity=&#x27;0.51&#x27;/%3E%3Ccircle cx=&#x27;99.3&#x27; cy=&#x27;50&#x27; r=&#x27;0.36&#x27; fill-opacity=&#x27;0.53&#x27;/%3E%3Ccircle cx=&#x27;140.3&#x27; cy=&#x27;60.6&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.84&#x27;/%3E%3Ccircle cx=&#x27;14.2&#x27; cy=&#x27;18.5&#x27; r=&#x27;0.45&#x27; fill-opacity=&#x27;0.77&#x27;/%3E%3Ccircle cx=&#x27;138.8&#x27; cy=&#x27;151.1&#x27; r=&#x27;0.4&#x27; fill-opacity=&#x27;0.45&#x27;/%3E%3Ccircle cx=&#x27;46.9&#x27; cy=&#x27;24&#x27; r=&#x27;0.66&#x27; fill-opacity=&#x27;0.39&#x27;/%3E%3Ccircle cx=&#x27;3.4&#x27; cy=&#x27;98.4&#x27; r=&#x27;0.64&#x27; fill-opacity=&#x27;0.83&#x27;/%3E%3Ccircle cx=&#x27;183.4&#x27; cy=&#x27;98.4&#x27; r=&#x27;0.64&#x27; fill-opacity=&#x27;0.83&#x27;/%3E%3Ccircle cx=&#x27;161&#x27; cy=&#x27;162.5&#x27; r=&#x27;0.59&#x27; fill-opacity=&#x27;0.42&#x27;/%3E%3Ccircle cx=&#x27;36.7&#x27; cy=&#x27;138&#x27; r=&#x27;0.5&#x27; fill-opacity=&#x27;0.48&#x27;/%3E%3C/svg%3E&quot;);--z-pattern-size:180px\">\n    <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n    <div class=\"z-backdrop__content\"></div>\n  </div>\n  <div class=\"z-feature-card__body\">\n    <h3 class=\"z-feature-card__title\">\n      <a class=\"z-card__link\" href=\"/security\">Fingerprint security</a>\n    </h3>\n    <p class=\"z-feature-card__description\">Biometric sign-in keeps every account unique and safe.</p>\n  </div>\n</article>",
+     "source": "generated"
+    },
+    {
+     "title": "Curvas de nivel",
+     "html": "<article data-pattern=\"contours\" data-align=\"center\" class=\"z-card z-feature-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-tone=\"success\" data-padding=\"none\">\n  <div class=\"z-backdrop z-feature-card__cover\" data-pattern=\"contours\" data-intensity=\"medium\" data-fade=\"none\" data-tone=\"media\" data-seed=\"7\" style=\"--z-pattern-tile:url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;240&#x27; height=&#x27;240&#x27; viewBox=&#x27;0 0 240 240&#x27;%3E%3Cpath d=&#x27;M20 179L20 180M20 180L19 190M19 190L20 195M30 159L29 160M29 160L23 170M23 170L20 179M21 200L20 195M21 200L29 210M29 210L30 211M40 153L30 159M40 214L30 211M50 149L48 150M48 150L40 153M50 214L40 214M60 149L50 149M60 212L50 214M67 150L60 149M67 150L70 151M70 207L65 210M65 210L60 212M80 158L70 151M80 196L77 200M77 200L70 207M81 160L80 158M81 160L84 170M84 170L85 180M85 180L83 190M83 190L80 196M140 59L140 60M140 60L139 70M139 70L140 75M150 39L149 40M149 40L143 50M143 50L140 59M141 80L140 75M141 80L149 90M149 90L150 91M160 33L150 39M160 94L150 91M170 29L168 30M168 30L160 33M170 94L160 94M180 29L170 29M180 92L170 94M187 30L180 29M187 30L190 31M190 87L185 90M185 90L180 92M200 38L190 31M200 76L197 80M197 80L190 87M201 40L200 38M201 40L204 50M204 50L205 60M205 60L203 70M203 70L200 76M10 157L9 160M9 160L6 170M6 170L4 180M4 180L3 190M3 190L2 200M2 200L3 210M3 210L6 220M6 220L10 225M20 144L14 150M14 150L10 157M20 230L10 225M20 230L20 230M30 138L27 140M27 140L20 144M30 231L20 230M40 135L30 138M40 231L30 231M50 133L40 135M50 231L40 231M60 132L50 133M60 229L54 230M54 230L50 231M70 132L60 132M70 226L60 229M80 133L70 132M80 222L70 226M90 135L80 133M90 213L83 220M83 220L80 222M96 140L90 135M96 140L100 148M100 186L99 190M99 190L97 200M97 200L92 210M92 210L90 213M100 150L100 148M100 150L102 160M102 160L102 170M102 170L101 180M101 180L100 186M130 37L129 40M129 40L126 50M126 50L124 60M124 60L123 70M123 70L122 80M122 80L123 90M123 90L126 100M126 100L130 105M140 24L134 30M134 30L130 37M140 110L130 105M140 110L140 110M150 18L147 20M147 20L140 24M150 111L140 110M160 15L150 18M160 111L150 111M170 13L160 15M170 111L160 111M180 12L170 13M180 109L174 110M174 110L170 111M190 12L180 12M190 106L180 109M200 13L190 12M200 102L190 106M210 15L200 13M210 93L203 100M203 100L200 102M216 20L210 15M216 20L220 28M220 66L219 70M219 70L217 80M217 80L212 90M212 90L210 93M220 30L220 28M220 30L222 40M222 40L222 50M222 50L221 60M221 60L220 66M10 17L7 20M7 20L2 30M2 30L0 34M10 125L1 130M1 130L0 131M20 11L10 17M20 123L10 125M30 8L24 10M24 10L20 11M30 122L20 123M40 6L30 8M40 120L30 122M50 5L40 6M50 119L43 120M43 120L40 120M60 4L50 5M60 118L50 119M70 2L60 4M70 116L60 118M80 1L70 2M80 113L70 116M86 0L80 1M90 109L88 110M88 110L80 113M90 239L86 240M100 99L99 100M99 100L90 109M100 236L90 239M110 55L109 60M109 60L108 70M108 70L106 80M106 80L104 90M104 90L100 99M110 217L109 220M109 220L106 230M106 230L100 236M120 11L115 20M115 20L113 30M113 30L112 40M112 40L111 50M111 50L110 55M120 154L118 160M118 160L117 170M117 170L115 180M115 180L114 190M114 190L113 200M113 200L111 210M111 210L110 217M130 5L121 10M121 10L120 11M130 137L127 140M127 140L122 150M122 150L120 154M140 3L130 5M140 131L130 137M150 2L140 3M150 128L144 130M144 130L140 131M160 0L150 2M160 126L150 128M163 0L160 0M170 125L160 126M170 239L163 240M180 124L170 125M180 238L170 239M190 122L180 124M190 236L180 238M200 121L190 122M200 233L190 236M210 119L206 120M206 120L200 121M210 229L208 230M208 230L200 233M220 116L210 119M220 219L219 220M219 220L210 229M230 97L229 100M229 100L226 110M226 110L220 116M230 175L229 180M229 180L228 190M228 190L226 200M226 200L224 210M224 210L220 219M240 34L238 40M238 40L237 50M237 50L235 60M235 60L234 70M234 70L233 80M233 80L231 90M231 90L230 97M240 131L235 140M235 140L233 150M233 150L232 160M232 160L231 170M231 170L230 175M10 58L10 60M10 60L9 70M9 70L9 80M9 80L10 84M20 34L16 40M16 40L12 50M12 50L10 58M12 90L10 84M12 90L20 100M20 100L20 100M30 26L24 30M24 30L20 34M30 104L20 100M40 22L30 26M40 105L30 104M50 19L47 20M47 20L40 22M50 104L40 105M60 18L50 19M60 103L50 104M70 19L60 18M70 100L69 100M69 100L60 103M76 20L70 19M76 20L80 21M80 93L70 100M90 29L80 21M90 79L90 80M90 80L83 90M83 90L80 93M91 30L90 29M91 30L94 40M94 40L95 50M95 50L95 60M95 60L93 70M93 70L90 79M130 178L130 180M130 180L129 190M129 190L129 200M129 200L130 204M140 154L136 160M136 160L132 170M132 170L130 178M132 210L130 204M132 210L140 220M140 220L140 220M150 146L144 150M144 150L140 154M150 224L140 220M160 142L150 146M160 225L150 224M170 139L167 140M167 140L160 142M170 224L160 225M180 138L170 139M180 223L170 224M190 139L180 138M190 220L189 220M189 220L180 223M196 140L190 139M196 140L200 141M200 213L190 220M210 149L200 141M210 199L210 200M210 200L203 210M203 210L200 213M211 150L210 149M211 150L214 160M214 160L215 170M215 170L215 180M215 180L213 190M213 190L210 199M30 54L28 60M28 60L28 70M28 70L30 75M40 42L32 50M32 50L30 54M33 80L30 75M33 80L40 84M50 38L44 40M44 40L40 42M50 86L40 84M60 38L50 38M60 83L50 86M67 40L60 38M67 40L70 42M70 76L66 80M66 80L60 83M75 50L70 42M75 50L76 60M76 60L74 70M74 70L70 76M150 174L148 180M148 180L148 190M148 190L150 195M160 162L152 170M152 170L150 174M153 200L150 195M153 200L160 204M170 158L164 160M164 160L160 162M170 206L160 204M180 158L170 158M180 203L170 206M187 160L180 158M187 160L190 162M190 196L186 200M186 200L180 203M195 170L190 162M195 170L196 180M196 180L194 190M194 190L190 196&#x27; fill=&#x27;none&#x27; stroke=&#x27;black&#x27; stroke-width=&#x27;1&#x27; stroke-linecap=&#x27;round&#x27;/%3E%3C/svg%3E&quot;);--z-pattern-size:240px\">\n    <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n    <div class=\"z-backdrop__content\"></div>\n  </div>\n  <div class=\"z-feature-card__body\">\n    <h3 class=\"z-feature-card__title\">Maps that stay readable</h3>\n    <p class=\"z-feature-card__description\">Contour lines drawn from a seed, the same on every render.</p>\n  </div>\n</article>",
+     "source": "generated"
+    },
+    {
+     "title": "Malla de color con grano",
+     "html": "<article data-pattern=\"mesh\" data-align=\"center\" class=\"z-card z-feature-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-tone=\"3\" data-padding=\"none\">\n  <div class=\"z-backdrop z-feature-card__cover\" data-pattern=\"mesh\" data-intensity=\"strong\" data-fade=\"none\" data-tone=\"media\" data-seed=\"21\" style=\"--z-mesh-x1:44%;--z-mesh-y1:45%;--z-mesh-c1:var(--z-chart-2);--z-mesh-x2:40%;--z-mesh-y2:48%;--z-mesh-c2:var(--z-info);--z-mesh-x3:81%;--z-mesh-y3:36%;--z-mesh-c3:var(--z-chart-3);--z-mesh-x4:73%;--z-mesh-y4:23%;--z-mesh-c4:var(--z-chart-4)\">\n    <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n    <div class=\"z-backdrop__content\"></div>\n  </div>\n  <div class=\"z-feature-card__body\">\n    <p class=\"z-feature-card__eyebrow\">New</p>\n    <h3 class=\"z-feature-card__title\">Liquid gradients</h3>\n    <p class=\"z-feature-card__description\">Four soft blobs from the chart palette.</p>\n  </div>\n</article>",
      "source": "generated"
     }
    ]
@@ -1706,6 +1801,24 @@
     }
    ]
   },
+  "OfferCard": {
+   "group": "content",
+   "classes": [
+    "z-offer-card",
+    "z-offer-card__head",
+    "z-offer-card__meta",
+    "z-offer-card__aside",
+    "z-offer-card__actions"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Oferta con fichas",
+     "html": "<article class=\"z-card z-offer-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-padding=\"lg\">\n  <div class=\"z-offer-card__head\">\n    <div class=\"z-offer-card__heading\">\n      <h3 class=\"z-offer-card__title\">Landing page designer</h3>\n      <div class=\"z-offer-card__meta\">\n        <span class=\"z-offer-card__fact\">\n          <z-icon name=\"bookmark\" size=\"14\"></z-icon>\n          Saved 2 days ago\n        </span>\n        <span class=\"z-badge\" data-tone=\"success\" data-variant=\"soft\" data-size=\"md\">\n          <z-icon name=\"banknotes\" size=\"12\"></z-icon>\n          $600\n        </span>\n        <span class=\"z-badge\" data-tone=\"info\" data-variant=\"soft\" data-size=\"md\">\n          <z-icon name=\"clock\" size=\"12\"></z-icon>\n          1 week\n        </span>\n      </div>\n    </div>\n  </div>\n  <p class=\"z-offer-card__description\">A clean, modern landing page for a dental SaaS product.</p>\n  <div class=\"z-offer-card__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n      <z-icon name=\"paper-airplane\" size=\"16\"></z-icon>\n      Apply\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--danger\" data-size=\"md\">\n      <z-icon name=\"trash\" size=\"16\"></z-icon>\n      Remove\n    </button>\n  </div>\n</article>",
+     "source": "generated"
+    }
+   ]
+  },
   "Panel": {
    "group": "content",
    "classes": [
@@ -1721,6 +1834,68 @@
     {
      "title": "Lateral opaco",
      "html": "<aside aria-label=\"Release notes\" class=\"z-panel z-solid\" data-padding=\"lg\">\n  <p>Version 2.4 adds keyboard navigation to every table.</p>\n</aside>",
+     "source": "generated"
+    }
+   ]
+  },
+  "PricingCard": {
+   "group": "content",
+   "classes": [
+    "z-pricing-card",
+    "z-pricing-card__blob",
+    "z-pricing-card__price",
+    "z-pricing-card__features",
+    "z-pricing-card__feature"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Plan destacado",
+     "html": "<article data-featured=\"true\" class=\"z-card z-liquid z-pricing-card\" data-variant=\"elevated\" data-surface=\"glass\" data-tone=\"info\" data-glow=\"true\" data-padding=\"lg\">\n  <span class=\"z-pricing-card__blob\" aria-hidden=\"true\"></span>\n  <div class=\"z-pricing-card__head\">\n    <h3 class=\"z-pricing-card__name\">Professional</h3>\n    <span class=\"z-pricing-card__badge\">Most popular</span>\n  </div>\n  <p class=\"z-pricing-card__price\">\n    <span class=\"z-pricing-card__amount\">$39</span>\n    <span class=\"z-pricing-card__period\">/ month</span>\n  </p>\n  <ul class=\"z-pricing-card__features\">\n    <li class=\"z-pricing-card__feature\" data-included=\"\">\n      <z-icon name=\"check-circle\" size=\"18\"></z-icon>\n      <span>\n        <span class=\"z-sr-only\">Included: </span>\n        Unlimited projects\n      </span>\n    </li>\n    <li class=\"z-pricing-card__feature\" data-included=\"\">\n      <z-icon name=\"check-circle\" size=\"18\"></z-icon>\n      <span>\n        <span class=\"z-sr-only\">Included: </span>\n        Priority support\n      </span>\n    </li>\n    <li class=\"z-pricing-card__feature\">\n      <z-icon name=\"x-circle\" size=\"18\"></z-icon>\n      <span>\n        <span class=\"z-sr-only\">Not included: </span>\n        Audit log\n      </span>\n    </li>\n  </ul>\n  <div class=\"z-pricing-card__action\">\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Choose Professional</button>\n  </div>\n</article>",
+     "source": "generated"
+    }
+   ]
+  },
+  "PricingTable": {
+   "group": "content",
+   "classes": [
+    "z-pricing-table",
+    "z-pricing-table__plans"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tres planes",
+     "html": "<section aria-label=\"Plans\" class=\"z-pricing-table\">\n  <div class=\"z-backdrop z-pricing-table__backdrop\" data-pattern=\"mesh\" data-intensity=\"strong\" data-fade=\"none\" data-seed=\"11\" style=\"--z-mesh-x1:51%;--z-mesh-y1:53%;--z-mesh-c1:var(--z-chart-4);--z-mesh-x2:58%;--z-mesh-y2:81%;--z-mesh-c2:var(--z-accent);--z-mesh-x3:53%;--z-mesh-y3:59%;--z-mesh-c3:var(--z-chart-3);--z-mesh-x4:48%;--z-mesh-y4:80%;--z-mesh-c4:var(--z-chart-5)\">\n    <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n    <div class=\"z-backdrop__content\">\n      <div class=\"z-pricing-table__plans\">\n        <article class=\"z-card z-liquid z-pricing-card\" data-variant=\"elevated\" data-surface=\"glass\" data-tone=\"success\" data-padding=\"lg\">\n          <span class=\"z-pricing-card__blob\" aria-hidden=\"true\"></span>\n          <div class=\"z-pricing-card__head\">\n            <h3 class=\"z-pricing-card__name\">Basic</h3>\n          </div>\n          <p class=\"z-pricing-card__price\">\n            <span class=\"z-pricing-card__amount\">$29</span>\n            <span class=\"z-pricing-card__period\">/ month</span>\n          </p>\n          <ul class=\"z-pricing-card__features\">\n            <li class=\"z-pricing-card__feature\" data-included=\"\">\n              <z-icon name=\"check-circle\" size=\"18\"></z-icon>\n              <span>\n                <span class=\"z-sr-only\">Included: </span>\n                3 projects\n              </span>\n            </li>\n            <li class=\"z-pricing-card__feature\">\n              <z-icon name=\"x-circle\" size=\"18\"></z-icon>\n              <span>\n                <span class=\"z-sr-only\">Not included: </span>\n                Custom brands\n              </span>\n            </li>\n          </ul>\n          <div class=\"z-pricing-card__action\">\n            <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Choose Basic</button>\n          </div>\n        </article>\n        <article data-featured=\"true\" class=\"z-card z-liquid z-pricing-card\" data-variant=\"elevated\" data-surface=\"glass\" data-tone=\"info\" data-glow=\"true\" data-padding=\"lg\">\n          <span class=\"z-pricing-card__blob\" aria-hidden=\"true\"></span>\n          <div class=\"z-pricing-card__head\">\n            <h3 class=\"z-pricing-card__name\">Professional</h3>\n            <span class=\"z-pricing-card__badge\">Most popular</span>\n          </div>\n          <p class=\"z-pricing-card__price\">\n            <span class=\"z-pricing-card__amount\">$39</span>\n            <span class=\"z-pricing-card__period\">/ month</span>\n          </p>\n          <ul class=\"z-pricing-card__features\">\n            <li class=\"z-pricing-card__feature\" data-included=\"\">\n              <z-icon name=\"check-circle\" size=\"18\"></z-icon>\n              <span>\n                <span class=\"z-sr-only\">Included: </span>\n                Unlimited projects\n              </span>\n            </li>\n            <li class=\"z-pricing-card__feature\" data-included=\"\">\n              <z-icon name=\"check-circle\" size=\"18\"></z-icon>\n              <span>\n                <span class=\"z-sr-only\">Included: </span>\n                Custom brands\n              </span>\n            </li>\n          </ul>\n          <div class=\"z-pricing-card__action\">\n            <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Choose Professional</button>\n          </div>\n        </article>\n      </div>\n    </div>\n  </div>\n</section>",
+     "source": "generated"
+    }
+   ]
+  },
+  "ProductCard": {
+   "group": "content",
+   "classes": [
+    "z-product-card",
+    "z-product-card__body",
+    "z-product-card__price",
+    "z-product-card__badge",
+    "z-card__corner",
+    "z-card__media"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "A sangre con precio y CTA de cristal",
+     "html": "<article data-layout=\"bleed\" class=\"z-card z-product-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-tone=\"info\" data-padding=\"md\">\n  <div data-placement=\"bleed\" data-scrim=\"bottom\" data-tint=\"true\" class=\"z-aspect z-card__media\" style=\"--z-aspect:1.7777777777777777\">\n    <img src=\"/img/carousel/glacier.svg\" alt=\"\" loading=\"lazy\" decoding=\"async\"/>\n  </div>\n  <div class=\"z-product-card__body\">\n    <span class=\"z-price z-product-card__price\" data-size=\"lg\">\n      <span class=\"z-price__current\">$256</span>\n    </span>\n    <div class=\"z-product-card__heading\">\n      <h3 class=\"z-product-card__title\">\n        <a class=\"z-card__link\" href=\"/shop/glacier\">Glacier shell jacket</a>\n      </h3>\n    </div>\n    <p class=\"z-product-card__subtitle\">Wind-proof, packable</p>\n    <div class=\"z-product-card__action\">\n      <button type=\"button\" class=\"z-btn z-btn--glass\" data-size=\"md\">Buy now</button>\n    </div>\n  </div>\n</article>",
+     "source": "generated"
+    },
+    {
+     "title": "Alojamiento con valoración y favorito",
+     "html": "<article data-layout=\"bleed\" class=\"z-card z-product-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-tone=\"success\" data-padding=\"md\">\n  <div data-placement=\"bleed\" data-scrim=\"bottom\" data-tint=\"true\" class=\"z-aspect z-card__media\" style=\"--z-aspect:1.7777777777777777\">\n    <img src=\"/img/carousel/forest.svg\" alt=\"\" loading=\"lazy\" decoding=\"async\"/>\n  </div>\n  <div class=\"z-card__corner\">\n    <span class=\"z-product-card__badge\">4.96 · 18 reviews</span>\n    <button type=\"button\" title=\"Save\" aria-label=\"Save\" class=\"z-btn z-btn--icon z-btn--glass\" data-size=\"md\">\n      <z-icon name=\"heart\" size=\"16\"></z-icon>\n    </button>\n  </div>\n  <div class=\"z-product-card__body\">\n    <span class=\"z-price z-product-card__price\" data-size=\"lg\">\n      <span class=\"z-price__current\">$96</span>\n      <span class=\"z-price__unit\">/ night</span>\n    </span>\n    <div class=\"z-product-card__heading\">\n      <h3 class=\"z-product-card__title\">Lake House, Canada</h3>\n    </div>\n  </div>\n</article>",
+     "source": "generated"
+    },
+    {
+     "title": "Inset con datos y reserva",
+     "html": "<article data-layout=\"inset\" class=\"z-card z-product-card\" data-variant=\"elevated\" data-surface=\"elevated\" data-padding=\"sm\">\n  <div data-placement=\"inset\" class=\"z-aspect z-card__media\" style=\"--z-aspect:1.3333333333333333\">\n    <img src=\"/img/carousel/mist.svg\" alt=\"\" loading=\"lazy\" decoding=\"async\"/>\n  </div>\n  <div class=\"z-product-card__body\">\n    <div class=\"z-product-card__heading\">\n      <h3 class=\"z-product-card__title\">Iceland Cabin</h3>\n      <span class=\"z-price z-product-card__price\" data-size=\"md\">\n        <span class=\"z-price__current\">$680</span>\n        <span class=\"z-price__unit\">per night</span>\n      </span>\n    </div>\n    <p class=\"z-product-card__subtitle\">Cozy cabin with views of the mountains and the northern lights.</p>\n    <dl class=\"z-stat-group\" data-variant=\"tiles\" data-align=\"center\">\n      <div class=\"z-stat-group__item\">\n        <dt class=\"z-stat-group__label\">Days</dt>\n        <dd class=\"z-stat-group__value\">3</dd>\n      </div>\n      <div class=\"z-stat-group__item\">\n        <dt class=\"z-stat-group__label\">Rating</dt>\n        <dd class=\"z-stat-group__value\">4.9</dd>\n      </div>\n    </dl>\n    <div class=\"z-product-card__action\">\n      <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"lg\">Reserve</button>\n    </div>\n  </div>\n</article>",
      "source": "generated"
     }
    ]
@@ -1822,6 +1997,25 @@
     {
      "title": "Agrupada por día",
      "html": "<section class=\"z-activity\" aria-label=\"Recent activity\">\n  <section class=\"z-activity__group\" aria-label=\"Today\">\n    <h3 class=\"z-activity__day\">Today</h3>\n    <ol class=\"z-activity__list\">\n      <li class=\"z-activity__item\">\n        <span class=\"z-activity__marker\">\n          <span aria-hidden=\"true\" class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\">\n            <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n          </span>\n        </span>\n        <div class=\"z-activity__body\">\n          <p class=\"z-activity__text\">\n            <span class=\"z-activity__actor\">Ana López</span>\n             \n            <span class=\"z-activity__verb\">closed</span>\n             \n            <a class=\"z-activity__object\" href=\"#\">#42 Login timeout</a>\n          </p>\n        </div>\n        <time class=\"z-activity__time\" dateTime=\"2026-11-22T13:10:00.000Z\">2 hours ago</time>\n      </li>\n      <li class=\"z-activity__item\" data-tone=\"success\">\n        <span class=\"z-activity__marker\">\n          <span class=\"z-activity__icon\" aria-hidden=\"true\">\n            <z-icon name=\"rocket-launch\" size=\"14\"></z-icon>\n          </span>\n        </span>\n        <div class=\"z-activity__body\">\n          <p class=\"z-activity__text\">\n            <span class=\"z-activity__actor\">Deploy bot</span>\n             \n            <span class=\"z-activity__verb\">shipped</span>\n             \n            <span class=\"z-activity__object\">v2.8.0 to production</span>\n          </p>\n        </div>\n        <time class=\"z-activity__time\" dateTime=\"2026-11-22T09:30:00.000Z\">5 hours ago</time>\n      </li>\n    </ol>\n  </section>\n  <section class=\"z-activity__group\" aria-label=\"Yesterday\">\n    <h3 class=\"z-activity__day\">Yesterday</h3>\n    <ol class=\"z-activity__list\">\n      <li class=\"z-activity__item\">\n        <span class=\"z-activity__marker\">\n          <span aria-hidden=\"true\" class=\"z-avatar\" data-size=\"sm\" data-shape=\"circle\" role=\"img\" aria-label=\"\">\n            <span class=\"z-avatar__initials\" aria-hidden=\"true\">MR</span>\n          </span>\n        </span>\n        <div class=\"z-activity__body\">\n          <p class=\"z-activity__text\">\n            <span class=\"z-activity__actor\">Marco Rossi</span>\n             \n            <span class=\"z-activity__verb\">commented on</span>\n             \n            <span class=\"z-activity__object\">Pricing page</span>\n          </p>\n          <div class=\"z-activity__detail\">The annual toggle should default to monthly.</div>\n        </div>\n        <time class=\"z-activity__time\" dateTime=\"2026-11-21T17:45:00.000Z\">21 hours ago</time>\n      </li>\n    </ol>\n  </section>\n</section>",
+     "source": "generated"
+    }
+   ]
+  },
+  "BalanceCard": {
+   "group": "dashboard",
+   "classes": [
+    "z-balance-card",
+    "z-balance-card__value",
+    "z-balance-card__fraction",
+    "z-balance-card__trend",
+    "z-balance-card__actions",
+    "z-balance-card__action"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Saldo con acciones",
+     "html": "<article class=\"z-balance-card\" aria-label=\"Total balance\">\n  <h2 class=\"z-balance-card__label\">Total balance</h2>\n  <data class=\"z-balance-card__value\" value=\"84250.8\">$84,250\n    <span class=\"z-balance-card__fraction\">.80</span>\n  </data>\n  <p class=\"z-balance-card__delta\">\n    <span class=\"z-balance-card__chip\">\n      <z-icon name=\"arrow-up-right\" size=\"12\"></z-icon>\n      +8.42%\n    </span>\n    +$6,540.20 this month\n  </p>\n  <span class=\"z-sparkline z-balance-card__trend\" role=\"img\" aria-label=\"Total balance: from 42 to 71, low 41, high 71\" data-type=\"area\" data-color=\"1\" data-values=\"42,44,41,47,52,50,58,63,71\" data-label=\"Total balance\" data-locale=\"en-US\">\n    <svg class=\"z-sparkline__svg\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" aria-hidden=\"true\" focusable=\"false\">\n      <path class=\"z-sparkline__area\" d=\"M0 90.23L12.5 84.483L25 93.103L37.5 75.862L50 61.494L62.5 67.241L75 44.253L87.5 29.885L100 6.897L100 100L87.5 100L75 100L62.5 100L50 100L37.5 100L25 100L12.5 100L0 100Z\">\n    </path>\n    <path class=\"z-sparkline__line\" d=\"M0 90.23L12.5 84.483L25 93.103L37.5 75.862L50 61.494L62.5 67.241L75 44.253L87.5 29.885L100 6.897\">\n  </path>\n</svg>\n<span class=\"z-sparkline__end\" aria-hidden=\"true\" style=\"--x:1;--y:0.931\"></span>\n</span>\n<ul class=\"z-balance-card__actions\">\n<li>\n  <button type=\"button\" class=\"z-balance-card__action\">\n    <span class=\"z-balance-card__action-icon\" aria-hidden=\"true\">\n      <z-icon name=\"arrow-up-tray\" size=\"18\"></z-icon>\n    </span>\n    Send\n  </button>\n</li>\n<li>\n  <button type=\"button\" class=\"z-balance-card__action\">\n    <span class=\"z-balance-card__action-icon\" aria-hidden=\"true\">\n      <z-icon name=\"arrow-down-tray\" size=\"18\"></z-icon>\n    </span>\n    Request\n  </button>\n</li>\n<li>\n  <button type=\"button\" class=\"z-balance-card__action\">\n    <span class=\"z-balance-card__action-icon\" aria-hidden=\"true\">\n      <z-icon name=\"plus\" size=\"18\"></z-icon>\n    </span>\n    Top up\n  </button>\n</li>\n</ul>\n</article>",
      "source": "generated"
     }
    ]
@@ -2063,6 +2257,23 @@
     {
      "title": "Cuatro KPI en una banda",
      "html": "<section aria-label=\"This month\" class=\"z-metric-group z-liquid\" data-variant=\"glass\" data-columns=\"4\">\n  <article class=\"z-metric\" aria-label=\"Revenue\" data-variant=\"plain\" data-state=\"ready\" data-sentiment=\"good\">\n    <header class=\"z-metric__head\">\n      <span class=\"z-metric__label\">Revenue</span>\n    </header>\n    <div class=\"z-metric__main\">\n      <data class=\"z-metric__value\">$128.4k</data>\n      <span class=\"z-metric__delta\">\n        <span class=\"z-delta\" data-direction=\"up\" data-sentiment=\"good\" data-delta=\"0.124\" data-period=\"last month\" data-locale=\"en-US\">\n          <span class=\"z-delta__arrow\" aria-hidden=\"true\">\n            <z-icon name=\"arrow-trending-up-right\" size=\"14\"></z-icon>\n          </span>\n          <span class=\"z-delta__value\" aria-hidden=\"true\">12.4%</span>\n          <span class=\"z-sr-only\">up 12.4%, better than last month</span>\n        </span>\n        <span class=\"z-metric__period\" aria-hidden=\"true\">vs last month</span>\n      </span>\n    </div>\n  </article>\n  <article class=\"z-metric\" aria-label=\"New customers\" data-variant=\"plain\" data-state=\"ready\" data-sentiment=\"good\">\n    <header class=\"z-metric__head\">\n      <span class=\"z-metric__label\">New customers</span>\n    </header>\n    <div class=\"z-metric__main\">\n      <data class=\"z-metric__value\" value=\"1284\">1,284</data>\n      <span class=\"z-metric__delta\">\n        <span class=\"z-delta\" data-direction=\"up\" data-sentiment=\"good\" data-value=\"1284\" data-delta=\"0.061\" data-period=\"last month\" data-locale=\"en-US\">\n          <span class=\"z-delta__arrow\" aria-hidden=\"true\">\n            <z-icon name=\"arrow-trending-up-right\" size=\"14\"></z-icon>\n          </span>\n          <span class=\"z-delta__value\" aria-hidden=\"true\">6.1%</span>\n          <span class=\"z-sr-only\">up 6.1%, better than last month</span>\n        </span>\n        <span class=\"z-metric__period\" aria-hidden=\"true\">vs last month</span>\n      </span>\n    </div>\n  </article>\n  <article class=\"z-metric\" aria-label=\"Churn\" data-variant=\"plain\" data-state=\"ready\" data-sentiment=\"good\">\n    <header class=\"z-metric__head\">\n      <span class=\"z-metric__label\">Churn</span>\n    </header>\n    <div class=\"z-metric__main\">\n      <data class=\"z-metric__value\">2.1%</data>\n      <span class=\"z-metric__delta\">\n        <span class=\"z-delta\" data-direction=\"down\" data-sentiment=\"good\" data-delta=\"-0.08\" data-positive=\"down\" data-period=\"last month\" data-locale=\"en-US\">\n          <span class=\"z-delta__arrow\" aria-hidden=\"true\">\n            <z-icon name=\"arrow-trending-down-right\" size=\"14\"></z-icon>\n          </span>\n          <span class=\"z-delta__value\" aria-hidden=\"true\">8%</span>\n          <span class=\"z-sr-only\">down 8%, better than last month</span>\n        </span>\n        <span class=\"z-metric__period\" aria-hidden=\"true\">vs last month</span>\n      </span>\n    </div>\n  </article>\n  <article class=\"z-metric\" aria-label=\"NPS\" data-variant=\"plain\" data-state=\"ready\" data-sentiment=\"neutral\">\n    <header class=\"z-metric__head\">\n      <span class=\"z-metric__label\">NPS</span>\n    </header>\n    <div class=\"z-metric__main\">\n      <data class=\"z-metric__value\" value=\"62\">62</data>\n      <span class=\"z-metric__delta\">\n        <span class=\"z-delta\" data-direction=\"flat\" data-sentiment=\"neutral\" data-value=\"62\" data-delta=\"0\" data-period=\"last month\" data-locale=\"en-US\">\n          <span class=\"z-delta__arrow\" aria-hidden=\"true\">\n            <z-icon name=\"minus\" size=\"14\"></z-icon>\n          </span>\n          <span class=\"z-delta__value\" aria-hidden=\"true\">0%</span>\n          <span class=\"z-sr-only\">no change</span>\n        </span>\n        <span class=\"z-metric__period\" aria-hidden=\"true\">vs last month</span>\n      </span>\n    </div>\n  </article>\n</section>",
+     "source": "generated"
+    }
+   ]
+  },
+  "PaymentCard": {
+   "group": "dashboard",
+   "classes": [
+    "z-payment-card",
+    "z-payment-card__chip",
+    "z-payment-card__number",
+    "z-payment-card__field"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Tarjeta de metal",
+     "html": "<article aria-label=\"Card ending in 4242\" class=\"z-card z-payment-card\" data-variant=\"elevated\" data-surface=\"metal\" data-tone=\"accent\" data-grain=\"true\" data-padding=\"lg\">\n  <div class=\"z-payment-card__top\">\n    <span class=\"z-payment-card__issuer\">zuix bank</span>\n    <span class=\"z-payment-card__contactless\" aria-hidden=\"true\">\n      <z-icon name=\"wifi\" size=\"20\"></z-icon>\n    </span>\n  </div>\n  <span class=\"z-payment-card__chip\" aria-hidden=\"true\"></span>\n  <p class=\"z-payment-card__number\">\n    <span aria-hidden=\"true\">•••• •••• •••• </span>\n    <span class=\"z-sr-only\">Card ending in </span>\n    4242\n  </p>\n  <div class=\"z-payment-card__bottom\">\n    <span class=\"z-payment-card__field\">\n      <span class=\"z-payment-card__caption\">Card holder</span>\n      Ana Ruiz\n    </span>\n    <span class=\"z-payment-card__field\">\n      <span class=\"z-payment-card__caption\">Expires</span>\n      08/29\n    </span>\n  </div>\n</article>",
      "source": "generated"
     }
    ]
@@ -2508,6 +2719,21 @@
     }
    ]
   },
+  "RangeHistogram": {
+   "group": "data",
+   "classes": [
+    "z-range-histogram",
+    "z-range-histogram__bar"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Rango de precio",
+     "html": "<div class=\"z-range-histogram\" aria-hidden=\"true\">\n  <span class=\"z-range-histogram__bar\" style=\"--z-bar:0.1\"></span>\n  <span class=\"z-range-histogram__bar\" style=\"--z-bar:0.25\"></span>\n  <span class=\"z-range-histogram__bar\" data-in=\"\" style=\"--z-bar:0.45\"></span>\n  <span class=\"z-range-histogram__bar\" data-in=\"\" style=\"--z-bar:0.7\"></span>\n  <span class=\"z-range-histogram__bar\" data-in=\"\" style=\"--z-bar:1\"></span>\n  <span class=\"z-range-histogram__bar\" data-in=\"\" style=\"--z-bar:0.9\"></span>\n  <span class=\"z-range-histogram__bar\" data-in=\"\" style=\"--z-bar:0.6\"></span>\n  <span class=\"z-range-histogram__bar\" style=\"--z-bar:0.35\"></span>\n  <span class=\"z-range-histogram__bar\" style=\"--z-bar:0.2\"></span>\n  <span class=\"z-range-histogram__bar\" style=\"--z-bar:0.1\"></span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
   "Rating": {
    "group": "data",
    "classes": [
@@ -2596,6 +2822,28 @@
     }
    ]
   },
+  "StatGroup": {
+   "group": "data",
+   "classes": [
+    "z-stat-group",
+    "z-stat-group__item",
+    "z-stat-group__label",
+    "z-stat-group__value"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Fichas",
+     "html": "<dl class=\"z-stat-group\" data-variant=\"tiles\" data-align=\"center\">\n  <div class=\"z-stat-group__item\">\n    <dt class=\"z-stat-group__label\">Countries</dt>\n    <dd class=\"z-stat-group__value\">28</dd>\n  </div>\n  <div class=\"z-stat-group__item\">\n    <dt class=\"z-stat-group__label\">Exhibitions</dt>\n    <dd class=\"z-stat-group__value\">10</dd>\n  </div>\n  <div class=\"z-stat-group__item\">\n    <dt class=\"z-stat-group__label\">Rating</dt>\n    <dd class=\"z-stat-group__value\">4.9</dd>\n  </div>\n</dl>",
+     "source": "generated"
+    },
+    {
+     "title": "Con separadores",
+     "html": "<dl class=\"z-stat-group\" data-variant=\"divided\" data-align=\"start\">\n  <div class=\"z-stat-group__item\">\n    <dt class=\"z-stat-group__label\">Followers</dt>\n    <dd class=\"z-stat-group__value\">12.4k</dd>\n  </div>\n  <div class=\"z-stat-group__item\">\n    <dt class=\"z-stat-group__label\">Following</dt>\n    <dd class=\"z-stat-group__value\">380</dd>\n  </div>\n</dl>",
+     "source": "generated"
+    }
+   ]
+  },
   "StatTile": {
    "group": "data",
    "classes": [
@@ -2617,6 +2865,11 @@
     {
      "title": "Con tendencia",
      "html": "<div class=\"z-stat z-liquid\" data-variant=\"glass\">\n  <span class=\"z-stat__head\">\n    <span class=\"z-stat__label\">Revenue</span>\n  </span>\n  <span class=\"z-stat__value\">$112k</span>\n  <span class=\"z-sparkline z-stat__trend\" role=\"img\" aria-label=\"Revenue: from 42 to 112, low 42, high 112\" data-type=\"area\" data-color=\"1\" data-values=\"42,48,45,61,66,72,69,84,90,88,97,112\" data-label=\"Revenue\">\n    <svg class=\"z-sparkline__svg\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" aria-hidden=\"true\" focusable=\"false\">\n      <path class=\"z-sparkline__area\" d=\"M0 93.103L9.091 85.714L18.182 89.409L27.273 69.704L36.364 63.547L45.455 56.158L54.545 59.852L63.636 41.379L72.727 33.99L81.818 36.453L90.909 25.369L100 6.897L100 100L90.909 100L81.818 100L72.727 100L63.636 100L54.545 100L45.455 100L36.364 100L27.273 100L18.182 100L9.091 100L0 100Z\">\n    </path>\n    <path class=\"z-sparkline__line\" d=\"M0 93.103L9.091 85.714L18.182 89.409L27.273 69.704L36.364 63.547L45.455 56.158L54.545 59.852L63.636 41.379L72.727 33.99L81.818 36.453L90.909 25.369L100 6.897\">\n  </path>\n</svg>\n<span class=\"z-sparkline__end\" aria-hidden=\"true\" style=\"--x:1;--y:0.931\"></span>\n</span>\n<span class=\"z-stat__foot\">\n<span class=\"z-stat__delta\" data-tone=\"success\">+15%</span>\n</span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Ficha de icono apilada",
+     "html": "<div class=\"z-stat\" data-variant=\"elevated\" data-tone=\"success\" data-layout=\"stacked\">\n  <span class=\"z-stat__head\">\n    <span class=\"z-stat__label\">Income</span>\n    <span class=\"z-stat__icon\">\n      <z-icon name=\"banknotes\" size=\"14\"></z-icon>\n    </span>\n  </span>\n  <span class=\"z-stat__value\">$12,850</span>\n</div>",
      "source": "generated"
     }
    ]
@@ -2752,6 +3005,16 @@
     {
      "title": "Malla de color",
      "html": "<div class=\"z-backdrop\" data-pattern=\"mesh\" data-intensity=\"medium\" data-fade=\"radial\" data-animated=\"\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Liquid glass</strong>\n      </p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Estrellas con semilla",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"stars\" data-intensity=\"medium\" data-fade=\"bottom\" data-seed=\"3\" style=\"--z-pattern-tile:url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;180&#x27; height=&#x27;180&#x27; viewBox=&#x27;0 0 180 180&#x27;%3E%3Ccircle cx=&#x27;129.6&#x27; cy=&#x27;7&#x27; r=&#x27;0.41&#x27; fill-opacity=&#x27;0.71&#x27;/%3E%3Ccircle cx=&#x27;86.6&#x27; cy=&#x27;87.6&#x27; r=&#x27;0.55&#x27; fill-opacity=&#x27;0.58&#x27;/%3E%3Ccircle cx=&#x27;35.1&#x27; cy=&#x27;15&#x27; r=&#x27;0.71&#x27; fill-opacity=&#x27;0.73&#x27;/%3E%3Ccircle cx=&#x27;158.4&#x27; cy=&#x27;58.3&#x27; r=&#x27;0.57&#x27; fill-opacity=&#x27;0.65&#x27;/%3E%3Ccircle cx=&#x27;94.8&#x27; cy=&#x27;149.7&#x27; r=&#x27;0.36&#x27; fill-opacity=&#x27;0.78&#x27;/%3E%3Ccircle cx=&#x27;55.9&#x27; cy=&#x27;168.6&#x27; r=&#x27;0.67&#x27; fill-opacity=&#x27;0.68&#x27;/%3E%3Ccircle cx=&#x27;27.8&#x27; cy=&#x27;66.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.26&#x27;/%3E%3Ccircle cx=&#x27;86.1&#x27; cy=&#x27;155.4&#x27; r=&#x27;0.86&#x27; fill-opacity=&#x27;0.72&#x27;/%3E%3Ccircle cx=&#x27;105.2&#x27; cy=&#x27;104.7&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.57&#x27;/%3E%3Ccircle cx=&#x27;150.9&#x27; cy=&#x27;74.3&#x27; r=&#x27;0.72&#x27; fill-opacity=&#x27;0.59&#x27;/%3E%3Ccircle cx=&#x27;139.7&#x27; cy=&#x27;154&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.66&#x27;/%3E%3Cpath d=&#x27;M126 78.9L127 82.9L131 83.9L127 84.9L126 88.9L125 84.9L121 83.9L125 82.9Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Cpath d=&#x27;M128.3 117.1L129.2 121L133.1 121.9L129.2 122.8L128.3 126.7L127.4 122.8L123.5 121.9L127.4 121Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Ccircle cx=&#x27;10.2&#x27; cy=&#x27;11.9&#x27; r=&#x27;1&#x27; fill-opacity=&#x27;0.46&#x27;/%3E%3Ccircle cx=&#x27;97.2&#x27; cy=&#x27;52.2&#x27; r=&#x27;0.76&#x27; fill-opacity=&#x27;0.6&#x27;/%3E%3Ccircle cx=&#x27;70.4&#x27; cy=&#x27;136.1&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.64&#x27;/%3E%3Ccircle cx=&#x27;135.1&#x27; cy=&#x27;138.6&#x27; r=&#x27;0.66&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;124.3&#x27; cy=&#x27;139.3&#x27; r=&#x27;1.09&#x27; fill-opacity=&#x27;0.84&#x27;/%3E%3Ccircle cx=&#x27;-3.5&#x27; cy=&#x27;104.9&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.74&#x27;/%3E%3Ccircle cx=&#x27;176.5&#x27; cy=&#x27;104.9&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.74&#x27;/%3E%3Cpath d=&#x27;M56.9 108.4L57.7 111.8L61.1 112.6L57.7 113.4L56.9 116.8L56.1 113.4L52.7 112.6L56.1 111.8Z&#x27; fill-opacity=&#x27;0.95&#x27;/%3E%3Ccircle cx=&#x27;107.8&#x27; cy=&#x27;25.4&#x27; r=&#x27;0.76&#x27; fill-opacity=&#x27;0.4&#x27;/%3E%3Ccircle cx=&#x27;158.6&#x27; cy=&#x27;8.8&#x27; r=&#x27;0.42&#x27; fill-opacity=&#x27;0.5&#x27;/%3E%3Ccircle cx=&#x27;160.1&#x27; cy=&#x27;5.2&#x27; r=&#x27;0.43&#x27; fill-opacity=&#x27;0.42&#x27;/%3E%3Ccircle cx=&#x27;-1.2&#x27; cy=&#x27;94.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;178.8&#x27; cy=&#x27;94.2&#x27; r=&#x27;0.35&#x27; fill-opacity=&#x27;0.34&#x27;/%3E%3Ccircle cx=&#x27;116.8&#x27; cy=&#x27;113.4&#x27; r=&#x27;0.87&#x27; fill-opacity=&#x27;0.73&#x27;/%3E%3Ccircle cx=&#x27;22.6&#x27; cy=&#x27;34.7&#x27; r=&#x27;0.81&#x27; fill-opacity=&#x27;0.66&#x27;/%3E%3Ccircle cx=&#x27;104&#x27; cy=&#x27;131.1&#x27; r=&#x27;1.06&#x27; fill-opacity=&#x27;0.31&#x27;/%3E%3Ccircle cx=&#x27;173.6&#x27; cy=&#x27;35.1&#x27; r=&#x27;0.72&#x27; fill-opacity=&#x27;0.51&#x27;/%3E%3Ccircle cx=&#x27;99.3&#x27; cy=&#x27;50&#x27; r=&#x27;0.36&#x27; fill-opacity=&#x27;0.53&#x27;/%3E%3Ccircle cx=&#x27;140.3&#x27; cy=&#x27;60.6&#x27; r=&#x27;0.63&#x27; fill-opacity=&#x27;0.84&#x27;/%3E%3Ccircle cx=&#x27;14.2&#x27; cy=&#x27;18.5&#x27; r=&#x27;0.45&#x27; fill-opacity=&#x27;0.77&#x27;/%3E%3Ccircle cx=&#x27;138.8&#x27; cy=&#x27;151.1&#x27; r=&#x27;0.4&#x27; fill-opacity=&#x27;0.45&#x27;/%3E%3Ccircle cx=&#x27;46.9&#x27; cy=&#x27;24&#x27; r=&#x27;0.66&#x27; fill-opacity=&#x27;0.39&#x27;/%3E%3Ccircle cx=&#x27;3.4&#x27; cy=&#x27;98.4&#x27; r=&#x27;0.64&#x27; fill-opacity=&#x27;0.83&#x27;/%3E%3Ccircle cx=&#x27;183.4&#x27; cy=&#x27;98.4&#x27; r=&#x27;0.64&#x27; fill-opacity=&#x27;0.83&#x27;/%3E%3Ccircle cx=&#x27;161&#x27; cy=&#x27;162.5&#x27; r=&#x27;0.59&#x27; fill-opacity=&#x27;0.42&#x27;/%3E%3Ccircle cx=&#x27;36.7&#x27; cy=&#x27;138&#x27; r=&#x27;0.5&#x27; fill-opacity=&#x27;0.48&#x27;/%3E%3C/svg%3E&quot;);--z-pattern-size:180px\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Night sky</strong>\n      </p>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Curvas de nivel del acento",
+     "html": "<div class=\"z-backdrop\" data-pattern=\"contours\" data-intensity=\"strong\" data-fade=\"radial\" data-tone=\"accent\" data-seed=\"atlas\" style=\"--z-pattern-tile:url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;240&#x27; height=&#x27;240&#x27; viewBox=&#x27;0 0 240 240&#x27;%3E%3Cpath d=&#x27;M10 190L0 185M10 236L0 237M10 190L10 190M10 190L16 200M16 200L18 210M18 210L18 220M18 220L15 230M15 230L10 236M70 122L61 130M61 130L67 140M67 140L70 141M80 127L70 122M80 140L70 141M83 130L80 127M83 130L80 140M80 140L80 140M170 76L167 80M167 80L165 90M165 90L169 100M169 100L170 101M180 72L170 76M180 100L170 101M190 78L180 72M190 88L190 90M190 90L180 100M180 100L180 100M191 80L190 78M191 80L190 88M220 187L215 190M215 190L210 200M210 200L212 210M212 210L218 220M218 220L220 223M230 184L220 187M227 230L220 223M227 230L230 232M240 185L230 184M240 237L230 232M10 18L0 15M10 175L0 174M20 17L10 18M20 180L10 175M30 0L27 10M27 10L20 17M20 180L20 180M20 180L26 190M26 190L28 200M28 200L29 210M29 210L30 220M30 220L30 228M30 237L30 240M30 230L30 228M30 230L30 237M50 112L47 120M47 120L45 130M45 130L44 140M44 140L47 150M47 150L50 153M60 103L52 110M52 110L50 112M60 157L50 153M70 102L60 103M70 158L60 157M80 105L70 102M80 158L70 158M90 15L86 20M86 20L88 30M88 30L90 31M88 110L80 105M88 110L90 112M90 156L80 158M100 6L94 10M94 10L90 15M100 34L90 31M100 120L90 112M100 152L90 156M110 2L100 6M110 34L100 34M100 120L100 120M100 120L108 130M108 130L110 138M110 141L104 150M104 150L100 152M120 4L110 2M120 31L110 34M111 140L110 138M111 140L110 141M124 10L120 4M124 10L125 20M125 20L121 30M121 30L120 31M150 74L149 80M149 80L148 90M148 90L147 100M147 100L149 110M149 110L150 115M160 60L151 70M151 70L150 74M154 120L150 115M154 120L160 124M170 57L160 60M160 60L160 60M170 124L160 124M180 57L170 57M180 119L178 120M178 120L170 124M190 58L180 57M190 111L180 119M197 60L190 58M197 60L200 62M200 98L199 100M199 100L191 110M191 110L190 111M200 184L196 190M196 190L196 200M196 200L200 210M200 210L200 211M207 70L200 62M207 70L208 80M208 80L205 90M205 90L200 98M210 177L204 180M204 180L200 184M206 220L200 211M206 220L210 226M220 175L210 177M213 230L210 226M213 230L220 238M222 0L230 8M230 174L220 175M222 240L220 238M233 10L230 8M233 10L240 15M240 174L230 174M10 47L0 45M10 162L0 163M20 48L10 47M20 160L19 160M19 160L10 162M30 50L20 48M30 50L30 50M30 145L29 150M29 150L20 160M40 54L30 50M40 101L37 110M37 110L35 120M35 120L33 130M33 130L31 140M31 140L30 145M40 182L38 190M38 190L38 200M38 200L39 210M39 210L40 218M49 0L50 1M50 59L40 54M50 82L45 90M45 90L40 100M40 100L40 101M50 172L41 180M41 180L40 182M40 220L40 218M40 220L44 230M44 230L49 240M60 6L50 1M55 60L50 59M55 60L60 64M60 74L53 80M53 80L50 82M60 170L50 172M70 5L60 6M70 60L68 60M68 60L60 64M70 79L60 74M70 170L64 170M64 170L60 170M80 0L70 5M80 57L70 60M70 80L70 79M70 80L80 86M80 169L70 170M80 0L80 0M90 55L80 57M84 90L80 86M84 90L90 94M90 169L80 169M90 234L80 240M100 54L90 55M98 100L90 94M98 100L100 101M100 169L90 169M100 228L97 230M97 230L90 234M110 54L100 54M110 107L100 101M110 170L100 169M110 222L100 228M120 55L110 54M120 108L110 107M120 170L110 170M120 170L120 170M120 218L117 220M117 220L110 222M129 60L120 55M129 60L130 62M130 99L130 100M130 100L120 108M130 170L120 170M129 220L120 218M129 220L130 220M133 70L130 62M133 70L134 80M134 80L133 90M133 90L130 99M140 170L136 170M136 170L130 170M137 230L130 220M137 230L140 240M140 0L142 10M142 10L144 20M144 20L146 30M146 30L150 36M150 170L140 170M140 240L140 240M155 40L150 36M155 40L160 42M157 170L150 170M157 170L160 170M170 44L160 42M169 180L160 170M169 180L170 181M180 45L170 44M180 147L178 150M178 150L178 160M178 160L180 161M173 190L170 181M173 190L178 200M178 200L180 202M190 45L180 45M190 129L189 130M189 130L183 140M183 140L180 147M190 164L180 161M185 210L180 202M185 210L190 215M200 46L190 45M200 115L196 120M196 120L190 129M200 164L190 164M193 220L190 215M193 220L200 228M209 0L210 2M210 46L200 46M210 101L204 110M204 110L200 115M210 164L200 164M201 230L200 228M201 230L209 240M216 10L210 2M216 10L220 17M220 48L210 46M220 83L217 90M217 90L211 100M211 100L210 101M220 164L210 164M222 20L220 17M222 20L227 30M227 30L230 39M225 50L220 48M225 50L227 60M227 60L226 70M226 70L222 80M222 80L220 83M230 164L220 164M231 40L230 39M231 40L240 45M240 163L230 164M10 79L7 80M7 80L0 82M10 149L8 150M8 150L0 153M14 80L10 79M14 80L20 83M20 136L18 140M18 140L10 149M24 90L20 83M24 90L25 100M25 100L25 110M25 110L24 120M24 120L22 130M22 130L20 136M50 199L50 200M50 200L50 208M60 185L54 190M54 190L50 199M50 210L50 208M50 210L54 220M54 220L60 226M70 182L60 185M70 228L60 226M80 181L70 182M80 225L70 228M90 184L80 181M90 218L88 220M88 220L80 225M100 189L90 184M100 208L99 210M99 210L90 218M102 190L100 189M102 190L104 200M104 200L100 208M156 0L157 10M157 10L160 20M160 20L160 20M160 224L157 230M157 230L156 240M170 29L160 20M170 220L160 224M172 30L170 29M172 30L180 32M180 224L170 220M190 32L180 32M186 230L180 224M186 230L190 233M195 0L200 7M200 27L197 30M197 30L190 32M195 240L190 233M202 10L200 7M202 10L204 20M204 20L200 27M210 118L209 120M209 120L204 130M204 130L203 140M203 140L210 150M220 103L215 110M215 110L210 118M210 150L210 150M210 150L220 153M230 91L223 100M223 100L220 103M230 154L220 153M240 82L232 90M232 90L230 91M240 153L230 154M8 110L0 106M8 110L10 115M10 123L7 130M7 130L0 138M11 120L10 115M11 120L10 123M230 112L224 120M224 120L220 130M220 130L230 140M240 106L232 110M232 110L230 112M240 138L230 140&#x27; fill=&#x27;none&#x27; stroke=&#x27;black&#x27; stroke-width=&#x27;1&#x27; stroke-linecap=&#x27;round&#x27;/%3E%3C/svg%3E&quot;);--z-pattern-size:240px\">\n  <div class=\"z-backdrop__layer\" aria-hidden=\"true\"></div>\n  <div class=\"z-backdrop__content\">\n    <div style=\"padding:48px 24px\">\n      <p>\n        <strong>Atlas</strong>\n      </p>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -5340,26 +5603,46 @@
   "UserCard": {
    "group": "people",
    "classes": [
+    "z-stat-group",
     "z-user-card",
+    "z-user-card__actions",
+    "z-user-card__avatar",
+    "z-user-card__bio",
     "z-user-card__cover",
     "z-user-card__cover-image",
-    "z-user-card__identity",
-    "z-user-card__avatar",
-    "z-user-card__presence",
-    "z-user-card__names",
-    "z-user-card__name",
     "z-user-card__handle",
+    "z-user-card__identity",
+    "z-user-card__name",
+    "z-user-card__names",
+    "z-user-card__overlay",
+    "z-user-card__photo",
+    "z-user-card__portrait",
+    "z-user-card__presence",
     "z-user-card__role",
-    "z-user-card__bio",
-    "z-user-card__stats",
     "z-user-card__stat",
-    "z-user-card__actions"
+    "z-user-card__stats",
+    "z-user-card__tagline"
    ],
    "behavior": "none",
    "examples": [
     {
      "title": "Con portada",
-     "html": "<article class=\"z-user-card z-liquid\" data-variant=\"cover\" aria-label=\"Ana López\">\n  <div class=\"z-user-card__cover\" aria-hidden=\"true\"></div>\n  <div class=\"z-user-card__identity\">\n    <span class=\"z-user-card__avatar\">\n      <span class=\"z-avatar\" data-size=\"xl\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\">\n        <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n      </span>\n      <span class=\"z-presence-badge z-user-card__presence\" data-status=\"online\" data-size=\"lg\">\n        <span class=\"z-presence\" data-status=\"online\" data-size=\"lg\" aria-hidden=\"true\">\n          <z-icon name=\"check\" size=\"10\"></z-icon>\n        </span>\n        <span class=\"z-sr-only\">Available</span>\n      </span>\n    </span>\n    <div class=\"z-user-card__names\">\n      <h3 class=\"z-user-card__name\">Ana López</h3>\n      <span class=\"z-user-card__handle\">@ana</span>\n    </div>\n    <span class=\"z-user-card__role\">Design</span>\n  </div>\n  <p class=\"z-user-card__bio\">Design systems and the odd typeface.</p>\n  <dl class=\"z-user-card__stats\">\n    <div class=\"z-user-card__stat\">\n      <dt>Followers</dt>\n      <dd>1.2k</dd>\n    </div>\n    <div class=\"z-user-card__stat\">\n      <dt>Projects</dt>\n      <dd>34</dd>\n    </div>\n    <div class=\"z-user-card__stat\">\n      <dt>Reviews</dt>\n      <dd>210</dd>\n    </div>\n  </dl>\n  <div class=\"z-user-card__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n      <z-icon name=\"user-plus\" size=\"16\"></z-icon>\n      Follow\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n      <z-icon name=\"chat-bubble-left-right\" size=\"16\"></z-icon>\n      Message\n    </button>\n  </div>\n</article>",
+     "html": "<article class=\"z-user-card z-liquid\" data-variant=\"cover\" aria-label=\"Ana López\">\n  <div class=\"z-user-card__cover\" aria-hidden=\"true\"></div>\n  <div class=\"z-user-card__identity\">\n    <span class=\"z-user-card__avatar\">\n      <span class=\"z-avatar\" data-size=\"xl\" data-shape=\"circle\" role=\"img\" aria-label=\"\" aria-hidden=\"true\">\n        <span class=\"z-avatar__initials\" aria-hidden=\"true\">AL</span>\n      </span>\n      <span class=\"z-presence-badge z-user-card__presence\" data-status=\"online\" data-size=\"lg\">\n        <span class=\"z-presence\" data-status=\"online\" data-size=\"lg\" aria-hidden=\"true\">\n          <z-icon name=\"check\" size=\"10\"></z-icon>\n        </span>\n        <span class=\"z-sr-only\">Available</span>\n      </span>\n    </span>\n    <div class=\"z-user-card__names\">\n      <h3 class=\"z-user-card__name\">Ana López</h3>\n      <span class=\"z-user-card__handle\">@ana</span>\n    </div>\n    <span class=\"z-user-card__role\">Design</span>\n  </div>\n  <p class=\"z-user-card__bio\">Design systems and the odd typeface.</p>\n  <dl class=\"z-stat-group z-user-card__stats\" data-variant=\"plain\" data-align=\"start\">\n    <div class=\"z-stat-group__item z-user-card__stat\">\n      <dt class=\"z-stat-group__label\">Followers</dt>\n      <dd class=\"z-stat-group__value\">1.2k</dd>\n    </div>\n    <div class=\"z-stat-group__item z-user-card__stat\">\n      <dt class=\"z-stat-group__label\">Projects</dt>\n      <dd class=\"z-stat-group__value\">34</dd>\n    </div>\n    <div class=\"z-stat-group__item z-user-card__stat\">\n      <dt class=\"z-stat-group__label\">Reviews</dt>\n      <dd class=\"z-stat-group__value\">210</dd>\n    </div>\n  </dl>\n  <div class=\"z-user-card__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">\n      <z-icon name=\"user-plus\" size=\"16\"></z-icon>\n      Follow\n    </button>\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n      <z-icon name=\"chat-bubble-left-right\" size=\"16\"></z-icon>\n      Message\n    </button>\n  </div>\n</article>",
+     "source": "generated"
+    },
+    {
+     "title": "Perfil limpio",
+     "html": "<link rel=\"preload\" as=\"image\" href=\"/img/people/sam.svg\"/>\n<article class=\"z-user-card\" data-variant=\"profile\" aria-label=\"Sam Rivers\">\n  <div class=\"z-user-card__identity\">\n    <img class=\"z-user-card__portrait\" src=\"/img/people/sam.svg\" alt=\"\"/>\n    <div class=\"z-user-card__names\">\n      <h3 class=\"z-user-card__name\">Sam Rivers</h3>\n      <span class=\"z-user-card__tagline\">Photographer</span>\n    </div>\n  </div>\n  <p class=\"z-user-card__bio\">Based in Sydney, I capture landscapes across the globe.</p>\n  <dl class=\"z-stat-group z-user-card__stats\" data-variant=\"tiles\" data-align=\"center\">\n    <div class=\"z-stat-group__item z-user-card__stat\">\n      <dt class=\"z-stat-group__label\">Countries</dt>\n      <dd class=\"z-stat-group__value\">28</dd>\n    </div>\n    <div class=\"z-stat-group__item z-user-card__stat\">\n      <dt class=\"z-stat-group__label\">Exhibitions</dt>\n      <dd class=\"z-stat-group__value\">10</dd>\n    </div>\n    <div class=\"z-stat-group__item z-user-card__stat\">\n      <dt class=\"z-stat-group__label\">Rating</dt>\n      <dd class=\"z-stat-group__value\">4.9</dd>\n    </div>\n  </dl>\n  <div class=\"z-user-card__actions\">\n    <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Explore portfolio</button>\n    <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Message</button>\n  </div>\n</article>",
+     "source": "generated"
+    },
+    {
+     "title": "Neón",
+     "html": "<link rel=\"preload\" as=\"image\" href=\"/img/people/mia.svg\"/>\n<article class=\"z-user-card\" data-variant=\"neon\" data-tone=\"danger\" aria-label=\"Zainab Malik\">\n  <div class=\"z-user-card__photo\" aria-hidden=\"true\">\n    <img src=\"/img/people/mia.svg\" alt=\"\"/>\n  </div>\n  <div class=\"z-user-card__status\">\n    <span class=\"z-user-card__role\">\n      <z-icon name=\"check-badge\" size=\"14\"></z-icon>\n      Marketing\n    </span>\n  </div>\n  <div class=\"z-user-card__overlay\">\n    <div class=\"z-user-card__names\">\n      <h3 class=\"z-user-card__name\">\n        <a class=\"z-card__link\" href=\"/people/zainab\">Zainab Malik</a>\n      </h3>\n      <span class=\"z-user-card__tagline\">Execution expert</span>\n    </div>\n  </div>\n</article>",
+     "source": "generated"
+    },
+    {
+     "title": "Retrato disponible",
+     "html": "<link rel=\"preload\" as=\"image\" href=\"/img/people/ana.svg\"/>\n<article class=\"z-user-card\" data-variant=\"portrait\" aria-label=\"Emily Carter\">\n  <div class=\"z-user-card__photo\" aria-hidden=\"true\">\n    <img src=\"/img/people/ana.svg\" alt=\"\"/>\n  </div>\n  <div class=\"z-user-card__status\">\n    <span class=\"z-badge\" data-tone=\"success\" data-variant=\"soft\" data-size=\"md\">\n      <span class=\"z-badge__dot\" aria-hidden=\"true\"></span>\n      Available\n    </span>\n  </div>\n  <div class=\"z-user-card__overlay\">\n    <div class=\"z-user-card__names\">\n      <h3 class=\"z-user-card__name\">Emily Carter</h3>\n      <span class=\"z-user-card__tagline\">UI/UX Designer</span>\n    </div>\n    <span class=\"z-user-card__action\">\n      <button type=\"button\" title=\"Message Emily Carter\" aria-label=\"Message Emily Carter\" class=\"z-btn z-btn--icon z-btn--primary\" data-size=\"md\">\n        <z-icon name=\"paper-airplane\" size=\"16\"></z-icon>\n      </button>\n    </span>\n  </div>\n</article>",
      "source": "generated"
     }
    ]
