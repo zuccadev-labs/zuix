@@ -7,6 +7,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { callerDir, loadZudocs, parseArgs, templateDir, ZudocsError } from "../scripts/config.mjs";
+import { describeLeaks, findLocalPaths, localRoots } from "../scripts/leaks.mjs";
 
 const USAGE = `Uso: zudocs <comando> [--config <archivo o carpeta>] [opciones]
 
@@ -84,8 +85,8 @@ const env = {
 // (10 kB) metería las fuentes pequeñas en la hoja de estilos, que bloquea el pintado, y obligaría a
 // permitir data: en font-src. Docusaurus lee la variable al cargarse: se fija aquí, en el entorno del hijo.
 env.WEBPACK_URL_LOADER_LIMIT ??= "2048";
-const run = (file, extra = []) => {
-  const r = spawnSync(process.execPath, [file, ...extra], { stdio: "inherit", env, cwd: templateDir });
+const run = (file, extra = [], extraEnv = {}) => {
+  const r = spawnSync(process.execPath, [file, ...extra], { stdio: "inherit", env: { ...env, ...extraEnv }, cwd: templateDir });
   if (r.error) die(`✗ No se pudo ejecutar ${file}: ${r.error.message}`);
   if (r.signal) process.kill(process.pid, r.signal);
   if (r.status !== 0) process.exit(r.status ?? 1);
@@ -99,7 +100,7 @@ const serve = (file, extra = []) => {
   child.on("exit", (code, signal) => process.exit(signal ? 0 : (code ?? 1)));
 };
 const docusaurusBin = createRequire(import.meta.url).resolve("@docusaurus/core/bin/docusaurus.mjs");
-const script = (name, extra = []) => run(join(templateDir, "scripts", `${name}.mjs`), extra);
+const script = (name, extra = [], extraEnv) => run(join(templateDir, "scripts", `${name}.mjs`), extra, extraEnv);
 const docusaurus = (extra) => run(docusaurusBin, extra);
 const strict = args.strict ? ["--strict"] : [];
 
@@ -136,13 +137,22 @@ switch (command) {
     script("headers");
     break;
   case "build": {
-    script("verify", strict);
+    // verify no mira la carpeta de salida: es la compilación anterior, y esta la sustituye.
+    script("verify", strict, { ZUDOCS_VERIFY_OUTPUT: "0" });
     script("llms");
     // Docusaurus ejecuta el paquete de servidor desde la carpeta de salida como CommonJS: dentro de un
     // proyecto con "type": "module" falla. Se compila siempre en la carpeta de trabajo de zudocs y se mueve.
     const direct = ctx.outDir === join(templateDir, "build");
     const target = direct ? ctx.outDir : ctx.stagingDir;
     docusaurus(["build", templateDir, "--out-dir", target, ...args.rest]);
+    // Un sitio con la ruta local de la máquina no se entrega: en otro proyecto, ni siquiera llega a la carpeta de salida.
+    const leaks = findLocalPaths(target, localRoots(ctx));
+    if (leaks.length)
+      die(
+        `${describeLeaks(leaks, ctx.rel(target))
+          .map((l) => `✗ ${l}`)
+          .join("\n")}\n✗ El sitio compilado lleva rutas del sistema de archivos local: no se publica.`,
+      );
     if (!direct) {
       rmSync(ctx.outDir, { recursive: true, force: true });
       mkdirSync(dirname(ctx.outDir), { recursive: true });

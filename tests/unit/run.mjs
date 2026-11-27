@@ -204,6 +204,8 @@ const COVERED = [
   "zui/src/dom/datatable.ts",
   "zui/src/dom/time.ts",
   "zudocs/scripts/config.mjs",
+  "zudocs/scripts/leaks.mjs",
+  "zudocs/scripts/client-config-loader.cjs",
   "zui/src/editor/tree.ts",
   "zui/src/editor/json-schema.ts",
   "zui/src/editor/validate.ts",

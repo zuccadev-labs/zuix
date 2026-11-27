@@ -100,11 +100,21 @@ Qué va en cada sitio:
 | Documentación | `docs.path`, relativa a la configuración | Solo se escribe en ella con `new` |
 | Logo e imágenes | `static` (por defecto `static/` junto a la configuración) | `logo.src` es una ruta dentro de esa carpeta |
 | Sitio compilado | `outDir` (por defecto `build/` junto a la configuración) | `--out-dir <ruta>` lo cambia para una ejecución |
-| Caché y archivos generados | `zudocs/.zudocs/<nombre>-<hash>/` dentro de zuix | Una carpeta por proyecto: no se pisan entre sí ni con el sitio de zuix |
+| Caché y archivos generados | `zudocs/.zudocs/<nombre>-<hash>/` dentro de zuix | Una carpeta por proyecto: no se pisan entre sí ni con el sitio de zuix. Lleva también la copia de la documentación que compila `build` |
 | Marca | `tokens/brands/<marca>.json` en zuix | La marca se crea en zuix; ver [Cambiar de marca](../agents/01-marca.md) |
 
 Dos proyectos se pueden compilar a la vez. El proyecto no necesita Node ni dependencias propias: las pone
 zuix. Funciona también si el proyecto declara `"type": "module"` o si su ruta tiene espacios.
+
+`build` compila una copia de la documentación del proyecto, dentro de la carpeta de trabajo, y no la carpeta
+original: así ninguna ruta del sitio compilado lleva a la del disco. Lo que la documentación referencie fuera
+de su carpeta no está en la copia: `verify` rechaza una imagen relativa que sale de ella (va dentro o en
+los estáticos), y un `.mdx` no puede importar archivos de fuera. `start` lee la carpeta original, para que
+los cambios se vean al guardar.
+
+Antes de entregar el sitio, `build` lo recorre entero y falla si algún archivo lleva una ruta local de la
+máquina: la carpeta personal, la de trabajo, la de zuix o las del proyecto. El error dice qué archivo, y el
+sitio no llega a la carpeta de salida. `verify` hace la misma comprobación sobre un sitio ya compilado.
 
 La compilación vacía la carpeta de salida antes de escribir, así que la plantilla se niega a usar una que no
 sea segura: la raíz del sistema, la carpeta personal, una que contenga la documentación, la configuración,

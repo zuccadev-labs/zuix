@@ -18,6 +18,23 @@ anotan aquí por versión de la suite: `pnpm bump` cierra esta sección y sube s
   reordenables), agrupada con agregados, en árbol con detalle y con 10 000 filas; `Select` con búsqueda y del
   servidor; `Combobox` del servidor; `Tabs` con menú «Más»; `Tree` que se mueve y carga ramas.
 
+### Corregido
+
+- El sitio compilado llevaba rutas absolutas de la máquina que compila. En todos los sitios, el paquete común
+  (`main.js`) llevaba la configuración de Docusaurus entera, con las opciones de presets y temas, los módulos
+  de cliente y las carpetas de estáticos: rutas absolutas de la plantilla y de la documentación.
+  Con la documentación de un proyecto fuera de zuix, además, cada documento llevaba su ruta
+  (`"source":"@site/../../../../home/<usuario>/…/docs/…"`), y en el sitio de zuix el registro de rutas llevaba
+  la de las páginas de componente. Ahora la copia de la configuración que llega al navegador va sin esos
+  campos, ni los de rutas de `zudocs.config.json`; la documentación de otro proyecto se compila desde una copia
+  en su carpeta de trabajo, y las páginas de componente se registran con alias (`@site`, `@generated`).
+- `build` recorre el sitio compilado y falla si algún archivo lleva la ruta de la carpeta personal, la de
+  trabajo, la de zuix o las del proyecto, con el nombre del archivo; fuera de zuix el sitio no llega a la
+  carpeta de salida. `verify` lo comprueba sobre un sitio ya compilado. `pnpm test:site` compila un proyecto
+  externo con la documentación fuera de su configuración y lo comprueba.
+- `verify` rechaza una imagen relativa que sale de la carpeta de documentación: no está en la copia que se
+  compila.
+
 ## [0.4.0] - 2026-11-23
 
 ### Añadido

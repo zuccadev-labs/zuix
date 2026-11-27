@@ -8,7 +8,7 @@
 //   4. la configuración de la propia plantilla (el sitio de zuix)
 // Las rutas de la configuración (docs.path, static, outDir, llms.append, fuentes locales) son relativas al archivo.
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, isAbsolute, join, parse, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -181,6 +181,38 @@ export function unsafeOutDir(outDir, protectedDirs) {
 }
 
 /**
+ * Copia la documentación de un proyecto externo en `ctx.siteDocsDir`. La copia se rehace entera en cada
+ * compilación: un documento borrado en el proyecto no sobrevive en ella. Sin efecto si no hace falta copia.
+ * @param {ReturnType<typeof loadZudocs>} ctx
+ */
+export function mirrorDocs(ctx) {
+  if (!ctx.docsMirror) return;
+  rmSync(ctx.siteDocsDir, { recursive: true, force: true });
+  mkdirSync(dirname(ctx.siteDocsDir), { recursive: true });
+  cpSync(ctx.docsDir, ctx.siteDocsDir, {
+    recursive: true,
+    dereference: true,
+    filter: (src) => !/[\\/](\.git|node_modules)$/.test(src),
+  });
+}
+
+/** Ruta en la documentación del proyecto de un archivo de `ctx.siteDocsDir` (la copia, si la hay). */
+export function realDocPath(ctx, file) {
+  return ctx.docsMirror && inside(file, ctx.siteDocsDir) ? join(ctx.docsDir, relative(ctx.siteDocsDir, file)) : file;
+}
+
+/**
+ * La configuración del proyecto tal como la recibe el navegador: sin los campos que son rutas locales
+ * (documentación, estáticos, salida, fuentes y llms.append), que el tema no usa y no deben publicarse.
+ * @param {import("./config.d.mts").ZudocsConfig} site
+ */
+export function clientSite(site) {
+  const { $schema, static: _static, outDir, fonts, docs, llms, ...rest } = site;
+  const { append, ...publicLlms } = llms ?? {};
+  return { ...rest, docs: { areas: docs.areas }, ...(llms ? { llms: publicLlms } : {}) };
+}
+
+/**
  * Carga la configuración, la valida y calcula las rutas del proyecto.
  * Lanza `ZudocsError` con todos los problemas encontrados si la configuración no es válida.
  * @param {{ config?: string, outDir?: string }} [options]
@@ -212,6 +244,11 @@ export function loadZudocs(options = {}) {
   // Archivos generados en cada build (robots.txt, llms-full.txt, copias .md): nunca en la carpeta del proyecto.
   const generatedStaticDir = join(templateDir, ".zudocs", isDefault ? "_zuix" : slug, "static");
   const docsDir = from(site.docs.path);
+  // Docusaurus nombra cada documento por su ruta relativa a la plantilla (`@site/../docs/guia.md`) y la deja en
+  // el sitio compilado. Para la documentación de zuix esa ruta no dice nada; para la de otro proyecto sube hasta
+  // la raíz del disco y baja por su ruta absoluta. La de otro proyecto se compila desde una copia en su carpeta
+  // de trabajo, dentro de la plantilla (ver `mirrorDocs`).
+  const docsMirror = !isDefault;
   const outDir = options.outDir
     ? resolve(callerDir(), options.outDir)
     : process.env.ZUDOCS_OUT_DIR
@@ -238,6 +275,10 @@ export function loadZudocs(options = {}) {
     slug,
     workDir,
     docsDir,
+    /** La documentación es de otro proyecto y `build` la compila desde una copia. */
+    docsMirror,
+    /** Carpeta de la que lee Docusaurus al compilar: la documentación o su copia. */
+    siteDocsDir: docsMirror ? join(workDir, "docs") : docsDir,
     outDir,
     pages,
     areas,

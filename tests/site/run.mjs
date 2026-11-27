@@ -6,6 +6,7 @@
 //   node tests/site/run.mjs --dir <carpeta> [--base /ruta/]   otro sitio compilado con zudocs
 //   BROWSER=chromium|firefox|webkit|all (por defecto chromium)   --quick: solo 1440 px oscuro en el rastreo
 //   --no-axe  --no-shots   SHOTS=<carpeta> (por defecto .tmp/site-shots/<navegador>)
+//   --no-external   no compila el proyecto externo (solo se compila con el sitio de zuix, sin --dir)
 //   --repeat=N  repite N veces la pasada de cada navegador (con un filtro, para medir un caso inestable: N de N)
 //
 // Qué comprueba:
@@ -17,13 +18,18 @@
 //   medios    prefers-reduced-motion, prefers-reduced-transparency (solo Chromium), forced-colors e impresión.
 //   páginas   portada, índice y página de cada componente (Vista previa/Código, React/HTML, gestor de paquetes,
 //             «Copiar página», vista previa en vivo de cada ejemplo), iconos, tokens, búsqueda y 404, si el sitio las tiene.
-//   archivos  sitemap.xml, robots.txt, llms.txt y llms-full.txt.
+//   archivos  sitemap.xml, robots.txt, llms.txt y llms-full.txt, y ninguna ruta del sistema de archivos local.
+//   externo   compila un proyecto con la documentación fuera de su configuración (tests/site/external.mjs): sin
+//             rutas locales, con buscador, llms.txt, copias .md y anclas, y verify falla si se le mete una.
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, extname, join, normalize, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, firefox, webkit } from "playwright-core";
+import { loadZudocs } from "../../zudocs/scripts/config.mjs";
+import { describeLeaks, findLocalPaths, localRoots } from "../../zudocs/scripts/leaks.mjs";
+import { externalProject } from "./external.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const argv = process.argv.slice(2);
@@ -37,11 +43,13 @@ const flag = (name) => {
   argv.splice(i, 1);
   return true;
 };
-const dir = resolve(opt("--dir") ?? join(root, "zudocs/build"));
+const dirArg = opt("--dir");
+const dir = resolve(dirArg ?? join(root, "zudocs/build"));
 const baseArg = opt("--base");
 const quick = flag("--quick");
 const noAxe = flag("--no-axe");
 const noShots = flag("--no-shots");
+const noExternal = flag("--no-external");
 const repeat = Math.max(1, Number(argv.find((a) => a.startsWith("--repeat="))?.slice(9)) || 1);
 const filter = argv.find((a) => !a.startsWith("--"))?.toLowerCase();
 
@@ -191,6 +199,18 @@ for (const name of ["llms.txt", "llms-full.txt"]) {
   }
 }
 
+// Rutas de esta máquina: la carpeta personal, la de trabajo y las de zuix; con el sitio de zuix, también las suyas.
+staticProblems.push(...describeLeaks(findLocalPaths(dir, localRoots(dirArg ? {} : loadZudocs())), "sitio"));
+
+// ── Proyecto externo ─────────────────────────────────────────────────────────────────────────────────────
+let failedTotal = 0;
+if (!dirArg && !noExternal && (!filter || "proyecto externo".includes(filter))) {
+  const { problems, notes } = await externalProject();
+  console.log(`${problems.length ? "✗" : "✓"} [externo] compilar un proyecto con la documentación fuera de su configuración`);
+  for (const line of [...notes, ...problems]) console.log(`      · ${line}`);
+  failedTotal += problems.length ? 1 : 0;
+}
+
 // ── Motores ──────────────────────────────────────────────────────────────────────────────────────────────
 const ENGINES = {
   chromium: () => chromium.launch({ channel: "chrome", headless: true }),
@@ -208,7 +228,6 @@ const SHOT_PAGES = new Set(
   ),
 );
 class Unverifiable extends Error {}
-let failedTotal = 0;
 
 /** Registra en `sink` los errores de consola y de red de la página. */
 function watch(page, sink) {
@@ -466,7 +485,7 @@ for (const browserName of wanted) {
     ok(broken.length === 0, `${broken.length} enlace(s) roto(s):\n${[...new Set(broken)].slice(0, 25).join("\n")}`);
   });
 
-  await test("archivos del sitio: sitemap, robots.txt, llms.txt, llms-full.txt, 404 e imagen para compartir", async () => {
+  await test("archivos del sitio: sitemap, robots.txt, llms.txt, llms-full.txt, 404, imagen para compartir y sin rutas locales", async () => {
     const problems = [...staticProblems];
     // La imagen social es opcional (`image` en la configuración), pero si existe debe estar en todas las páginas y en el sitio.
     const withImage = [...ogImages].filter(([, src]) => src);

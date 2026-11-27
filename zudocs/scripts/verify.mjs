@@ -4,7 +4,8 @@
 //
 // Errores: configuración contra su esquema, marca, iconos, logo, favicon e imagen social, navbar, llms.append,
 // fuentes locales, áreas con carpeta y README, front matter, rutas repetidas, enlaces relativos, anclas e
-// imágenes que no existen, e iconos desconocidos en .mdx.
+// imágenes que no existen o que salen de la documentación, iconos desconocidos en .mdx y, si ya hay un sitio
+// compilado, rutas del sistema de archivos local dentro de él.
 // Avisos: nombres fuera de convención, prefijos repetidos, sin título o con varios, títulos vacíos o repetidos,
 // documentos fuera de toda área, marcadores de plantilla sin rellenar, imágenes sin texto alternativo,
 // fuentes servidas por un tercero y sitio sin `url`.
@@ -12,6 +13,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve, sep } from "node:path";
 import { findConfig, loadZudocs, parseArgs, PAGES, repoDir as repo } from "./config.mjs";
 import { listDocs, stripCode } from "./docs.mjs";
+import { describeLeaks, findLocalPaths, localRoots } from "./leaks.mjs";
 
 const errors = [];
 const warnings = [];
@@ -188,6 +190,11 @@ if (ctx) {
         errors.push(`${where(m.index)}: ${image ? "imagen rota" : "enlace roto"} "${href}"`);
         continue;
       }
+      // En otro proyecto, `build` compila una copia de la carpeta de documentación: lo que queda fuera no llega.
+      if (image && !abs.startsWith(docs + sep)) {
+        errors.push(`${where(m.index)}: la imagen "${href}" sale de la carpeta de documentación. Muévela dentro o a la de estáticos`);
+        continue;
+      }
       if (!/\.mdx?$/.test(path)) continue;
       if (!abs.startsWith(docs + sep)) {
         errors.push(`${where(m.index)}: "${href}" sale de la carpeta de documentación`);
@@ -240,6 +247,12 @@ if (ctx) {
     }
   }
 }
+
+// ── 7. Sitio compilado ────────────────────────────────────────────────────
+// Si ya hay un sitio en la carpeta de salida, no debe llevar rutas de esta máquina. `build` lo comprueba
+// después de compilar, no antes: lo que hay en la salida es la compilación que va a sustituir.
+if (ctx && process.env.ZUDOCS_VERIFY_OUTPUT !== "0" && existsSync(join(ctx.outDir, "index.html")))
+  errors.push(...describeLeaks(findLocalPaths(ctx.outDir, localRoots(ctx)), ctx.rel(ctx.outDir)));
 
 for (const w of warnings) print(`aviso  ${w}`);
 for (const e of errors) process.stderr.write(`error  ${e}\n`);

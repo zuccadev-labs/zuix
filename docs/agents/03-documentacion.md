@@ -167,6 +167,7 @@ En otro proyecto, los mismos comandos con `-- --config <ruta a su zudocs.config.
 | Front matter válido; dos documentos no se publican en la misma ruta | Error |
 | Enlaces relativos, anclas e imágenes resuelven, dentro de la carpeta de documentación | Error |
 | `.mdx` o HTML activo con `markdown.untrusted` | Error |
+| Si ya hay un sitio compilado en la salida, ningún archivo lleva una ruta local de la máquina | Error, con el archivo |
 | Nombres `NN-nombre.md` o `README.md`, prefijos sin repetir | Aviso |
 | Un título `#` por documento, sin títulos vacíos ni repetidos entre documentos | Aviso |
 | Documento fuera de toda área; marcador de plantilla sin rellenar; imagen sin texto alternativo | Aviso |
@@ -175,8 +176,9 @@ En otro proyecto, los mismos comandos con `-- --config <ruta a su zudocs.config.
 Los avisos no detienen el build; `--strict` los convierte en errores. La documentación de zuix se mantiene
 con 0 errores y 0 avisos, y el sitio publicado se compila con `--strict`.
 
-El build falla además con enlaces o anclas rotos entre páginas, regenera `llms.txt` y `llms-full.txt` y
-genera el índice del buscador.
+El build falla además con enlaces o anclas rotos entre páginas y si el sitio compilado lleva una ruta del
+sistema de archivos local (la carpeta personal, la de trabajo, la plantilla o las del proyecto); regenera
+`llms.txt` y `llms-full.txt` y genera el índice del buscador.
 
 ## Cuando falta algo
 

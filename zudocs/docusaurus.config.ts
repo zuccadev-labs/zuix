@@ -4,16 +4,22 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type * as Preset from "@docusaurus/preset-classic";
 import type { Config, Plugin } from "@docusaurus/types";
-import { loadZudocs, PAGES, templateDir } from "./scripts/config.mjs";
+import { clientSite, loadZudocs, mirrorDocs, PAGES, templateDir } from "./scripts/config.mjs";
 import { iconsModule } from "./scripts/icons.mjs";
 import remarkLead from "./scripts/remark-lead.mjs";
 import { zudocsSite } from "./scripts/site-plugin.mjs";
 
 const zudocs = loadZudocs();
-const { site, areas, pages, docsDir } = zudocs;
+const { site, areas, pages } = zudocs;
 const search = site.search;
 const locale = site.locale ?? "es";
 const development = process.env.NODE_ENV === "development";
+
+// La documentación de otro proyecto se compila desde una copia dentro de la plantilla: así ninguna
+// ruta del sitio sube hasta la raíz del disco (scripts/config.mjs). En desarrollo se lee la carpeta original,
+// para que los cambios se vean al guardar; el servidor de desarrollo no publica nada.
+if (!development) mirrorDocs(zudocs);
+const docsDir = development ? zudocs.docsDir : zudocs.siteDocsDir;
 
 // Un proyecto externo guarda la caché del empaquetador en su carpeta de trabajo, no en la común.
 const bundlerCache = (): Plugin => ({
@@ -59,7 +65,7 @@ const config: Config = {
   i18n: { defaultLocale: locale, locales: [locale], localeConfigs: { [locale]: { htmlLang: locale } } },
   stylesheets: zudocs.remoteFonts,
   staticDirectories: zudocs.staticDirs,
-  customFields: { zudocs: { ...site, docs: { ...site.docs, areas }, pages } },
+  customFields: { zudocs: { ...clientSite(site), docs: { areas }, pages } },
   presets: [
     [
       "classic",

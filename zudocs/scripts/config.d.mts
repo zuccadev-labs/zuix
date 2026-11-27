@@ -39,6 +39,8 @@ export interface ZudocsContext {
   slug: string;
   workDir: string;
   docsDir: string;
+  docsMirror: boolean;
+  siteDocsDir: string;
   outDir: string;
   pages: Record<"components" | "icons" | "tokens", boolean>;
   areas: ZudocsArea[];
@@ -76,4 +78,10 @@ export function parseArgs(argv?: string[]): {
 export function validateSchema(value: unknown, schema: object, path?: string): string[];
 export function unsafeOutDir(outDir: string, protectedDirs: [string, string | undefined][]): string | undefined;
 export function findConfig(explicit?: string): string;
+export function mirrorDocs(ctx: ZudocsContext): void;
+export function realDocPath(ctx: ZudocsContext, file: string): string;
+export function clientSite(site: ZudocsConfig): Omit<ZudocsConfig, "static" | "outDir" | "fonts" | "docs" | "llms"> & {
+  docs: { areas: ZudocsArea[] };
+  llms?: { full?: boolean };
+};
 export function loadZudocs(options?: { config?: string; outDir?: string }): ZudocsContext;

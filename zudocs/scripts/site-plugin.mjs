@@ -2,11 +2,14 @@
 //   · Una ruta por componente (`/components/<grupo>/<slug>`), generada de los manifiestos (scripts/components.mjs).
 //   · Datos globales: áreas con sus documentos en el orden de su barra lateral, grupos y componentes para la
 //     barra lateral, y por documento el tiempo de lectura y la fecha de actualización.
+//   · La copia de la configuración que llega al navegador, sin rutas locales (scripts/client-config-loader.cjs).
 // Corre en `allContentLoaded`, cuando el plugin de documentación ya ha calculado rutas, títulos y barras.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 import { componentMarkdown, groupsOf, loadCatalog } from "./components.mjs";
+import { realDocPath } from "./config.mjs";
 import { stripCode, parseFrontMatter } from "./docs.mjs";
 
 /** ¿Hay un historial de git completo? Con un clon superficial todas las fechas serían la del último commit. */
@@ -45,6 +48,11 @@ const declaredDate = (data) => (/^\d{4}-\d{2}-\d{2}/.test(data.fecha ?? "") ? da
 export function zudocsSite(ctx) {
   return (context) => ({
     name: "zudocs-site",
+    configureWebpack() {
+      const clientConfig = join(context.generatedFilesDir, "docusaurus.config.mjs");
+      const loader = join(dirname(fileURLToPath(import.meta.url)), "client-config-loader.cjs");
+      return { module: { rules: [{ test: (path) => path === clientConfig, use: [{ loader }] }] } };
+    },
     async allContentLoaded({ allContent, actions }) {
       const version = allContent["docusaurus-plugin-content-docs"]?.default?.loadedVersions?.[0];
       const docsById = new Map((version?.docs ?? []).map((d) => [d.id, d]));
@@ -65,7 +73,7 @@ export function zudocsSite(ctx) {
         return { ...area, items };
       });
       for (const doc of version?.docs ?? []) {
-        const file = doc.source.replace(/^@site/, context.siteDir);
+        const file = realDocPath(ctx, join(context.siteDir, doc.source.replace(/^@site\//, "")));
         let text = "";
         try {
           text = readFileSync(file, "utf8");
@@ -94,10 +102,12 @@ export function zudocsSite(ctx) {
             markdown: componentMarkdown(c, { href: ctx.href }),
           }),
         );
+        // Rutas con alias (@site, @generated), no absolutas: el registro de módulos de la ruta llega al
+        // navegador con cada ruta tal cual se escribe aquí.
         actions.addRoute({
           path: `${base}/${c.group}/${c.slug}`,
-          component: join(context.siteDir, "src/components/ComponentPage/index.tsx"),
-          modules: { data },
+          component: "@site/src/components/ComponentPage/index.tsx",
+          modules: { data: `@generated/${relative(context.generatedFilesDir, data).split(/[\\/]/).join("/")}` },
           exact: true,
         });
       }

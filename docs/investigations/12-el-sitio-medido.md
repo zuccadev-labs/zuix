@@ -115,6 +115,61 @@ documentos de zuix y con los de mi piloto local, sin falsos positivos.
 Y escribí una prueba del sitio compilado (`pnpm test:site`): sirve el sitio bajo su `baseUrl` con la política
 de contenido activa y recorre todas las páginas del sitemap en dos temas y tres anchos, en tres motores.
 
+## Rutas de la máquina en el sitio compilado
+
+El 26 de noviembre me llegó un informe: compilando un proyecto con su configuración en `site/` y
+`docs.path: "../docs"`, los `.js` del sitio llevaban `"source":"@site/../../../../media/<usuario>/…/docs/…"`.
+`verify` no lo veía, y quien publicara ese sitio publicaba la ruta del disco de quien lo compiló: su nombre de
+usuario y el nombre de sus proyectos, que pueden ser privados.
+
+Lo reproduje con un proyecto en una carpeta temporal y busqué en todo `build/` las rutas de la máquina. Había
+más de lo que decía el informe:
+
+| Dónde | Qué llevaba | En qué sitios |
+|---|---|---|
+| `main.js`, la configuración del sitio | Docusaurus copia la configuración entera en el paquete del navegador, con las opciones de presets y temas (`docs.path`, `customCss`, `docsDir` del buscador), los módulos de cliente y las carpetas de estáticos | Todos, también el de zuix: rutas absolutas de la plantilla |
+| Los datos de cada documento (`source`) y el registro de rutas | La ruta del documento relativa a la plantilla, que fuera de zuix sube hasta la raíz y baja por la del proyecto | Proyectos con la documentación fuera de zuix: 3 de 3 documentos |
+| El registro de rutas | La ruta absoluta de la página de componente y de sus datos, una por componente | Los que activan `pages.components`, como el de zuix |
+
+El sitio de zuix publicado en GitHub Pages llevaba así la ruta del runner, que no dice nada; compilado en mi
+máquina, la mía. `llms.txt`, `llms-full.txt`, las copias `.md`, el `sitemap` y el índice del buscador estaban
+limpios, y el sitio no tiene «Editar esta página»: zudocs no configura `editUrl`.
+
+Lo arreglé en cada origen:
+
+- La copia de la configuración que llega al navegador pasa por un cargador propio
+  (`scripts/client-config-loader.cjs`) que vacía presets, plugins, temas, módulos de cliente y estáticos. El
+  navegador no los usa; lo comprobé en el código de cliente de Docusaurus, del tema y del buscador. La
+  configuración con la que compila Node no cambia. De `zudocs.config.json` solo llegan los campos que usa el
+  tema, sin `docs.path`, `static`, `outDir`, `fonts` ni `llms.append`.
+- La documentación de otro proyecto se compila desde una copia en su carpeta de trabajo, dentro de la
+  plantilla: `"source":"@site/.zudocs/<nombre>-<hash>/docs/…"`. El hash sale de la ruta de la configuración y
+  no se puede invertir; solo confirmaría una ruta que alguien ya supiera.
+- Las páginas de componente se registran con alias (`@site/…`, `@generated/…`), como hacen los plugins de
+  Docusaurus. A este lo encontró la salvaguarda del punto siguiente, no yo.
+
+Descarté dos caminos. Un enlace simbólico a la documentación dentro de la plantilla no basta: el empaquetador
+resuelve el enlace a la ruta real y la regla de Markdown de Docusaurus deja de reconocer los archivos; para
+evitarlo habría que desactivar la resolución de enlaces en todo el empaquetado, y con pnpm, que instala con
+enlaces, eso puede cargar dos copias de React. No lo probé: lo descarté antes.
+Reescribir las rutas en el sitio ya compilado funciona, pero tapa el síntoma: cada plugin nuevo podría traer
+otra forma de ruta. Prefiero que no se generen y que una comprobación falle si aparece una.
+
+La copia tiene un precio: lo que un documento referencie fuera de su carpeta no está en ella. `verify` rechaza
+ahora una imagen relativa que sale de la documentación, y un `.mdx` no puede importar archivos de fuera.
+`start` lee la carpeta original, para que los cambios se vean al guardar; el servidor de desarrollo no publica
+nada.
+
+La salvaguarda: `build` recorre todos los archivos del sitio compilado y falla si alguno lleva la ruta de la
+carpeta personal, la de trabajo, la de llamada, la plantilla, el repositorio o las del proyecto, tal cual,
+con barras normales o escapada en JSON. El error nombra el archivo, y en otro proyecto el sitio no llega a la
+carpeta de salida. `verify` hace lo mismo con un sitio ya compilado. No busca rutas de menos de dos niveles
+(`/tmp`, `/root`): saldrían en cualquier texto. `pnpm test:site` compila un proyecto externo, con la
+documentación fuera de su configuración, estáticos, una fuente local y espacios en la ruta, y comprueba que no
+lleva ninguna ruta, que el buscador encuentra una palabra suya, que `llms.txt` y las copias `.md` están, que el
+enlace con ancla se resuelve y que `verify` falla si se le mete una ruta en un archivo. Comprobé a mano que un
+enlace y un ancla rotos siguen deteniendo el build.
+
 ## Lo que dejé sin arreglar
 
 | Qué | Por qué |
@@ -125,6 +180,7 @@ de contenido activa y recorre todas las páginas del sitemap en dos temas y tres
 | La política de contenido no se aplica en GitHub Pages | El alojamiento no admite cabeceras propias |
 | `robots.txt` bajo `/zuix/` | Los buscadores solo lo leen en la raíz del dominio |
 | El icono de la pestaña solo existe en SVG | Sin `.ico` ni icono para iOS |
+| Un `.mdx` de otro proyecto no puede importar archivos de fuera de su documentación | Se compila desde una copia de esa carpeta |
 
 ## Lo que no he comprobado
 

@@ -15,7 +15,8 @@ export interface ZudocsSite {
   logo?: { src: string; srcDark?: string; alt?: string };
   repository?: string;
   cta?: { label: string; to: string };
-  docs: { path: string; areas: ZudocsArea[] };
+  /** Solo las áreas: las rutas locales de la configuración no llegan al navegador (`clientSite`). */
+  docs: { areas: ZudocsArea[] };
   /** Páginas de catálogo activas (`pages` en la configuración). */
   pages: { components: boolean; icons: boolean; tokens: boolean; loaders?: boolean; effects?: boolean; carousels?: boolean };
   home?: { eyebrow?: string; title?: string; emphasis?: string; suite?: boolean };
