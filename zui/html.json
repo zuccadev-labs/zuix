@@ -38,6 +38,11 @@
      "title": "Escala de tamaños",
      "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"xs\">Extra small</button>\n<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"sm\">Small</button>\n<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Medium</button>\n<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"lg\">Large</button>\n<button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"xl\">Extra large</button>",
      "source": "generated"
+    },
+    {
+     "title": "Tonal",
+     "html": "<div style=\"display:flex;gap:8px\">\n  <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Publish</button>\n  <button type=\"button\" class=\"z-btn z-btn--tonal\" data-size=\"md\">\n    <z-icon name=\"eye\" size=\"16\"></z-icon>\n    Preview\n  </button>\n  <button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\">Save draft</button>\n</div>",
+     "source": "generated"
     }
    ]
   },
@@ -47,7 +52,7 @@
     "z-btn-group",
     "z-btn-group__separator"
    ],
-   "behavior": "none",
+   "behavior": "dom",
    "examples": [
     {
      "title": "Unido",
@@ -67,6 +72,11 @@
     {
      "title": "Separado",
      "html": "<div role=\"group\" aria-label=\"Actions\" class=\"z-btn-group\" data-orientation=\"horizontal\">\n  <button type=\"button\" class=\"z-btn z-btn--outline\" data-size=\"md\">Cancel</button>\n  <button type=\"button\" class=\"z-btn z-btn--primary\" data-size=\"md\">Save</button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Conectado",
+     "html": "<div role=\"group\" aria-label=\"View\" class=\"z-btn-group\" data-orientation=\"horizontal\" data-connected=\"true\">\n  <button type=\"button\" aria-pressed=\"false\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n    <z-icon name=\"list-bullet\" size=\"16\"></z-icon>\n    List\n  </button>\n  <button type=\"button\" aria-pressed=\"true\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n    <z-icon name=\"squares-2x2\" size=\"16\"></z-icon>\n    Grid\n  </button>\n  <button type=\"button\" aria-pressed=\"false\" class=\"z-btn z-btn--secondary\" data-size=\"md\">\n    <z-icon name=\"calendar-days\" size=\"16\"></z-icon>\n    Calendar\n  </button>\n</div>",
      "source": "generated"
     }
    ]
@@ -129,6 +139,11 @@
     {
      "title": "Tamaños y extendido",
      "html": "<div style=\"display:flex;flex-wrap:wrap;gap:16px;align-items:center\">\n  <button type=\"button\" title=\"New\" aria-label=\"New\" class=\"z-fab\" data-size=\"sm\" data-variant=\"primary\">\n    <z-icon name=\"plus\" size=\"18\"></z-icon>\n  </button>\n  <button type=\"button\" title=\"Compose\" aria-label=\"Compose\" class=\"z-fab\" data-size=\"md\" data-variant=\"primary\">\n    <z-icon name=\"pencil\" size=\"22\"></z-icon>\n  </button>\n  <button type=\"button\" title=\"Create\" aria-label=\"Create\" class=\"z-fab\" data-size=\"lg\" data-variant=\"secondary\">\n    <z-icon name=\"plus\" size=\"28\"></z-icon>\n  </button>\n  <button type=\"button\" class=\"z-fab\" data-size=\"md\" data-variant=\"primary\" data-extended=\"\">\n    <z-icon name=\"pencil-square\" size=\"22\"></z-icon>\n    <span class=\"z-fab__label\">New message</span>\n  </button>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Extendido en tres tallas",
+     "html": "<div style=\"display:flex;flex-wrap:wrap;gap:16px;align-items:center\">\n  <button type=\"button\" class=\"z-fab\" data-size=\"sm\" data-variant=\"primary\" data-extended=\"\">\n    <z-icon name=\"pencil\" size=\"18\"></z-icon>\n    <span class=\"z-fab__label\">Compose</span>\n  </button>\n  <button type=\"button\" class=\"z-fab\" data-size=\"md\" data-variant=\"primary\" data-extended=\"\">\n    <z-icon name=\"pencil\" size=\"22\"></z-icon>\n    <span class=\"z-fab__label\">Compose</span>\n  </button>\n  <button type=\"button\" class=\"z-fab\" data-size=\"lg\" data-variant=\"primary\" data-extended=\"\">\n    <z-icon name=\"pencil\" size=\"28\"></z-icon>\n    <span class=\"z-fab__label\">Compose</span>\n  </button>\n</div>",
      "source": "generated"
     }
    ]
@@ -2234,6 +2249,11 @@
      "title": "Tonos, grosor y contenido propio",
      "html": "<div style=\"display:flex;gap:16px;align-items:center\">\n  <div class=\"z-progress-ring\" data-size=\"md\" data-tone=\"danger\" data-state=\"loading\" style=\"--z-ring-value:92\">\n    <progress class=\"z-progress-ring__bar\" aria-label=\"Storage\" max=\"100\" value=\"92\"></progress>\n    <span class=\"z-progress-ring__content\" aria-hidden=\"true\">92%</span>\n  </div>\n  <div class=\"z-progress-ring\" data-size=\"xl\" data-tone=\"success\" data-state=\"loading\" style=\"--z-ring-value:60;--z-ring-thickness:10px\">\n    <progress class=\"z-progress-ring__bar\" aria-label=\"Files\" max=\"5\" value=\"3\" aria-valuetext=\"3 of 5 files\"></progress>\n    <span class=\"z-progress-ring__content\" aria-hidden=\"true\">3/5</span>\n  </div>\n</div>",
      "source": "generated"
+    },
+    {
+     "title": "Ondulado",
+     "html": "<div style=\"display:flex;gap:16px;align-items:center\">\n  <div class=\"z-progress-ring\" data-size=\"lg\" data-tone=\"accent\" data-state=\"loading\" data-variant=\"wavy\" style=\"--z-ring-value:72\">\n    <svg class=\"z-progress-ring__wave\" viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\">\n      <circle class=\"z-progress-ring__rest\" cx=\"50\" cy=\"50\" r=\"40\" pathLength=\"100\"></circle>\n      <path class=\"z-progress-ring__arc\" d=\"M50.00 10.00L51.34 9.18L52.72 8.53L54.12 8.17L55.51 8.16L56.85 8.53L58.11 9.24L59.27 10.23L60.35 11.36L61.37 12.53L62.36 13.60L63.37 14.47L64.47 15.08L65.67 15.42L67.00 15.52L68.46 15.47L70.00 15.36L71.57 15.32L73.09 15.45L74.48 15.83L75.69 16.52L76.67 17.51L77.40 18.76L77.92 20.19L78.28 21.72L78.58 23.23L78.90 24.65L79.35 25.91L79.99 26.99L80.86 27.88L81.97 28.64L83.25 29.32L84.64 30.00L86.02 30.75L87.27 31.62L88.29 32.65L88.99 33.85L89.34 35.19L89.35 36.64L89.08 38.14L88.64 39.65L88.14 41.11L87.71 42.50L87.46 43.82L87.48 45.07L87.78 46.28L88.36 47.49L89.14 48.72L90.00 50.00L90.82 51.34L91.47 52.72L91.83 54.12L91.84 55.51L91.47 56.85L90.76 58.11L89.77 59.27L88.64 60.35L87.47 61.37L86.40 62.36L85.53 63.37L84.92 64.47L84.58 65.67L84.48 67.00L84.53 68.46L84.64 70.00L84.68 71.57L84.55 73.09L84.17 74.48L83.48 75.69L82.49 76.67L81.24 77.40L79.81 77.92L78.28 78.28L76.77 78.58L75.35 78.90L74.09 79.35L73.01 79.99L72.12 80.86L71.36 81.97L70.68 83.25L70.00 84.64L69.25 86.02L68.38 87.27L67.35 88.29L66.15 88.99L64.81 89.34L63.36 89.35L61.86 89.08L60.35 88.64L58.89 88.14L57.50 87.71L56.18 87.46L54.93 87.48L53.72 87.78L52.51 88.36L51.28 89.14L50.00 90.00L48.66 90.82L47.28 91.47L45.88 91.83L44.49 91.84L43.15 91.47L41.89 90.76L40.73 89.77L39.65 88.64L38.63 87.47L37.64 86.40L36.63 85.53L35.53 84.92L34.33 84.58L33.00 84.48L31.54 84.53L30.00 84.64L28.43 84.68L26.91 84.55L25.52 84.17L24.31 83.48L23.33 82.49L22.60 81.24L22.08 79.81L21.72 78.28L21.42 76.77L21.10 75.35L20.65 74.09L20.01 73.01L19.14 72.12L18.03 71.36L16.75 70.68L15.36 70.00L13.98 69.25L12.73 68.38L11.71 67.35L11.01 66.15L10.66 64.81L10.65 63.36L10.92 61.86L11.36 60.35L11.86 58.89L12.29 57.50L12.54 56.18L12.52 54.93L12.22 53.72L11.64 52.51L10.86 51.28L10.00 50.00L9.18 48.66L8.53 47.28L8.17 45.88L8.16 44.49L8.53 43.15L9.24 41.89L10.23 40.73L11.36 39.65L12.53 38.63L13.60 37.64L14.47 36.63L15.08 35.53L15.42 34.33L15.52 33.00L15.47 31.54L15.36 30.00L15.32 28.43L15.45 26.91L15.83 25.52L16.52 24.31L17.51 23.33L18.76 22.60L20.19 22.08L21.72 21.72L23.23 21.42L24.65 21.10L25.91 20.65L26.99 20.01L27.88 19.14L28.64 18.03L29.32 16.75L30.00 15.36L30.75 13.98L31.62 12.73L32.65 11.71L33.85 11.01L35.19 10.66L36.64 10.65L38.14 10.92L39.65 11.36L41.11 11.86L42.50 12.29L43.82 12.54L45.07 12.52L46.28 12.22L47.49 11.64L48.72 10.86L50.00 10.00Z\" pathLength=\"100\">\n    </path>\n  </svg>\n  <progress class=\"z-progress-ring__bar\" aria-label=\"Upload\" max=\"100\" value=\"72\"></progress>\n  <span class=\"z-progress-ring__content\" aria-hidden=\"true\">72%</span>\n</div>\n<div class=\"z-progress-ring\" data-size=\"lg\" data-tone=\"accent\" data-state=\"indeterminate\" data-variant=\"wavy\" style=\"--z-ring-value:0\">\n  <svg class=\"z-progress-ring__wave\" viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\">\n    <circle class=\"z-progress-ring__rest\" cx=\"50\" cy=\"50\" r=\"40\" pathLength=\"100\"></circle>\n    <path class=\"z-progress-ring__arc\" d=\"M50.00 10.00L51.34 9.18L52.72 8.53L54.12 8.17L55.51 8.16L56.85 8.53L58.11 9.24L59.27 10.23L60.35 11.36L61.37 12.53L62.36 13.60L63.37 14.47L64.47 15.08L65.67 15.42L67.00 15.52L68.46 15.47L70.00 15.36L71.57 15.32L73.09 15.45L74.48 15.83L75.69 16.52L76.67 17.51L77.40 18.76L77.92 20.19L78.28 21.72L78.58 23.23L78.90 24.65L79.35 25.91L79.99 26.99L80.86 27.88L81.97 28.64L83.25 29.32L84.64 30.00L86.02 30.75L87.27 31.62L88.29 32.65L88.99 33.85L89.34 35.19L89.35 36.64L89.08 38.14L88.64 39.65L88.14 41.11L87.71 42.50L87.46 43.82L87.48 45.07L87.78 46.28L88.36 47.49L89.14 48.72L90.00 50.00L90.82 51.34L91.47 52.72L91.83 54.12L91.84 55.51L91.47 56.85L90.76 58.11L89.77 59.27L88.64 60.35L87.47 61.37L86.40 62.36L85.53 63.37L84.92 64.47L84.58 65.67L84.48 67.00L84.53 68.46L84.64 70.00L84.68 71.57L84.55 73.09L84.17 74.48L83.48 75.69L82.49 76.67L81.24 77.40L79.81 77.92L78.28 78.28L76.77 78.58L75.35 78.90L74.09 79.35L73.01 79.99L72.12 80.86L71.36 81.97L70.68 83.25L70.00 84.64L69.25 86.02L68.38 87.27L67.35 88.29L66.15 88.99L64.81 89.34L63.36 89.35L61.86 89.08L60.35 88.64L58.89 88.14L57.50 87.71L56.18 87.46L54.93 87.48L53.72 87.78L52.51 88.36L51.28 89.14L50.00 90.00L48.66 90.82L47.28 91.47L45.88 91.83L44.49 91.84L43.15 91.47L41.89 90.76L40.73 89.77L39.65 88.64L38.63 87.47L37.64 86.40L36.63 85.53L35.53 84.92L34.33 84.58L33.00 84.48L31.54 84.53L30.00 84.64L28.43 84.68L26.91 84.55L25.52 84.17L24.31 83.48L23.33 82.49L22.60 81.24L22.08 79.81L21.72 78.28L21.42 76.77L21.10 75.35L20.65 74.09L20.01 73.01L19.14 72.12L18.03 71.36L16.75 70.68L15.36 70.00L13.98 69.25L12.73 68.38L11.71 67.35L11.01 66.15L10.66 64.81L10.65 63.36L10.92 61.86L11.36 60.35L11.86 58.89L12.29 57.50L12.54 56.18L12.52 54.93L12.22 53.72L11.64 52.51L10.86 51.28L10.00 50.00L9.18 48.66L8.53 47.28L8.17 45.88L8.16 44.49L8.53 43.15L9.24 41.89L10.23 40.73L11.36 39.65L12.53 38.63L13.60 37.64L14.47 36.63L15.08 35.53L15.42 34.33L15.52 33.00L15.47 31.54L15.36 30.00L15.32 28.43L15.45 26.91L15.83 25.52L16.52 24.31L17.51 23.33L18.76 22.60L20.19 22.08L21.72 21.72L23.23 21.42L24.65 21.10L25.91 20.65L26.99 20.01L27.88 19.14L28.64 18.03L29.32 16.75L30.00 15.36L30.75 13.98L31.62 12.73L32.65 11.71L33.85 11.01L35.19 10.66L36.64 10.65L38.14 10.92L39.65 11.36L41.11 11.86L42.50 12.29L43.82 12.54L45.07 12.52L46.28 12.22L47.49 11.64L48.72 10.86L50.00 10.00Z\" pathLength=\"100\">\n  </path>\n</svg>\n<progress class=\"z-progress-ring__bar\" aria-label=\"Loading\" max=\"100\"></progress>\n</div>\n</div>",
+     "source": "generated"
     }
    ]
   },
@@ -2504,6 +2524,11 @@
     {
      "title": "Vertical",
      "html": "<div style=\"height:120px;display:flex;gap:16px\">\n  <div class=\"z-progress\" data-size=\"md\" data-tone=\"accent\" data-state=\"loading\" data-orientation=\"vertical\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"CPU\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"72\">\n      <div class=\"z-progress__fill\" style=\"--z-progress-value:72%\"></div>\n    </div>\n    <span class=\"z-progress__value\">72%</span>\n  </div>\n  <div class=\"z-progress\" data-size=\"md\" data-tone=\"info\" data-state=\"loading\" data-orientation=\"vertical\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Memory\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"38\">\n      <div class=\"z-progress__fill\" style=\"--z-progress-value:38%\"></div>\n    </div>\n    <span class=\"z-progress__value\">38%</span>\n  </div>\n  <div class=\"z-progress\" data-size=\"md\" data-tone=\"warning\" data-state=\"loading\" data-orientation=\"vertical\" data-segments=\"5\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Disk\" aria-valuemin=\"0\" aria-valuemax=\"5\" aria-valuenow=\"4\">\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\" data-filled=\"true\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:100%\"></span>\n      </span>\n      <span class=\"z-progress__segment\">\n        <span class=\"z-progress__fill\" style=\"--z-progress-value:0%\"></span>\n      </span>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Ondulada",
+     "html": "<div style=\"display:grid;gap:16px\">\n  <div class=\"z-progress\" data-variant=\"wavy\" style=\"--z-progress-value:64%\" data-size=\"md\" data-tone=\"accent\" data-state=\"loading\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Exporting\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"64\">\n      <div class=\"z-progress__fill\"></div>\n    </div>\n    <span class=\"z-progress__value\">64%</span>\n  </div>\n  <div class=\"z-progress\" data-variant=\"wavy\" style=\"--z-progress-value:0%\" data-size=\"md\" data-tone=\"accent\" data-state=\"indeterminate\">\n    <div class=\"z-progress__track\" role=\"progressbar\" aria-label=\"Syncing\" aria-valuemin=\"0\" aria-valuemax=\"100\">\n      <div class=\"z-progress__fill\"></div>\n    </div>\n  </div>\n</div>",
      "source": "generated"
     }
    ]
@@ -3683,6 +3708,11 @@
      "title": "Mensajes por ValidityState",
      "html": "<form noValidate=\"\" class=\"z-form\">\n  <div class=\"z-field\" data-layout=\"stacked\" data-validate=\"\" data-msg-value-missing=\"Enter your email address.\" data-msg-type-mismatch=\"Enter an email in the format you@example.com.\">\n    <label class=\"z-field__label\" id=\"_R_1_-label\" for=\"_R_1_-control\">Email\n      <span class=\"z-field__required\" aria-hidden=\"true\">*</span>\n    </label>\n    <div class=\"z-field__body\">\n      <span class=\"z-input\" data-size=\"md\">\n        <input type=\"email\" autoComplete=\"email\" id=\"_R_1_-control\" required=\"\" class=\"z-input__control\" name=\"email\"/>\n      </span>\n    </div>\n  </div>\n  <button type=\"submit\" class=\"z-btn z-btn--primary\" data-size=\"md\">Subscribe</button>\n</form>",
      "source": "generated"
+    },
+    {
+     "title": "Etiqueta flotante con autocompletado",
+     "html": "<form style=\"display:grid;gap:16px;max-width:360px\">\n  <div class=\"z-field\" data-layout=\"stacked\" data-label-placement=\"floating\">\n    <label class=\"z-field__label\" id=\"_R_1_-label\" for=\"_R_1_-control\">Email</label>\n    <div class=\"z-field__body\">\n      <span class=\"z-input\" data-size=\"md\">\n        <input type=\"email\" autoComplete=\"email\" id=\"_R_1_-control\" placeholder=\" \" class=\"z-input__control\" name=\"email\"/>\n      </span>\n    </div>\n  </div>\n  <div class=\"z-field\" data-layout=\"stacked\" data-label-placement=\"floating\">\n    <label class=\"z-field__label\" id=\"_R_2_-label\" for=\"_R_2_-control\">Full name</label>\n    <div class=\"z-field__body\">\n      <span class=\"z-input\" data-size=\"md\">\n        <span class=\"z-input__icon\">\n          <z-icon name=\"user\" size=\"16\"></z-icon>\n        </span>\n        <input autoComplete=\"name\" id=\"_R_2_-control\" aria-describedby=\"_R_2_-hint\" placeholder=\" \" class=\"z-input__control\" name=\"name\"/>\n      </span>\n      <p class=\"z-field__hint\" id=\"_R_2_-hint\">As it appears on your ID.</p>\n    </div>\n  </div>\n</form>",
+     "source": "generated"
     }
    ]
   },
@@ -4168,6 +4198,11 @@
     {
      "title": "Con marcas y etiquetas",
      "html": "<span class=\"z-slider\" id=\"quality\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"0\" data-max=\"100\" data-step=\"25\" data-value=\"50\" data-marks=\"labels\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__marks\" aria-hidden=\"true\">\n    <span class=\"z-slider__mark\" data-value=\"0\" data-in-range style=\"inset-inline-start:calc(0.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Low</span></span>\n    <span class=\"z-slider__mark\" data-value=\"25\" data-in-range style=\"inset-inline-start:calc(0.25 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"50\" data-in-range style=\"inset-inline-start:calc(0.5 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">Medium</span></span>\n    <span class=\"z-slider__mark\" data-value=\"75\" style=\"inset-inline-start:calc(0.75 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"></span>\n    <span class=\"z-slider__mark\" data-value=\"100\" style=\"inset-inline-start:calc(1.0 * (100% - var(--z-slider-thumb)) + var(--z-slider-thumb) / 2)\"><span class=\"z-slider__mark-label\">High</span></span>\n  </span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Quality\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"50\" aria-orientation=\"horizontal\"></span>\n</span>",
+     "source": "manual"
+    },
+    {
+     "title": "Desde el centro",
+     "html": "<span class=\"z-slider\" id=\"balance\" data-size=\"md\" data-orientation=\"horizontal\" data-min=\"-50\" data-max=\"50\" data-step=\"5\" data-value=\"-20\" data-origin=\"center\">\n  <span class=\"z-slider__track\"><span class=\"z-slider__range\"></span></span>\n  <span class=\"z-slider__thumb\" role=\"slider\" tabindex=\"0\" aria-label=\"Balance\" aria-valuemin=\"-50\" aria-valuemax=\"50\" aria-valuenow=\"-20\" aria-orientation=\"horizontal\"></span>\n  <input type=\"hidden\" name=\"balance\" value=\"-20\" />\n</span>",
      "source": "manual"
     }
    ]
@@ -5045,6 +5080,11 @@
     {
      "title": "Modal con pie",
      "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#edit-profile\">Edit profile</button>\n\n<dialog id=\"edit-profile\" class=\"z-liquid z-modal\" data-size=\"md\" aria-labelledby=\"edit-profile-title\">\n  <header class=\"z-modal__header\">\n    <div class=\"z-modal__heading\">\n      <h2 id=\"edit-profile-title\" class=\"z-modal__title\">Edit profile</h2>\n      <p class=\"z-modal__description\">Changes apply to your whole workspace.</p>\n    </div>\n  </header>\n  <div class=\"z-modal__body\">Your content.</div>\n  <footer class=\"z-modal__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"secondary\" data-z-close>Cancel</button>\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close value=\"save\">Save</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-modal__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>",
+     "source": "manual"
+    },
+    {
+     "title": "A pantalla completa en el teléfono",
+     "html": "<button type=\"button\" class=\"z-btn z-btn--secondary\" data-size=\"md\" data-z-open=\"#new-event\">New event</button>\n\n<dialog id=\"new-event\" class=\"z-liquid z-modal\" data-size=\"md\" data-fullscreen=\"compact\" aria-labelledby=\"new-event-title\">\n  <header class=\"z-modal__header\">\n    <div class=\"z-modal__heading\">\n      <h2 id=\"new-event-title\" class=\"z-modal__title\">New event</h2>\n    </div>\n  </header>\n  <div class=\"z-modal__body\">Fields of the event.</div>\n  <footer class=\"z-modal__footer\">\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"secondary\" data-z-close>Cancel</button>\n    <button type=\"button\" class=\"z-dialog-btn\" data-variant=\"primary\" data-z-close value=\"save\">Save</button>\n  </footer>\n  <button type=\"button\" class=\"z-overlay-close z-modal__close\" aria-label=\"Close\" data-z-close>\n    <z-icon name=\"x-mark\" size=\"16\"></z-icon>\n  </button>\n</dialog>",
      "source": "manual"
     }
    ]
