@@ -27320,7 +27320,7 @@
     {
      "name": "routing",
      "type": "OrthogonalOptions",
-     "description": "Enrutado orthogonal: { margin?, offset?, radius?, spacing?, nudge?, bendCost?, maxGrid? }."
+     "description": "Enrutado orthogonal: { margin?, offset?, radius?, spacing?, nudge?, bendCost?, maxGrid?, strategy?: 'auto' | 'grid' }."
     },
     {
      "name": "cull",

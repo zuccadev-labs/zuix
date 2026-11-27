@@ -4743,6 +4743,86 @@
     }
    ]
   },
+  "DeviceSummary": {
+   "group": "nodes",
+   "classes": [
+    "z-device",
+    "z-device__media",
+    "z-device__text",
+    "z-device__title",
+    "z-device__address",
+    "z-device__ip",
+    "z-device__sep",
+    "z-device__host",
+    "z-device__meta"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Switch",
+     "html": "<div class=\"z-device\">\n  <span class=\"z-device__media\" aria-hidden=\"true\">\n    <z-icon name=\"server-stack\" size=\"22\"></z-icon>\n  </span>\n  <div class=\"z-device__text\">\n    <span class=\"z-device__title\">Managed switch · 8× 2.5G</span>\n    <span class=\"z-device__address\">\n      <span class=\"z-device__ip\">\n        <span class=\"z-redact\" data-sensitive=\"ip\">10.0.99.2</span>\n      </span>\n      <span class=\"z-device__sep\" aria-hidden=\"true\"> · </span>\n      <span class=\"z-device__host\">\n        <span class=\"z-redact\" data-sensitive=\"domain\">switch.internal</span>\n      </span>\n    </span>\n    <span class=\"z-device__meta\">Switch OS 7.1</span>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Servidor con tono",
+     "html": "<div class=\"z-device\" data-tone=\"accent\">\n  <span class=\"z-device__media\" aria-hidden=\"true\">\n    <z-icon name=\"server\" size=\"22\"></z-icon>\n  </span>\n  <div class=\"z-device__text\">\n    <span class=\"z-device__title\">Tower server</span>\n    <span class=\"z-device__address\">\n      <span class=\"z-device__ip\">\n        <span class=\"z-redact\" data-sensitive=\"ip\">10.0.10.20</span>\n      </span>\n      <span class=\"z-device__sep\" aria-hidden=\"true\"> · </span>\n      <span class=\"z-device__host\">\n        <span class=\"z-redact\" data-sensitive=\"domain\">hv.internal</span>\n      </span>\n    </span>\n    <span class=\"z-device__meta\">Hypervisor 9.1</span>\n    <span class=\"z-device__meta\">64 GB · 16 cores</span>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "DiagramLegend": {
+   "group": "nodes",
+   "classes": [
+    "z-diagram-legend",
+    "z-diagram-legend__title",
+    "z-diagram-legend__list",
+    "z-diagram-legend__item",
+    "z-diagram-legend__key",
+    "z-diagram-legend__swatch",
+    "z-diagram-legend__label",
+    "z-diagram-legend__widths",
+    "z-diagram-legend__width",
+    "z-diagram-legend__value",
+    "z-diagram-legend__zone",
+    "z-diagram-legend__share",
+    "z-diagram-legend__chip",
+    "z-diagram-legend__text",
+    "z-diagram-legend__symbol"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Desde un grafo",
+     "html": "<section class=\"z-diagram-legend\">\n  <h3 class=\"z-diagram-legend__title\">Legend</h3>\n  <ul class=\"z-diagram-legend__list\" role=\"list\">\n    <li class=\"z-diagram-legend__item\" data-type=\"line\">\n      <span class=\"z-diagram-legend__key\">\n        <svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 44 14\" width=\"44\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n          <g class=\"z-edge\" data-double=\"\" style=\"--z-edge-width:5.5px\">\n            <path class=\"z-edge__path\" d=\"M 3 7 L 41 7\">\n          </path>\n          <path class=\"z-edge__core\" d=\"M 3 7 L 41 7\">\n        </path>\n      </g>\n    </svg>\n  </span>\n  <span class=\"z-diagram-legend__label\">\n    <span class=\"z-sr-only\">Double line: </span>\n    802.1Q trunk (tagged VLANs)\n  </span>\n</li>\n<li class=\"z-diagram-legend__item\" data-type=\"line\">\n  <span class=\"z-diagram-legend__key\">\n    <svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 44 14\" width=\"44\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n      <g class=\"z-edge\" data-color=\"\" style=\"--z-edge-color:var(--z-chart-1)\">\n        <path class=\"z-edge__path\" d=\"M 3 7 L 41 7\">\n      </path>\n    </g>\n  </svg>\n</span>\n<span class=\"z-diagram-legend__label\">\n  <span class=\"z-sr-only\">Solid line: </span>\n  Access port, colored by VLAN\n</span>\n</li>\n<li class=\"z-diagram-legend__item\" data-type=\"line\">\n<span class=\"z-diagram-legend__key\">\n  <svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 44 14\" width=\"44\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n    <g class=\"z-edge\" data-tone=\"danger\">\n      <path class=\"z-edge__path\" d=\"M 3 7 L 41 7\">\n    </path>\n  </g>\n</svg>\n</span>\n<span class=\"z-diagram-legend__label\">\n<span class=\"z-sr-only\">Solid line: </span>\nWAN uplink\n</span>\n</li>\n<li class=\"z-diagram-legend__item\" data-type=\"line\">\n<span class=\"z-diagram-legend__key\">\n<svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 44 14\" width=\"44\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n  <g class=\"z-edge\" data-dash=\"dashed\" style=\"--z-edge-dash:6 4.4\">\n    <path class=\"z-edge__path\" d=\"M 3 7 L 41 7\">\n  </path>\n</g>\n</svg>\n</span>\n<span class=\"z-diagram-legend__label\">\n<span class=\"z-sr-only\">Dashed line: </span>\nKVM console\n</span>\n</li>\n<li class=\"z-diagram-legend__item\" data-type=\"width\">\n<span class=\"z-diagram-legend__label\">Line width</span>\n<span class=\"z-diagram-legend__widths\">\n<span class=\"z-diagram-legend__width\">\n<svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 28 14\" width=\"28\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n  <g class=\"z-edge\" data-tone=\"accent\" style=\"--z-edge-width:5.5px\">\n    <path class=\"z-edge__path\" d=\"M 3 7 L 25 7\">\n  </path>\n</g>\n</svg>\n<span class=\"z-diagram-legend__value\">10G</span>\n</span>\n<span class=\"z-diagram-legend__width\">\n<svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 28 14\" width=\"28\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n<g class=\"z-edge\" data-tone=\"accent\" style=\"--z-edge-width:3px\">\n  <path class=\"z-edge__path\" d=\"M 3 7 L 25 7\">\n</path>\n</g>\n</svg>\n<span class=\"z-diagram-legend__value\">2.5G</span>\n</span>\n<span class=\"z-diagram-legend__width\">\n<svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 28 14\" width=\"28\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n<g class=\"z-edge\" data-tone=\"accent\">\n<path class=\"z-edge__path\" d=\"M 3 7 L 25 7\">\n</path>\n</g>\n</svg>\n<span class=\"z-diagram-legend__value\">1G</span>\n</span>\n<span class=\"z-diagram-legend__width\">\n<svg class=\"z-diagram-legend__swatch\" viewBox=\"0 0 28 14\" width=\"28\" height=\"14\" aria-hidden=\"true\" focusable=\"false\">\n<g class=\"z-edge\" data-tone=\"accent\" style=\"--z-edge-width:1.25px\">\n<path class=\"z-edge__path\" d=\"M 3 7 L 25 7\">\n</path>\n</g>\n</svg>\n<span class=\"z-diagram-legend__value\">100M</span>\n</span>\n</span>\n</li>\n<li class=\"z-diagram-legend__item\" data-type=\"zone\">\n<span class=\"z-diagram-legend__key\">\n<span class=\"z-diagram-legend__zone\" aria-hidden=\"true\" style=\"--z-zone-color:var(--z-chart-2)\"></span>\n</span>\n<span class=\"z-diagram-legend__label\">\n<span class=\"z-sr-only\">Zone: </span>\nVLAN 20 · DMZ\n</span>\n</li>\n<li class=\"z-diagram-legend__item\" data-type=\"symbol\">\n<span class=\"z-diagram-legend__key\">\n<span class=\"z-diagram-legend__chip\" aria-hidden=\"true\">LAN</span>\n</span>\n<span class=\"z-diagram-legend__label\">only from LAN or VPN</span>\n</li>\n<li class=\"z-diagram-legend__item\" data-type=\"symbol\">\n<span class=\"z-diagram-legend__key\">\n<span class=\"z-diagram-legend__symbol z-port__vlans\" aria-hidden=\"true\">\n<span class=\"z-port__vlan\" data-untagged=\"\" style=\"--z-vlan-color:var(--z-chart-1)\"></span>\n<span class=\"z-port__vlan\" style=\"--z-vlan-color:var(--z-chart-2)\"></span>\n<span class=\"z-port__vlan\" style=\"--z-vlan-color:var(--z-chart-4)\"></span>\n</span>\n</span>\n<span class=\"z-diagram-legend__label\">port VLANs (tall = untagged)</span>\n</li>\n</ul>\n</section>",
+     "source": "generated"
+    }
+   ]
+  },
+  "FolderCard": {
+   "group": "nodes",
+   "classes": [
+    "z-folder-card",
+    "z-folder-card__tab",
+    "z-folder-card__icon",
+    "z-folder-card__title",
+    "z-folder-card__kind",
+    "z-folder-card__body",
+    "z-folder-card__footer"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Equipo de red",
+     "html": "<section id=\"core\" class=\"z-folder-card\" aria-labelledby=\"core-title\" style=\"--z-folder-color:var(--z-chart-6)\">\n  <div class=\"z-folder-card__tab\">\n    <span class=\"z-folder-card__icon\" aria-hidden=\"true\">\n      <z-icon name=\"server-stack\" size=\"16\"></z-icon>\n    </span>\n    <h3 class=\"z-folder-card__title\" id=\"core-title\">Core switch</h3>\n    <span class=\"z-folder-card__kind\">switch</span>\n  </div>\n  <div class=\"z-folder-card__body\">\n    <div class=\"z-device\">\n      <span class=\"z-device__media\" aria-hidden=\"true\">\n        <z-icon name=\"server-stack\" size=\"22\"></z-icon>\n      </span>\n      <div class=\"z-device__text\">\n        <span class=\"z-device__title\">Managed switch · 8× 2.5G + 2× SFP+</span>\n        <span class=\"z-device__address\">\n          <span class=\"z-device__ip\">\n            <span class=\"z-redact\" data-sensitive=\"ip\">10.0.99.2</span>\n          </span>\n          <span class=\"z-device__sep\" aria-hidden=\"true\"> · </span>\n          <span class=\"z-device__host\">\n            <span class=\"z-redact\" data-sensitive=\"domain\">switch.internal</span>\n          </span>\n        </span>\n        <span class=\"z-device__meta\">Switch OS 7.1</span>\n      </div>\n    </div>\n    <div class=\"z-folder-card__footer\">configured as a pure L2 switch</div>\n  </div>\n</section>",
+     "source": "generated"
+    },
+    {
+     "title": "Aviso con borde de peligro",
+     "html": "<section class=\"z-folder-card\" style=\"--z-folder-color:var(--z-danger)\">\n  <div class=\"z-folder-card__tab\">\n    <span class=\"z-folder-card__icon\" aria-hidden=\"true\">\n      <z-icon name=\"globe-alt\" size=\"16\"></z-icon>\n    </span>\n    <h3 class=\"z-folder-card__title\">Open to the internet</h3>\n    <span class=\"z-folder-card__kind\">port forwards</span>\n  </div>\n  <div class=\"z-folder-card__body\">Ports 80 and 443 go to the reverse proxy. Everything else is closed.</div>\n</section>",
+     "source": "generated"
+    }
+   ]
+  },
   "Node": {
    "group": "nodes",
    "classes": [
@@ -4757,7 +4837,14 @@
     "z-node-port__label",
     "z-node-group",
     "z-node-group__header",
-    "z-node-group__title"
+    "z-node-group__title",
+    "z-node__shape",
+    "z-node-group__note",
+    "z-folder-card",
+    "z-folder-card__tab",
+    "z-folder-card__title",
+    "z-folder-card__kind",
+    "z-folder-card__body"
    ],
    "behavior": "none",
    "examples": [
@@ -4769,6 +4856,11 @@
     {
      "title": "Grupo",
      "html": "<div class=\"z-node-group\" data-id=\"g\" data-type=\"group\" role=\"group\" aria-roledescription=\"group\" aria-label=\"Retry block\" style=\"--z-node-x:0px;--z-node-y:0px;--z-node-w:360px;--z-node-h:200px\">\n  <div class=\"z-node-group__header\">\n    <span class=\"z-node-group__title\">Retry block</span>\n  </div>\n  <span class=\"z-node__resize\" aria-hidden=\"true\"></span>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Nube, carpeta y zona",
+     "html": "<div class=\"z-inline\" data-gap=\"4\" data-align=\"start\" data-justify=\"start\" data-wrap=\"true\">\n  <div style=\"position:relative;width:220px;height:120px\">\n    <div class=\"z-node\" data-id=\"i\" data-type=\"cloud\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Internet\" style=\"--z-node-x:0px;--z-node-y:0px;--z-node-w:220px;--z-node-h:120px\">\n      <svg class=\"z-node__shape\" viewBox=\"0 0 102 62\" preserveAspectRatio=\"none\" aria-hidden=\"true\" focusable=\"false\">\n        <path d=\"M 17 60 A 15 15 0 1 1 11 32 A 14 14 0 0 1 31 17 A 20 20 0 1 1 67 13 A 13 13 0 0 1 89 31 A 15 15 0 1 1 85 60 Z\" vector-effect=\"non-scaling-stroke\">\n      </path>\n    </svg>\n    <div class=\"z-node__header\">\n      <span class=\"z-node__title\">Internet</span>\n    </div>\n    <div class=\"z-node__body\">dynamic IPv4</div>\n  </div>\n</div>\n<div style=\"position:relative;width:260px;height:120px\">\n  <div class=\"z-node z-folder-card\" data-id=\"f\" data-type=\"folder\" role=\"group\" aria-roledescription=\"node\" aria-label=\"Firewall\" style=\"--z-node-x:0px;--z-node-y:0px;--z-node-w:260px;--z-node-h:120px;--z-folder-color:var(--z-danger)\">\n    <div class=\"z-folder-card__tab\">\n      <span class=\"z-folder-card__title\">Firewall</span>\n      <span class=\"z-folder-card__kind\">router</span>\n    </div>\n    <div class=\"z-folder-card__body\">Fanless mini PC</div>\n    <span class=\"z-node__resize\" aria-hidden=\"true\"></span>\n  </div>\n</div>\n<div style=\"position:relative;width:260px;height:120px\">\n  <div class=\"z-node-group\" data-id=\"z\" data-type=\"zone\" role=\"group\" aria-roledescription=\"group\" aria-label=\"VLAN 20 · DMZ\" style=\"--z-node-x:0px;--z-node-y:0px;--z-node-w:260px;--z-node-h:120px;--z-zone-color:var(--z-chart-2)\">\n    <div class=\"z-node-group__header\">\n      <span class=\"z-node-group__title\">VLAN 20 · DMZ</span>\n      <span class=\"z-node-group__note\">no access to LAN</span>\n    </div>\n    <span class=\"z-node__resize\" aria-hidden=\"true\"></span>\n  </div>\n</div>\n</div>",
      "source": "generated"
     }
    ]
@@ -4793,7 +4885,9 @@
     "z-edge__path",
     "z-edge__hit",
     "z-edge__end",
-    "z-edge__label"
+    "z-edge__label",
+    "z-edge__core",
+    "z-edge__end-label"
    ],
    "behavior": "dom",
    "examples": [
@@ -4805,6 +4899,11 @@
     {
      "title": "Grafo en JSON, solo lectura, con vista en lista",
      "html": "<div class=\"z-node-canvas\" data-z-node-canvas data-readonly data-minimap=\"false\" aria-label=\"Pipeline\" id=\"pipeline\">\n  <script type=\"application/json\" data-graph>{\"nodes\":[{\"id\":\"hook\",\"position\":{\"x\":0,\"y\":40},\"data\":{\"label\":\"Webhook\",\"icon\":\"bolt\",\"description\":\"POST /orders\",\"tone\":\"accent\"},\"ports\":[{\"id\":\"out\",\"kind\":\"source\",\"type\":\"json\"}]},{\"id\":\"filter\",\"position\":{\"x\":300,\"y\":0},\"data\":{\"label\":\"Filter\",\"icon\":\"funnel\",\"description\":\"total > 100\",\"status\":\"success\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"},{\"id\":\"true\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"true\"},{\"id\":\"false\",\"kind\":\"source\",\"type\":\"json\",\"label\":\"false\"}]},{\"id\":\"save\",\"position\":{\"x\":600,\"y\":60},\"data\":{\"label\":\"Save order\",\"icon\":\"circle-stack\",\"description\":\"orders table\",\"status\":\"running\"},\"ports\":[{\"id\":\"in\",\"kind\":\"target\",\"type\":\"json\"}]}],\"edges\":[{\"id\":\"e1\",\"source\":\"hook\",\"sourcePort\":\"out\",\"target\":\"filter\",\"targetPort\":\"in\",\"animated\":true},{\"id\":\"e2\",\"source\":\"filter\",\"sourcePort\":\"true\",\"target\":\"save\",\"targetPort\":\"in\",\"label\":\"yes\"}]}</script>\n</div>\n<div class=\"z-node-list\" data-for=\"#pipeline\"></div>",
+     "source": "manual"
+    },
+    {
+     "title": "Red con aristas con estilo, en JSON",
+     "html": "<div class=\"z-node-canvas\" data-z-node-canvas data-readonly data-edge-type=\"orthogonal\" data-minimap=\"false\" aria-label=\"Small network\">\n  <script type=\"application/json\" data-graph>{\"nodes\":[{\"id\":\"net\",\"type\":\"cloud\",\"position\":{\"x\":200,\"y\":0},\"data\":{\"label\":\"Internet\",\"description\":\"1 Gbit/s\"},\"ports\":[{\"id\":\"down\",\"kind\":\"source\",\"side\":\"bottom\"}]},{\"id\":\"sw\",\"type\":\"folder\",\"position\":{\"x\":140,\"y\":200},\"data\":{\"label\":\"Core switch\",\"kind\":\"switch\",\"color\":\"chart-6\",\"description\":\"8× 2.5G + 2× SFP+\"},\"ports\":[{\"id\":\"up\",\"kind\":\"target\",\"side\":\"top\",\"anchor\":true},{\"id\":\"a\",\"kind\":\"source\",\"side\":\"bottom\",\"anchor\":true},{\"id\":\"b\",\"kind\":\"source\",\"side\":\"bottom\",\"anchor\":true}]},{\"id\":\"pc\",\"type\":\"folder\",\"position\":{\"x\":0,\"y\":420},\"data\":{\"label\":\"Desk\",\"kind\":\"workstation\",\"color\":\"chart-1\",\"description\":\"10.0.10.30\"},\"ports\":[{\"id\":\"up\",\"kind\":\"target\",\"side\":\"top\",\"anchor\":true},{\"id\":\"kvm\",\"kind\":\"source\",\"side\":\"right\",\"anchor\":true}]},{\"id\":\"hv\",\"type\":\"folder\",\"position\":{\"x\":380,\"y\":420},\"data\":{\"label\":\"Server\",\"kind\":\"server\",\"description\":\"10.0.10.20\"},\"ports\":[{\"id\":\"up\",\"kind\":\"target\",\"side\":\"top\",\"anchor\":true},{\"id\":\"console\",\"kind\":\"target\",\"side\":\"left\",\"anchor\":true}]},{\"id\":\"dmz\",\"type\":\"zone\",\"position\":{\"x\":680,\"y\":200},\"size\":{\"width\":260,\"height\":150},\"data\":{\"label\":\"VLAN 20 · DMZ\",\"color\":\"chart-2\",\"description\":\"no access to LAN\"}},{\"id\":\"web\",\"parentId\":\"dmz\",\"position\":{\"x\":20,\"y\":56},\"size\":{\"width\":220,\"height\":72},\"data\":{\"label\":\"Web\",\"icon\":\"globe-alt\",\"description\":\"CT 149\"}}],\"edges\":[{\"id\":\"wan\",\"source\":\"net\",\"sourcePort\":\"down\",\"target\":\"sw\",\"targetPort\":\"up\",\"kind\":\"wan\",\"color\":\"danger\",\"weight\":\"1G\",\"targetLabel\":\"1G\",\"markerEnd\":\"none\"},{\"id\":\"lan\",\"source\":\"sw\",\"sourcePort\":\"a\",\"target\":\"pc\",\"targetPort\":\"up\",\"kind\":\"access\",\"color\":\"chart-1\",\"weight\":\"2.5G\",\"targetLabel\":\"2.5G\",\"markerEnd\":\"none\"},{\"id\":\"trunk\",\"source\":\"sw\",\"sourcePort\":\"b\",\"target\":\"hv\",\"targetPort\":\"up\",\"kind\":\"trunk\",\"double\":true,\"weight\":\"10G\",\"targetLabel\":\"10G\",\"markerEnd\":\"none\"},{\"id\":\"console\",\"source\":\"pc\",\"sourcePort\":\"kvm\",\"target\":\"hv\",\"targetPort\":\"console\",\"kind\":\"console\",\"dash\":\"dashed\",\"label\":\"HDMI + USB\",\"markerEnd\":\"none\"}]}</script>\n</div>",
      "source": "manual"
     }
    ]
@@ -4854,6 +4953,112 @@
      "title": "Minimapa",
      "html": "<nav class=\"z-node-minimap z-liquid\" aria-label=\"Minimap\" tabindex=\"0\"></nav>",
      "source": "manual"
+    }
+   ]
+  },
+  "PortPanel": {
+   "group": "nodes",
+   "classes": [
+    "z-port-panel",
+    "z-port-panel__group",
+    "z-port",
+    "z-port__number",
+    "z-port__jack",
+    "z-port__socket",
+    "z-port__vlans",
+    "z-port__vlan",
+    "z-port__to"
+   ],
+   "behavior": "dom",
+   "examples": [
+    {
+     "title": "Switch con VLAN",
+     "html": "<div class=\"z-port-panel\" role=\"listbox\" aria-orientation=\"horizontal\" aria-label=\"Core switch ports\">\n  <div class=\"z-port-panel__group\" role=\"presentation\" data-group=\"rj45\">\n    <div class=\"z-port\" role=\"option\" tabindex=\"0\" aria-selected=\"false\" aria-label=\"Port 1 Firewall, connected, tagged LAN, IoT, and MGMT\" data-port=\"p1\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"rj45\" data-state=\"linked\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">1</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\">\n        <span class=\"z-port__vlan\" style=\"--z-vlan-color:var(--z-chart-1)\"></span>\n        <span class=\"z-port__vlan\" style=\"--z-vlan-color:var(--z-chart-4)\"></span>\n        <span class=\"z-port__vlan\" style=\"--z-vlan-color:var(--z-chart-6)\"></span>\n      </span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">Firewall</span>\n    </div>\n    <div class=\"z-port\" role=\"option\" tabindex=\"-1\" aria-selected=\"false\" aria-label=\"Port 2 Desk, connected, untagged LAN, 2.5G\" data-port=\"p2\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"rj45\" data-state=\"linked\" data-vlan=\"\" style=\"--z-port-color:var(--z-chart-1)\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">2</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\">\n        <span class=\"z-port__vlan\" data-untagged=\"\" style=\"--z-vlan-color:var(--z-chart-1)\"></span>\n      </span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">Desk</span>\n    </div>\n    <div class=\"z-port\" role=\"option\" tabindex=\"-1\" aria-selected=\"false\" aria-label=\"Port 3 free\" data-port=\"p3\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"rj45\" data-state=\"free\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">3</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\"></span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">free</span>\n    </div>\n    <div class=\"z-port\" role=\"option\" tabindex=\"-1\" aria-selected=\"false\" aria-label=\"Port 4 Access point, connected, untagged MGMT, tagged LAN and IoT\" data-port=\"p4\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"rj45\" data-state=\"linked\" data-vlan=\"\" style=\"--z-port-color:var(--z-chart-6)\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">4</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\">\n        <span class=\"z-port__vlan\" data-untagged=\"\" style=\"--z-vlan-color:var(--z-chart-6)\"></span>\n        <span class=\"z-port__vlan\" style=\"--z-vlan-color:var(--z-chart-1)\"></span>\n        <span class=\"z-port__vlan\" style=\"--z-vlan-color:var(--z-chart-4)\"></span>\n      </span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">Access point</span>\n    </div>\n    <div class=\"z-port\" role=\"option\" tabindex=\"-1\" aria-selected=\"false\" aria-disabled=\"true\" aria-label=\"Port 5, disabled, bad cable\" title=\"bad cable\" data-port=\"p5\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"rj45\" data-state=\"disabled\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">5</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\"></span>\n      <span class=\"z-port__to\" aria-hidden=\"true\"></span>\n    </div>\n  </div>\n  <div class=\"z-port-panel__group\" role=\"presentation\" data-group=\"sfp\">\n    <div class=\"z-port\" role=\"option\" tabindex=\"-1\" aria-selected=\"false\" aria-label=\"Port SFP+1 Server, connected, SFP, untagged LAN, 10G\" data-port=\"s1\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"sfp\" data-state=\"linked\" data-vlan=\"\" style=\"--z-port-color:var(--z-chart-1)\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">SFP+1</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\">\n        <span class=\"z-port__vlan\" data-untagged=\"\" style=\"--z-vlan-color:var(--z-chart-1)\"></span>\n      </span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">Server</span>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Puerto expuesto y coaxial",
+     "html": "<div class=\"z-port-panel\" role=\"listbox\" aria-orientation=\"horizontal\" aria-label=\"Gateway ports\" data-size=\"sm\">\n  <div class=\"z-port-panel__group\" role=\"presentation\" data-group=\"coax\">\n    <div class=\"z-port\" role=\"option\" tabindex=\"0\" aria-selected=\"false\" aria-label=\"Port Cable internet, connected, coaxial\" data-port=\"cable\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"coax\" data-state=\"linked\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">Cable</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\"></span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">internet</span>\n    </div>\n  </div>\n  <div class=\"z-port-panel__group\" role=\"presentation\" data-group=\"rj45\">\n    <div class=\"z-port\" role=\"option\" tabindex=\"-1\" aria-selected=\"false\" aria-label=\"Port 1G exposed host, connected, exposed to the internet\" data-port=\"lan1\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"rj45\" data-state=\"exposed\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">1G</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\"></span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">exposed host</span>\n    </div>\n    <div class=\"z-port\" role=\"option\" tabindex=\"-1\" aria-selected=\"false\" aria-label=\"Port 1G free\" data-port=\"lan2\" data-port-anchor=\"\" data-side=\"bottom\" data-connector=\"rj45\" data-state=\"free\">\n      <span class=\"z-port__number\" aria-hidden=\"true\">1G</span>\n      <span class=\"z-port__jack\" aria-hidden=\"true\">\n        <span class=\"z-port__socket\"></span>\n      </span>\n      <span class=\"z-port__vlans\" aria-hidden=\"true\"></span>\n      <span class=\"z-port__to\" aria-hidden=\"true\">free</span>\n    </div>\n  </div>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "Redact": {
+   "group": "nodes",
+   "classes": [
+    "z-redact"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Dominio público",
+     "html": "<span class=\"z-redact\" data-sensitive=\"domain\">git.example.net</span>",
+     "source": "generated"
+    },
+    {
+     "title": "Enmascarado a la fuerza",
+     "html": "<div class=\"z-inline\" data-gap=\"3\" data-align=\"center\" data-justify=\"start\" data-wrap=\"true\">\n  <span class=\"z-redact\" data-sensitive=\"ip\" data-redacted=\"\">203.0.113.220</span>\n  <span class=\"z-redact\" data-sensitive=\"domain\" data-redacted=\"\">photos.mylab.example</span>\n  <span class=\"z-redact\" data-sensitive=\"text\" data-redacted=\"\">••••••</span>\n</div>",
+     "source": "generated"
+    }
+   ]
+  },
+  "SpecList": {
+   "group": "nodes",
+   "classes": [
+    "z-spec-group",
+    "z-spec-group__title",
+    "z-spec-list",
+    "z-spec",
+    "z-spec__icon",
+    "z-spec__text",
+    "z-spec__label",
+    "z-spec__value",
+    "z-spec__note"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "Hardware",
+     "html": "<div class=\"z-spec-group\">\n  <span class=\"z-spec-group__title\">Hardware</span>\n  <ul class=\"z-spec-list\" data-columns=\"2\">\n    <li class=\"z-spec\">\n      <span class=\"z-spec__icon\" aria-hidden=\"true\">\n        <z-icon name=\"cpu-chip\" size=\"18\"></z-icon>\n      </span>\n      <span class=\"z-spec__text\">\n        <span class=\"z-spec__label\">CPU</span>\n        <span class=\"z-spec__value\">16-core CPU</span>\n        <span class=\"z-spec__note\">32 threads</span>\n      </span>\n    </li>\n    <li class=\"z-spec\">\n      <span class=\"z-spec__icon\" aria-hidden=\"true\">\n        <z-icon name=\"rectangle-stack\" size=\"18\"></z-icon>\n      </span>\n      <span class=\"z-spec__text\">\n        <span class=\"z-spec__label\">Memory</span>\n        <span class=\"z-spec__value\">64 GB DDR5</span>\n        <span class=\"z-spec__note\">ECC</span>\n      </span>\n    </li>\n    <li class=\"z-spec\">\n      <span class=\"z-spec__icon\" aria-hidden=\"true\">\n        <z-icon name=\"arrows-right-left\" size=\"18\"></z-icon>\n      </span>\n      <span class=\"z-spec__text\">\n        <span class=\"z-spec__label\">Network</span>\n        <span class=\"z-spec__value\">Dual 10G SFP+</span>\n        <span class=\"z-spec__note\">VLAN-aware bridge</span>\n      </span>\n    </li>\n    <li class=\"z-spec\">\n      <span class=\"z-spec__icon\" aria-hidden=\"true\">\n        <z-icon name=\"circle-stack\" size=\"18\"></z-icon>\n      </span>\n      <span class=\"z-spec__text\">\n        <span class=\"z-spec__label\">SSD</span>\n        <span class=\"z-spec__value\">NVMe 2 TB</span>\n        <span class=\"z-spec__note\">guest disks</span>\n      </span>\n    </li>\n  </ul>\n</div>",
+     "source": "generated"
+    },
+    {
+     "title": "Redes con su color",
+     "html": "<ul class=\"z-spec-list\" data-columns=\"1\">\n  <li class=\"z-spec\" style=\"--z-spec-color:var(--z-chart-1)\">\n    <span class=\"z-spec__text\">\n      <span class=\"z-spec__label\">VLAN 10</span>\n      <span class=\"z-spec__value\">LAN · 10.0.10.0/24</span>\n      <span class=\"z-spec__note\">trusted</span>\n    </span>\n  </li>\n  <li class=\"z-spec\" style=\"--z-spec-color:var(--z-chart-2)\">\n    <span class=\"z-spec__text\">\n      <span class=\"z-spec__label\">VLAN 20</span>\n      <span class=\"z-spec__value\">DMZ · 10.0.20.0/24</span>\n      <span class=\"z-spec__note\">services only</span>\n    </span>\n  </li>\n  <li class=\"z-spec\" data-tone=\"danger\">\n    <span class=\"z-spec__text\">\n      <span class=\"z-spec__label\">Uplink</span>\n      <span class=\"z-spec__value\">WAN · 192.168.1.0/24</span>\n      <span class=\"z-spec__note\">untrusted</span>\n    </span>\n  </li>\n</ul>",
+     "source": "generated"
+    }
+   ]
+  },
+  "StoragePool": {
+   "group": "nodes",
+   "classes": [
+    "z-storage-pool",
+    "z-storage-pool__head",
+    "z-storage-pool__name",
+    "z-storage-pool__disks",
+    "z-storage-pool__usage",
+    "z-storage-pool__meter",
+    "z-storage-pool__fill",
+    "z-storage-pool__vdevs",
+    "z-storage-pool__vdev",
+    "z-storage-pool__drives",
+    "z-storage-pool__title",
+    "z-storage-pool__meta",
+    "z-storage-pool__note",
+    "z-disk",
+    "z-disk__face"
+   ],
+   "behavior": "none",
+   "examples": [
+    {
+     "title": "RAIDZ2 con vdev especial",
+     "html": "<section class=\"z-storage-pool\" aria-label=\"tank\">\n  <div class=\"z-storage-pool__head\">\n    <h3 class=\"z-storage-pool__name\">tank</h3>\n    <span class=\"z-storage-pool__disks\">6 HDD + 2 SSD</span>\n    <span class=\"z-storage-pool__usage\">49% used · 22.2 TiB free · 43.6 TiB usable</span>\n  </div>\n  <div class=\"z-storage-pool__meter\" role=\"meter\" aria-label=\"Used space in tank\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"49\" aria-valuetext=\"49% used · 22.2 TiB free · 43.6 TiB usable\" style=\"--z-pool-used:49.1%\">\n    <span class=\"z-storage-pool__fill\"></span>\n  </div>\n  <ul class=\"z-storage-pool__vdevs\" role=\"list\">\n    <li class=\"z-storage-pool__vdev\" data-layout=\"raidz2\">\n      <span class=\"z-storage-pool__drives\" data-disk=\"hdd\" aria-hidden=\"true\">\n        <span class=\"z-disk\" data-kind=\"hdd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n        <span class=\"z-disk\" data-kind=\"hdd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n        <span class=\"z-disk\" data-kind=\"hdd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n        <span class=\"z-disk\" data-kind=\"hdd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n        <span class=\"z-disk\" data-kind=\"hdd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n        <span class=\"z-disk\" data-kind=\"hdd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n      </span>\n      <span class=\"z-storage-pool__title\">data · RAIDZ2</span>\n      <span class=\"z-storage-pool__meta\">6× 12 TB HDD</span>\n      <span class=\"z-storage-pool__meta\">2 disks may fail</span>\n    </li>\n    <li class=\"z-storage-pool__vdev\" data-layout=\"mirror\">\n      <span class=\"z-storage-pool__drives\" data-disk=\"ssd\" aria-hidden=\"true\">\n        <span class=\"z-disk\" data-kind=\"ssd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n        <span class=\"z-disk\" data-kind=\"ssd\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n      </span>\n      <span class=\"z-storage-pool__title\">special vdev · mirror</span>\n      <span class=\"z-storage-pool__meta\">1 disk may fail</span>\n      <span class=\"z-storage-pool__meta\">metadata · 18 / 238 GiB used</span>\n    </li>\n  </ul>\n</section>",
+     "source": "generated"
+    },
+    {
+     "title": "Un disco sin redundancia",
+     "html": "<section class=\"z-storage-pool\" aria-label=\"fast\">\n  <div class=\"z-storage-pool__head\">\n    <h3 class=\"z-storage-pool__name\">fast</h3>\n    <span class=\"z-storage-pool__disks\">1 NVMe</span>\n    <span class=\"z-storage-pool__usage\">92% used · 70 GiB free · 900 GiB usable</span>\n  </div>\n  <div class=\"z-storage-pool__meter\" role=\"meter\" aria-label=\"Used space in fast\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"92\" aria-valuetext=\"92% used · 70 GiB free · 900 GiB usable\" data-level=\"critical\" style=\"--z-pool-used:92.2%\">\n    <span class=\"z-storage-pool__fill\"></span>\n  </div>\n  <ul class=\"z-storage-pool__vdevs\" role=\"list\">\n    <li class=\"z-storage-pool__vdev\" data-layout=\"single\">\n      <span class=\"z-storage-pool__drives\" data-disk=\"nvme\" aria-hidden=\"true\">\n        <span class=\"z-disk\" data-kind=\"nvme\">\n          <span class=\"z-disk__face\"></span>\n        </span>\n      </span>\n      <span class=\"z-storage-pool__title\">data · single disk</span>\n      <span class=\"z-storage-pool__meta\">NVMe 1 TB</span>\n      <span class=\"z-storage-pool__meta\" data-redundancy=\"none\">no redundancy</span>\n    </li>\n  </ul>\n  <p class=\"z-storage-pool__note\">hourly snapshots · synced offsite</p>\n</section>",
+     "source": "generated"
     }
    ]
   },
