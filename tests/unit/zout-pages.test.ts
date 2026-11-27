@@ -8,7 +8,9 @@ import { activeSection, appBarProgress } from "../../zout/src/logic.ts";
 import { wireAppBar, wireScrollspy } from "../../zout/src/pages.ts";
 
 fc.configureGlobal({ seed: Number(process.env.ZUIX_FC_SEED ?? 20261122), numRuns: Number(process.env.ZUIX_FC_RUNS ?? 300) });
-const frame = () => new Promise((r) => setTimeout(r, 40));
+// Dos fotogramas: lo que la pieza pidió con requestAnimationFrame ya corrió (un plazo fijo de 40 ms fallaba con la
+// máquina cargada, 1 de cada 3 veces).
+const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(undefined))));
 
 describe("lógica", () => {
   test("pliegue de la AppBar", () => {

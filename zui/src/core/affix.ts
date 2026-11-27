@@ -23,7 +23,10 @@ export function attachAffix(el: HTMLElement, onChange?: (stuck: boolean) => void
   // La distancia es la de la hoja (`--z-affix-offset` → `inset-block-start` o `-end`): no se repite en un atributo.
   const offset = Math.max(0, Number.parseFloat(getComputedStyle(el)[side]) || 0);
   const root = scrollerOf(el);
-  const margin = `${-(offset + 1)}px`;
+  // Pegado, el borde queda a `offset` del borde de contenido del desplazador (su relleno cuenta); el área del observador
+  // empieza en el borde de relleno: se recorta también el relleno de ese lado.
+  const pad = root ? Number.parseFloat(getComputedStyle(root)[side === "top" ? "paddingTop" : "paddingBottom"]) || 0 : 0;
+  const margin = `${-(offset + pad + 1)}px`;
   const observer = new View(
     ([entry]) => {
       if (!entry) return;

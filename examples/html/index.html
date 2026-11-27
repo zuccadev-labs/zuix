@@ -360,6 +360,24 @@
 <div class="z-branch" data-index="2" data-count="3"></div>
   </div>
 </section>
+<section class="z-card demo" data-component="Checkpoint" data-behavior="none">
+  <header class="demo__head"><h3 class="demo__name">Checkpoint</h3><span class="z-badge" data-tone="neutral">css</span></header>
+  <div class="demo__stage">
+<div class="z-checkpoint" role="group" aria-labelledby="_R_0_-name">
+  <span class="z-checkpoint__rule" aria-hidden="true"></span>
+  <span class="z-checkpoint__badge">
+    <z-icon name="bookmark" size="14"></z-icon>
+    <span class="z-checkpoint__label" id="_R_0_-name">Before refactor</span>
+    <time class="z-checkpoint__time" dateTime="2026-11-25T10:42:00Z">10:42</time>
+  </span>
+  <button type="button" class="z-btn z-btn--ghost z-checkpoint__restore" data-size="sm" aria-describedby="_R_0_-name">
+    <z-icon name="arrow-uturn-up-left" size="14"></z-icon>
+    Restore
+  </button>
+  <span class="z-checkpoint__rule" aria-hidden="true"></span>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Citation" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">Citation</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -403,6 +421,14 @@
   <div class="demo__stage">
 <div class="z-sources-block" data-open>
   <script type="application/json" data-props>{"items": [{"title": "Release process", "url": "https://example.com/release"}, {"title": "HTML contract", "url": "https://example.org/contract"}]}</script>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="StackTrace" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">StackTrace</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-stack-trace">
+  <script type="application/json" data-props>{"error": "TypeError: Cannot read properties of undefined (reading 'map')\n    at ProjectList (http://localhost:5173/src/screens/Projects.tsx:42:19)\n    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom.js:11548:26)\n    at mountIndeterminateComponent (http://localhost:5173/node_modules/.vite/deps/react-dom.js:14926:21)\n    at loadProjects (http://localhost:5173/src/data/projects.ts:17:5)"}</script>
 </div>
   </div>
 </section>
@@ -452,6 +478,18 @@
     </dl>
   </div>
 </div>
+  </div>
+</section>
+<section class="z-card demo" data-component="VoiceInput" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">VoiceInput</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-voice-input" data-show-label data-max-duration="120"></div>
+  </div>
+</section>
+<section class="z-card demo" data-component="WebPreview" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">WebPreview</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-web-preview" data-viewports data-title="Example site" style="--z-web-preview-height: 260px"></div>
   </div>
 </section>
 </div>
@@ -752,6 +790,19 @@
     </button>
   </span>
 </header>
+  </div>
+</section>
+<section class="z-card demo" data-component="ChatSearch" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">ChatSearch</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div style="display: grid; gap: 12px; max-width: 420px">
+  <div class="z-chat-search" data-target="chat-search-demo" data-query="release"></div>
+  <ol id="chat-search-demo" class="z-chat-search-demo" style="display: grid; gap: 8px; margin: 0; padding: 0; list-style: none">
+    <li class="z-message"><div class="z-message__text">The release notes are ready for review.</div></li>
+    <li class="z-message"><div class="z-message__text">I added the notes about the new tokens.</div></li>
+    <li class="z-message"><div class="z-message__text">Can you check the release date?</div></li>
+  </ol>
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="Composer" data-behavior="dom">
@@ -1654,6 +1705,37 @@ malaga" data-ignore-accents="">Un
 <div class="z-tracker" data-label="API" data-days='[{"status":"ok","label":"Nov 1"},{"status":"ok","label":"Nov 2"},{"status":"warning","label":"Nov 3","note":"12 min"},{"status":"ok","label":"Nov 4"},{"status":"error","label":"Nov 5","note":"41 min"},{"status":"ok","label":"Nov 6"},{"status":"maintenance","label":"Nov 7"},{"status":"ok","label":"Nov 8"}]'></div>
   </div>
 </section>
+<section class="z-card demo" data-component="Widget" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Widget</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<section class="z-dashboard-grid__item z-liquid z-widget" data-id="revenue" data-name="Revenue" aria-labelledby="widget-demo-title" style="max-width: 360px">
+  <header class="z-dashboard-grid__head">
+    <div class="z-dashboard-grid__titles">
+      <h2 class="z-dashboard-grid__title" id="widget-demo-title">Revenue</h2>
+      <p class="z-dashboard-grid__description">Last 30 days</p>
+    </div>
+    <div class="z-dashboard-grid__actions">
+      <button type="button" class="z-btn z-btn--icon z-btn--ghost" data-size="sm" aria-label="Revenue options" title="Revenue options" aria-haspopup="menu" aria-expanded="false" data-z-open="#widget-demo-menu" data-z-placement="bottom-end">
+        <z-icon name="ellipsis-horizontal" size="16"></z-icon>
+      </button>
+    </div>
+  </header>
+  <div class="z-dashboard-grid__body">
+    <div class="z-widget__body" data-status="ready">
+      <div class="z-stat z-liquid" data-variant="glass">
+        <span class="z-stat__head"><span class="z-stat__label">Revenue</span></span>
+        <span class="z-stat__value">$48.2k</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="widget-demo-menu" popover class="z-liquid z-menu" role="menu" aria-label="Revenue options" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1"><span class="z-menu__icon"><z-icon name="arrow-path" size="14"></z-icon></span><span class="z-menu__text">Refresh</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" data-danger><span class="z-menu__icon"><z-icon name="trash" size="14"></z-icon></span><span class="z-menu__text">Remove</span></button>
+</div>
+  </div>
+</section>
 </div>
 <h2 class="page__group">data</h2>
 <div class="page__grid">
@@ -1771,6 +1853,36 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="DataView" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">DataView</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-dataview" data-layout="grid" style="--z-dataview-min:180px">
+  <div class="z-dataview__bar">
+    <div role="radiogroup" aria-label="Layout" class="z-segmented z-dataview__switch" data-size="sm">
+      <button type="button" role="radio" aria-checked="false" data-state="off" value="list" tabindex="-1" class="z-segmented__item">
+        <z-icon name="list-bullet" size="14"></z-icon>
+        <span class="z-segmented__label">List</span>
+      </button>
+      <button type="button" role="radio" aria-checked="true" data-state="on" value="grid" tabindex="0" class="z-segmented__item">
+        <z-icon name="squares-2x2" size="14"></z-icon>
+        <span class="z-segmented__label">Grid</span>
+      </button>
+    </div>
+  </div>
+  <ul class="z-dataview__items" aria-label="Projects">
+    <li class="z-dataview__item">
+      <div class="z-card" data-variant="elevated" data-padding="sm">Atlas</div>
+    </li>
+    <li class="z-dataview__item">
+      <div class="z-card" data-variant="elevated" data-padding="sm">Borealis</div>
+    </li>
+    <li class="z-dataview__item">
+      <div class="z-card" data-variant="elevated" data-padding="sm">Cirrus</div>
+    </li>
+  </ul>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="DescriptionList" data-behavior="none">
   <header class="demo__head"><h3 class="demo__name">DescriptionList</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
@@ -1866,6 +1978,29 @@ malaga" data-ignore-accents="">Un
   <div class="z-meter__track" role="meter" aria-label="Disk usage" aria-valuemin="0" aria-valuemax="512" aria-valuenow="412" aria-valuetext="412 GB of 512 GB">
     <div class="z-meter__fill" style="--z-meter-value:80.46875%"></div>
   </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="OverflowList" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">OverflowList</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-overflow-list" role="group" aria-label="Sections" data-more-label="{count} more" style="max-width: 340px">
+  <div class="z-overflow-list__item" data-id="home"><button type="button" class="z-btn z-btn--ghost" data-size="sm"><span class="z-overflow-list__text">Home</span></button></div>
+  <div class="z-overflow-list__item" data-id="projects"><button type="button" class="z-btn z-btn--ghost" data-size="sm"><span class="z-overflow-list__text">Projects</span></button></div>
+  <div class="z-overflow-list__item" data-id="reports"><button type="button" class="z-btn z-btn--ghost" data-size="sm"><span class="z-overflow-list__text">Reports</span></button></div>
+  <div class="z-overflow-list__item" data-id="billing"><button type="button" class="z-btn z-btn--ghost" data-size="sm"><span class="z-overflow-list__text">Billing</span></button></div>
+  <div class="z-overflow-list__item" data-id="members"><button type="button" class="z-btn z-btn--ghost" data-size="sm"><span class="z-overflow-list__text">Members</span></button></div>
+  <div class="z-overflow-list__item" data-id="settings"><button type="button" class="z-btn z-btn--ghost" data-size="sm"><span class="z-overflow-list__text">Settings</span></button></div>
+  <button type="button" class="z-btn z-btn--ghost z-overflow-list__more" data-size="sm" aria-haspopup="menu" aria-expanded="false" data-z-open="#overflow-menu" data-z-placement="bottom-end" aria-label="0 more" data-overflow><span class="z-overflow-list__count">+0</span></button>
+</div>
+
+<div id="overflow-menu" popover class="z-liquid z-menu" role="menu" aria-label="More sections" data-size="md">
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" data-overflow-for="home" hidden><span class="z-menu__text">Home</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" data-overflow-for="projects" hidden><span class="z-menu__text">Projects</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" data-overflow-for="reports" hidden><span class="z-menu__text">Reports</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" data-overflow-for="billing" hidden><span class="z-menu__text">Billing</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" data-overflow-for="members" hidden><span class="z-menu__text">Members</span></button>
+  <button type="button" role="menuitem" class="z-menu__item" tabindex="-1" data-overflow-for="settings" hidden><span class="z-menu__text">Settings</span></button>
 </div>
   </div>
 </section>
@@ -2494,6 +2629,14 @@ malaga" data-ignore-accents="">Un
   <header class="demo__head"><h3 class="demo__name">Spinner</h3><span class="z-badge" data-tone="neutral">css</span></header>
   <div class="demo__stage">
 <span class="z-spinner" data-size="md" data-tone="accent" role="status" aria-label="Loading"></span>
+  </div>
+</section>
+<section class="z-card demo" data-component="TopProgress" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TopProgress</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div style="position: relative; height: 24px">
+  <div class="z-top-progress" data-inline data-value="64" data-announce="false"></div>
+</div>
   </div>
 </section>
 </div>
@@ -3172,6 +3315,15 @@ malaga" data-ignore-accents="">Un
 </span>
   </div>
 </section>
+<section class="z-card demo" data-component="Mentions" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Mentions</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-mentions" id="mentions-demo">
+  <textarea class="z-textarea" aria-label="Comment" placeholder="Type @ or #" rows="3"></textarea>
+  <script type="application/json" data-props>{"sources": [{"trigger": "@", "label": "People", "items": [{"id": "u1", "label": "Ana López", "description": "Design"}, {"id": "u2", "label": "Bruno Díaz", "description": "Engineering"}, {"id": "u3", "label": "Carla Ruiz", "description": "Support"}]}, {"trigger": "#", "label": "Channels", "items": [{"id": "c1", "label": "releases"}, {"id": "c2", "label": "design"}]}]}</script>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="MonthPicker" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">MonthPicker</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -3563,6 +3715,12 @@ malaga" data-ignore-accents="">Un
 </div>
 <h2 class="page__group">media</h2>
 <div class="page__grid">
+<section class="z-card demo" data-component="AudioPlayer" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">AudioPlayer</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-audio-player" data-title="Design systems at scale" data-subtitle="Episode 12" data-duration="1834" data-peaks="3 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3 4 6 8 9 7 5 3 2 4 6 9 8 6 4 3 5" style="max-width: 560px"></div>
+  </div>
+</section>
 <section class="z-card demo" data-component="CompareSlider" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">CompareSlider</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -3691,6 +3849,12 @@ malaga" data-ignore-accents="">Un
 </div>
   </div>
 </section>
+<section class="z-card demo" data-component="Waveform" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Waveform</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-waveform" data-duration="42" data-position="12" data-label="Seek interview" data-peaks="3 5 8 6 9 4 3 7 9 6 4 2 5 8 7 3 4 6 8 9 7 5 3 2 4 6 9 8 6 4 3 5" style="max-width: 420px"></div>
+  </div>
+</section>
 </div>
 <h2 class="page__group">navigation</h2>
 <div class="page__grid">
@@ -3720,6 +3884,28 @@ malaga" data-ignore-accents="">Un
       <div class="z-accordion__body">Yes, from the billing page.</div>
     </div>
   </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="Affix" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Affix</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-affix" data-side="top" style="--z-affix-offset:8px">
+  <div role="toolbar" aria-label="Filters" aria-orientation="horizontal" class="z-toolbar z-liquid" data-variant="glass" data-size="md">
+    <button type="button" class="z-btn z-btn--secondary" data-size="sm">
+      <z-icon name="funnel" size="14"></z-icon>
+      Filters
+    </button>
+  </div>
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="BackToTop" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">BackToTop</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div id="btt-demo" tabindex="0" role="region" aria-label="Changelog" style="max-height: 200px; overflow: auto">
+  <p style="min-height: 600px">Scroll this panel to bring the button up.</p>
+  <div class="z-back-to-top" data-threshold="120" data-show-label data-label="Back to top"></div>
 </div>
   </div>
 </section>
@@ -3932,6 +4118,26 @@ malaga" data-ignore-accents="">Un
     </span>
   </li>
 </ol>
+  </div>
+</section>
+<section class="z-card demo" data-component="TableOfContents" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">TableOfContents</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 16px">
+  <div id="toc-demo-article" tabindex="0" role="region" aria-label="Release notes" style="max-height: 220px; overflow: auto">
+    <h3 id="toc-intro">Introduction</h3>
+    <p style="min-height: 180px">Why the release exists.</p>
+    <h3 id="toc-install">Install</h3>
+    <p style="min-height: 180px">Package manager and versions.</p>
+    <h4 id="toc-peer">Peer dependencies</h4>
+    <p style="min-height: 180px">React is optional.</p>
+    <h3 id="toc-usage">Usage</h3>
+    <p style="min-height: 180px">Import the styles first.</p>
+  </div>
+  <div class="z-toc" data-label="On this page" data-active="toc-intro">
+    <script type="application/json" data-props>{"items": [{"id": "toc-intro", "label": "Introduction", "level": 3}, {"id": "toc-install", "label": "Install", "level": 3}, {"id": "toc-peer", "label": "Peer dependencies", "level": 4}, {"id": "toc-usage", "label": "Usage", "level": 3}]}</script>
+  </div>
+</div>
   </div>
 </section>
 <section class="z-card demo" data-component="Tabs" data-behavior="dom">
@@ -4430,6 +4636,31 @@ malaga" data-ignore-accents="">Un
 </dialog>
   </div>
 </section>
+<section class="z-card demo" data-component="Popconfirm" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">Popconfirm</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<button type="button" class="z-btn z-btn--danger" data-size="md" aria-haspopup="dialog" aria-expanded="false" data-z-open="#popconfirm-demo" data-z-placement="top">
+  <z-icon name="trash" size="16"></z-icon>
+  Delete
+</button>
+
+<div id="popconfirm-demo" popover class="z-liquid z-popover z-popconfirm" role="dialog" aria-labelledby="popconfirm-demo-title" data-arrow>
+  <div class="z-popover__body">
+    <div class="z-popconfirm__content" data-intent="danger">
+      <span class="z-popconfirm__icon" aria-hidden="true"><z-icon name="exclamation-triangle" size="18"></z-icon></span>
+      <div class="z-popconfirm__text">
+        <p class="z-popconfirm__title" id="popconfirm-demo-title">Delete this row?</p>
+        <p class="z-popconfirm__description" id="popconfirm-demo-description">Its history goes with it.</p>
+      </div>
+    </div>
+    <div class="z-popconfirm__actions">
+      <button type="button" class="z-btn z-btn--secondary" data-size="sm" autofocus aria-describedby="popconfirm-demo-description" data-z-close>Cancel</button>
+      <button type="button" class="z-btn z-btn--danger" data-size="sm" aria-describedby="popconfirm-demo-description" data-z-confirm>Delete</button>
+    </div>
+  </div>
+</div>
+  </div>
+</section>
 <section class="z-card demo" data-component="Popover" data-behavior="dom">
   <header class="demo__head"><h3 class="demo__name">Popover</h3><span class="z-badge" data-tone="accent">dom</span></header>
   <div class="demo__stage">
@@ -4437,6 +4668,44 @@ malaga" data-ignore-accents="">Un
 
 <div id="usage" popover class="z-liquid z-popover" role="dialog" aria-label="Usage">
   412 GB of 512 GB used.
+</div>
+  </div>
+</section>
+<section class="z-card demo" data-component="SearchView" data-behavior="dom">
+  <header class="demo__head"><h3 class="demo__name">SearchView</h3><span class="z-badge" data-tone="accent">dom</span></header>
+  <div class="demo__stage">
+<div class="z-searchview" data-mode="auto">
+  <button type="button" class="z-searchview__bar" aria-haspopup="dialog" aria-expanded="false" aria-controls="z-sv-_R_0_-view">
+    <z-icon name="magnifying-glass" size="18"></z-icon>
+    <span class="z-searchview__text">Search projects</span>
+  </button>
+  <dialog class="z-searchview__view" id="z-sv-_R_0_-view" aria-label="Search projects" data-state="closed">
+    <div class="z-searchview__header">
+      <button type="button" class="z-btn z-btn--ghost z-btn--icon z-searchview__back" data-size="md" aria-label="Back" title="Back">
+        <z-icon name="arrow-left" size="18"></z-icon>
+      </button>
+      <input class="z-searchview__input" type="search" aria-label="Search projects" placeholder="Search projects" autoComplete="off" enterKeyHint="search" value=""/>
+      <button type="button" class="z-btn z-btn--ghost z-btn--icon z-searchview__clear" data-size="md" aria-label="Clear search" title="Clear search">
+        <z-icon name="x-mark" size="18"></z-icon>
+      </button>
+    </div>
+    <div class="z-searchview__results">
+      <nav aria-label="Recent" class="z-navlist">
+        <a class="z-navlink" href="#atlas">
+          <span class="z-navlink__icon">
+            <z-icon name="folder" size="16"></z-icon>
+          </span>
+          <span class="z-navlink__label">Atlas</span>
+        </a>
+        <a class="z-navlink" href="#borealis">
+          <span class="z-navlink__icon">
+            <z-icon name="folder" size="16"></z-icon>
+          </span>
+          <span class="z-navlink__label">Borealis</span>
+        </a>
+      </nav>
+    </div>
+  </dialog>
 </div>
   </div>
 </section>
@@ -5206,22 +5475,27 @@ malaga" data-ignore-accents="">Un
       </nav>
     </nav>
     <div class="z-docs-layout__main">
-      <details class="z-docs-layout__toc-compact">
-        <summary class="z-docs-layout__toc-summary">On this page
-          <z-icon name="chevron-down" size="14"></z-icon>
-        </summary>
-        <ul class="z-docs-layout__toc-list">
-          <li data-level="2">
-            <a class="z-docs-layout__toc-link" href="#docs-install">Install</a>
-          </li>
-          <li data-level="2">
-            <a class="z-docs-layout__toc-link" href="#docs-usage">Usage</a>
-          </li>
-          <li data-level="3">
-            <a class="z-docs-layout__toc-link" href="#docs-usage-react">With React</a>
-          </li>
-        </ul>
-      </details>
+      <div role="navigation" aria-label="On this page" data-compact="" id="z-toc-_R_b_" class="z-toc z-docs-layout__toc-compact">
+        <details class="z-toc__compact">
+          <summary class="z-toc__summary">
+            <span class="z-toc__summary-title">On this page</span>
+            <span class="z-toc__chevron" aria-hidden="true">
+              <z-icon name="chevron-down" size="14"></z-icon>
+            </span>
+          </summary>
+          <ol class="z-toc__list">
+            <li class="z-toc__entry" data-depth="0">
+              <a class="z-toc__link" href="#docs-install">Install</a>
+            </li>
+            <li class="z-toc__entry" data-depth="0">
+              <a class="z-toc__link" href="#docs-usage">Usage</a>
+            </li>
+            <li class="z-toc__entry" data-depth="1">
+              <a class="z-toc__link" href="#docs-usage-react">With React</a>
+            </li>
+          </ol>
+        </details>
+      </div>
       <article class="z-docs-layout__article">
         <div class="z-prose" data-size="md">
           <h1>Getting started</h1>
@@ -5249,20 +5523,20 @@ malaga" data-ignore-accents="">Un
         </a>
       </nav>
     </div>
-    <nav class="z-docs-layout__toc" aria-label="On this page">
-      <p class="z-docs-layout__toc-title" aria-hidden="true">On this page</p>
-      <ul class="z-docs-layout__toc-list">
-        <li data-level="2">
-          <a class="z-docs-layout__toc-link" href="#docs-install">Install</a>
+    <div role="navigation" aria-label="On this page" id="z-toc-_R_4_" class="z-toc z-docs-layout__toc">
+      <p class="z-toc__title" aria-hidden="true">On this page</p>
+      <ol class="z-toc__list">
+        <li class="z-toc__entry" data-depth="0">
+          <a class="z-toc__link" href="#docs-install">Install</a>
         </li>
-        <li data-level="2">
-          <a class="z-docs-layout__toc-link" href="#docs-usage">Usage</a>
+        <li class="z-toc__entry" data-depth="0">
+          <a class="z-toc__link" href="#docs-usage">Usage</a>
         </li>
-        <li data-level="3">
-          <a class="z-docs-layout__toc-link" href="#docs-usage-react">With React</a>
+        <li class="z-toc__entry" data-depth="1">
+          <a class="z-toc__link" href="#docs-usage-react">With React</a>
         </li>
-      </ul>
-    </nav>
+      </ol>
+    </div>
   </div>
 </div>
   </div>

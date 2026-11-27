@@ -20,8 +20,12 @@ export default function ({ t, assert, poll, visible, gone }) {
         const toc = page.locator(".z-docs-layout .z-toc").first();
         await visible(page, ".z-docs-layout .z-toc");
         await poll(async () => (await toc.locator(".z-toc__summary-current").textContent()) === "Loading bar", "primera sección");
-        await page.evaluate(() => document.getElementById("pg-search").scrollIntoView({ block: "start" }));
-        await poll(async () => (await toc.locator(".z-toc__summary-current").textContent()) === "Search view", "sigue al desplazamiento");
+        await page.evaluate(() => document.getElementById("pg-overflow").scrollIntoView({ block: "start" }));
+        await poll(async () => (await toc.locator(".z-toc__summary-current").textContent()) === "Overflow", "sigue al desplazamiento");
+        // Al final del documento manda la última sección, aunque sea corta y no llegue a la línea de lectura.
+        await scrollPage(page, "end");
+        await poll(async () => (await toc.locator(".z-toc__summary-current").textContent()) === "Contents", "al final, la última");
+        await page.evaluate(() => document.getElementById("pg-overflow").scrollIntoView({ block: "start" }));
         await poll(() => page.evaluate(() => document.querySelector('[data-testid="pg-affix"]')?.hasAttribute("data-stuck")), "Affix pegado");
         await shot(page, "page-toc-affix");
         await toc.locator("summary").click();
@@ -79,7 +83,7 @@ export default function ({ t, assert, poll, visible, gone }) {
     {
       name: "DataView (React): lista o rejilla con el conmutador, guardado y recuperado al volver",
       async run({ open }) {
-        let page = await open("page");
+        const page = await open("page");
         await page.evaluate(() => localStorage.removeItem("zuix-demo-projects-layout"));
         const view = () => page.locator(".z-dataview").first();
         assert((await view().getAttribute("data-layout")) === "list", "lista por defecto");
@@ -91,7 +95,8 @@ export default function ({ t, assert, poll, visible, gone }) {
         await poll(async () => (await view().getAttribute("data-layout")) === "list", "flechas del radiogroup");
         await page.keyboard.press("ArrowRight");
         await poll(async () => (await page.evaluate(() => localStorage.getItem("zuix-demo-projects-layout"))) === "grid", "guardado");
-        page = await open("page");
+        // Cada open() es un contexto nuevo (sin el almacenamiento de antes): se recarga la misma página.
+        await page.reload();
         await poll(async () => (await view().getAttribute("data-layout")) === "grid", "recuperado tras montar");
         await page.evaluate(() => localStorage.removeItem("zuix-demo-projects-layout"));
       },
@@ -299,7 +304,7 @@ export default function ({ t, assert, poll, visible, gone }) {
         await poll(async () => (await player.locator(".z-audio-player__wave").getAttribute("aria-busy")) === null, "onda calculada");
         const heights = await player.locator(".z-waveform__bar").evaluateAll((bars) => new Set(bars.map((b) => b.style.getPropertyValue("--z-peak"))).size);
         assert(heights > 4, `la onda tiene forma: ${heights}`);
-        await player.getByRole("button", { name: "Play" }).click();
+        await player.getByRole("button", { name: "Play", exact: true }).click();
         await poll(() => player.evaluate((el) => el.hasAttribute("data-playing")), "suena");
         await page.keyboard.press("k");
         await poll(() => player.evaluate((el) => !el.hasAttribute("data-playing")), "K pausa");

@@ -183,7 +183,7 @@ export const tableOfContentsWidget: Widget<TableOfContentsProps, Config, State> 
       c.compact
         ? h(
             "details",
-            { class: "z-toc__compact", key: "compact", open: on(s.open) },
+            { class: "z-toc__compact", key: "compact", open: s.open || undefined },
             h(
               "summary",
               { class: "z-toc__summary" },
